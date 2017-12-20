@@ -1,0 +1,16 @@
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Square extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+  }
+</script>
+
+<style lang="stylus">
+
+</style>
