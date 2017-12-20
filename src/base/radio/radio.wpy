@@ -1,0 +1,71 @@
+<template>
+  <view class="radioBox" wx:if="{{showCover}}">
+    <view class="radioBox-Msg">
+      <view class="radioBox-head">{{radioMsg.headTxt}}</view>
+      <view class="radioBox-list">
+        <radio-group bindchange="serviceValChange">
+          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
+            <label class="radio">
+              <radio value="{{item.value}}" checked="{{item.checked}}" hidden="{{true}}" />{{item.txt}}
+              <image class="radio-Icon" src="{{item.value===radioChecked?'./image/icon-select@2x.png':'./image/icon-selected_gray.png'}}" wx:if="{{radioMsg.radioType}}"></image>
+              <image class="radio-Icon" src="{{item.value===radioChecked?'./image/icon-selected@2x.png':'./image/icon-selected_gray.png'}}"></image>
+            </label>
+          </view>
+        </radio-group>
+      </view>
+      <view class="radioBox-closeBtn">
+        <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+
+  export default class RadioBox extends wepy.component {
+    mixins = [base]
+
+    data = {
+      showCover: true
+      radioMsg: null
+    }
+
+    onLoad() {
+    }
+
+    methods = {
+      init(msg) {
+        this.radioMsg = msg
+        this.$apply()
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .radioBox
+    position: fixed
+    z-index: 1000
+    left: 0
+    top: 0
+    height: 100vh
+    width: 100vw
+    background: rgba(54, 53, 71, .5)
+
+    .radioBox-Msg
+      position: fixed
+      margin: auto
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+      width: 265.5px
+      min-height: 40px
+      max-height: 400px
+
+</style>
