@@ -1,6 +1,6 @@
 <template>
   <view class="mine-wrapper">
-    我的9
+    我的
   </view>
 </template>
 
