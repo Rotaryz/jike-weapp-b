@@ -1,6 +1,6 @@
 <template>
   <view class="shop-wrapper">
-    店铺1
+    店铺
   </view>
 </template>
 
