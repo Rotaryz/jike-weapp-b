@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 import wepy from 'wepy'
-import User from 'api/user'
 
 export default class userMixin extends wepy.mixin {
   isFunction(item) {
     return typeof item === 'function'
   }
+
   // set Code
   async $setCode() {
     const res = await wepy.login()
@@ -104,8 +104,8 @@ export default class userMixin extends wepy.mixin {
       user = await this.$getUser()
       console.log(user)
     } else {
-      if(!res.customer.avatarUrl) {
-        user = Object.assign(res.customer,{avatarUrl:res.avatarUrl})
+      if (!res.customer.avatarUrl) {
+        user = Object.assign(res.customer, {avatarUrl: res.avatarUrl})
       } else {
         user = res.customer
       }
