@@ -1,0 +1,17 @@
+<template>
+  <view class="shop-wrapper">
+    店铺
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Shop extends wepy.page {
+
+  }
+</script>
+
+<style lang="stylus">
+
+</style>

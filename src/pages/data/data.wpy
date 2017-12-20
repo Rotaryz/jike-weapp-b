@@ -1,0 +1,17 @@
+<template>
+  <view class="data-wrapper">
+    数据
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Data extends wepy.page {
+
+  }
+</script>
+
+<style lang="stylus">
+
+</style>

@@ -1,2 +1,2 @@
-# weapp-b
-集客小程序B端
+# jike-weapp
+集客小程序

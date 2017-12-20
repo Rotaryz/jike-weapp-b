@@ -1,0 +1,17 @@
+<template>
+  <view class="mine-wrapper">
+    我的
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Mine extends wepy.page {
+
+  }
+</script>
+
+<style lang="stylus">
+
+</style>
