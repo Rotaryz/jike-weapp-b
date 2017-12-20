@@ -74,25 +74,25 @@ export default class extends wepy.app {
           pagePath: 'pages/shop/shop',
           text: '店铺',
           iconPath: './common/images/icon-shop@2x.png',
-          selectedIconPath: './common/images/icon-shop@2x.png'
+          selectedIconPath: './common/images/icon-shop2@2x.png'
         },
         {
           pagePath: 'pages/marketing/marketing',
           text: '营销',
           iconPath: './common/images/icon-marketing@2x.png',
-          selectedIconPath: './common/images/icon-marketing@2x.png'
+          selectedIconPath: './common/images/icon-marketing2@2x.png'
         },
         {
-          pagePath: 'pages/mine/mine',
+          pagePath: 'pages/data/data',
           text: '数据',
           iconPath: './common/images/icon-data@2x.png',
-          selectedIconPath: './common/images/icon-data_active@2x.png'
+          selectedIconPath: './common/images/icon-data2@2x.png'
         },
         {
           pagePath: 'pages/mine/mine',
           text: '我的',
-          iconPath: './common/images/icon-mine@2x.png',
-          selectedIconPath: './common/images/icon-mine_active@2x.png'
+          iconPath: './common/images/icon-my@2x.png',
+          selectedIconPath: './common/images/icon-my2@2x.png'
         }
       ]
     }
