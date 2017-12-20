@@ -1,6 +1,19 @@
 <template>
-  <view class="shop-wrapper">
-    店铺
+  <view>
+    <view class="shop-header">
+      <view>
+        <image></image>
+        <view>输码核销</view>
+      </view>
+      <view>
+        <image></image>
+        <view>扫码核销</view>
+      </view>
+      <view>
+        <image></image>
+        <view>输码核销</view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -8,7 +21,9 @@
   import wepy from 'wepy'
 
   export default class Shop extends wepy.page {
-
+    config = {
+      navigationBarTitleText: '商家助手'
+    }
   }
 </script>
 

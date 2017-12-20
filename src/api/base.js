@@ -3,6 +3,7 @@ import http from 'common/js/http'
 
 export default class base {
   static baseUrl = wepy.$instance.globalData.baseUrl
+  static baseLogin = wepy.$instance.globalData.baseLogin
   static get = http.get.bind(http)
   static put = http.put.bind(http)
   static post = http.post.bind(http)
