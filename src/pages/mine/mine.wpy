@@ -1,9 +1,8 @@
 <template>
   <view class="mine-wrapper">
-    我的
-    <view @tap="showRadio">打开</view>
-    <RadioBox></RadioBox>
-    <TwoRadioBox></TwoRadioBox>
+    <view class="mine-head">
+      <image src="./image/pic-bg@2x.png" class="mine-head-border"></image>
+    </view>
   </view>
 </template>
 
@@ -13,6 +12,13 @@
   import TwoRadioBox from '@/base/second-radio/second-radio'
 
   export default class Mine extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的',
+      navigationBarBackgroundColor: '#363537',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+
     components = {
       RadioBox,
       TwoRadioBox
@@ -53,5 +59,20 @@
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .mine-wrapper
+
+    .mine-head
+      width: 100vw
+      height: 30vw
+      background: $color-theme
+      position: relative
+
+      .mine-head-border
+        width: 100vw
+        height: 18vw
+        position: absolute
+        bottom: -7vw
 
 </style>
