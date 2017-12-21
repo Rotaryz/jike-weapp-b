@@ -52,6 +52,7 @@ export default class extends wepy.app {
 
   config = {
     pages: [
+      'pages/create-service/create-service',
       'pages/shop/shop',
       'pages/marketing/marketing',
       'pages/data/data',
@@ -60,9 +61,9 @@ export default class extends wepy.app {
     window: {
       backgroundColor: '#F9F9F9',
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
+      navigationBarBackgroundColor: '#363547',
       navigationBarTitleText: '商家助手',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'white'
     },
     tabBar: {
       color: '#C8C8C8',
