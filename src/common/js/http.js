@@ -20,7 +20,12 @@ export default class http {
     const res = await wepy.request(param)
     Tips.loaded()
     if (this.isSuccess(res)) {
-      const result = res.data.data ? res.data.data : res.data
+      let result
+      if (res.statusCode === 422) {
+        result = res.responseJSON
+      } else {
+        result = res.data.data ? res.data.data : res.data
+      }
       return result
     } else {
       throw this.requestException(res)
@@ -61,11 +66,11 @@ export default class http {
   static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
-    if (wxCode !== 200) {
+    if (wxCode !== 200 || wxCode !== 422) {
       return false
     }
-    const wxData = res.data
-    return wxData && wxData.error === 0
+    const wxData = wxCode === 200 ? res.data : res.responseJSON
+    return wxData
   }
 
   /**
