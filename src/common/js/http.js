@@ -11,7 +11,7 @@ export default class http {
     }
     const Authorization = wepy.getStorageSync('token')
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization})
+      param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
     param.header = Object.assign({}, param.header, {'Current-merchant': wepy.getStorageSync('merchantId') || 100000})
     if (loading) {
@@ -61,11 +61,10 @@ export default class http {
   static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
-    if (wxCode !== 200) {
-      return false
+    if (wxCode === 200 || wxCode === 422) {
+      return true
     }
-    const wxData = res.data
-    return wxData && wxData.error === 0
+    return false
   }
 
   /**
