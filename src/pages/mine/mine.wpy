@@ -3,16 +3,19 @@
     我的
     <view @tap="showRadio">打开</view>
     <RadioBox></RadioBox>
+    <TwoRadioBox></TwoRadioBox>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import RadioBox from '@/base/radio/radio'
+  import TwoRadioBox from '@/base/second-radio/second-radio'
 
   export default class Mine extends wepy.page {
     components = {
-      RadioBox
+      RadioBox,
+      TwoRadioBox
     }
 
     methods = {
@@ -20,12 +23,19 @@
         this.$broadcast('init', {
           headTxt: '营业状态', // 头部标题
           radioType: 1, // 1为方，2为圆
+          radioChecked: '0', // 默认选择哪一个
           items: [
-            {value: '0', txt: '营业中', checked: false},
-            {value: '1', txt: '暂停营业', checked: false},
-            {value: '2', txt: '筹建中', checked: false},
-            {value: '3', txt: '已关门', checked: false}]
+            {value: '0', txt: '营业中'},
+            {value: '1', txt: '暂停营业'},
+            {value: '2', txt: '筹建中'},
+            {value: '3', txt: '已关门'}]
         })
+      }
+    }
+
+    events = {
+      chioseOK(item) {
+        console.log(item)
       }
     }
   }

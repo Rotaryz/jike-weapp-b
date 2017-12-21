@@ -3,17 +3,17 @@
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
       <view class="radioBox-list">
-        <radio-group bindchange="serviceValChange">
+        <radio-group bindchange="radioChiose">
           <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
-            <label class="radio">
-              <radio value="{{item.value}}" checked="{{item.checked}}" hidden="{{true}}" />{{item.txt}}
-              <image class="radio-Icon" src="{{item.value===radioChecked?'./image/icon-select@2x.png':'./image/icon-selected_gray.png'}}" wx:if="{{radioMsg.radioType}}"></image>
-              <image class="radio-Icon" src="{{item.value===radioChecked?'./image/icon-selected@2x.png':'./image/icon-selected_gray.png'}}"></image>
+            <label class="radioLabel {{item.value===radioMsg.radioChecked?'active':''}}">
+              <radio value="{{item.value}}" checked="{{item.value===radioMsg.radioChecked}}" hidden="true" />{{item.txt}}
+              <image class="radio-Icon" src="{{item.value===radioMsg.radioChecked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
+              <image class="radio-Icon" src="{{item.value===radioMsg.radioChecked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" wx:if="{{radioMsg.radioType===2}}"></image>
             </label>
           </view>
         </radio-group>
       </view>
-      <view class="radioBox-closeBtn">
+      <view class="radioBox-closeBtn" @tap="closeCover">
         <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
       </view>
     </view>
@@ -29,7 +29,7 @@
     mixins = [base]
 
     data = {
-      showCover: true
+      showCover: false,
       radioMsg: null
     }
 
@@ -37,8 +37,21 @@
     }
 
     methods = {
-      init(msg) {
-        this.radioMsg = msg
+      closeCover() {
+        this.$emit('chioseOK', this.radioMsg.items[this.radioMsg.radioChecked])
+        this.showCover = false
+      },
+      radioChiose(e) {
+        this.radioMsg.radioChecked = e.detail.value
+        this.$apply()
+      }
+    }
+
+    events = {
+      init(radioList) {
+        console.log(radioList)
+        this.radioMsg = radioList
+        this.showCover = true
         this.$apply()
       }
     }
@@ -58,14 +71,60 @@
     background: rgba(54, 53, 71, .5)
 
     .radioBox-Msg
-      position: fixed
-      margin: auto
-      left: 0
-      top: 0
-      right: 0
-      bottom: 0
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+      background: $color-white
       width: 265.5px
       min-height: 40px
-      max-height: 400px
+      border-radius: 4px
+
+      .radioBox-head
+        height: 40px
+        background: $color-theme
+        line-height: 40px
+        text-align: center
+        color: $color-white
+        font-size: $font-size-medium-x
+
+      .radioBox-list
+        max-height: 330px
+        padding: 10px 12px 20px
+
+        .radioBox-list-item
+          line-height: 39px
+          border-bottom: 1px solid $color-row-line
+          font-size: $font-size-small
+
+          .radioLabel
+            display: block
+            width: 100%
+            position: relative
+
+            .radio-Icon
+              width: 16px
+              height: 16px
+              position: absolute
+              right: 0
+              top: 11px
+
+          .radioLabel.active
+            color: $color-assist-f
+
+      .radioBox-closeBtn
+        width: 34px
+        height: 34px
+        display: flex
+        justify-content: center
+        align-items: center
+        position: absolute
+        left: 50%
+        transform: translate(-50%, 0)
+        bottom: -50px
+
+        .radioBox-closeX
+          width: 20px
+          height: 20px
 
 </style>

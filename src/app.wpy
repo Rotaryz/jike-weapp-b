@@ -52,10 +52,10 @@ export default class extends wepy.app {
 
   config = {
     pages: [
+      'pages/mine/mine',
       'pages/shop/shop',
       'pages/marketing/marketing',
-      'pages/data/data',
-      'pages/mine/mine'
+      'pages/data/data'
     ],
     window: {
       backgroundColor: '#F9F9F9',
