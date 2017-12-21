@@ -33,4 +33,14 @@ export default class logIn extends base {
     return await this.post(url, data)
   }
 
+  /**
+   * 商家忘记密码
+   * @param data
+   * @returns {Promise.<*>}
+   */
+  static async resetPassword(data) {
+    const url = `${this.baseLogin}/api/merchants/reset-password`
+    return await this.post(url, data)
+  }
+
 }

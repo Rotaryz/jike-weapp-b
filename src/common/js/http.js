@@ -11,7 +11,7 @@ export default class http {
     }
     const Authorization = wepy.getStorageSync('token')
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization})
+      param.header = Object.assign({}, {Authorization}, {'X-Requested-With': "XMLHttpRequest"})
     }
     param.header = Object.assign({}, param.header, {'Current-merchant': wepy.getStorageSync('merchantId') || 100000})
     if (loading) {
@@ -55,6 +55,7 @@ export default class http {
       throw this.requestException(resData)
     }
   }
+
   /**
    * 判断请求是否成功
    */
@@ -104,7 +105,7 @@ export default class http {
     return this.request('DELETE', url, data, loading)
   }
 
-  static updateImg (url, name, loading = true) {
+  static updateImg(url, name, loading = true) {
     return this.update(url, name, loading)
   }
 }

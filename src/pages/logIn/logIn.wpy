@@ -43,8 +43,9 @@
       </view>
       <view class="password lg-ch" wx:if="{{loginType.forget}}">
         <view class="ciphertext" wx:if="{{!loginType.anCiphertext}}">
-          <image class="icon" src="./icon-password@2x.png"></image>
-          <input type="password" placeholder="再次输入新密码"
+          <image class="icon" src="{{loginType.anPassError.image}}"></image>
+          <input class="{{loginType.anPassError.status ? '' : 'error'}}"
+                 type="password" placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
                  bindinput="anginPassword" bindblur="burlPass"/>
           <image class="close" src="./icon-hide@2x.png"
@@ -104,7 +105,10 @@
           image: './icon-phone@2x.png'
         },
         passError: './icon-password@2x.png',
-        anPassError: true,
+        anPassError: {
+          status: true,
+          image: './icon-password@2x.png'
+        },
         codeError: true,
         showClose: false
       }
@@ -153,8 +157,10 @@
           this.submitType = 2
         } else if (type === 'forget') {
           this.submitText = '确定'
+          this.loginType.register = true
           this.loginType.forget = true
           this.loginType.login = false
+          this.submitType = 3
         }
       },
       async setCode() {
@@ -179,21 +185,34 @@
         if (reg.test(e.detail.value)) {
           this.password = e.detail.value
         }
-        if ((this.phoneSusses !== '' && this.password !== '') ||
-          (this.phoneSusses !== '' && this.password !== '' && this.code !== '')) {
-          this.loginType.submit = true
+        if (this.submitType !== 3) {
+          if ((this.phoneSusses !== '' && this.password !== '') ||
+            (this.phoneSusses !== '' && this.password !== '' && this.code !== '')) {
+            this.loginType.submit = true
+          } else {
+            this.loginType.submit = false
+          }
         }
 //        console.log(reg.test(e.detail.value))
       },
       anginPassword(e) {
+        this.loginType.anPassError.status = true
+        this.loginType.anPassError.image = './icon-password@2x.png'
         let reg = /^[a-zA-Z0-9]{6,18}$/
         if (reg.test(e.detail.value)) {
           this.anPassword = e.detail.value
         }
+        if (this.phoneSusses !== '' && this.password !== '' && this.code !==
+          '' && this.anPassword === this.password) {
+          this.loginType.submit = true
+        } else {
+          this.loginType.submit = false
+        }
       },
       burlPass() {
         if (this.anPassword !== this.password) {
-          this.loginType.anPassError = false
+          this.loginType.anPassError.status = false
+          this.loginType.anPassError.image = './icon-cw_password@2x.png'
         }
       },
       getCode(e) {
@@ -216,6 +235,20 @@
             })
 //            登陆成功的跳转
             console.log(res)
+          } else if (subType === 3) {
+            res = await logIn.resetPassword({
+              'mobile': this.phoneSusses,
+              'password': this.password,
+              'password_confirmation': this.anPassword,
+              'code': this.code
+            })
+            console.log(res)
+            if (res.error === 0) {
+              console.log('dffddfs')
+              this.loginType.register = false
+              this.loginType.forget = false
+              this.loginType.login = true
+            }
           }
 //          wepy.setStorageSync('token', res.access_token)
         }
