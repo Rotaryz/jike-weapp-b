@@ -29,14 +29,14 @@
           <image class="icon" src="{{loginType.passError}}"></image>
           <input type="password" placeholder="{{passtext}}"
                  placeholder-class="placeholder" bindinput="putPassword"
-                 maxlength="18"/>
+                 maxlength="18" value="{{password}}"/>
           <image class="close" src="./icon-hide@2x.png"
                  @tap="showCiphertext('fi')"></image>
         </view>
         <view class="proclaimed" wx:if="{{loginType.ciphertext}}">
           <image class="icon" src="./icon-password@2x.png"></image>
           <input type="text" placeholder="{{passtext}}"
-                 placeholder-class="placeholder"/>
+                 placeholder-class="placeholder" value="{{password}}" maxlength="18"/>
           <image class="close" src="./icon-display@2x.png"
                  @tap="showCiphertext('fi')"></image>
         </view>
@@ -54,7 +54,7 @@
         <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
           <image class="icon" src="./icon-password@2x.png"></image>
           <input type="text" placeholder="再次输入新密码"
-                 placeholder-class="placeholder"/>
+                 placeholder-class="placeholder" maxlength="18" value="{{anPassword}}"/>
           <image class="close" src="./icon-display@2x.png"
                  @tap="showCiphertext('tw')"></image>
         </view>
@@ -142,6 +142,7 @@
         this.loginType.showClose = false
       },
       showCiphertext(type) {
+        console.log(this.password)
         if (type === 'fi') {
           this.loginType.ciphertext = !this.loginType.ciphertext
         } else if (type === 'tw') {
@@ -227,13 +228,14 @@
               password: this.password,
               code: this.code
             })
-            console.log(res)
+            wepy.setStorageSync('token', res.access_token)
 //            注册成功后跳转到个人中心
           } else if (subType === 1) {
             res = await logIn.login({
               mobile: this.phoneSusses,
               password: this.password
             })
+            wepy.setStorageSync('token', res.access_token)
 //            登陆成功的跳转
             console.log(res)
           } else if (subType === 3) {
@@ -243,12 +245,18 @@
               'password_confirmation': this.anPassword,
               'code': this.code
             })
-            console.log(res)
+            console.log(res.error)
             if (res.error === 0) {
               console.log('dffddfs')
+              this.submitText = '登陆'
               this.loginType.register = false
               this.loginType.forget = false
               this.loginType.login = true
+              this.phoneNum = ''
+              this.password = ''
+              this.submitType = 1
+              this.loginType.submit = false
+              this.$apply()
             }
           }
 //          wepy.setStorageSync('token', res.access_token)
