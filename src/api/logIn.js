@@ -9,7 +9,7 @@ export default class logIn extends base {
    * @returns {Promise.<*>}
    */
   static async login(data) {
-    const url = `${this.baseUrl}/api/merchants/login`
+    const url = `${this.baseLogin}/api/merchants/login`
     return await this.post(url, data)
   }
 
@@ -32,4 +32,5 @@ export default class logIn extends base {
     const url = `${this.baseLogin}/api/merchants/register`
     return await this.post(url, data)
   }
+
 }

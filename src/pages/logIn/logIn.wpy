@@ -18,10 +18,11 @@
         <text wx:if="{{loginType.register}}" @tap="setCode">{{loginType.time}}
         </text>
       </view>
-      <view class="lg-ch" wx:if="{{loginType.register}}">
+      <view class="lg-ch" wx:if="{{loginType.register || loginType.forget}}">
         <image class="icon" src="./icon-code@2x.png"></image>
         <input type="text" placeholder="请输入验证码"
-               placeholder-class="placeholder" value="{{code}}" bindinput="getCode"/>
+               placeholder-class="placeholder" value="{{code}}"
+               bindinput="getCode"/>
       </view>
       <view class="password lg-ch">
         <view class="ciphertext" wx:if="{{!loginType.ciphertext}}">
@@ -41,17 +42,27 @@
         </view>
       </view>
       <view class="password lg-ch" wx:if="{{loginType.forget}}">
-        <view class="ciphertext">
+        <view class="ciphertext" wx:if="{{!loginType.anCiphertext}}">
           <image class="icon" src="./icon-password@2x.png"></image>
           <input type="password" placeholder="再次输入新密码"
+                 placeholder-class="placeholder" maxlength="18"
+                 bindinput="anginPassword" bindblur="burlPass"/>
+          <image class="close" src="./icon-hide@2x.png"
+                 @tap="showCiphertext('tw')"></image>
+        </view>
+        <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
+          <image class="icon" src="./icon-password@2x.png"></image>
+          <input type="text" placeholder="再次输入新密码"
                  placeholder-class="placeholder"/>
-          <image class="close" src="./icon-hide@2x.png"></image>
+          <image class="close" src="./icon-display@2x.png"
+                 @tap="showCiphertext('tw')"></image>
         </view>
       </view>
-      <button class="{{loginType.submit ? '' : 'disable'}}" @tap="submit('register')">注册
+      <button class="{{loginType.submit ? '' : 'disable'}}"
+              @tap="submit({{submitType}})">{{submitText}}
       </button>
       <view class="tip" wx:if="{{loginType.login}}">
-        <text>忘记密码</text>
+        <text @tap="showOther('forget')">忘记密码</text>
         <text @tap="showOther('register')">立即注册</text>
       </view>
     </view>
@@ -62,8 +73,10 @@
 
 <script>
   import wepy from 'wepy'
+  import users from 'common/mixins/users'
   import logIn from 'api/logIn'
   export default class Square extends wepy.page {
+    mixins = [users]
     config = {
       navigationBarTitleText: '集客商家助手'
     }
@@ -73,7 +86,10 @@
       phoneNum: '',
       phoneSusses: '',
       password: '',
+      submitType: 1,
+      anPassword: '',
       passtext: '请输入密码',
+      submitText: '登陆',
       code: '',
       loginType: {
         login: true,
@@ -122,15 +138,22 @@
         this.loginType.showClose = false
       },
       showCiphertext(type) {
-        console.log(type)
         if (type === 'fi') {
           this.loginType.ciphertext = !this.loginType.ciphertext
+        } else if (type === 'tw') {
+          this.loginType.anCiphertext = !this.loginType.anCiphertext
         }
       },
 //      注册
       showOther(type) {
         if (type === 'register') {
+          this.submitText = '注册'
           this.loginType.register = true
+          this.loginType.login = false
+          this.submitType = 2
+        } else if (type === 'forget') {
+          this.submitText = '确定'
+          this.loginType.forget = true
           this.loginType.login = false
         }
       },
@@ -156,23 +179,48 @@
         if (reg.test(e.detail.value)) {
           this.password = e.detail.value
         }
-        console.log(reg.test(e.detail.value))
+        if ((this.phoneSusses !== '' && this.password !== '') ||
+          (this.phoneSusses !== '' && this.password !== '' && this.code !== '')) {
+          this.loginType.submit = true
+        }
+//        console.log(reg.test(e.detail.value))
+      },
+      anginPassword(e) {
+        let reg = /^[a-zA-Z0-9]{6,18}$/
+        if (reg.test(e.detail.value)) {
+          this.anPassword = e.detail.value
+        }
+      },
+      burlPass() {
+        if (this.anPassword !== this.password) {
+          this.loginType.anPassError = false
+        }
       },
       getCode(e) {
         this.code = e.detail.value
       },
-      submit(subType) {
-        console.log(subType)
-        if (this.phoneSusses !== '' && this.password !== '') {
-          if (subType === 'register') {
-            await
-            logIn.register({mobile: this.phoneSusses,password:this.password,code:this.code})
+      async submit(subType) {
+        if (this.loginType.submit) {
+          let res
+          if (subType === 2) {
+            res = await logIn.register({
+              mobile: this.phoneSusses,
+              password: this.password,
+              code: this.code
+            })
+//            注册成功后跳转到个人中心
+          } else if (subType === 1) {
+            res = await logIn.login({
+              mobile: this.phoneSusses,
+              password: this.password
+            })
+//            登陆成功的跳转
+            console.log(res)
           }
+//          wepy.setStorageSync('token', res.access_token)
         }
-
       }
     }
-
   }
 </script>
 
