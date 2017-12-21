@@ -9,7 +9,7 @@
 
 <script>
   import wepy from 'wepy'
-  import RadioBox from '@/base/radio/radio'
+  import RadioBox from '@/base/checkbox/checkbox'
   import TwoRadioBox from '@/base/second-radio/second-radio'
 
   export default class Mine extends wepy.page {
@@ -20,21 +20,32 @@
 
     methods = {
       showRadio() {
-        this.$broadcast('init', {
-          headTxt: '营业状态', // 头部标题
-          radioType: 1, // 1为方，2为圆
-          radioChecked: '0', // 默认选择哪一个
-          items: [
-            {value: '0', txt: '营业中'},
-            {value: '1', txt: '暂停营业'},
-            {value: '2', txt: '筹建中'},
-            {value: '3', txt: '已关门'}]
+        this.$invoke('TwoRadioBox', 'init', {
+          headTxt: '行业类型', // 头部标题
+          radioType: 2, // 1为方，2为圆
+          radioChecked: {
+            one: 0,
+            two: '羊肉'
+          }, // 默认选择哪一个
+          items: [{
+            name: '餐饮',
+            son: ['羊肉', '牛肉', '红烧肉']
+          }, {
+            name: '美业',
+            son: ['美发', '美容', '洗剪吹']
+          }]
         })
       }
     }
 
     events = {
-      chioseOK(item) {
+      checkboxChioseOK(item) {
+        console.log(item)
+      },
+      radioChioseOK(item) {
+        console.log(item)
+      },
+      secondRadioOK(item) {
         console.log(item)
       }
     }

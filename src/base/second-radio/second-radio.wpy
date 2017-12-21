@@ -5,7 +5,7 @@
       <view class="radioBox-body">
         <view class="radioBox-title">
           <view class="radioBox-title-item" wx:for="{{radioMsg.items}}" wx:key="{{item}}">
-            <view class="radioBox-title-item-box {{item.name===radioMsg.radioChecked.one?'active':''}}" @tap="titleChiose({{index}})">
+            <view class="radioBox-title-item-box {{index===radioMsg.radioChecked.one?'active':''}}" @tap="titleChiose({{index}})">
               <view class="radioBox-title-item-before"></view>
               {{item.name}}
               <image src="./image/icon-rightred20@2x.png" class="radioBox-title-item-arrow normal"></image>
@@ -14,7 +14,7 @@
         </view>
         <view class="radioBox-list">
           <radio-group bindchange="radioChiose">
-            <view class="radioBox-list-item" wx:for="{{radioMsg.items[radioMsg.radioChecked.one]}}" wx:key="{{item}}">
+            <view class="radioBox-list-item" wx:for="{{radioMsg.items[radioMsg.radioChecked.one].son}}" wx:key="{{item}}">
               <label class="radioLabel {{item===radioMsg.radioChecked.two?'active':''}}">
                 <radio value="{{item}}" checked="{{item==radioMsg.radioChecked.two}}" hidden="true" />{{item}}
                 <image class="radio-Icon" src="{{item==radioMsg.radioChecked.two?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
@@ -39,31 +39,43 @@
   export default class TwoRadioBox extends wepy.component {
     mixins = [base]
 
+//    {
+//      headTxt: '行业类型', // 头部标题
+//      radioType: 2, // 1为方，2为圆
+//      radioChecked: {
+//        one: 0,
+//        two: '羊肉'
+//      }, // 默认选择哪一个
+//      items: [{
+//        name: '餐饮',
+//        son: ['羊肉', '牛肉', '红烧肉']
+//      }, {
+//        name: '美业',
+//        son: ['美发', '美容', '洗剪吹']
+//      }]
+//    }
     data = {
-      showCover: true,
-      radioMsg: {
-        headTxt: '行业类型', // 头部标题
-        radioType: 2, // 1为方，2为圆
-        radioChecked: {
-          one: '餐饮',
-          two: '羊肉'
-        }, // 默认选择哪一个
-        items: [{
-          name: '餐饮',
-          son: ['羊肉', '牛肉', '红烧肉']
-        }, {
-          name: '美业',
-          son: ['美发', '美容', '洗剪吹']
-        }]
-      }
+      showCover: false,
+      radioMsg: null
     }
 
     onLoad() {
     }
 
     methods = {
+      init(radioList) {
+        console.log(radioList)
+        this.radioMsg = radioList
+        this.showCover = true
+        this.$apply()
+      },
       closeCover() {
-        this.$emit('chioseOK')
+        let data = {
+          one: this.radioMsg.items[this.radioMsg.radioChecked.one].name,
+          two: this.radioMsg.radioChecked.two
+        }
+        this.$emit('secondRadioOK', data)
+        this.radioMsg = null
         this.showCover = false
       },
       radioChiose(e) {
@@ -75,15 +87,6 @@
         this.radioMsg.radioChecked.one = idx
         this.radioMsg.radioChecked.two = null
         console.log(this.radioMsg.radioChecked)
-        this.$apply()
-      }
-    }
-
-    events = {
-      init(radioList) {
-        console.log(radioList)
-        this.radioMsg = radioList
-        this.showCover = true
         this.$apply()
       }
     }

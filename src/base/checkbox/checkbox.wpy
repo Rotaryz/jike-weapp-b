@@ -1,17 +1,17 @@
 <template>
-  <view class="radioBox" wx:if="{{showCover}}">
+  <view class="checkBox" wx:if="{{showCover}}">
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
       <view class="radioBox-list">
-        <radio-group bindchange="radioChiose">
-          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
-            <label class="radioLabel {{item.txt===radioMsg.radioChecked?'active':''}}">
-              <radio value="{{item.txt}}" checked="{{item.txt===radioMsg.radioChecked}}" hidden="true" />{{item.txt}}
-              <image class="radio-Icon" src="{{item.txt===radioMsg.radioChecked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
-              <image class="radio-Icon" src="{{item.txt===radioMsg.radioChecked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" wx:if="{{radioMsg.radioType===2}}"></image>
+        <checkbox-group bindchange="checkboxChiose">
+          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{item}}">
+            <label class="radioLabel {{item.checked?'active':''}}">
+              <checkbox value="{{item.txt}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
+              <image class="radio-Icon" src="{{item.checked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
+              <image class="radio-Icon" src="{{item.checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" wx:if="{{radioMsg.radioType===2}}"></image>
             </label>
           </view>
-        </radio-group>
+        </checkbox-group>
       </view>
       <view class="radioBox-closeBtn" @tap="closeCover">
         <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
@@ -25,19 +25,20 @@
   import wepy from 'wepy'
   import base from 'common/mixins/base'
 
-  export default class RadioBox extends wepy.component {
+  export default class CheckBox extends wepy.component {
     mixins = [base]
 
-//  {
-//    headTxt: '营业状态', // 头部标题
-//    radioType: 2, // 1为方，2为圆
-//    radioChecked: '营业中', // 默认选择哪一个
-//    items: [
-//      {value: '0', txt: '营业中'},
-//      {value: '1', txt: '暂停营业'},
-//      {value: '2', txt: '筹建中'},
-//      {value: '3', txt: '已关门'}]
-//  }
+//    radioMsg: {
+//      headTxt: '营业状态', // 头部标题
+//      radioType: 1, // 1为方，2为圆
+//      radioChecked: ['暂停营业', '筹建中'], // 默认选择哪一个
+//      items: [
+//        {value: 0, txt: '营业中', checked: false},
+//        {value: 1, txt: '暂停营业', checked: true},
+//        {value: 2, txt: '筹建中', checked: true},
+//        {value: 3, txt: '已关门', checked: false}]
+//    }
+
     data = {
       showCover: false,
       radioMsg: null
@@ -54,14 +55,25 @@
         this.$apply()
       },
       closeCover() {
-        this.$emit('radioChioseOK', this.radioMsg.radioChecked)
+        this.$emit('checkboxChioseOK', this.radioMsg.radioChecked)
         this.radioMsg = null
         this.showCover = false
       },
-      radioChiose(e) {
+      checkboxChiose(e) {
         this.radioMsg.radioChecked = e.detail.value
+        this._choiseChecked(this.radioMsg.items)
         this.$apply()
       }
+    }
+
+    _choiseChecked(arr) {
+      arr.forEach((item) => {
+        if (this.radioMsg.radioChecked.indexOf(item.txt) !== -1) {
+          item.checked = true
+        } else {
+          item.checked = false
+        }
+      })
     }
   }
 </script>
@@ -69,7 +81,7 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
 
-  .radioBox
+  .checkBox
     position: fixed
     z-index: 1000
     left: 0
