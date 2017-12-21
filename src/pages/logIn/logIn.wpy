@@ -227,6 +227,7 @@
               password: this.password,
               code: this.code
             })
+            console.log(res)
 //            注册成功后跳转到个人中心
           } else if (subType === 1) {
             res = await logIn.login({
