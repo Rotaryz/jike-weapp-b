@@ -1,0 +1,66 @@
+<template>
+  <view class="container">
+    <canvas canvas-id="areaCanvas" class="canvas"
+            bindtouchstart="touchHandler"></canvas>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import wxCharts from 'common/libs/wxcharts'
+  let areaChart = null
+  export default class Chart extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+
+    onLoad() {
+      console.log(wxCharts)
+      areaChart = new wxCharts({
+        canvasId: 'areaCanvas',
+        type: 'area',
+        categories: ['12.1', '12.2', '12.3', '12.4', '12.5', '12.6'],
+        animation: true,
+        series: [{
+          name: '成交量1',
+//        数据
+          data: [2000, 1145, 1220, 656, 331, 634],
+          format: function (val) {
+            return val.toFixed(0)
+          }
+        }],
+        legend: false,
+        dataLabel: false,
+        yAxis: {
+          title: '',
+          format: function (val) {
+            return val.toFixed(0)
+          },
+          min: 0,
+          max: 2000,
+          fontColor: '#9b9b9b',
+          gridColor: '#E6E6E6',
+          titleFontColor: '#9b9b9b'
+        },
+        xAxis: {
+          fontColor: '#9b9b9b',
+          gridColor: '#E6E6E6',
+          type: 'calibration'
+        },
+        extra: {
+          lineStyle: 'curve'
+        },
+        width: 370,
+        height: 220
+      })
+    }
+  }
+</script>
+
+<style lang="stylus">
+  canvas
+    width: 96%
+    overflow: hidden
+    height: 220px
+    /**transform :translateX(-50%)*/
+</style>

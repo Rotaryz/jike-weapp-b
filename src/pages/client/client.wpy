@@ -1,16 +1,134 @@
 <template>
-
+  <view class="client">
+    <view class="client-head">
+      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+            wx:key="{{index}}">
+        <text>{{item.title}}</text>
+      </view>
+    </view>
+    <view class="general">
+      <view class="choice-time">
+        <view class="active">昨天</view>
+        <view>最近七天</view>
+        <view>最近30天</view>
+      </view>
+      <view class="gen-title">
+        <view>客户数量(个)</view>
+        <view>9800</view>
+        <view>较前天
+          <text>20%</text>
+          <image src="./icon-rise@2x.png"></image>
+        </view>
+      </view>
+      <areaChart></areaChart>
+    </view>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  export default class Square extends wepy.page {
+  import areaChart from '@/base/areaChart/areaChart'
+  export default class client extends wepy.page {
     config = {
-      navigationBarTitleText: ''
+      navigationBarTitleText: '客户',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      areaChart: areaChart
+    }
+    data = {
+      navNum: 0,
+      navList: [{
+        title: '客户概括'
+      }, {
+        title: '客户列表'
+      }, {
+        title: '客户画像'
+      }]
     }
   }
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  page
+    background: $color-white
+    width: 100%
+    overflow-x: hidden
+
+  view
+    box-sizing: border-box
+
+  .client-head
+    height: 38.5px
+    background: $color-theme
+    display: flex
+    align-items: center
+    padding-top: 11.5px
+    view
+      font-family: $font-family-light
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      line-height: 20px
+      flex: 1
+    .choice
+      text
+        display: inline-block
+        padding-bottom: 6px
+        margin: 0 auto
+        width: 71.2%
+        color: $color-assist-f
+        border-bottom: 2px solid $color-assist-f
+
+  .general
+    text-align: center
+    .choice-time
+      display: flex
+      justify-content: center
+      padding: 20px 0 31.5px
+      view
+        font-size: $font-size-small-s
+        height: 27px
+        padding: 6.5px 4.5px
+        border: 0.5px solid $color-theme
+        &:first-child
+          padding: 6.5px 12.5px
+          border-top-left-radius: 2px
+          border-bottom-left-radius: 2px
+          border-right: none
+        &:last-child
+          border-top-right-radius: 2px
+          border-bottom-right-radius: 2px
+          border-left: none
+      .active
+        background: $color-theme
+        color: $color-white
+    .gen-title
+      view
+        &:nth-child(1)
+          font-size: $font-size-medium
+          line-height: 20px
+        &:nth-child(2)
+          font-family: 'Impact'
+          font-size: $font-size-large-xx
+          line-height: 29px
+          margin: 7.5px 0 4.5px
+        &:nth-child(3)
+          font-size: $font-size-small
+          font-family: $font-family-regular
+          position: relative
+          display: inline-block
+          line-height: 16.5px
+          text
+            color: $color-assist-f
+          image
+            position: absolute
+            right: -12px
+            height: 10px
+            width: 10px
+
 
 </style>

@@ -54,6 +54,7 @@
 
     config = {
       pages: [
+        'pages/client/client',
         'pages/cancelRecord/cancelRecord',
         'pages/shop/shop',
         'pages/qrCode/qrCode',
@@ -104,8 +105,8 @@
     }
 
     globalData = {
-      baseUrl: 'jike-backend-api.majy999.com',
-      baseLogin: 'http://jike-jwt.majy999.com',
+      baseUrl: 'dev.jike-backend-api.jerryf.cn',
+      baseLogin: 'dev.jike-jwt.jerryf.cn',
       isAuthorise: false,
       user: null,
       orderInfo: {}
