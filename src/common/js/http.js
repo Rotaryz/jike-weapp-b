@@ -9,7 +9,7 @@ export default class http {
       method: method,
       data: data
     }
-    const Authorization = wepy.getStorageSync('token')
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2ppa2Utand0Lm1hank5OTkuY29tL2FwaS9tZXJjaGFudHMvbG9naW4iLCJpYXQiOjE1MTM4NTA5MjAsImV4cCI6MTUxMzg1NDUyMCwibmJmIjoxNTEzODUwOTIwLCJqdGkiOiJ5eUJuNzhSUkRtNzdidU5OIn0.mY0qm6M1u0QWxOrG9thfFAQTckrhUU6PtPs8MlPVdgY'
     if (Authorization) {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }

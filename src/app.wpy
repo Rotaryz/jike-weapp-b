@@ -54,9 +54,10 @@
 
     config = {
       pages: [
-
-        'pages/logIn/logIn',
+        'pages/cancelRecord/cancelRecord',
         'pages/shop/shop',
+        'pages/qrCode/qrCode',
+        'pages/logIn/logIn',
         'pages/marketing/marketing',
         'pages/data/data',
         'pages/mine/mine'
@@ -103,7 +104,7 @@
     }
 
     globalData = {
-      baseUrl: 'http://jike-wap-api.majy999.com',
+      baseUrl: 'jike-backend-api.majy999.com',
       baseLogin: 'http://jike-jwt.majy999.com',
       isAuthorise: false,
       user: null,

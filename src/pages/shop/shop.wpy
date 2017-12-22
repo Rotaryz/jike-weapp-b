@@ -1,19 +1,52 @@
 <template>
-  <view>
+  <view class="shop">
     <view class="shop-header">
-      <view>
-        <image></image>
+      <navigator url="/pages/qrCode/qrCode">
+        <image src="./icon-inputcode@2x.png"></image>
         <view>输码核销</view>
-      </view>
-      <view>
-        <image></image>
+      </navigator>
+      <navigator >
+        <image src="./icon-scancode@2x.png"></image>
         <view>扫码核销</view>
+      </navigator>
+      <navigator>
+        <image src="./icon-record@2x.png"></image>
+        <view>核销记录</view>
+      </navigator>
+    </view>
+    <view class="shop-father">
+      <view class="shop-manage">
+        <view class="meHea">
+          <text>经营概况</text>
+          <view>
+            <text>昨天</text>
+            <text>七天</text>
+          </view>
+        </view>
+        <view class="meCon">
+          <view>
+            <view>800</view>
+            <view>浏览总量(次)</view>
+          </view>
+          <view>
+            <view>800</view>
+            <view>订单总量(次)</view>
+          </view>
+          <view>
+            <view>800</view>
+            <view>消费金额(次)</view>
+          </view>
+        </view>
       </view>
-      <view>
-        <image></image>
-        <view>输码核销</view>
+      <view class="shop-extend">
+        <navigator wx:for="{{navList}}" wx:key="{{index}}">
+          <image src="{{item.image}}"></image>
+          <view>{{item.text}}</view>
+        </navigator>
+
       </view>
     </view>
+
   </view>
 </template>
 
@@ -22,11 +55,165 @@
 
   export default class Shop extends wepy.page {
     config = {
-      navigationBarTitleText: '商家助手'
+      navigationBarTitleText: '商家助手',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    data = {
+      navList: [{
+        text: '服务',
+        image: './icon-service@2x.png'
+      }, {
+        text: '客户',
+        image: './icon-customer@2x.png'
+      }, {
+        text: '商圈',
+        image: './icon-tradingarea@2x.png'
+      }, {
+        text: '礼包',
+        image: './icon-package@2x.png'
+      }, {
+        text: '评价',
+        image: './icon-evaluate@2x.png'
+      }, {
+        text: '资产',
+        image: './icon-asset@2x.png'
+      }, {
+        text: '',
+        image: ''
+      }, {
+        text: '',
+        image: ''
+      }, {
+        text: '',
+        image: ''
+      }]
     }
   }
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  page
+    height: 100%
+    overflow: hidden
+
+  view
+    box-sizing: border-box
+
+  .shop
+    height: 100%
+
+  image
+    position: absolute
+
+  .shop-header
+    display: flex
+    background: $color-theme
+    box-sizing: border-box
+    height: 19.1%
+    align-items: flex-end
+    navigator
+      flex: 1
+      height: 100%
+      position: relative
+      text-align: center
+      view
+        font-size: $font-size-medium
+        color: $color-white
+        position: absolute
+        bottom: 20.5px
+        no-wrap()
+        row-center()
+      image
+        height: 30.19%
+        width: 25.6%
+        bottom: 52.5px
+        row-center()
+
+  .shop-father
+    padding: 0 5px
+    height: 80.9%
+    .shop-manage
+      margin-top: 5px
+      background-color: $color-white
+      display: flex
+      padding-top: 11.5px
+      flex-direction: column
+      height: 26.8%
+      .meHea
+        font-size: $font-size-medium
+        display: flex
+        justify-content: space-between
+        > text
+          position: relative
+          text-indent: 10.5px
+          &::before
+            content: ''
+            position: absolute
+            height: 13px
+            width: 5px
+            left: 0
+            background-color: $color-assist-f
+        > view
+          text
+            font-size: $font-size-small
+            display: inline-block
+            height: 20px
+            width: 45px
+            line-height: 20px
+            box-sizing: border-box
+            text-align: center
+            &:first-child
+              color: $color-white
+              background-color: $color-theme
+              border: 0.5px solid $color-theme
+              border-bottom-left-radius: 2px
+              border-top-left-radius: 2px
+            &:last-child
+              border: 0.5px solid $color-theme
+              border-bottom-right-radius: 2px
+              border-top-right-radius: 2px
+              margin-right: 10.5px
+      .meCon
+        display: flex
+        font-size: $font-size-small-s
+        align-items: center
+        color: $color-text
+        padding: 16.5px 0 28.5px
+        view
+          flex: 1
+          text-align: center
+          view
+            &:first-child
+              color: $color-orange
+              font-size: $font-size-large
+              line-height: 25px
+              margin-bottom: 2.5px
+              font-family: $font-family-meddle
+
+    .shop-extend
+      height: 73.2%
+      display: flex
+      flex-wrap: wrap
+      justify-content: space-between
+      text-align: center
+      margin-top: 5px
+      font-size: $font-size-small
+      > navigator
+        width: 33.2%
+        height: 33.2%
+        background: $color-white
+        margin-top: 1px
+        position: relative
+        view, image
+          position: absolute
+          bottom: 25.4%
+          row-center()
+        image
+          width: 32px
+          height: 26px
+          top: 25.4%
 
 </style>

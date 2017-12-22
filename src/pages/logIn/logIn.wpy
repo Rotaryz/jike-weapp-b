@@ -245,7 +245,7 @@
               'password_confirmation': this.anPassword,
               'code': this.code
             })
-            console.log(res.error)
+            console.log(res)
             if (res.error === 0) {
               console.log('dffddfs')
               this.submitText = '登陆'

@@ -1,0 +1,119 @@
+<template>
+  <view>
+    <view class="reHeard">
+      <view wx:for="{{navList}}">{{item.name}}</view>
+    </view>
+
+    <view class="reCon">
+      <view class="re-white">
+        <view class="re-title">养发护发优惠券</view>
+        <view>128392</view>
+        <view>3272378</view>
+        <view>
+          <view>2017-01-01</view>
+          <view class="times">13:08</view>
+        </view>
+      </view>
+      <view>
+        <view>养发护发优惠券</view>
+        <view>128392</view>
+        <view>3272378</view>
+        <view>
+          <view>2017-01-01</view>
+          <view>13:08</view>
+        </view>
+      </view>
+      <view class="re-white">
+        <view>养发护发优惠券</view>
+        <view>128392</view>
+        <view>3272378</view>
+        <view>
+          <view>2017-01-01</view>
+          <view>13:08</view>
+        </view>
+      </view>
+      <view>
+        <view>养发护发优惠券</view>
+        <view>128392</view>
+        <view>3272378</view>
+        <view>
+          <view>2017-01-01</view>
+          <view>13:08</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class record extends wepy.page {
+    config = {
+      navigationBarTitleText: '核销记录',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    data = {
+      navList: [{
+        name: '券名'
+      }, {
+        name: '券ID'
+      }, {
+        name: '用户ID'
+      }, {
+        name: '核销时间'
+      }]
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  view
+    box-sizing: border-box
+
+  .reHeard
+    height: 39.5px
+    background: $color-theme
+    display: flex
+    view
+      flex: 1
+      text-indent: 12px
+      color: $color-white
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      line-height: 39.5px
+      &:first-child
+        flex: 1.5
+
+  .reCon
+    > view
+      display: flex
+      font-size: $font-size-small
+      text-overflow: ellipsis
+      overflow: hidden
+      padding: 0px 12px
+      .re-title
+        no-wrap()
+      view
+        width: 22.22%
+        height: 45px
+        padding-top: 9px
+        white-space :nowrap
+        &:first-child
+          width: 33.33%
+        &:last-child
+          display: flex
+          flex-direction: column
+          text-align: right
+          view
+            width: 100%
+            padding-top: 0px
+            line-height: 1
+          .times
+            transform: translateY(-4.5px)
+    .re-white
+      background: $color-white
+
+</style>
