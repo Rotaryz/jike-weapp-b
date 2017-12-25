@@ -1,11 +1,11 @@
 <template>
-  <view class="twoRadioBox" wx:if="{{showCover}}">
+  <view class="twoRadioBox" wx:if="{{showCover}}" @tap.stop="showNull">
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
       <view class="radioBox-body">
         <view class="radioBox-title">
-          <view class="radioBox-title-item" wx:for="{{radioMsg.items}}" wx:key="{{item}}">
-            <view class="radioBox-title-item-box {{index===radioMsg.radioChecked.one?'active':''}}" @tap="titleChiose({{index}})">
+          <view class="radioBox-title-item" wx:for="{{items}}" wx:key="{{item}}">
+            <view class="radioBox-title-item-box {{item.id===checked.one?'active':''}}" catchtap="titleChiose({{index}})">
               <view class="radioBox-title-item-before"></view>
               {{item.name}}
               <image src="./image/icon-rightred20@2x.png" class="radioBox-title-item-arrow normal"></image>
@@ -13,18 +13,17 @@
           </view>
         </view>
         <view class="radioBox-list">
-          <radio-group bindchange="radioChiose">
-            <view class="radioBox-list-item" wx:for="{{radioMsg.items[radioMsg.radioChecked.one].son}}" wx:key="{{item}}">
-              <label class="radioLabel {{item===radioMsg.radioChecked.two?'active':''}}">
-                <radio value="{{item}}" checked="{{item==radioMsg.radioChecked.two}}" hidden="true" />{{item}}
-                <image class="radio-Icon" src="{{item==radioMsg.radioChecked.two?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
-                <image class="radio-Icon" src="{{item==radioMsg.radioChecked.two?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" wx:if="{{radioMsg.radioType===2}}"></image>
+          <radio-group catchchange="radioChiose">
+            <view class="radioBox-list-item" wx:for="{{secondItems}}" wx:key="{{item}}">
+              <label class="radioLabel {{item.id===checked.two?'active':''}}">
+                <radio value="{{item.id}}" checked="{{item.id==checked.two}}" hidden="true" />{{item.name}}
+                <image class="radio-Icon" src="{{item.id==checked.two?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
               </label>
             </view>
           </radio-group>
         </view>
       </view>
-      <view class="radioBox-closeBtn" @tap="closeCover">
+      <view class="radioBox-closeBtn" catchtap="closeCover">
         <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
       </view>
     </view>
@@ -41,54 +40,116 @@
 
 //    {
 //      headTxt: '行业类型', // 头部标题
-//      radioType: 2, // 1为方，2为圆
 //      radioChecked: {
 //        one: 0,
-//        two: '羊肉'
-//      }, // 默认选择哪一个
-//      items: [{
-//        name: '餐饮',
-//        son: ['羊肉', '牛肉', '红烧肉']
-//      }, {
-//        name: '美业',
-//        son: ['美发', '美容', '洗剪吹']
-//      }]
+//        two: 0
+//      }, // 默认选择哪一个 下标
+//      oneTitle: 'industries', //一级标题,
+//      twoTitle: 'industry', //二级标题
+//      "industries": [
+//          {
+//            "id": 1,
+//            "name": "餐饮",
+//            "parent_id": 0,
+//            "created_at": null,
+//            "updated_at": null,
+//            "industry": [
+//              {
+//                "id": 4,
+//                "name": "自助餐",
+//                "parent_id": 1,
+//                "created_at": null,
+//                "updated_at": null
+//              }]
+//          },
+//          {
+//            "id": 2,
+//            "name": "丽人",
+//            "parent_id": 0,
+//            "created_at": null,
+//            "updated_at": null,
+//            "industry": [
+  //            {
+  //              "id": 5,
+  //              "name": "美发",
+  //              "parent_id": 2,
+  //              "created_at": null,
+  //              "updated_at": null
+  //            },
+  //            {
+  //              "id": 6,
+  //              "name": "美甲",
+  //              "parent_id": 2,
+  //              "created_at": null,
+  //              "updated_at": null
+  //            },
+  //            {
+  //              "id": 7,
+  //              "name": "美容",
+  //              "parent_id": 2,
+  //              "created_at": null,
+  //              "updated_at": null
+  //            }
+//            ]
+//          }]
 //    }
     data = {
       showCover: false,
-      radioMsg: null
+      radioMsg: null,
+      checked: null,
+      items: [],
+      secondItems: []
     }
 
     onLoad() {
     }
 
     methods = {
+      showNull() {
+
+      },
       init(radioList) {
-        console.log(radioList)
         this.radioMsg = radioList
+        this.checked = radioList.radioChecked
+        this.items = radioList[radioList.oneTitle]
+        if (radioList.radioChecked.one) {
+          this.secondItems = this._seekId(radioList[radioList.oneTitle], radioList.radioChecked.one)[0][radioList.twoTitle]
+        } else {
+          this.secondItems = radioList[radioList.oneTitle][0]
+        }
         this.showCover = true
         this.$apply()
       },
       closeCover() {
-        let data = {
-          one: this.radioMsg.items[this.radioMsg.radioChecked.one].name,
-          two: this.radioMsg.radioChecked.two
-        }
-        this.$emit('secondRadioOK', data)
+        let res = this._seekId(this.items, this.checked.one)[0][this.radioMsg.twoTitle]
+        console.log(res)
+        let chioseRes = this._seekId(res, this.checked.two)[0]
+        this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
         this.radioMsg = null
+        this.checked = null
+        this.items = []
+        this.secondItems = []
         this.showCover = false
+        this.$apply()
       },
       radioChiose(e) {
-        this.radioMsg.radioChecked.two = e.detail.value
-        console.log(this.radioMsg.radioChecked)
+        this.checked.two = e.detail.value
+        console.log(this.checked)
         this.$apply()
       },
       titleChiose(idx) {
-        this.radioMsg.radioChecked.one = idx
-        this.radioMsg.radioChecked.two = null
-        console.log(this.radioMsg.radioChecked)
+        this.checked.one = this.items[idx].id
+        this.checked.two = null
+        this.secondItems = this.items[idx][this.radioMsg.twoTitle]
+        console.log(this.checked)
         this.$apply()
       }
+    }
+
+    _seekId(arr, id) {
+      return arr.filter((item) => {
+        return item.id === Number(id)
+      })
     }
   }
 </script>
@@ -98,7 +159,7 @@
 
   .twoRadioBox
     position: fixed
-    z-index: 1
+    z-index: 1000
     left: 0
     top: 0
     height: 100vh

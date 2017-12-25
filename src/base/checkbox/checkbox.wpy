@@ -1,14 +1,13 @@
 <template>
-  <view class="checkBox" wx:if="{{showCover}}">
+  <view class="checkBox" wx:if="{{showCover}}" @tap.stop="showNull">
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
       <view class="radioBox-list">
-        <checkbox-group bindchange="checkboxChiose">
-          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{item}}">
+        <checkbox-group @change="checkboxChiose">
+          <view class="radioBox-list-item" wx:for="{{items}}" wx:key="{{item}}">
             <label class="radioLabel {{item.checked?'active':''}}">
               <checkbox value="{{item.txt}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
-              <image class="radio-Icon" src="{{item.checked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}" wx:if="{{radioMsg.radioType===1}}"></image>
-              <image class="radio-Icon" src="{{item.checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" wx:if="{{radioMsg.radioType===2}}"></image>
+              <image class="radio-Icon" src="{{item.checked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}"></image>
             </label>
           </view>
         </checkbox-group>
@@ -30,7 +29,6 @@
 
 //    radioMsg: {
 //      headTxt: '营业状态', // 头部标题
-//      radioType: 1, // 1为方，2为圆
 //      radioChecked: ['暂停营业', '筹建中'], // 默认选择哪一个
 //      items: [
 //        {value: 0, txt: '营业中', checked: false},
@@ -41,6 +39,8 @@
 
     data = {
       showCover: false,
+      checked: [],
+      items: [],
       radioMsg: null
     }
 
@@ -48,30 +48,46 @@
     }
 
     methods = {
+      showNull() {
+
+      },
       init(radioList) {
         console.log(radioList)
         this.radioMsg = radioList
+        this.checked = radioList.radioChecked.slice()
+        this.items = radioList.items.slice()
         this.showCover = true
         this.$apply()
       },
       closeCover() {
-        this.$emit('checkboxChioseOK', this.radioMsg.radioChecked)
+        let res = this._checkedShow(this.radioMsg.items)
+        this.$emit('checkboxChioseOK', res)
         this.radioMsg = null
         this.showCover = false
       },
       checkboxChiose(e) {
-        this.radioMsg.radioChecked = e.detail.value
-        this._choiseChecked(this.radioMsg.items)
+        this.checked = e.detail.value
+        this._choiseChecked(this.items)
         this.$apply()
       }
     }
 
     _choiseChecked(arr) {
       arr.forEach((item) => {
-        if (this.radioMsg.radioChecked.indexOf(item.txt) !== -1) {
+        if (this.checked.indexOf(item.txt) !== -1) {
           item.checked = true
         } else {
           item.checked = false
+        }
+      })
+    }
+
+    _checkedShow(arr) {
+      return arr.filter((item) => {
+        if (this.checked.indexOf(item.txt) !== -1) {
+          return true
+        } else {
+          return false
         }
       })
     }

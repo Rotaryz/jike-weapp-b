@@ -1,20 +1,29 @@
 <template>
-  <view class="radioBox" wx:if="{{showCover}}">
+  <view class="twoColumnRadioBox" wx:if="{{showCover}}" @tap.stop="showNull">
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
-
-      <view class="radioBox-list">
-        <radio-group bindchange="radioChiose">
-          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
-            <label class="radioLabel {{item.txt===checked?'active':''}}">
-              <radio value="{{item.txt}}" checked="{{item.txt==checked}}" hidden="true"/>{{item.txt}}
-              <image class="radio-Icon" src="{{item.txt==checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
-            </label>
+      <view class="radioBox-body">
+        <view class="radioBox-title">
+          <view class="radioBox-title-item">
+            <view class="radioBox-title-item-box active}}">
+              <view class="radioBox-title-item-before"></view>
+              {{radioMsg.title}}
+              <image src="./image/icon-rightred20@2x.png" class="radioBox-title-item-arrow"></image>
+            </view>
           </view>
-        </radio-group>
+        </view>
+        <view class="radioBox-list">
+          <radio-group catchchange="radioChiose">
+            <view class="radioBox-list-item" wx:for="{{items}}" wx:key="{{item}}">
+              <label class="radioLabel {{item.id==checked?'active':''}}">
+                <radio value="{{item.id}}" checked="{{item.id==checked}}" hidden="true" />{{item.name}}
+                <image class="radio-Icon" src="{{item.id==checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
+              </label>
+            </view>
+          </radio-group>
+        </view>
       </view>
-
-      <view class="radioBox-closeBtn" @tap="closeCover">
+      <view class="radioBox-closeBtn" catchtap="closeCover">
         <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
       </view>
     </view>
@@ -26,41 +35,50 @@
   import wepy from 'wepy'
   import base from 'common/mixins/base'
 
-  export default class RadioBox extends wepy.component {
+  export default class TwoColumnRadioBox extends wepy.component {
     mixins = [base]
 
 //  {
-//    headTxt: '营业状态',
-//    radioChecked: '营业中',
-//    items: [
-//      {value: '0', txt: '营业中'},
-//      {value: '1', txt: '暂停营业'},
-//      {value: '2', txt: '筹建中'},
-//      {value: '3', txt: '已关门'}]
+//    headTxt: '商圈',
+//    radioChecked: 1,
+//    title: '白云区',
+//    items:  [
+    //  {
+    //    "id": 1,
+    //    "name": "万达商圈（白云区）"
+    //  }
+//    ]
 //  }
-
     data = {
       showCover: false,
-      checked: '',
-      radioMsg: null
+      radioMsg: null,
+      checked: null,
+      items: []
     }
 
     onLoad() {
     }
 
     methods = {
+      showNull() {
+
+      },
       init(radioList) {
-        console.log(radioList)
         this.radioMsg = radioList
         this.checked = radioList.radioChecked
+        this.items = radioList.items
         this.showCover = true
         this.$apply()
+        console.log(this)
       },
       closeCover() {
-        let res = this._checkRes(this.radioMsg.items, this.checked)
-        this.$emit('radioChioseOK', res)
+        let res = this._seekId(this.items, this.checked)[0]
+        this.$emit('twoColumnRadioOK', res)
         this.radioMsg = null
+        this.checked = null
+        this.items = []
         this.showCover = false
+        this.$apply()
       },
       radioChiose(e) {
         this.checked = e.detail.value
@@ -68,9 +86,9 @@
       }
     }
 
-    _checkRes(arr, checked) {
+    _seekId(arr, id) {
       return arr.filter((item) => {
-        return item.txt === checked
+        return item.id === Number(id)
       })
     }
   }
@@ -79,7 +97,7 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
 
-  .radioBox
+  .twoColumnRadioBox
     position: fixed
     z-index: 1000
     left: 0
@@ -106,31 +124,10 @@
         color: $color-white
         font-size: $font-size-medium-x
 
-      .radioBox-list
-        max-height: 330px
-        padding: 10px 12px 20px
-
-        .radioBox-list-item
-          line-height: 39px
-          border-bottom: 1px solid $color-row-line
-          font-size: $font-size-small
-
-          .radioLabel
-            display: block
-            width: 100%
-            position: relative
-
-            .radio-Icon
-              width: 16px
-              height: 16px
-              position: absolute
-              right: 2px
-              top: 11px
-
-          .radioLabel.active
-            color: $color-assist-f
-
-      .twoColumn-radioBox-list
+      .radioBox-body
+        max-height: 360px
+        display: flex
+        background: $color-background
 
         .radioBox-title
           width: 90px
@@ -138,39 +135,14 @@
 
           .radioBox-title-item
 
-            .radioBox-title-item-box
+            .radioBox-title-item-box.active
+              background: $color-white
               line-height: 38px
               font-size: $font-size-small
               display: flex
               align-items: center
               position: relative
               border-bottom: 1px solid $color-row-line
-              border-right: 1px solid $color-row-line
-
-              .radioBox-title-item-before
-                width: 2px
-                height: 38px
-                background: $color-background
-                margin-right: 10px
-
-              .radioBox-title-item-arrow
-                opacity: 0
-                width: 10px
-                height: 10px
-                position: absolute
-                right: 7px
-                top: 15px
-
-              .normal
-                opacity: 0
-                width: 10px
-                height: 10px
-                position: absolute
-                right: 7px
-                top: 15px
-
-            .radioBox-title-item-box.active
-              background: $color-white
               border-right: 0 none
               color: $color-assist-f
 
@@ -179,9 +151,6 @@
                 height: 38px
                 background: $color-assist-f
                 margin-right: 10px
-
-              .normal
-                opacity: 1
 
               .radioBox-title-item-arrow
                 width: 10px

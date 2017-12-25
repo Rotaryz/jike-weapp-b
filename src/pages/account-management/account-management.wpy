@@ -1,0 +1,114 @@
+<template>
+  <view class="account-management">
+    <view class="account-store-list">
+      <view class="account-store-title">
+        <view class="account-store-title-txt">国颐堂（白云店）</view>
+        <image class="account-store-title-arrow" src="./image/icon-lower20@2x.png"></image>
+      </view>
+      <view class="store-account-item">
+        <view class="store-account-item-left">
+          <view class="store-account-item-left-txt">账号：</view>13565468975
+        </view>
+        <image class="store-account-item-arrow" src="./image/icon-pressed@2x.png"></image>
+      </view>
+    </view>
+    <view class="account-management-btn" @tap="newAccount">新建账号</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Account from '@/api/account'
+
+  export default class AccountManagement extends wepy.page {
+    config = {
+      navigationBarTitleText: '账号管理',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+
+    }
+
+    data = {
+
+    }
+
+    methods = {
+      newAccount() {
+        this.$navigate('/pages/create-account/create-account')
+      }
+    }
+
+    async onLoad() {
+      this.load()
+    }
+
+    async load() {
+      let res = await Account.getSubAccount()
+      console.log(res)
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .account-management
+
+    .account-store-list
+      margin-top: 10px
+      background: $color-white
+      padding-left: 12px
+
+      view:last-child
+        border-bottom: 0 none
+
+      .account-store-title
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        display: flex
+        align-items: center
+        justify-content: space-between
+
+        .account-store-title-txt
+          font-size: $font-size-medium
+          color: $color-text-title
+
+        .account-store-title-arrow
+          width: 11px
+          height: 11px
+          margin-right: 12px
+
+      .store-account-item
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        display: flex
+        align-items: center
+        justify-content: space-between
+
+        .store-account-item-left
+          display: flex
+          font-size: $font-size-small
+          color: $color-text-title
+
+          .store-account-item-left-txt
+            color: $color-text-d
+            margin-right: 10px
+
+        .store-account-item-arrow
+          width: 11px
+          height: 11px
+          margin-right: 12px
+
+    .account-management-btn
+      margin: 10px 12px
+      background: $color-theme
+      height: 44px
+      line-height: 44px
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      border-radius: 2px
+</style>

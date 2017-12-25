@@ -1,0 +1,179 @@
+<template>
+  <view class="createAccount">
+    <view class="createAccount-head">
+      <view class="createAccount-txt">
+        <view class="createAccount-txt-title">账号</view>
+        <input type="text" class="createAccount-txt-input" placeholder="请输入" placeholder-class="createAccount-txt-placeholder"/>
+      </view>
+
+      <view class="createAccount-txt">
+        <view class="createAccount-txt-title">密码</view>
+        <input type="text" class="createAccount-txt-input" placeholder="密码(6-16位数字或者字母)" placeholder-class="createAccount-txt-placeholder"/>
+      </view>
+
+      <view class="createAccount-txt last">
+        <view class="createAccount-txt-title">手机</view>
+        <input type="number" class="createAccount-txt-input" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11"/>
+      </view>
+    </view>
+
+    <view class="createAccount-body">
+      <view class="store-msg-picker">
+        <view class="store-msg-picker-title">门店</view>
+        <view class="store-msg-picker-right" @tap="showCheckBox">
+          <view class="store-msg-picker-txt">{{shopName}}</view>
+          <image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>
+        </view>
+      </view>
+
+      <view class="store-msg-picker">
+        <view class="store-msg-picker-title">权限</view>
+        <view class="store-msg-picker-right">
+          <view class="store-msg-picker-txt">{{jurisdiction}}</view>
+          <image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>
+        </view>
+      </view>
+    </view>
+
+    <view class="createAccount-btn">提交</view>
+    <RadioBox></RadioBox>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Account from '@/api/account'
+  import RadioBox from '@/base/radio/radio'
+  import base from '@/common/mixins/base'
+
+  export default class CreateAccount extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '新建账号',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      RadioBox
+    }
+
+    data = {
+      storeList: [],
+      checkedStore: []
+    }
+
+    methods = {
+      showCheckBox() {
+        let items = this.storeList.map((item, index) => {
+          return {
+            value: index,
+            txt: item.shop_name,
+            id: item.id
+          }
+        })
+        this.$invoke('RadioBox', 'init', {
+          headTxt: '门店选择',
+          radioChecked: 0,
+          items
+        })
+      }
+    }
+
+    events = {
+      radioChioseOK(item) {
+        console.log(item)
+      }
+    }
+
+    async onLoad() {
+      this.load()
+    }
+
+    async load() {
+      this.storeList = await Account.getAnnexList()
+      console.log(this.storeList)
+      this.loaded()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .createAccount
+
+    .createAccount-head
+      margin-top: 10px
+      padding-left: 12px
+      background: $color-white
+
+      .createAccount-txt
+        display: flex
+        align-items: center
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        font-size: $font-size-medium
+
+        .createAccount-txt-title
+          flex: 3
+
+        .createAccount-txt-input
+          flex: 7
+          height: 38px
+
+        .createAccount-txt-placeholder
+          color: $color-text-d
+
+      .createAccount-txt.last
+        border-bottom: 0 none
+
+    .createAccount-body
+      background: $color-white
+      margin-top: 10px
+      padding-left: 12px
+
+      .store-msg-picker
+        display: flex
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        justify-content: space-between
+        align-items: center
+        padding-right: 12px
+
+        .sitebox
+          width: 50vw
+          display: flex
+          justify-content: flex-end
+
+        .store-msg-picker-title
+          width: 60px
+          line-height: 39px
+          color: $color-text-title
+          font-size: $font-size-medium
+
+        .store-msg-picker-right
+          display: flex
+          align-items: center
+          height: 39px
+
+          .store-msg-picker-arrow
+            width: 10px
+            height: 10px
+
+          .store-msg-picker-txt
+            font-size: $font-size-medium
+            margin-right: 10px
+
+    .createAccount-btn
+      margin: 10px 12px
+      background: $color-theme
+      height: 44px
+      line-height: 44px
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      border-radius: 2px
+
+</style>

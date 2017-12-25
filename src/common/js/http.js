@@ -9,7 +9,8 @@ export default class http {
       method: method,
       data: data
     }
-    const Authorization = wepy.getStorageSync('token')
+    // const Authorization = wepy.getStorageSync('token')
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9yZWdpc3RlciIsImlhdCI6MTUxMzkxMjI1MSwiZXhwIjoxNTEzOTE1ODUxLCJuYmYiOjE1MTM5MTIyNTEsImp0aSI6IjNCd2VXOFRiOHQ2MEZ4Y2QifQ.T_pUHoOAxSKgN6UbWiY1-xWdDsDGX_4GPwpiSr2Txdo'
     if (Authorization) {
       param.header = Object.assign({}, {Authorization})
     }
@@ -20,12 +21,7 @@ export default class http {
     const res = await wepy.request(param)
     Tips.loaded()
     if (this.isSuccess(res)) {
-      let result
-      if (res.statusCode === 422) {
-        result = res.responseJSON
-      } else {
-        result = res.data.data ? res.data.data : res.data
-      }
+      const result = res.data.data ? res.data.data : res.data
       return result
     } else {
       throw this.requestException(res)
@@ -66,11 +62,10 @@ export default class http {
   static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
-    if (wxCode !== 200 || wxCode !== 422) {
-      return false
+    if (wxCode === 200 || wxCode === 422) {
+      return true
     }
-    const wxData = wxCode === 200 ? res.data : res.responseJSON
-    return wxData
+    return false
   }
 
   /**

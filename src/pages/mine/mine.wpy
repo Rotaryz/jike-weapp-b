@@ -1,58 +1,79 @@
 <template>
   <view class="mine-wrapper">
     <view class="mine-head">
-      <image src="./image/pic-bg@2x.png" class="mine-head-border"></image>
+      <view class="mine-head-avtarBox">
+        <image class="mine-head-avatar" src="{{avatarUrl}}"></image>
+        <view class="mine-head-name">{{storeMsg.shop_name}}</view>
+        <view class="switch-store">
+          <image src="./image/icon-switch@2x.png" class="switch-store-img"></image>
+          <view class="switch-store-txt">
+            <view class="trigon"><view class="trigon-content"></view></view>
+            切换门店
+          </view>
+        </view>
+      </view>
+      <image src="./image/pic-1_bg@2x.png" class="mine-head-border"></image>
+    </view>
+    <view class="mine-list">
+      <view class="mine-list-item" wx:for="{{listItems}}" wx:key="{{item}}" @tap="skip({{item.txt}}, {{item.skipUrl}})">
+        <image src="./image/pic-2_bg@2x.png" class="mine-list-item-cover"></image>
+        <view class="mine-list-item-left">
+          <image src="{{item.url}}" class="mine-list-item-img"></image>
+          <view class="mine-list-item-txt">{{item.txt}}</view>
+        </view>
+        <image src="./image/Rectangle @2x.png" class="mine-list-item-arrow"></image>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import RadioBox from '@/base/checkbox/checkbox'
-  import TwoRadioBox from '@/base/second-radio/second-radio'
+  import Store from '@/api/store'
+  import base from '@/common/mixins/base'
 
   export default class Mine extends wepy.page {
+    mixins = [base]
+
     config = {
       navigationBarTitleText: '我的',
-      navigationBarBackgroundColor: '#363537',
+      navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white',
       backgroundColor: '#F9F9F9'
     }
 
-    components = {
-      RadioBox,
-      TwoRadioBox
+    data = {
+      listItems: [
+        {url: './image/icon-sp_info@2x.png', txt: '门店基础信息', skipUrl: '/pages/store-msg/store-msg'},
+        {url: './image/icon-sp_certificate@2x.png', txt: '门店证照', skipUrl: '/pages/store-license/store-license'},
+        {url: './image/icon-sp_account@2x.png', txt: '账号管理', skipUrl: '/pages/account-management/account-management'},
+        {url: './image/icon-sp_phone@2x.png', txt: '联系销售', skipUrl: '/pages/contact-sales/contact-sales'}
+      ],
+      storeMsg: null,
+      avatarUrl: null
+    }
+
+    async onLoad() {
+      this.load()
+    }
+
+    async load() {
+      let res = await Store.getMsgList()
+      this.storeMsg = res
+      this.avatarUrl = res.logo_image
+      console.log(this)
+      this.loaded()
     }
 
     methods = {
-      showRadio() {
-        this.$invoke('TwoRadioBox', 'init', {
-          headTxt: '行业类型', // 头部标题
-          radioType: 2, // 1为方，2为圆
-          radioChecked: {
-            one: 0,
-            two: '羊肉'
-          }, // 默认选择哪一个
-          items: [{
-            name: '餐饮',
-            son: ['羊肉', '牛肉', '红烧肉']
-          }, {
-            name: '美业',
-            son: ['美发', '美容', '洗剪吹']
-          }]
-        })
-      }
-    }
-
-    events = {
-      checkboxChioseOK(item) {
-        console.log(item)
-      },
-      radioChioseOK(item) {
-        console.log(item)
-      },
-      secondRadioOK(item) {
-        console.log(item)
+      skip(txt, url) {
+        let skipUrl
+        if (txt === '联系销售') {
+          skipUrl = url + '?id=' + this.storeMsg.salesman_id
+        } else {
+          skipUrl = url
+        }
+        this.$navigate(skipUrl)
       }
     }
   }
@@ -65,14 +86,123 @@
 
     .mine-head
       width: 100vw
-      height: 30vw
+      height: 24vw
       background: $color-theme
       position: relative
+      padding-top: 4vw
+
+      .mine-head-avtarBox
+        display: flex
+        align-items: center
+        position: relative
+
+        .mine-head-avatar
+          border: 1px solid $color-white
+          width: 48px
+          height: 48px
+          border-radius: 50%
+          margin-left: 12px
+
+        .mine-head-name
+          font-size: $font-size-medium
+          color: $color-white
+          margin-left: 10px
+          font-family: $font-family-regular
+
+        .switch-store
+          width: 76px
+          height: 22px
+          border: .5px solid #56546c
+          border-radius: 2px
+          position: absolute
+          top: 50%
+          transform: translate(0, -50%)
+          right: 12px
+          display: flex
+          align-items: center
+          justify-content: center
+
+          .switch-store-img
+            width: 13px
+            height: 13px
+            margin-right: 3px
+
+          .switch-store-txt
+            color: $color-white
+            font-size: $font-size-small
+            font-family: $font-family-regular
+
+          .trigon
+            display: block
+            width: 0
+            height: 0
+            border-width: 3px 8px 3px 0
+            border-style: solid
+            border-color: transparent #56546c transparent transparent
+            position: absolute
+            left: -8px
+            top: 50%
+            transform: translate(0, -50%)
+
+            .trigon-content
+              display: block
+              width: 0
+              height: 0
+              border-width: 3px 8px 3px 0
+              border-style: solid
+              border-color: transparent $color-theme transparent transparent
+              position: absolute
+              top: -3px
+              left: 1px
 
       .mine-head-border
         width: 100vw
-        height: 18vw
+        height: 11vw
         position: absolute
-        bottom: -7vw
+        bottom: 0
+
+    .mine-list
+
+      .mine-list-item
+        height: 59px
+        display: flex
+        align-items: center
+        justify-content: space-between
+        background: $color-white
+        border-bottom: 1px solid $color-background
+        position: relative
+
+        .mine-list-item-cover
+          display: none
+
+        .mine-list-item-left
+          display: flex
+          align-items: center
+          height: 100%
+          margin-left: 12px
+
+          .mine-list-item-img
+            width: 25px
+            height: 25px
+            margin-right: 10px
+
+          .mine-list-item-txt
+            font-size: $font-size-medium
+
+        .mine-list-item-arrow
+          width: 10px
+          height: 10px
+          margin-right: 12px
+
+      view:first-child .mine-list-item-cover
+        display: block
+        width: 100vw
+        height: 30px
+        position: absolute
+        top: 0
+
+
+
+
 
 </style>
