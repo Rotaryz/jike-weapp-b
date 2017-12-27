@@ -1,33 +1,92 @@
 <template>
   <view class="client">
     <view class="client-head">
-      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
-            wx:key="{{index}}">
-        <text>{{item.title}}</text>
-      </view>
+      <NavHeader>
+        <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+              wx:key="{{index}}" @tap="showMsg({{index}})">
+          <text>{{item.title}}</text>
+        </view>
+      </NavHeader>
     </view>
-    <view class="general">
+    <view class="general" wx:if="{{navNum === 0}}">
       <view class="choice-time">
-        <view class="active">昨天</view>
-        <view>最近七天</view>
-        <view>最近30天</view>
+        <view wx:for="{{dayList}}" wx:key="{{index}}"
+              class="{{showTime === index ? 'active' : ''}}"
+              @tap="checkTime({{index}}, {{item.time}})">{{
+          item.title}}
+        </view>
       </view>
       <view class="gen-title">
         <view>客户数量(个)</view>
-        <view>9800</view>
+        <view>{{customerTrend.detial.customer_count}}</view>
         <view>较前天
-          <text>20%</text>
-          <image src="./icon-rise@2x.png"></image>
+          <text>{{customerTrend.detial.customer_percentage}}%</text>
+          <image src="./icon-rise@2x.png"
+                 wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+          <image src="./icon-decline@2x.png"
+                 wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
         </view>
       </view>
-      <areaChart></areaChart>
+      <AeraChart></AeraChart>
+    </view>
+    <view class="client-list" wx:if="{{navNum === 1}}">
+      <view class="client-item" wx:for="{{customerList}}" wx:key="{{index}}">
+        <view>
+          <image src="{{item.avatar_url}}"></image>
+          <text>{{item.nickname}}</text>
+        </view>
+        <view>{{item.created_at}}</view>
+      </view>
+    </view>
+    <view class="client-picture" wx:if="{{navNum === 2}}">
+      <view class="client-pia">
+        <view class="picture-title">性别分布</view>
+        <view class="pic-pie">
+          <Pie></Pie>
+          <view class="pie-con">
+            <view class="pie-title">
+              <view>分布</view>
+              <view>人数</view>
+              <view>占比</view>
+            </view>
+            <view class="pie-item" wx:for="{{customerSex}}" wx:key="{{index}}">
+              <text class="pie-ico" style="background:{{color[index]}}"></text>
+              <view>{{item.name}}</view>
+              <view>{{item.data}}</view>
+              <view>{{item.percentage}}%</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="client-city">
+        <view class="picture-title">城市分布
+          <text>TOP10</text>
+        </view>
+        <view class="city-item city-title">
+          <view>排名</view>
+          <view>城市</view>
+          <view>用户数</view>
+        </view>
+        <view class="city-item" wx:for="{{customerCity}}"
+              wx:key="{{idnex}}">
+          <view wx:if="{{index <= 2}}">
+            <image src="{{cityIcon[index]}}"></image>
+          </view>
+          <view wx:if="{{index > 2}}">{{index + 1}}</view>
+          <view>{{item.city}}</view>
+          <view>{{item.count}}</view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import areaChart from '@/base/areaChart/areaChart'
+  import Pie from '@/base/pie/pie'
+  import AeraChart from '@/base/areaChart/areaChart'
+  import NavHeader from '@/base/nav-header/nav-header'
+  import shop from 'api/shop'
   export default class client extends wepy.page {
     config = {
       navigationBarTitleText: '客户',
@@ -35,56 +94,92 @@
       navigationBarTextStyle: 'white'
     }
     components = {
-      areaChart: areaChart
+      Pie: Pie,
+      NavHeader: NavHeader,
+      AeraChart: AeraChart
     }
     data = {
       navNum: 0,
+      showTime: 0,
+      dayList: [{
+        title: '昨天',
+        time: 'yesterday'
+      }, {
+        title: '最近7天',
+        time: 'week'
+      }, {
+        title: '最近30天',
+        time: 'month'
+      }],
       navList: [{
         title: '客户概括'
       }, {
         title: '客户列表'
       }, {
         title: '客户画像'
-      }]
+      }],
+      color: ['#00C4E2', '#FF4E00', '#363547'],
+      customerTrend: [],
+      customerList: [],
+      customerCity: [],
+      customerSex: [],
+      cityIcon: ['./icon-first@2x.png', './icon-second@2x.png', './icon-third@2x.png']
+    }
+
+    async _showMsg(num, time = 'yesterday') {
+      this.navNum = num
+      if (num === 0) {
+        let data = {time: time}
+        let res = await shop.customerTrend(data)
+        this.customerTrend = res
+        this.$com.AeraChart.$wxpage.infoArea(this.customerTrend)
+      } else if (num === 1) {
+        let res = await shop.customerList()
+        this.customerList = res
+      } else if (num === 2) {
+        let res = await shop.customerSex()
+        this.customerSex = res
+        let city = await shop.customerCity()
+        this.customerCity = city
+        this.$com.Pie.$wxpage.infoPie(res)
+      }
+      this.$apply()
+    }
+
+    methods = {
+      async checkTime(index, time) {
+        this.showTime = index
+        await this._showMsg(0, time)
+      },
+      showMsg(num){
+        console.log(num)
+        this._showMsg(num)
+      }
+
+    }
+
+    async onLoad() {
+      console.log()
+      await this._showMsg(0)
     }
   }
+
 </script>
 
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
   page
-    background: $color-white
     width: 100%
     overflow-x: hidden
 
   view
     box-sizing: border-box
 
-  .client-head
-    height: 38.5px
-    background: $color-theme
-    display: flex
-    align-items: center
-    padding-top: 11.5px
-    view
-      font-family: $font-family-light
-      text-align: center
-      color: $color-white
-      font-size: $font-size-medium
-      line-height: 20px
-      flex: 1
-    .choice
-      text
-        display: inline-block
-        padding-bottom: 6px
-        margin: 0 auto
-        width: 71.2%
-        color: $color-assist-f
-        border-bottom: 2px solid $color-assist-f
-
   .general
     text-align: center
+    background: $color-white
+    padding-bottom: 34.5px
     .choice-time
       display: flex
       justify-content: center
@@ -122,13 +217,107 @@
           position: relative
           display: inline-block
           line-height: 16.5px
+          padding-bottom: 34.5px
           text
             color: $color-assist-f
           image
             position: absolute
             right: -12px
+            top: 4px
             height: 10px
             width: 10px
+
+  .client-list
+    .client-item
+      display: flex
+      justify-content: space-between
+      height: 43px
+      align-items: center
+      background: $color-white
+      font-size: $font-size-small
+      padding: 0 12px
+      border-bottom: 0.5px solid $color-split-line
+      view
+        &:first-child
+          position: relative
+          text
+            margin-left: 33px
+          image
+            width: 24px
+            height: 24px
+            border-radius: 50%
+            left: 0
+            col-center()
+
+  .picture-title
+    font-size: $font-size-medium
+    height: 43.5px
+    line-height: 43.5px
+    border-bottom: 0.5px solid $color-split-line
+    position: relative
+    text-indent: 5px
+    &::before
+      content: ''
+      col-center()
+      height: 14px
+      width: 5px
+      left: -3.5px
+      background-color: $color-assist-f
+
+  .client-picture
+    color: $color-text
+    text
+      color: $color-text-d
+      margin-left: 9px
+      font-size: $font-size-small
+    > view
+      background: $color-white
+      padding: 0 0 0 $padding
+      .pic-pie
+        display: flex
+        .pie-con
+          transform: translateX(-40px)
+          flex: 2
+          font-size: $font-size-small
+          padding-top: 36px
+          .pie-title
+            padding-bottom: 10.5px
+            view
+              color: $color-text-d
+          .pie-item
+            margin-bottom: 8.5px
+            position: relative
+            color: $color-text
+            .pie-ico
+              width: 6px
+              height 6px
+              border-radius: 2px
+              col-center()
+              left: 0
+          > view
+            display: flex
+            view
+              flex: 1
+              text-align: center
+
+    .client-city
+      margin-top: 10px
+      .city-item
+        display: flex
+        font-size: $font-size-small
+        height: 39px
+        align-items: center
+        border-bottom: 0.5px solid $color-split-line
+        padding-left: 4px
+        image
+          width: 14.5px
+          height: 24px
+        view
+          flex: 1
+      .city-title
+        view
+          color: $color-text-d
+          padding-left: 0px
 
 
 </style>

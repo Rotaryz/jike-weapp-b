@@ -8,7 +8,7 @@
     </view>
     <view class="qR-num">
       <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}"
-            @touchstart="onTap({{index}},{{item.text}})" @touchend="endTap()">
+            @touchstart="oncap({{index}},{{item.text}})" @touchend="endTap()">
         <view class="nums">
           <text>{{item.text}}</text>
           <image src="{{item.image}}"></image>
@@ -64,13 +64,17 @@
         image: './pic-validate@2x.png'
       }],
       showInput: true,
-      code: '9812401525'
+      code: '0123456789'
     }
+
     async _verification(data) {
       return await shop.verification(data)
     }
+
     methods = {
-      onTap(index, num) {
+      oncap(index, num) {
+        let that = this
+        let code = 0
         if (this.code.length <= 17) {
           this.code += num
           this.code = this.code.replace(/(\d{4})/g, '$1 ')
@@ -80,13 +84,32 @@
             if (idx === index) {
               item.image = './pic-button2@2x.png'
             }
-          } else {
-            if (idx === index) {
-              item.image = './pic-validatered@2x.png'
-              let code = this.code.replace(/ /g, '')
-              let res = this._verification(code)
+          }
+          if (idx === index && idx === this.codeNum.length - 1) {
+            item.image = './pic-validatered@2x.png'
+            code = this.code.replace(/ /g, '')
+            async function show() {
+              let res = await that._verification(code)
               console.log(res)
+              if (res.error === 0) {
+//                成功时
+                wepy.showToast({
+                  title: '核销成功',
+                  icon: 'success',
+                  duration: 1000
+                })
+                that.code = ''
+              } else {
+                wepy.showToast({
+                  title: '核销失败',
+                  icon: 'loading',
+                  duration: 1000
+                })
+//                失败时
+              }
             }
+
+            show()
           }
           return item
         })

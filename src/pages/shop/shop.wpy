@@ -5,11 +5,11 @@
         <image src="./icon-inputcode@2x.png"></image>
         <view>输码核销</view>
       </navigator>
-      <navigator >
+      <view @tap="scanCodes">
         <image src="./icon-scancode@2x.png"></image>
         <view>扫码核销</view>
-      </navigator>
-      <navigator>
+      </view>
+      <navigator url="/pages/cancel-record/cancel-record">
         <image src="./icon-record@2x.png"></image>
         <view>核销记录</view>
       </navigator>
@@ -19,27 +19,30 @@
         <view class="meHea">
           <text>经营概况</text>
           <view>
-            <text>昨天</text>
-            <text>七天</text>
+            <text wx:for="{{times}}" wx:key="{{index}}"
+                  class="{{showTime ===index ?'sh-active' : ''}}"
+                  @tap="showData({{item.type}},{{index}})">{{
+              item.title}}
+            </text>
           </view>
         </view>
         <view class="meCon">
           <view>
-            <view>800</view>
+            <view>{{dataList.hit_count}}</view>
             <view>浏览总量(次)</view>
           </view>
           <view>
-            <view>800</view>
-            <view>订单总量(次)</view>
+            <view>{{dataList.order_count}}</view>
+            <view>订单总量(个)</view>
           </view>
           <view>
-            <view>800</view>
-            <view>消费金额(次)</view>
+            <view>{{dataList.money_count}}</view>
+            <view>消费金额(元)</view>
           </view>
         </view>
       </view>
       <view class="shop-extend">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}">
+        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -52,7 +55,7 @@
 
 <script>
   import wepy from 'wepy'
-
+  import shop from 'api/shop'
   export default class Shop extends wepy.page {
     config = {
       navigationBarTitleText: '商家助手',
@@ -60,34 +63,82 @@
       navigationBarTextStyle: 'white'
     }
     data = {
+      showTime: 0,
+      times: [{
+        title: '昨天',
+        type: 'yeaterday'
+      }, {
+        title: '七天',
+        type: 'week'
+      }],
       navList: [{
         text: '服务',
-        image: './icon-service@2x.png'
+        image: './icon-service@2x.png',
+        src: '/pages'
       }, {
         text: '客户',
-        image: './icon-customer@2x.png'
+        image: './icon-customer@2x.png',
+        src: '/pages/client/client'
       }, {
         text: '商圈',
-        image: './icon-tradingarea@2x.png'
+        image: './icon-tradingarea@2x.png',
+        src: '/pages/business/business'
       }, {
         text: '礼包',
-        image: './icon-package@2x.png'
+        image: './icon-package@2x.png',
+        src: '/pages'
       }, {
         text: '评价',
-        image: './icon-evaluate@2x.png'
+        image: './icon-evaluate@2x.png',
+        src: '/pages/evaluate/evaluate'
       }, {
-        text: '资产',
-        image: './icon-asset@2x.png'
+        text: '订单',
+        image: './icon-asset@2x.png',
+        src: '/pages/order/order'
+      }, {
+        text: '',
+        image: ''
       }, {
         text: '',
         image: ''
       }, {
         text: '',
         image: ''
-      }, {
-        text: '',
-        image: ''
-      }]
+      }],
+      dataList: []
+    }
+
+    async load(time = 'yesterday', type = 'hit') {
+      let data = {time: time, type: type}
+      let res = await shop.dataTrend(data)
+      this.dataList = res.detail
+      this.$apply()
+    }
+
+    scanCodes() {
+      wepy.scanCode({
+        onlyFromCamera: false,
+        success(res) {
+          console.log(res)
+        },
+        fail(res) {
+          console.log('10000')
+        },
+        complete(res) {
+          console.log('6666')
+        }
+      })
+    }
+
+    methods = {
+      async showData(time, index) {
+        this.showTime = index
+        await this.load(time)
+      }
+    }
+
+    async onLoad() {
+      await this.load()
     }
   }
 </script>
@@ -114,7 +165,7 @@
     box-sizing: border-box
     height: 19.1%
     align-items: flex-end
-    navigator
+    navigator, > view
       flex: 1
       height: 100%
       position: relative
@@ -165,17 +216,19 @@
             line-height: 20px
             box-sizing: border-box
             text-align: center
+            border: 0.5px solid $color-theme
+            border-bottom-right-radius: 2px
+            border-top-right-radius: 2px
             &:first-child
-              color: $color-white
-              background-color: $color-theme
-              border: 0.5px solid $color-theme
               border-bottom-left-radius: 2px
               border-top-left-radius: 2px
             &:last-child
-              border: 0.5px solid $color-theme
               border-bottom-right-radius: 2px
               border-top-right-radius: 2px
               margin-right: 10.5px
+          .sh-active
+            background: $color-theme
+            color: $color-white
       .meCon
         display: flex
         font-size: $font-size-small-s

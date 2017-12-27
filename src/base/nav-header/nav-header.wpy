@@ -1,10 +1,7 @@
 <template>
   <view>
     <view class="client-head">
-      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
-            wx:key="{{index}}">
-        <text>{{item.title}}</text>
-      </view>
+      <slot></slot>
     </view>
   </view>
 </template>
@@ -15,16 +12,12 @@
     config = {
       navigationBarTitleText: ''
     }
-    props = {
-      navList: {
-        type: Array,
-        default: []
-      }
-    }
   }
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
   view
     box-sizing: border-box
 
@@ -33,18 +26,17 @@
     background: $color-theme
     display: flex
     align-items: center
-    padding-top: 11.5px
+    padding-top: 10.5px
     view
       font-family: $font-family-light
       text-align: center
       color: $color-white
       font-size: $font-size-medium
-      line-height: 20px
       flex: 1
+      line-height:26px
     .choice
       text
         display: inline-block
-        padding-bottom: 6px
         margin: 0 auto
         width: 71.2%
         color: $color-assist-f

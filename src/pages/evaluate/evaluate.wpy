@@ -1,0 +1,134 @@
+<template>
+  <view class="star">
+    <view class="start-title">截至昨天您的累计星级评价结果</view>
+    <view class="star-fa">
+      <view class="star-item" wx:for="{{starList.satr}}" wx:key="{{index}}">
+        <view class="stars">
+          <image src="./icon-evaluate_red@2x.png"
+                 wx:for="{{item.star_level}}" wx:key="{{index}}"></image>
+        </view>
+        <view>{{item.star_level}}星</view>
+        <progress stroke-width="4" activeColor="#e6e6e6" activeColor="#EF705D"
+                  percent="{{item.percentage}}" active="true"></progress>
+        <view>{{item.count}}单</view>
+      </view>
+    </view>
+  </view>
+  <view class="impression">
+    <view class="eva-title">印象</view>
+    <view class="tag" wx:for="{{starList.impression}}" wx:key="{{idnex}}">{{
+      item.impression}}
+      {{item.count}}
+    </view>
+  </view>
+  <view class="appraise">
+    <view class="eva-title">评价</view>
+    <view class="ap-list" wx:for="{{commentList}}" wx:key="{{index}}">
+      <view>{{item.detail}}</view>
+      <view>匿名评价</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import shop from 'api/shop'
+  export default class Square extends wepy.page {
+    config = {
+      navigationBarTitleText: '服务评价',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+
+    data = {
+      starList: [],
+      commentList: []
+    }
+
+    async load() {
+//    星级评定
+      let res = await shop.getStar()
+      this.starList = res
+      console.log(this.starList)
+//    评论内容
+      let data = await shop.getComment()
+      this.commentList = data
+      this.$apply()
+    }
+
+    async onLoad() {
+      await this.load()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  .star
+    background-color: $color-white
+    .start-title
+      font-size: 14px
+      line-height: 44px
+      text-align: center
+    .star-fa
+      padding-bottom: 7px
+    .star-item
+      display: flex
+      font-size: $font-size-small
+      margin-bottom: 9.5px
+      image
+        width: 16px
+        height: 16px
+      .stars
+        text-align: right
+        width: 36%
+        margin-right: 5.4px
+        transform: translateY(-3px)
+      progress
+        width: 135px
+        margin: 0 5.4px
+        transform: translateY(-3px)
+
+  .eva-title
+    display: block
+    font-size: $font-size-medium
+    position: relative
+    color: $color-text-d
+    padding-left: 20px
+    line-height: 43px
+    &::before
+      content: ''
+      col-center()
+      height: 12px
+      width: 4px
+      left: 12px
+      background: $color-assist-f
+
+  .impression, .appraise
+    background: $color-white
+    margin-top: 10px
+    padding-left: 12px
+    .tag
+      display: inline-block
+      font-size: $font-size-small
+      padding: 8px 10px
+      border: 0.5px solid $color-split-line
+      margin: 0 12px 12px 0
+
+  .appraise
+    padding-bottom: 28px
+    .ap-list
+      border-bottom: 0.5px solid $color-split-line
+      padding: 12px 0
+      font-size: $font-size-small
+      display: flex
+      view
+        flex: 8
+        color: $color-theme
+        &:last-child
+          flex: 2
+          text-align: center
+          color: $color-text-d
+
+</style>

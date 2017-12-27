@@ -1,16 +1,76 @@
 <template>
-
+  <view class="container" id="pie">
+    <canvas canvas-id="pieCanvas" class="canvas"
+            bindtouchstart="touchHandler"></canvas>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import wxCharts from 'common/libs/wxcharts'
   export default class Square extends wepy.page {
     config = {
       navigationBarTitleText: ''
+    }
+    data = {
+      pieChart: ''
+    }
+    infoPie(res) {
+      let series = [{
+        name: '',
+        data: 0
+      }]
+      res = series.concat(res)
+      this.pieChart = new wxCharts({
+        animation: true,
+        canvasId: 'pieCanvas',
+        type: 'ring',
+        series: res,
+        width: 200,
+        height: 150,
+        dataLabel: false,
+        dataPointShape: false,
+        legend: false,
+        disablePieStroke: false
+      })
+
+    }
+    onLoad() {
+//      this.pieChart = new wxCharts({
+//        animation: true,
+//        canvasId: 'pieCanvas',
+//        type: 'ring',
+//        series: [{
+//          name: '',
+//          data: 0
+//        }, {
+//          name: '男性',
+//          data: 35
+//        }, {
+//          name: '女性',
+//          data: 78
+//        }, {
+//          name: '未知',
+//          data: 85
+//        }],
+//        width: 200,
+//        height: 150,
+//        dataLabel: false,
+//        dataPointShape: false,
+//        legend: false,
+//        disablePieStroke: false
+//      })
+//      console.log(this.pieChart)
     }
   }
 </script>
 
 <style lang="stylus">
+  #pie
+    transform: translate(-31.5px, 2px)
+    height: 176.5px
+    overflow: hidden
+    flex: 2
+
 
 </style>

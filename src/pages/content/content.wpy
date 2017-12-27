@@ -1,0 +1,94 @@
+<template>
+  <view class="content">
+    <NavHeader>
+      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+            wx:key="{{index}}" @tap="showMsg({{index}})">
+        <text>{{item}}</text>
+      </view>
+    </NavHeader>
+    <view class="content-coupon">
+      <view class="con-cou-item">
+        <image src="./bk.jpg"></image>
+        <view>
+          <view class="con-cou-item-ri">
+            <view>
+              <image src="./star@2x.png"></image>
+              54545
+            </view>
+            <view>
+              <image src="./icon-share@2x.png"></image>
+              252
+            </view>
+          </view>
+          <view class="con-cou-item-le">
+            <view>删除</view>
+            <view>下线</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import NavHeader from '@/base/nav-header/nav-header'
+  export default class content extends wepy.page {
+    config = {
+      navigationBarTitleText: '内容管理',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      NavHeader: NavHeader
+    }
+    data = {
+      navNum: 0,
+      navList: ['已上线', '已下线', '待确认']
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  .content-coupon
+    padding: 0 $padding
+    display: flex
+    flex-direction: column
+    .con-cou-item
+      margin-top: 10px
+      image
+        width: 100%
+        height: 26.67vw
+      > view
+        background: $color-white
+        display: flex
+        justify-content: space-between
+        height: 10.67vw
+        align-items: center
+        margin-top: -2px
+        padding: 0 11.5px
+        image
+          height: 10px
+          width: 10px
+        view
+          display: inline-block
+          font-size: $font-size-small
+          color: $color-text-d
+        .con-cou-item-ri
+          view
+            margin-right: 17px
+        .con-cou-item-le
+          view
+            font-size: $font-size-small-s
+            padding: 5px 20px
+            border-radius: 2px
+            margin-left: 5px
+            &:nth-child(1)
+              border: 0.5px solid $color-text-d
+              color: $color-theme
+            &:nth-child(2)
+              border: 0.5px solid $color-assist-f
+              color: $color-assist-f
+</style>

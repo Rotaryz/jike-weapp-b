@@ -1,17 +1,199 @@
 <template>
   <view class="data-wrapper">
-    数据
+    <view class="herder-title">
+      <view class="header">
+        <view wx:for="{{nacList}}"
+              class="{{showNac === index ? 'da-active':''}}"
+              wx:key="{{index}}" @tap="checkNac({{item.type}},{{index}})">{{
+          item.title}}
+        </view>
+      </view>
+    </view>
+    <view class="tips">
+      <view wx:for="{{typeList}}" wx:key="{{index}}"
+            class="tips-title {{showType === index ? 'tips-active':''}}"
+            @tap="showData({{index}})">
+        <view>{{item.title}}</view>
+        <view>{{item.count}}</view>
+        <view>较前天
+          <text>{{item.percentage}}%</text>
+          <image src="./icon-rise@2x.png"
+                 wx:if="{{item.trend === 'up'}}"></image>
+          <image src="./icon-decline@2x.png"
+                 wx:if="{{item.trend === 'down'}}"></image>
+        </view>
+      </view>
+    </view>
+    <view class="gen-title">
+      <view>{{typeList[showType].title}}</view>
+      <view>{{typeList[showType].count}}</view>
+      <view>较前天
+        <text>{{typeList[showType].percentage}}%</text>
+        <image src="./icon-rise@2x.png"
+               wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+        <image src="./icon-decline@2x.png"
+               wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
+      </view>
+    </view>
+    <AeraChart></AeraChart>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-
+  import shop from 'api/shop'
+  import AeraChart from '@/base/areaChart/areaChart'
   export default class Data extends wepy.page {
+    config = {
+      navigationBarTitleText: '数据流量'
+    }
+    components = {
+      AeraChart: AeraChart
+    }
+    data = {
+      showNac: 0,
+      showType: 'hit',
+      nacList: [{
+        title: '昨天',
+        type: 'yeaterday'
+      }, {
+        title: '最近7天',
+        type: 'week'
+      }, {
+        title: '最近30天',
+        type: 'month'
+      }],
+      typeList: [],
+      dataList: [],
+      timeMsg: 'yeaterday'
+    }
 
+    async load(time = 'yesterday', type = 'hit') {
+      let data = {time: time, type: type}
+      let res = await shop.dataTrend(data)
+      this.dataList = res
+      this.typeList = this.dataList.detail
+      this.$com.AeraChart.$wxpage.infoArea(res)
+      this.$apply()
+    }
+
+    methods = {
+      async showData(index) {
+        this.showType = index
+        await this.load(this.timeMsg, this.showType)
+      },
+      async checkNac(time, num) {
+        this.showNac = num
+        this.timeMsg = time
+        await this.load(this.timeMsg, this.showType)
+      }
+    }
+
+    async onLoad() {
+      await this.load()
+    }
   }
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  page
+    background: $color-white
+
+  view
+    box-sizing: border-box
+
+  .herder-title
+    padding: $padding
+    .header
+      display: flex
+      border: 0.5px solid $color-theme
+      border-right: none
+      view
+        height: 26px
+        line-height: 26px
+        text-align center
+        flex: 1
+        font-size: $font-size-small
+        color: $color-theme
+        border-right: 0.5px solid $color-theme
+      .da-active
+        background: $color-theme
+        color: $color-white
+
+  .tips
+    display: flex
+    background: $color-theme
+    > view
+      text-align: center
+      flex: 1
+      padding: 15px 0 13px
+      &:last-child
+        border-left: 0.5px solid #020203
+      &:nth-child(2)
+        border-left: 0.5px solid #020203
+        border-right: 0.5px solid #6A6881
+      &:first-child
+        border-right: 0.5px solid #6A6881
+      view
+        color: $color-white
+        font-size: $font-size-small
+
+        &:last-child
+          color: $color-text-d
+          font-size: $font-size-small-s
+          line-height: 14px
+          display: inline-block
+          position: relative
+          transform: translateX(-10px)
+          text
+            color: $color-orange
+        &:nth-child(2)
+          font-size: $font-size-medium-x
+          font-family: $font-family-meddle
+          line-height: 22.5px
+          margin: 7px 0 0
+        &:first-child
+          line-height: 16.5px
+        image
+          position: absolute
+          right: -12px
+          top: 2.4px
+          height: 10px
+          width: 10px
+
+  .tips-active
+    border-bottom: 5px solid $color-assist-f
+
+  .gen-title
+    margin-top: 26.5px
+    display: flex
+    flex-direction: column
+    view
+      text-align: center
+      &:nth-child(1)
+        font-size: $font-size-medium
+        line-height: 20px
+      &:nth-child(2)
+        font-family: 'Impact'
+        font-size: $font-size-large-xx
+        line-height: 29px
+        margin: 7.5px 0 4.5px
+      &:nth-child(3)
+        font-size: $font-size-small
+        font-family: $font-family-regular
+        position: relative
+        display: inline-block
+        line-height: 16.5px
+        padding-bottom: 34.5px
+        text
+          color: $color-assist-f
+        image
+          position: absolute
+          right: -12px
+          top: 4px
+          height: 10px
+          width: 10px
 
 </style>

@@ -1,52 +1,27 @@
 <template>
-  <view>
+  <scroll-view class="cancle" bindscrolltolower="showMore" scroll-y="true">
     <view class="reHeard">
-      <view wx:for="{{navList}}">{{item.name}}</view>
+      <view wx:for="{{navList}}" wx:key="{{index}}">{{item.name}}</view>
     </view>
 
     <view class="reCon">
-      <view class="re-white">
-        <view class="re-title">养发护发优惠券</view>
-        <view>128392</view>
-        <view>3272378</view>
+      <view wx:for="{{verification}}" wx:key="{{index}}"
+            class="re-items {{index % 2 === 0 ? 're-white' :''}}">
+        <view class="re-title">{{item.promotion_name}}</view>
+        <view>{{item.promotion_id}}</view>
+        <view>{{item.customer_id}}</view>
         <view>
-          <view>2017-01-01</view>
-          <view class="times">13:08</view>
-        </view>
-      </view>
-      <view>
-        <view>养发护发优惠券</view>
-        <view>128392</view>
-        <view>3272378</view>
-        <view>
-          <view>2017-01-01</view>
-          <view>13:08</view>
-        </view>
-      </view>
-      <view class="re-white">
-        <view>养发护发优惠券</view>
-        <view>128392</view>
-        <view>3272378</view>
-        <view>
-          <view>2017-01-01</view>
-          <view>13:08</view>
-        </view>
-      </view>
-      <view>
-        <view>养发护发优惠券</view>
-        <view>128392</view>
-        <view>3272378</view>
-        <view>
-          <view>2017-01-01</view>
-          <view>13:08</view>
+          <view>{{item.updated_date}}</view>
+          <view class="times">{{item.updated_time}}</view>
         </view>
       </view>
     </view>
-  </view>
+  </scroll-view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import shop from 'api/shop'
   export default class record extends wepy.page {
     config = {
       navigationBarTitleText: '核销记录',
@@ -62,7 +37,39 @@
         name: '用户ID'
       }, {
         name: '核销时间'
-      }]
+      }],
+      verification: [],
+      page: 1,
+      nothing: false,
+      times: 0
+    }
+
+    async load(page = 1) {
+      let data = {page: page}
+      let res = await shop.verificationLog(data)
+      this.verification = this.verification.concat(res)
+      this.$apply()
+      return res
+    }
+
+    async onLoad() {
+      await this.load()
+      console.log(this.verification)
+    }
+
+    methods = {
+      async showMore(e) {
+
+        if (!this.nothing) {
+          this.showMore = false
+          this.page++
+          console.log(this.page)
+          let res = await this.load(this.page)
+          if (res.length === 0) {
+            this.nothing = true
+          }
+        }
+      }
     }
   }
 </script>
@@ -73,8 +80,15 @@
   view
     box-sizing: border-box
 
+  scroll-view
+    max-height: 100vh
+
   .reHeard
     height: 39.5px
+    position: fixed
+    width: 100vw
+    top: 0
+    z-index: 200
     background: $color-theme
     display: flex
     view
@@ -88,7 +102,8 @@
         flex: 1.5
 
   .reCon
-    > view
+    margin-top: 39.5px
+    .re-items
       display: flex
       font-size: $font-size-small
       text-overflow: ellipsis
@@ -100,7 +115,7 @@
         width: 22.22%
         height: 45px
         padding-top: 9px
-        white-space :nowrap
+        white-space: nowrap
         &:first-child
           width: 33.33%
         &:last-child

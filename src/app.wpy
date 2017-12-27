@@ -54,13 +54,19 @@
 
     config = {
       pages: [
-        'pages/client/client',
-        'pages/cancelRecord/cancelRecord',
-        'pages/shop/shop',
-        'pages/qrCode/qrCode',
-        'pages/logIn/logIn',
-        'pages/marketing/marketing',
+        'pages/create-content/create-content',
+        'pages/content/content',
         'pages/data/data',
+        'pages/shop/shop',
+        'pages/cancel-record/cancel-record',
+        'pages/business/business',
+        'pages/evaluate/evaluate',
+        'pages/client/client',
+        'pages/marketing/marketing',
+        'pages/qrCode/qrCode',
+        'pages/order/order',
+        'pages/server/server',
+        'pages/logIn/logIn',
         'pages/mine/mine'
       ],
       window: {
@@ -105,8 +111,8 @@
     }
 
     globalData = {
-      baseUrl: 'dev.jike-backend-api.jerryf.cn',
-      baseLogin: 'dev.jike-jwt.jerryf.cn',
+      baseUrl: 'http://dev.jike-backend-api.jerryf.cn',
+      baseLogin: 'http://dev.jike-jwt.jerryf.cn',
       isAuthorise: false,
       user: null,
       orderInfo: {}

@@ -1,0 +1,211 @@
+<template>
+  <view class="create-content">
+    <image class="theme" src="{{imgSrc}}">
+      <view>更换封面</view>
+    </image>
+    <view class="add">
+      <image src="./icon-nr_add@2x.png"></image>
+      <view class="options">
+        <image src="./icon-add_text@2x.png"></image>
+        <image src="./icon-add_video@2x.png"></image>
+        <image src="./icon-add_img@2x.png"></image>
+        <image src="./icon-add_ticket@2x.png"></image>
+      </view>
+    </view>
+    <view class="content-page">
+      <view class="con-item-fa con-item-video">
+        <image src="./icon-del@2x.png" class="con-close"></image>
+        <view class="con-item">
+          <view class="cantainer"></view>
+          <image src="./icon-video@2x.png" class="video-ico"></image>
+        </view>
+        <view class="add">
+          <image src="./icon-nr_add@2x.png"></image>
+          <view class="options">
+            <image src="./icon-add_text@2x.png"></image>
+            <image src="./icon-add_video@2x.png"></image>
+            <image src="./icon-add_img@2x.png"></image>
+            <image src="./icon-add_ticket@2x.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="con-item-fa con-item-text">
+        <image src="./icon-del@2x.png" class="con-close"></image>
+        <view class="con-item">
+          <scroll-view class="text-detail" scroll-y>看对方考虑对方Kafka
+            就是阿散井卡积分卡就是卡积分坷拉金坷垃加啊四风口浪尖副卡世界风卡拉胶疯狂拉升就卡就是发卡JFK
+            垃圾啊是风口浪尖啊是付款啦付款啦就是考虑放假啊开始发卡收费卡手机发看拉萨解放看拉萨解放卡拉及时反馈了解啊是风口浪尖ask
+            积分卡时间立刻就卡时间克拉斯就疯狂拉升就付款啦就打开啦就是看多久啊是附件阿克苏寄卡升级疯狂拉升就疯狂拉升就饭卡上就疯狂拉升就疯狂拉升就疯狂拉升就疯狂拉升就发分厘卡时间发神经封口蜡就
+          </scroll-view>
+        </view>
+        <view class="add">
+          <image src="./icon-nr_add@2x.png"></image>
+          <view class="options">
+            <image src="./icon-add_text@2x.png"></image>
+            <image src="./icon-add_video@2x.png"></image>
+            <image src="./icon-add_img@2x.png"></image>
+            <image src="./icon-add_ticket@2x.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="con-item-fa con-item-image">
+        <image src="./icon-del@2x.png" class="con-close"></image>
+        <view class="con-item">
+          <view class="cantainer"></view>
+        </view>
+        <view class="add">
+          <image src="./icon-nr_add@2x.png"></image>
+          <view class="options">
+            <image src="./icon-add_text@2x.png"></image>
+            <image src="./icon-add_video@2x.png"></image>
+            <image src="./icon-add_img@2x.png"></image>
+            <image src="./icon-add_ticket@2x.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="con-item-fa con-item-coupon">
+        <image src="./icon-del@2x.png" class="con-close"></image>
+        <view class="con-item">
+          <Coupon></Coupon>
+        </view>
+        <view class="add">
+          <image src="./icon-nr_add@2x.png"></image>
+          <view class="options">
+            <image src="./icon-add_text@2x.png"></image>
+            <image src="./icon-add_video@2x.png"></image>
+            <image src="./icon-add_img@2x.png"></image>
+            <image src="./icon-add_ticket@2x.png"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="con-submit">
+      <view>
+        发布
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Coupon from '@/base/coupon/coupon'
+  export default class createContent extends wepy.page {
+    config = {
+      navigationBarTitleText: '创建内容',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      Coupon: Coupon
+    }
+    data = {
+      imgSrc: ''
+    }
+    methods = {}
+
+    onLoad() {
+
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  .theme
+    height: 36.53vw
+    width: 100vw
+    background: $color-theme
+    position: relative
+    view
+      position: absolute
+      color: $color-white
+      bottom: 12px
+      right: 12px
+      height: 20px
+      line-height: 20px
+      text-align: center
+      width: 63px
+      border-radius: 4px
+      font-size: $font-size-small
+      color: $color-theme
+      background: $color-white
+
+  .add
+    display: flex
+    align-items: center
+    flex-direction: column
+    image
+      height: 32px
+      width: 32px
+    view
+
+      background: $color-white
+      padding: 8px 25px
+      display: flex
+      display: none
+      justify-content: space-between
+      border-radius: 4px
+      border: 0.5px solid $color-split-line
+      image
+        height: 20px
+        width: 20px
+        margin-left: 36.5px
+        &:first-child
+          margin-left: 0
+
+  .content-page
+    padding: 0 $padding
+
+    .con-item-fa
+      position: relative
+      .con-close
+        height: 10px
+        width: 10px
+        position: absolute
+        left: 5px
+        top: 5px
+        z-index: 300
+    .con-item
+      background: $color-white
+      border-radius: 4px
+      border: 0.5px solid $color-split-line
+      padding: 12.5px 17.5px
+      position: relative
+      .cantainer
+        height: 20vw
+        background: $color-theme
+
+  .con-item-video
+    .video-ico
+      height: 42px
+      width: 42px
+      all-center()
+
+  .con-item-text
+    .con-item .text-detail
+      height: 20vw
+      padding: 6.5px 7.5px
+      background: $color-background
+      font-size: $font-size-small
+      line-height: 18px
+      color: $color-theme
+      font-family: 'PingFang SC'
+
+  .coupon
+    margin-bottom: 0px
+    padding-top: 20vw
+
+  .con-submit
+    padding: 0 $padding $padding
+    view
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
+</style>

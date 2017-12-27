@@ -9,16 +9,15 @@ export default class http {
       method: method,
       data: data
     }
-    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2ppa2Utand0Lm1hank5OTkuY29tL2FwaS9tZXJjaGFudHMvbG9naW4iLCJpYXQiOjE1MTM4NTA5MjAsImV4cCI6MTUxMzg1NDUyMCwibmJmIjoxNTEzODUwOTIwLCJqdGkiOiJ5eUJuNzhSUkRtNzdidU5OIn0.mY0qm6M1u0QWxOrG9thfFAQTckrhUU6PtPs8MlPVdgY'
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9yZWdpc3RlciIsImlhdCI6MTUxMzkxMjI1MSwiZXhwIjoxNTEzOTE1ODUxLCJuYmYiOjE1MTM5MTIyNTEsImp0aSI6IjNCd2VXOFRiOHQ2MEZ4Y2QifQ.T_pUHoOAxSKgN6UbWiY1-xWdDsDGX_4GPwpiSr2Txdo'
     if (Authorization) {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
-    param.header = Object.assign({}, param.header, {'Current-merchant': wepy.getStorageSync('merchantId') || 100000})
     if (loading) {
-      Tips.loading()
+      // Tips.loading()
     }
     const res = await wepy.request(param)
-    Tips.loaded()
+    // Tips.loaded()
     if (this.isSuccess(res)) {
       const result = res.data.data ? res.data.data : res.data
       return result
