@@ -19,6 +19,15 @@ export default class Account extends base {
     const url = `${this.baseUrl}/api/merchants/chain-merchants`
     return await this.get(url)
   }
+  /**
+   * 创建分店管理账户
+   * @param mobile 登陆账户 password 密码 belongs_to 门店ID
+   * @returns {Promise.<*>}
+   */
+  static async setSubAccount(data) {
+    const url = `${this.baseUrl}/api/merchants/create-merchant-child`
+    return await this.post(url, data)
+  }
 
   /**
    * 获取销售联系方式

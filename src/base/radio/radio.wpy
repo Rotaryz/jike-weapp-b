@@ -61,6 +61,7 @@
         this.$emit('radioChioseOK', res)
         this.radioMsg = null
         this.showCover = false
+        this.$apply()
       },
       radioChiose(e) {
         this.checked = e.detail.value

@@ -60,6 +60,7 @@ export default class extends wepy.app {
       'pages/account-management/account-management',
       'pages/create-account/create-account',
       'pages/contact-sales/contact-sales',
+      'pages/share-prize/share-prize',
       'pages/data/data'
     ],
     window: {

@@ -67,7 +67,8 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;"></map>
+          <map id="myMap" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;">
+          </map>
       </view>
     </view>
 
@@ -191,6 +192,7 @@
     <RadioBox></RadioBox>
     <TwoRadioBox></TwoRadioBox>
     <TwoColumnRadioBox></TwoColumnRadioBox>
+    <Toast></Toast>
   </view>
 </template>
 
@@ -202,8 +204,8 @@
   import TwoRadioBox from '@/base/second-radio/second-radio'
   import TwoColumnRadioBox from '@/base/radio-twoColumn/radio-twoColumn'
   import QQMapWX from '@/common/libs/qqmap-wx-jssdk'
-  import tips from '@/common/js/tips'
   import Store from '@/api/store'
+  import Toast from '@/base/toast/toast'
 
   export default class StoreMsg extends wepy.page {
     mixins = [base]
@@ -218,7 +220,8 @@
     components = {
       RadioBox,
       TwoRadioBox,
-      TwoColumnRadioBox
+      TwoColumnRadioBox,
+      Toast
     }
 
     data = {
@@ -231,6 +234,7 @@
       description: '',
       industryName: '',
       industry: '',
+      industryId: '',
       tel: '',
       site: '',
       mapAddress: '',
@@ -282,36 +286,35 @@
         key: 'WPABZ-ZVD6P-RJJD5-VSCIN-BBADV-FMFJX'
       })
       let res = await Store.getMsgList()
-      if (res.shop_name) {
-        this.Induring = res
-        this.name = res.shop_name
-        this.industry = res.industry
-        this.industryName = res.industry.name
-        this.description = res.describe
-        this.tel = res.mobile
-        this.site = res.address
-        this.mapAddress = res.address
-        this.region = [res.business_circle.province, res.business_circle.city, res.business_circle.district]
-        this.longitude = res.longitude ? res.longitude : 113.324520
-        this.latitude = res.latitude ? res.latitude : 23.099994
-        this.markers[0].longitude = this.longitude
-        this.markers[0].latitude = this.latitude
-        this.area = res.business_circle.name
-        this.areaId = res.business_circle_id
-        this.storeStatus = res.open_status
-        let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
-        this.storeStatusTxt = arr[this.storeStatus]
-        this.areaArr = await Store.getArea(res.business_circle.district)
-        this.weekChecked = res.week_day.split(',')
-        this._choiseChecked(this.weekValue)
-        this.hourBegin = res.open_time
-        this.hourEnd = res.close_time
-        this.hourChioseArr[0] = res.open_time.split(':')[0]
-        this.hourChioseArr[1] = res.open_time.split(':')[1] === '00' ? '0' : '1'
-        this.hourChioseArr[2] = res.close_time.split(':')[0]
-        this.hourChioseArr[3] = res.close_time.split(':')[1] === '00' ? '0' : '1'
-        this._mapAuto()
-      }
+      this.Induring = res
+      this.name = res.shop_name ? res.shop_name : ''
+      this.industry = res.industry ? res.industry : ''
+      this.industryId = res.industry_id ? res.industry_id : ''
+      this.industryName = res.industry ? res.industry.name : ''
+      this.description = res.describe ? res.describe : ''
+      this.tel = res.mobile ? res.mobile : ''
+      this.site = res.address ? res.address : ''
+      this.mapAddress = res.address ? res.address : ''
+      this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : []
+      this.longitude = res.longitude ? res.longitude : 113.324520
+      this.latitude = res.latitude ? res.latitude : 23.099994
+      this.markers[0].longitude = this.longitude
+      this.markers[0].latitude = this.latitude
+      this.area = res.business_circle ? res.business_circle.name : ''
+      this.areaId = res.business_circle_id ? res.business_circle_id : ''
+      this.storeStatus = res.open_status ? res.open_status : ''
+      let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
+      this.storeStatusTxt = arr[this.storeStatus]
+      this.areaArr = res.business_circle ? await Store.getArea(res.business_circle.district) : []
+      this.weekChecked = res.week_day ? res.week_day.split(',') : []
+      this._choiseChecked(this.weekValue)
+      this.hourBegin = res.open_time ? res.open_time : ''
+      this.hourEnd = res.close_time ? res.close_time : ''
+      this.hourChioseArr[0] = res.open_time ? res.open_time.split(':')[0] : ''
+      this.hourChioseArr[1] = res.open_time ? (res.open_time.split(':')[1] === '00' ? '0' : '1') : ''
+      this.hourChioseArr[2] = res.close_time ? res.close_time.split(':')[0] : ''
+      this.hourChioseArr[3] = res.close_time ? (res.close_time.split(':')[1] === '00' ? '0' : '1') : ''
+      this._mapAuto()
       this.loaded()
     }
 
@@ -322,9 +325,17 @@
     methods = {
       industryChiose() {
         this.showMap = false
-        let radioChecked = {
-          two: this.industry.id,
-          one: this.industry.parent_id
+        let radioChecked
+        if (this.industryId) {
+          radioChecked = {
+            two: this.industry.id,
+            one: this.industry.parent_id
+          }
+        } else {
+          radioChecked = {
+            two: '',
+            one: ''
+          }
         }
         let listMsg = {
           headTxt: '行业类型',
@@ -337,6 +348,8 @@
       },
       areaChiose() {
         this.showMap = false
+        console.log(this.showMap)
+        let self = this
         let radioChecked = this.areaId
         if (this.region[2]) {
           let listMsg = {
@@ -347,8 +360,12 @@
           }
           this.$invoke('TwoColumnRadioBox', 'init', listMsg)
         } else {
-          tips.error('请选择地区')
+          this.$invoke('Toast', 'show', '请选择地区')
+          setTimeout(() => {
+            self.$apply()
+          }, 2000)
         }
+        this.$apply()
       },
       showRadio() {
         this.showMap = false
@@ -361,6 +378,8 @@
             {value: '2', txt: '筹建中'},
             {value: '3', txt: '已关闭'}]
         })
+        console.log(this.showMap)
+        this.$apply()
       },
       txtChange(e) {
         let eventId = e.target.id
@@ -388,7 +407,6 @@
         this.mapAddress = this.region[0] + this.region[1] + this.region[2]
         this._mapAuto(this.mapAddress)
         this.areaArr = await Store.getArea(this.region[2])
-        console.log(this.areaArr)
       },
       mapTap(e) {
         console.log(e)
@@ -490,9 +508,9 @@
 
     events = {
       radioChioseOK(item) {
-        this.showMap = true
         this.storeStatus = Number(item[0].value)
         this.storeStatusTxt = item[0].txt
+        this.showMap = true
         this.$apply()
         console.log(this)
       },
@@ -506,12 +524,13 @@
             }
             break
         }
+        this.$apply()
         console.log(item)
       },
       twoColumnRadioOK(item) {
-        this.showMap = true
         this.area = item.name
         this.areaId = item.id
+        this.showMap = true
         this.$apply()
       }
     }
