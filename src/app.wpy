@@ -52,10 +52,14 @@ export default class extends wepy.app {
 
   config = {
     pages: [
-      'pages/create-service/create-service',
+      'pages/wheel-controller/wheel-controller',
+      'pages/package-manage/package-manage',
+      'pages/package-detail/package-detail',
+      'pages/package-controller/package-controller',
+      'pages/service-controller/service-controller',
+      'pages/service-manage/service-manage',
       'pages/shop/shop',
       'pages/marketing/marketing',
-      'pages/data/data',
       'pages/mine/mine'
     ],
     window: {
@@ -100,7 +104,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    baseUrl: 'http://jike-wap-api.majy999.com',
+    baseUrl: 'http://dev.jike-backend-api.jerryf.cn',
     isAuthorise: false,
     user: null,
     orderInfo: {}

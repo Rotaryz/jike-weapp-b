@@ -13,7 +13,6 @@ export default class http {
     if (Authorization) {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
-    param.header = Object.assign({}, param.header, {'Current-merchant': wepy.getStorageSync('merchantId') || 100000})
     if (loading) {
       Tips.loading()
     }
@@ -27,34 +26,27 @@ export default class http {
     }
   }
 
-  static async update(url, name, loading = true) {
-    const resImage = await wepy.chooseImage()
-    const token = wepy.getStorageSync('token')
+  static async upload(url, data, name = 'file', loading = true) {
     const param = {
       url: url,
-      filePath: resImage.tempFilePaths[0],
-      name: name,
-      formData: {
-        jk_token: token
-      }
+      filePath: data,
+      name: name
     }
     const Authorization = wepy.getStorageSync('token')
-    if (Authorization) {
-      param.header = Object.assign({}, {Authorization})
-    }
-    param.header = Object.assign({}, param.header, {'Current-merchant': 100000})
+    param.header = Object.assign({}, {Authorization})
     if (loading) {
       Tips.loading()
     }
     const res = await wepy.uploadFile(param)
     const resData = JSON.parse(res.data)
     Tips.loaded()
-    if (res.statusCode === 200 && resData.error === 0) {
-      return resData
+    if (resData.status_code === 200 && resData.error === 0) {
+      return resData.data
     } else {
       throw this.requestException(resData)
     }
   }
+
   /**
    * 判断请求是否成功
    */
@@ -103,7 +95,7 @@ export default class http {
     return this.request('DELETE', url, data, loading)
   }
 
-  static updateImg (url, name, loading = true) {
+  static updateImg(url, name, loading = true) {
     return this.update(url, name, loading)
   }
 }

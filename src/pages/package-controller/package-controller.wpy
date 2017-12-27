@@ -1,0 +1,734 @@
+<template>
+  <view class="package-controller">
+    <view class="detail-wrapper border-bottom-1px">
+      <view class="business input-wrapper border-bottom-1px">
+        <view class="label">适用商圈</view>
+        <view class="arrow-content-wrapper">
+          <view class="content">{{business}}</view>
+          <view class="arrow-right">
+            <image src="./icon-arrow-right@2x.png" class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view class="category input-wrapper border-bottom-1px" @tap="showCategoryModal">
+        <view class="label">适用品类</view>
+        <view class="arrow-content-wrapper">
+          <view class="content">{{category}}</view>
+          <view class="arrow-right">
+            <image src="./icon-arrow-right@2x.png" class="full-image"></image>
+          </view>
+        </view>
+        <categories-modal title="选择品类" @hide.user="hideCategoriesModal">
+          <view slot="content" class="categories-modal">
+            <view class="header border-bottom-1px" @tap.stop="selectAllCategories">
+              全选
+              <view class="select-box {{isSelectAllCategories ? 'selected' : ''}}">
+                <image wx:if="{{isSelectAllCategories}}" src="./icon-select@2x.png" class="full-image"></image>
+              </view>
+            </view>
+            <repeat for="{{categories}}" index="index" key="index" item="item">
+              <view class="item border-bottom-1px" @tap.stop="selectCategory({{item}})">
+                {{item.name}}
+                <view class="select-box {{item.check ? 'selected' : ''}}">
+                  <image wx:if="{{item.check}}" src="./icon-select@2x.png" class="full-image"></image>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </categories-modal>
+      </view>
+      <view class="store input-wrapper border-bottom-1px" @tap="showStoreModal">
+        <view class="label">适用门店</view>
+        <view class="arrow-content-wrapper">
+          <view class="content">{{store}}</view>
+          <view class="arrow-right">
+            <image src="./icon-arrow-right@2x.png" class="full-image"></image>
+          </view>
+        </view>
+        <stores-modal title="门店选择" @hide.user="hideStoresModal">
+          <view class="stores-modal" slot="content">
+            <view class="select-all border-bottom-1px" @tap.stop="selectAllStores">
+              全选
+              <view class="select-box {{isSelectAllStores ? 'selected' : ''}}">
+                <image wx:if="{{isSelectAllStores}}" src="./icon-select@2x.png" class="full-image"></image>
+              </view>
+            </view>
+            <repeat for="{{stores}}" key="index" index="index" item="item">
+              <view class="select-item border-bottom-1px" @tap.stop="selectStore({{item}})">
+                {{item.shop_name}}
+                <view class="select-box {{item.check ? 'selected' : ''}}">
+                  <image wx:if="{{item.check}}" src="./icon-select@2x.png" class="full-image"></image>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </stores-modal>
+      </view>
+      <view class="picture-wrapper border-bottom-1px">
+        <view class="label">礼包图片</view>
+        <view class="picture-content">
+          <repeat for="{{pictures}}" key="index" index="index" item="item">
+            <view class="picture">
+              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
+                <image class="full-image" src="./icon-del@2x.png"></image>
+              </view>
+              <image wx:if="{{item.image_url}}" src="{{item.image_url}}" class="image full-image"></image>
+              <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
+                <image src="./icon-add@2x.png" class="full-image"></image>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="tip-wrapper">
+          礼包详情页展示图片，添加1-3张图片(尺寸:750x400,大小50K以下)
+        </view>
+      </view>
+      <view class="title input-wrapper border-bottom-1px">
+        <view class="label">标题</view>
+        <input type="text"
+               value="{{title}}"
+               maxlength="10"
+               @input="handleInput('title')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+        <view class="lenth-wrapper">{{titleLength}}/10</view>
+      </view>
+      <view class="title input-wrapper border-bottom-1px">
+        <view class="label">副标题</view>
+        <input type="text"
+               value="{{subTitle}}"
+               maxlength="10"
+               @input="handleInput('subTitle')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+        <view class="lenth-wrapper">{{subTitleLength}}/10</view>
+      </view>
+      <view class="title input-wrapper border-bottom-1px">
+        <view class="label">平台价</view>
+        <input type="number"
+               value="{{platformPrice}}"
+               maxlength="10"
+               @input="handleInput('platformPrice')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+      </view>
+      <view class="title input-wrapper border-bottom-1px">
+        <view class="label">门市价</view>
+        <input type="number"
+               value="{{shopPrice}}"
+               maxlength="10"
+               @input="handleInput('shopPrice')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+      </view>
+      <view class="plan">
+        <view class="title">活动计划</view>
+        <view class="text-wrapper">
+          <textarea value="{{plan}}"
+                    @input="handleInput('plan')"
+                    placeholder="请输入"
+                    placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
+        </view>
+      </view>
+    </view>
+    <view class="sell-wrapper border-bottom-1px border-top-1px">
+      <view class="time input-wrapper border-bottom-1px" @tap="showSellTimeModal">
+        <view class="label">售卖时间</view>
+        <view class="content">
+          <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          <view class="to">至</view>
+          <view class="end">{{sellEndTime}}</view>
+        </view>
+        <view class="arrow-right">
+          <image src="./icon-arrow-right@2x.png" class="full-image"></image>
+        </view>
+        <sell-time-modal title="售卖时间">
+          <view class="sell-time-modal" slot="content">
+            <view class="header">
+              <view class="start" @tap.stop="changeSellPickerType('start')">
+                {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
+              </view>
+              <view class="to">至</view>
+              <view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>
+              <view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
+                <view class="line"></view>
+              </view>
+            </view>
+            <view class="picker-time-wrapper">
+              <sell-time-picker @cancel.user="cancelSellTimePicker"
+                                @confirm.user="confirmSellTimePicker"></sell-time-picker>
+            </view>
+          </view>
+        </sell-time-modal>
+      </view>
+      <view class="stock input-wrapper">
+        <view class="label">销售数量</view>
+        <input type="number"
+               value="{{stock}}"
+               maxlength="10"
+               @input="handleInput('stock')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+      </view>
+    </view>
+    <view class="know-wrapper border-top-1px border-bottom-1px">
+      <view class="know-content input-wrapper border-bottom-1px" @tap="showKnowModal">
+        <view class="label">报名须知</view>
+        <!--<view class="arrow-right">-->
+        <!--<image src="./icon-arrow-right@2x.png" class="full-image"></image>-->
+        <!--</view>-->
+      </view>
+      <view class="know">
+        <view class="title">活动规则：</view>
+        <view class="first">
+          <view class="circle"></view>
+          大礼包会上架到活动联盟商家的优惠劵列表
+        </view>
+        <view class="second">
+          <view class="circle"></view>
+          各个商家优惠劵的数量会平均分配
+        </view>
+        <view class="third">
+          <view class="circle"></view>
+          各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。
+        </view>
+      </view>
+    </view>
+    <view class="btn-wrapper">
+      <button class="btn" @tap="submitForm">提交</button>
+    </view>
+    <toast></toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import BaseModal from '@/base/base-modal/base-modal'
+  import DatePicker from '@/base/date-picker/date-picker'
+  import Toast from '@/base/toast/toast'
+  import Packages from 'api/packages'
+  import Uploads from 'api/uploads'
+  import Tips from 'common/js/tips'
+
+  const IMAGE_INIT = {
+    id: 0,
+    image_id: 0
+  }
+
+  export default class packageController extends wepy.page {
+    data = {
+      packageId: 0,
+      business: '白云区万达商圈',
+      isSelectAllCategories: false,
+      categories: [],
+      selectCategoryIds: [],
+      isSelectAllStores: false,
+      stores: [],
+      selectStoreIds: [],
+      pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
+      title: '',
+      titleLength: 0,
+      subTitle: '',
+      subTitleLength: 0,
+      platformPrice: '',
+      shopPrice: '',
+      plan: '',
+      sellStartTime: '',
+      sellEndTime: '',
+      sellTimePickerType: 'start',
+      stock: ''
+    }
+
+    async onLoad(option) {
+      await this.load()
+      if (option.id) {
+        this.packageId = option.id
+        this.navigationBarTitle = '编辑礼包'
+        wepy.setNavigationBarTitle({title: this.navigationBarTitle})
+        await this._getPackageDetail()
+      }
+    }
+
+    async load() {
+      await this._getIndustries()
+    }
+
+    async _getPackageDetail() {
+      const res = await Packages.getPackage(this.packageId)
+      console.log(res)
+      this.business = res.business_circles_name
+      this.selectCategoryIds = res.industry_ids
+      this.selectStoreIds = res.merchant_ids
+      this.pictures = res.gift_bag_images
+      this.title = res.title
+      this.titleLength = this.title.length
+      this.subTitle = res.subhead
+      this.subTitleLength = this.subTitle.length
+      this.platformPrice = res.platform_price
+      this.shopPrice = res.shop_price
+      this.plan = res.activity_project
+      this.sellStartTime = res.sell_start_at
+      this.sellEndTime = res.sell_end_at
+      this.stock = res.stock === -1 ? '' : this.stock
+      this.$apply()
+      this._handleCategories()
+      await this._getMerchantStores()
+    }
+
+    _handleCategories() {
+      if (this.selectCategoryIds.length === this.categories.length) {
+        this.isSelectAllCategories = true
+      }
+      this.selectCategoryIds.forEach((id) => {
+        const selectIndex = this.categories.findIndex((item) => Math.floor(item.id) === Math.floor(id))
+        this.categories[selectIndex].check = true
+      })
+      this.$apply()
+    }
+
+    async _getIndustries() {
+      const res = await Packages.getIndustries()
+      this.categories = res
+      this.$apply()
+    }
+
+    async _getMerchantStores() {
+      const params = {industry_ids: this.selectCategoryIds}
+      const res = await Packages.getMerchantStores(params)
+      this.stores = res
+      if (this.selectStoreIds.length > 0) {
+        if (this.selectStoreIds.length === this.stores.length) {
+          this.isSelectAllStores = true
+        }
+        this.selectStoreIds.forEach((id) => {
+          const selectIndex = this.stores.findIndex((item) => Math.floor(item.merchant_id) === Math.floor(id))
+          this.stores[selectIndex].check = true
+        })
+      }
+      this.$apply()
+    }
+
+    _handleInput(name, value) {
+      if (name.indexOf('service') > -1) {
+        name = name.split('service')
+        const type = name[0]
+        const index = Math.floor(name[1])
+        if (index + 1 > this.services.length) {
+          this.services.push({})
+        }
+        this.services[index][type] = value
+        this.$apply()
+        return
+      }
+      this[name] = value
+      if (name === 'title') {
+        this.titleLength = value.length
+      } else if (name === 'subTitle') {
+        this.subTitleLength = value.length
+      }
+      this.$apply()
+    }
+
+    _toast(message) {
+      this.$invoke('toast', 'show', message)
+    }
+
+    methods = {
+      selectAllCategories() {
+        this.isSelectAllCategories = !this.isSelectAllCategories
+        this.categories.map((item) => {
+          item.check = this.isSelectAllCategories
+        })
+        this.$apply()
+      },
+      selectCategory(category) {
+        const selectIndex = this.categories.findIndex((item) => item.id === category.id)
+        this.categories[selectIndex].check = !this.categories[selectIndex].check
+        const isAllSelect = this.categories.findIndex((item) => !item.check)
+        if (isAllSelect === -1) {
+          this.isSelectAllCategories = true
+        } else {
+          this.isSelectAllCategories = false
+        }
+        this.$apply()
+      },
+      hideCategoriesModal() {
+        const selectIds = []
+        this.categories.forEach((item) => {
+          if (item.check) {
+            selectIds.push(item.id)
+          }
+        })
+        this.selectCategoryIds = selectIds
+        this.$apply()
+        this._getMerchantStores()
+      },
+      selectAllStores() {
+        this.isSelectAllStores = !this.isSelectAllStores
+        this.stores.map((item) => {
+          item.check = this.isSelectAllStores
+        })
+        this.$apply()
+      },
+      selectStore(store) {
+        const selectIndex = this.stores.findIndex((item) => item.id === store.id)
+        this.stores[selectIndex].check = !this.stores[selectIndex].check
+        const isAllSelect = this.stores.findIndex((item) => !item.check)
+        if (isAllSelect === -1) {
+          this.isSelectAllStores = true
+        } else {
+          this.isSelectAllStores = false
+        }
+        this.$apply()
+      },
+      hideStoresModal() {
+        const selectIds = []
+        this.stores.forEach((item) => {
+          if (item.check) {
+            selectIds.push(item.merchant_id)
+          }
+        })
+        this.selectStoreIds = selectIds
+        this.$apply()
+      },
+      async chooseImage(pictureIndex) {
+        const picture = await wepy.chooseImage()
+        const res = await Uploads.uploadImages(picture.tempFilePaths[0])
+        this.pictures[pictureIndex].image_id = res.id
+        this.pictures[pictureIndex].image_url = res.url
+        this.$apply()
+      },
+      deleteImage(pictureIndex) {
+        this.pictures[pictureIndex].image_id = 0
+        this.pictures[pictureIndex].image_url = 0
+        this.$apply()
+      },
+      handleInput(name, e) {
+        this._handleInput(name, e.detail.value)
+      },
+      changeSellPickerType(type) {
+        this.sellTimePickerType = type
+      },
+      cancelSellTimePicker() {
+        this.$invoke('sell-time-modal', 'hide')
+      },
+      confirmSellTimePicker(date) {
+        if (this.sellTimePickerType === 'start') {
+          this.sellStartTime = date
+          this.sellTimePickerType = 'end'
+        } else {
+          this.sellEndTime = date
+        }
+      },
+      async submitForm() {
+        const data = {
+          business_circles_name: this.business,
+          industry_ids: this.selectCategoryIds,
+          merchant_ids: this.selectStoreIds,
+          title: this.title,
+          subhead: this.subTitle,
+          platform_price: this.platformPrice,
+          shop_price: this.shopPrice,
+          activity_project: this.plan,
+          sell_start_at: this.sellStartTime,
+          sell_end_at: this.sellEndTime,
+          stock: this.stock === '' ? -1 : this.stock,
+          gift_bag_images: this.pictures
+        }
+        const res = this.packageId ? await Packages.updatePackage(this.packageId, data) : await Packages.createPackage(data)
+        if (res.error === 0) {
+          Tips.success(this.packageId ? '修改成功!' : '创建成功!')
+          this.$navigate('/pages/package-manage/package-manage')
+        } else {
+          this._toast(res.message)
+        }
+        console.log(res)
+      },
+      showCategoryModal() {
+        this.$invoke('categories-modal', 'show')
+      },
+      showStoreModal() {
+        this.$invoke('stores-modal', 'show')
+      },
+      showSellTimeModal() {
+        this.$invoke('sell-time-modal', 'show')
+      }
+    }
+
+    components = {
+      'categories-modal': BaseModal,
+      'stores-modal': BaseModal,
+      'sell-time-modal': BaseModal,
+      'sell-time-picker': DatePicker,
+      'toast': Toast
+    }
+
+    config = {
+      navigationBarTitleText: '创建礼包'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .package-controller
+    padding-top: 10px
+    background: $color-background
+    .detail-wrapper, .sell-wrapper, .know-wrapper
+      margin-bottom: 10px
+      padding-left: 12px
+      font-size: $font-size-medium
+      background-color: $color-white
+    .input-wrapper
+      display: flex
+      align-items: center
+      height: 40px
+    .arrow-content-wrapper
+      display: flex
+      align-items: center
+    .arrow-right
+      width: 6px
+      height: 10px
+      margin-left: 10px
+    .label
+      color: $color-text-td
+    .detail-wrapper
+      .business, .category, .store
+        justify-content: space-between
+        padding-right: 12px
+      .picture-wrapper
+        height: 102px
+        padding-top: 12.5px
+        box-sizing: border-box
+        .label
+          margin-bottom: 12.5px
+        .picture-content
+          display: flex
+          align-items: center
+          .picture
+            position: relative
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 32px
+            height: 32px
+            margin-right: 20px
+            text-align: center
+            line-height 32px
+            border-radius: 4px
+            border-1px($color-text-d, 4px, dashed)
+            .delete
+              position: absolute
+              top: -5px
+              right: -3.5px
+              z-index: 10
+              width: 12px
+              height: 12px
+            .add
+              width: 12px
+              height: 12px
+              padding: 10px
+            .image
+              border-radius: 4px
+        .tip-wrapper
+          margin-top: 6.5px
+          color: $color-text-d
+          font-size: $font-size-small-s
+      .title
+        padding-right: 12px
+        .label
+          width: 78px
+          flex: 0 0 78px
+        input
+          flex: 1
+        .lenth-wrapper
+          width: 30px
+          text-align: right
+          font-size: $font-size-small-s
+          color: $color-text-d
+      .plan
+        padding-right: 12px
+        padding-bottom: 7.5px
+        .title
+          margin-top: 13px
+          margin-bottom: 5px
+        .text-wrapper
+          height: 75px
+          padding: 7px 9px
+          border-1px()
+          background-color: $color-background
+          textarea
+            width: 100%
+            height: 100%
+      .categories-modal
+        padding: 8px 12px
+        .header
+          display: flex
+          align-items: center
+          height: 39px
+          font-size: $font-size-small
+          .select-box
+            width: 16px
+            height: 16px
+            margin-left: 10px
+            border-1px($color-checkbox-line)
+            &.selected
+              border-none()
+        .item
+          display: inline-flex
+          align-items: center
+          width: 50%
+          height: 39px
+          box-sizing: border-box
+          font-size: $font-size-small
+          &:nth-child(odd)
+            padding-left: 20px
+          &:nth-child(even)
+            border-right: 1px solid $color-split-line
+          .select-box
+            width: 16px
+            height: 16px
+            margin-left: 10px
+            border-1px($color-checkbox-line)
+            &.selected
+              border-none()
+      .stores-modal
+        padding: 8px 12px
+        .select-all
+          display: flex
+          height: 39px
+          align-items: center
+          font-size: $font-size-small
+          .select-box
+            width: 16px
+            height: 16px
+            margin-left: 10px
+            border-1px($color-checkbox-line)
+            &.selected
+              border-none()
+        .select-item
+          display: flex
+          align-items: center
+          justify-content: space-between
+          height: 39px
+          .select-box
+            width: 16px
+            height: 16px
+            margin-left: 10px
+            border-1px($color-checkbox-line)
+            &.selected
+              border-none()
+        .checked
+          color: $color-assist-f
+    .sell-wrapper
+      .time
+        padding-right: 12px
+        .label
+          color: $color-text
+        .content
+          flex: 1
+          display: flex
+          align-items: center
+          height: 100%
+          .start, .end
+            flex: 1
+            text-align: center
+          .to
+            color: $color-text-d
+        .sell-time-modal
+          height: 285px
+          .header
+            position: relative
+            display: flex
+            align-items: center
+            height: 45px
+            margin-bottom: 14px
+            line-height: 55px
+            text-align: center
+            font-size: $font-size-medium
+            color: $color-text-d
+            background-color: $color-background
+            .start
+              flex: 1
+              height: 100%
+              line-height: 45px
+              text-align: center
+            .to
+              flex: 0 0 23px
+              text-align: center
+            .end
+              flex: 1
+              height: 100%
+              line-height: 45px
+              text-align: center
+              color: $color-text
+            .line-wrapper
+              position: absolute
+              bottom: 0
+              left: 0
+              width: 121px
+              height: 2px
+              transition: all .3s
+              &.end
+                transform: translate3d(144px, 0, 0)
+              .line
+                width: 100px
+                height: 2px
+                margin: auto
+                background-color: $color-assist-f
+          .picker-time-wrapper
+            height: 227px
+      .stock
+        padding-right: 12px
+        .label
+          width: 78px
+          flex: 0 0 78px
+        input
+          flex: 1
+    .know-wrapper
+      margin-bottom: 21px
+      .know-content
+        justify-content: space-between
+        padding-right: 12px
+      .know
+        display: block
+        padding-top: 17px
+        padding-right: 62px
+        padding-bottom: 6px
+        .title
+          margin-bottom: 14px
+          font-size: $font-size-medium
+          color: $color-text-d
+        .first, .second, .third
+          display: flex
+          margin-bottom: 12px
+          line-height: 18px
+          font-size: $font-size-small
+          color: $color-text-d
+          .circle
+            width: 5px
+            height: 5px
+            margin-top: 5px
+            margin-right: 6px
+            border-radius: 50%
+        .first .circle
+          border: 1px solid $color-assist-f
+          background-color: $color-assist-tw
+        .second .circle
+          border: 1px solid $color-text-d
+          background-color: $color-split-line
+        .third .circle
+          border: 1px solid #1AC521
+          background: #D9FFB0
+    .btn-wrapper
+      margin-bottom: 17.5px
+      padding: 0 12px
+      .btn
+        height: 44px
+        line-height: 44px
+        font-size: $font-size-medium
+        color: $color-white
+        background: $color-text
+</style>

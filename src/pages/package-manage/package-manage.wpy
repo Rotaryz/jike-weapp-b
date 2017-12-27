@@ -1,0 +1,354 @@
+<template>
+  <view class="package-manage">
+    <view class="tab-wrapper">
+      <repeat for="{{tabs}}" index="index" key="index" item="item">
+        <view class="tab" @tap="changeTab({{index}})">
+          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}</text>
+        </view>
+      </repeat>
+      <view class="line-wrapper" style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
+        <view class="line"></view>
+      </view>
+    </view>
+    <view class="container" wx:if="{{tabIndex === 0}}">
+      <repeat for="{{willOnLines}}" index="index" key="index" item="item">
+        <view class="coupon-item">
+          <view class="coupon-image-wrapper">
+            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+          </view>
+          <view class="content-wrapper">
+            <view class="desc-wrapper">
+              <view class="image-wrapper">
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+              </view>
+              <view class="desc">
+                <view class="name">{{item.title}}</view>
+                <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+              </view>
+            </view>
+            <view class="ctrl-wrapper">
+              <view class="status">未上线</view>
+              <view class="btn-group">
+                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="container" wx:if="{{tabIndex === 1}}">
+      <repeat for="{{onLines}}" index="index" key="index" item="item">
+        <view class="coupon-item">
+          <view class="coupon-image-wrapper">
+            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+          </view>
+          <view class="content-wrapper">
+            <view class="desc-wrapper">
+              <view class="image-wrapper">
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+              </view>
+              <view class="desc">
+                <view class="name">{{item.title}}</view>
+                <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+              </view>
+            </view>
+            <view class="ctrl-wrapper">
+              <view class="status">已上线</view>
+              <view class="btn-group">
+                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="right-btn" @tap="check({{item.id}})">查看</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="container" wx:if="{{tabIndex === 2}}">
+      <repeat for="{{offLines}}" index="index" key="index" item="item">
+        <view class="coupon-item">
+          <view class="coupon-image-wrapper">
+            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+          </view>
+          <view class="content-wrapper">
+            <view class="desc-wrapper">
+              <view class="image-wrapper">
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+              </view>
+              <view class="desc">
+                <view class="name">{{item.title}}</view>
+                <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+              </view>
+            </view>
+            <view class="ctrl-wrapper">
+              <view class="status">已下线</view>
+              <view class="btn-group">
+                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="right-btn" @tap="check({{item.id}})">查看</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="container" wx:if="{{tabIndex === 3}}">
+      <repeat for="{{willApplys}}" index="index" key="index" item="item">
+        <view class="coupon-item">
+          <view class="coupon-image-wrapper">
+            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+          </view>
+          <view class="content-wrapper">
+            <view class="desc-wrapper">
+              <view class="image-wrapper">
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+              </view>
+              <view class="desc">
+                <view class="name">{{item.title}}</view>
+                <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+              </view>
+            </view>
+            <view class="ctrl-wrapper">
+              <view class="status">有<span class="count">{{item.wait_check_count}}个</span>需要审核</view>
+              <view class="btn-group">
+                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn" @tap="check({{item.id}})">查看</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="create-service border-top-1px">
+      <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
+    </view>
+    <confirm @confirm.user="delete"></confirm>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Packages from 'api/packages'
+  import Confirm from '@/base/confirm/confirm'
+
+  const TABS = ['待上线', '已上线', '已下线', '待审核']
+
+  export default class PackageManage extends wepy.page {
+    data = {
+      tabs: TABS,
+      tabIndex: 0,
+      tabTranslateX: 0,
+      willOnLines: [],
+      onLines: [],
+      offLines: [],
+      willApplys: []
+    }
+
+    async onLoad() {
+      await this.load()
+    }
+
+    async load() {
+      await this._getPackageLists()
+    }
+
+    async _getPackageLists() {
+      const res = await Packages.getPackageLists({status: this.tabIndex})
+      switch (this.tabIndex) {
+        case 0:
+          this.willOnLines = res
+          break
+        case 1:
+          this.onLines = res
+          break
+        case 2:
+          this.offLines = res
+          break
+        case 3:
+          this.willApplys = res
+          break
+        default:
+          break
+      }
+      this.$apply()
+    }
+
+    methods = {
+      async changeTab(index) {
+        this.tabIndex = Math.floor(index)
+        this.tabTranslateX = (100 * this.tabIndex) + '%'
+        if ((this.tabIndex === 0 && this.willOnLines.length === 0) ||
+          (this.tabIndex === 1 && this.onLines.length === 0) ||
+          (this.tabIndex === 2 && this.offLines.length === 0) ||
+          (this.tabIndex === 3 && this.willApplys.length === 0)) {
+          await this._getPackageLists()
+        }
+      },
+      showConfirm(id) {
+        this.deleteId = id
+        this.$invoke('confirm', 'show')
+      },
+      async delete() {
+        const res = await Packages.deletePackage(this.deleteId)
+        console.log(res)
+        this._getPackageLists()
+      },
+      edit(id) {
+        this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
+      },
+      check(id) {
+        this.$navigate(`/pa`)
+      }
+    }
+
+    components = {
+      'confirm': Confirm
+    }
+
+    config = {
+      navigationBarTitleText: '礼包管理'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+
+  .package-manage
+    padding-top: 36px
+    padding-bottom: 64px
+    background: $color-background
+    .tab-wrapper
+      position: fixed
+      top: 0
+      left: 0
+      display: flex
+      width: 100%
+      height: 36px
+      z-index: 10
+      background: $color-theme
+      .tab
+        flex: 1
+        height: 100%
+        text-align: center
+        .content
+          line-height: 36px
+          color: $color-white
+          font-size: $font-size-medium
+          &.active
+            color: $color-assist-f
+      .line-wrapper
+        position: absolute
+        left: 0
+        bottom: 0
+        display: flex
+        justify-content: center
+        width: 25%
+        height: 2px
+        transition: all .3s
+        transform: translate3d(0, 0, 0)
+        .line
+          width: 58px
+          height: 2px
+          background: $color-assist-f
+    .container
+      padding: 10px 12px
+      .coupon-item
+        position: relative
+        width: 100%
+        height: 0
+        margin-bottom: 10px
+        padding-top: 110px
+        .coupon-image-wrapper
+          position: absolute
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+        .content-wrapper
+          position: absolute
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+          .desc-wrapper
+            display: flex
+            height: 63.6363636363%
+            .image-wrapper
+              flex: 0 0 90px
+              width: 90px
+              height: 50px
+              margin-top: 8px
+              margin-left: 10.5px
+              border-radius: 4px
+              overflow: hidden
+              background-color: $color-theme
+            .desc
+              flex: 1
+              padding-left: 10px
+              padding-top: 10px
+              .name
+                font-family: $font-family-regular
+                margin-bottom: 2.5px
+                font-size: $font-size-medium
+                color: $color-text-dark
+              .subdesc
+                margin-bottom: 8px
+                font-size: $font-size-small-s
+                color: $color-text-light
+              .sell-wrapper
+                font-size: $font-size-small-s
+                color: $color-text-light
+                .split
+                  display: inline-block
+                  width: 20px
+          .ctrl-wrapper
+            display: flex
+            align-items: center
+            justify-content: space-between
+            height: 36.3636363636%
+            padding: 0 10px
+            .status
+              font-size: $font-size-small
+              .count
+                color: $color-assist-f
+            .btn-group
+              display: flex
+              align-items: center
+              .left-btn, .right-btn
+                width: 60px
+                height: 24px
+                margin-left: 5px
+                line-height: 24px
+                border-1px($color-text-d, 4px)
+                text-align: center
+                font-size: $font-size-small-s
+                color: $color-text-d
+              .right-btn
+                border-1px($color-assist-f, 4px)
+                color: $color-assist-f
+    .create-service
+      position: fixed
+      bottom: 0
+      left: 0
+      width: 100%
+      height: 64px
+      padding: 10px 12px
+      box-sizing: border-box
+      background-color: $color-white
+      .btn
+        width: 100%
+        height: 100%
+        line-height: 44px
+        border-radius: 4px
+        text-align: center
+        background: $color-theme
+        color: $color-white
+        font-size: $font-size-medium
+</style>

@@ -1,6 +1,9 @@
 <template>
   <view class="data-wrapper">
-    数据
+    <form bindsubmit="submit" report-submit='true' >
+      <button form-type="submit" type="default" size="mini">提交</button>
+    </form>
+    <view>     {{formId}}</view>
   </view>
 </template>
 
@@ -8,7 +11,15 @@
   import wepy from 'wepy'
 
   export default class Data extends wepy.page {
+    data = {
+      formId: ''
+    }
 
+    methods = {
+      submit(e) {
+        this.formId = e.detail.formId
+      }
+    }
   }
 </script>
 

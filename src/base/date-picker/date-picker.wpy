@@ -1,0 +1,94 @@
+<template>
+  <view class="date-picker">
+    <view class="header-wrapper border-bottom-1px">
+      <view class="cancel" @tap.stop="cancel">取消</view>
+      <view class="confirm" @tap.stop="confirm">确定</view>
+    </view>
+    <picker-view indicator-style="height: 40px;font-size: 14px; color: #363547" class="picker-view" value="{{value}}"
+                 @change="bindChange">
+      <picker-view-column>
+        <view wx:for="{{years}}" wx:key="unique" class="picker-item">{{item}}年</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{months}}" wx:key="unique" class="picker-item">{{item}}月</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{days}}" wx:key="unique" class="picker-item">{{item}}日</view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  const date = new Date()
+  const years = []
+  const months = []
+  const days = []
+
+  for (let i = date.getFullYear(); i <= date.getFullYear() + 10; i++) {
+    years.push(i)
+  }
+
+  for (let i = 1; i <= 12; i++) {
+    months.push(i)
+  }
+
+  for (let i = 1; i <= 31; i++) {
+    days.push(i)
+  }
+
+  export default class DatePicker extends wepy.component {
+    data = {
+      years: years,
+      year: date.getFullYear(),
+      months: months,
+      month: 1,
+      days: days,
+      day: 1,
+      value: [0, 3, 0]
+    }
+
+    methods = {
+      bindChange(e) {
+        const val = e.detail.value
+        this.year = this.data.years[val[0]]
+        this.month = this.data.months[val[1]]
+        this.day = this.data.days[val[2]]
+      },
+      cancel() {
+        this.$emit('cancel')
+      },
+      confirm() {
+        const date = `${this.year}-${this.month}-${this.day}`
+        this.$emit('confirm', date)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .date-picker
+    position: relative
+    width: 100%
+    height: 100%
+    .header-wrapper
+      display: flex
+      align-items: center
+      justify-content: space-between
+      height: 25.5px
+      padding: 0 10px
+      font-size: $font-size-small
+    .picker-view
+      position: absolute
+      top: 25.5px
+      bottom: 0
+      left: 0
+      right: 0
+      .picker-item
+        line-height: 40px
+        text-align: center
+</style>

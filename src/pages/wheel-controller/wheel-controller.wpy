@@ -1,0 +1,516 @@
+<template>
+  <view class="wheel-controller">
+    <view class="wheel-wrapper">
+      <view class="header-wrapper">
+        <view class="switch-wrapper">
+          <view class="switch">
+            <view class="switch-ball"></view>
+          </view>
+          <view class="text">
+            开启活动
+          </view>
+        </view>
+        <view class="edit-wrapper">
+          <view class="btn">编辑</view>
+        </view>
+      </view>
+      <view class="content-wrapper">
+        <view class="wheel">
+          <view class="wheel-pointer">
+            <image src="./pic-pointer@2x.png" class="full-image"></image>
+          </view>
+          <view class="wheel-content" ref="wheel">
+            <view class="wheel-image">
+              <image src="./pic-zp@2x.png" class="full-image"></image>
+            </view>
+            <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
+              <view class="prize prize-{{index}}">
+                <view class="name">80元优惠券</view>
+                <view class="img-wrapper">
+                  <image src="./pic-coupon.png" mode="aspectFit"></image>
+                </view>
+              </view>
+            </repeat>
+            <view class="prize prize-5">
+              <view class="name">谢谢惠顾</view>
+              <view class="img-wrapper">
+                <image src="./pic-face@2x.png" mode="aspectFit"></image>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="pan-wrapper">
+          <view class="pan"></view>
+        </view>
+      </view>
+    </view>
+    <view class="detail-wrapper border-bottom-1px">
+      <view class="block-title border-bottom-1px">
+        活动信息
+      </view>
+      <view class="container">
+        <view class="title input-wrapper border-bottom-1px">
+          <view class="label">活动名称</view>
+          <input type="text"
+                 value="{{name}}"
+                 maxlength="10"
+                 @input="handleInput('name')"
+                 placeholder="请输入"
+                 placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+          <view class="lenth-wrapper">{{nameLength}}/10</view>
+        </view>
+        <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
+          <view class="label">活动时间</view>
+          <view class="content">
+            <view class="start sell">{{fromDate === '' ? '当天' : fromDate}}</view>
+            <view class="to">至</view>
+            <view class="end">{{toDate}}</view>
+          </view>
+          <view class="arrow-right">
+            <image src="./icon-arrow-right@2x.png" class="full-image"></image>
+          </view>
+          <activity-time-modal title="活动时间">
+            <view class="activity-time-modal" slot="content">
+              <view class="header">
+                <view class="start" @tap.stop="changeActivityPicker('start')">
+                  {{fromDate === '' ? '当天' : fromDate}}
+                </view>
+                <view class="to">至</view>
+                <view class="end" @tap.stop="changeActivityPicker('end')">{{toDate}}</view>
+                <view class="line-wrapper {{activityPickerType === 'end' ? 'end' : ''}}">
+                  <view class="line"></view>
+                </view>
+              </view>
+              <view class="picker-time-wrapper">
+                <activity-time-picker @cancel.user="cancelActivityPicker"
+                                      @confirm.user="confirmActivityPicker"></activity-time-picker>
+              </view>
+            </view>
+          </activity-time-modal>
+        </view>
+        <view class="join input-wrapper border-bottom-1px">
+          <view class="label">参与次数</view>
+          <view class="select-wrapper">
+            <view class="select-box">
+              <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
+                <image wx:if="{{joinTimes === 0}}" src="./icon-selected@2x.png" class="full-image"></image>
+              </view>
+              <view class="text">一天一次</view>
+            </view>
+            <view class="select-box">
+              <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
+                <image wx:if="{{joinTimes === 1}}" src="./icon-selected@2x.png" class="full-image"></image>
+              </view>
+              <view class="text">一人一次</view>
+            </view>
+          </view>
+        </view>
+        <view class="add input-wrapper border-bottom-1px">
+          <view class="label">增加次数</view>
+          <view class="select-wrapper">
+            <view class="select-box">
+              <view class="select unselect">
+                <image src="./icon-selected@2x.png" class="full-image"></image>
+              </view>
+              <view class="text">未中奖后分享成功再抽一次(选填)</view>
+            </view>
+          </view>
+        </view>
+        <view class="explain">
+          <view class="title">活动说明</view>
+          <view class="text-wrapper">
+          <textarea value="{{explain}}"
+                    @input="handleInput('explain')"
+                    placeholder="请输入"
+                    placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="prize-wrapper border-bottom-1px">
+      <view class="block-title border-bottom-1px">添加奖品</view>
+      <view class="container">
+        <view class="chance-wrapper">
+          设置总中奖概率
+          <view class="chance-input">
+            <input type="number"
+                   value="{{chance}}"
+                   maxlength="3"
+                   @input="handleInput('chance')"/>
+          </view>
+        </view>
+        <view class="item-wrapper">
+          <view class="name">50元现金红包</view>
+          <view class="quantity">10000个</view>
+          <view class="del">
+            <image src="./icon-yx_delete@2x.png"></image>
+          </view>
+        </view>
+        <view class="add-wrapper">
+          <view class="btn">
+            <view class="add-image">
+              <image src="./icon-yx_add@2x.png" class="full-image"></image>
+            </view>
+            添加奖品
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="btn-group">
+      <view class="btn-cancel">取消</view>
+      <view class="split"></view>
+      <view class="btn-save">保存</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import BaseModal from '@/base/base-modal/base-modal'
+  import DatePicker from '@/base/date-picker/date-picker'
+
+  export default class WheelController extends wepy.page {
+    data = {
+      name: '',
+      nameLength: 0,
+      fromDate: '',
+      toDate: '',
+      activityPickerType: 'start',
+      joinTimes: 0,
+      activityDesc: '',
+      isPaused: 0,
+      percentage: '56',
+      activityPromotions: new Array(5)
+    }
+
+    components = {
+      'activity-time-modal': BaseModal,
+      'activity-time-picker': DatePicker
+    }
+
+    config = {
+      navigationBarTitleText: '大转盘'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .wheel-controller
+    background-color: $color-background
+    .input-wrapper
+      display: flex
+      align-items: center
+      height: 40px
+      .label
+        width: 78px
+        flex: 0 0 78px
+        font-size: $font-size-medium
+        color: $color-text-td
+    .wheel-wrapper
+      padding-bottom: 17.5px
+      background-color: $color-theme
+      .header-wrapper
+        display: flex
+        align-items: center
+        justify-content: space-between
+        height: 50px
+        padding: 0 12px
+        .switch-wrapper
+          display: flex
+          align-items: center
+          .switch
+            display: flex
+            align-items: center
+            width: 44px
+            height: 24px
+            padding: 0 1px
+            border-radius: 100px
+            background-color: $color-white
+            transition: all .3s
+            .switch-ball
+              width: 22px
+              height: 22px
+              border-radius: 50%
+              background-color: $color-text-d
+              transition: all .3s
+              transform: translate3d(0, 0, 0)
+          .text
+            margin-left: 5px
+            color: $color-white
+            font-size: $font-size-medium
+        .edit-wrapper
+          .btn
+            width: 50px
+            height: 24px
+            border-radius: 100px
+            border-1px($color-white, 100px)
+            color: $color-white
+            font-size: $font-size-medium
+            text-align: center
+            line-height: 24px
+      .content-wrapper
+        width: 100%
+        padding: 0 10%
+        box-sizing: border-box
+        .wheel
+          position: relative
+          width: 100%
+          height: 0
+          padding-top: 100%
+          .wheel-pointer
+            position: absolute
+            top: 50%
+            left: 50%
+            width: 28.6666666666666%
+            height: 32%
+            z-index: 50
+            transform: translate(-50%, -50%)
+          .wheel-content
+            position: absolute
+            top: 0
+            left: 0
+            display: flex
+            justify-content: center
+            width: 100%
+            height: 100%
+            transition-timing-function: ease-in-out
+            transition-property: transform
+            .wheel-image
+              position: absolute
+              width: 100%
+              height: 100%
+            .prize
+              position: absolute
+              width: 45%
+              height: 100%
+              box-sizing: border-box
+              padding-top: 11%
+              text-align: center
+              for $i in 0 1 2 3 4 5
+                &.prize-{$i}
+                  z-index: (-($i) + 6)
+                  transform: rotate($i * 60deg)
+              .name
+                margin-bottom: 10%
+                font-size: $font-size-small-s
+                color: $color-assist-f
+              .img-wrapper
+                width: 37.04%
+                height: 13.11%
+                margin: 0 auto
+                box-sizing: border-box
+                image
+                  max-width: 100%
+                  max-height: 100%
+        .pan-wrapper
+          width: 100%
+          height: 26px
+          box-sizing: border-box
+          margin-top: -3%
+          padding: 0 40px
+          .pan
+            width: 100%
+            height: 100%
+            border-radius: 100%
+            background-color: $color-black
+    .detail-wrapper
+      background-color: $color-white
+      .container
+        padding-left: 12px
+        .title
+          padding-right: 12px
+          input
+            flex: 1
+          .lenth-wrapper
+            width: 30px
+            text-align: right
+            font-size: $font-size-small-s
+            color: $color-text-d
+        .time
+          padding-right: 12px
+          font-size: $font-size-medium
+          .label
+            color: $color-text
+          .content
+            flex: 1
+            display: flex
+            align-items: center
+            height: 100%
+            .start, .end
+              flex: 1
+              text-align: center
+            .to
+              color: $color-text-d
+          .sell-time-modal
+            height: 285px
+            .header
+              position: relative
+              display: flex
+              align-items: center
+              height: 45px
+              margin-bottom: 14px
+              line-height: 55px
+              text-align: center
+              font-size: $font-size-medium
+              color: $color-text-d
+              background-color: $color-background
+              .start
+                flex: 1
+                height: 100%
+                line-height: 45px
+                text-align: center
+              .to
+                flex: 0 0 23px
+                text-align: center
+              .end
+                flex: 1
+                height: 100%
+                line-height: 45px
+                text-align: center
+                color: $color-text
+              .line-wrapper
+                position: absolute
+                bottom: 0
+                left: 0
+                width: 121px
+                height: 2px
+                transition: all .3s
+                &.end
+                  transform: translate3d(144px, 0, 0)
+                .line
+                  width: 100px
+                  height: 2px
+                  margin: auto
+                  background-color: $color-assist-f
+            .picker-time-wrapper
+              height: 227px
+        .join, .add
+          font-size: $font-size-medium
+          .select-wrapper
+            flex: 1
+            display: flex
+            align-items: center
+            height: 100%
+            .select-box
+              flex: 1
+              display: flex
+              align-items: center
+              height: 100%
+              .select
+                width: 16px
+                height: 16px
+                margin-right: 4px
+                border-radius: 50%
+                border-1px($color-text-d, 50%)
+                &.unselect
+                  border-none()
+        .explain
+          padding-right: 12px
+          padding-bottom: 7.5px
+          font-size: $font-size-medium
+          .title
+            margin-top: 13px
+            margin-bottom: 5px
+          .text-wrapper
+            height: 75px
+            padding: 7px 9px
+            border-1px()
+            background-color: $color-background
+            textarea
+              width: 100%
+              height: 100%
+    .prize-wrapper
+      background-color: $color-white
+      .container
+        padding: 0 12px
+        padding-bottom: 15px
+        .chance-wrapper
+          display: flex
+          align-items: center
+          justify-content: center
+          height: 46px
+          font-size: $font-size-small
+          color: $color-text-d
+          .chance-input
+            width: 56px
+            height: 24px
+            margin-left: 3.5px
+            border-1px()
+            background-color: $color-background
+            input
+              height: 24px
+              min-height: 24px
+              text-align: center
+              font-size: $font-size-small
+        .item-wrapper
+          display: flex
+          align-items: center
+          height: 40px
+          padding-left: 12px
+          padding-right: 2px
+          margin-bottom: 5px
+          border-1px()
+          font-size: $font-size-small
+          .name
+            flex: 0 0 95px
+            width: 95px
+            color: $color-text
+          .quantity
+            flex: 1
+            color: $color-assist-f
+          .del
+            flex: 0 0 30px
+            width: 30px
+            height: 30px
+            padding: 10px
+            box-sizing: border-box
+            image
+              width: 10px
+              height: 10px
+        .add-wrapper
+          height: 24px
+          padding-top: 5px
+          .btn
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 103.5px
+            height: 24px
+            margin: 0 auto
+            font-size: $font-size-medium
+            border-radius: 100px
+            border-1px($color-split-line, 100px)
+            .add-image
+              width: 10px
+              height: 10px
+    .btn-group
+      display: flex
+      height: 40px
+      padding: 11.5px 12px
+      .btn-cancel
+        flex: 1
+        height: 40px
+        border-radius: 4px
+        line-height: 40px
+        text-align: center
+        font-size: $font-size-medium
+        color: $color-text
+        background-color: $color-white
+        border-1px($color-split-line, 4px)
+      .split
+        flex: 0 0 8.5px
+        width: 8.5px
+      .btn-save
+        flex: 1
+        height: 40px
+        border-radius: 4px
+        line-height: 40px
+        text-align: center
+        font-size: $font-size-medium
+        color: $color-white
+        background-color: $color-theme
+
+</style>
