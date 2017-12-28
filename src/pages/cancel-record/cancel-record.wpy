@@ -59,7 +59,6 @@
 
     methods = {
       async showMore(e) {
-
         if (!this.nothing) {
           this.showMore = false
           this.page++

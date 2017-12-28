@@ -151,7 +151,7 @@
         this.showTime = index
         await this._showMsg(0, time)
       },
-      showMsg(num){
+      showMsg(num) {
         console.log(num)
         this._showMsg(num)
       }

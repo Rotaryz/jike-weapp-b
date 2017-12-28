@@ -8,7 +8,7 @@
 
 <script>
   import wepy from 'wepy'
-  import wxCharts from 'common/libs/wxcharts'
+  import WxCharts from 'common/libs/wxcharts'
   export default class Chart extends wepy.page {
     config = {
       navigationBarTitleText: ''
@@ -27,7 +27,7 @@
     }
 
     infoArea(res) {
-      this.areaChart = new wxCharts({
+      this.areaChart = new WxCharts({
         canvasId: 'areaCanvas',
 
         type: 'area',

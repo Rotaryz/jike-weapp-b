@@ -1,85 +1,110 @@
 <template>
   <view class="create-content">
-    <image class="theme" src="{{imgSrc}}">
+    <view class="inps">
+      <input type="text" placeholder="点击设置主标题" maxlength="20"
+             placeholder-style="color:#9b9b9b" value="{{title}}"
+             bindinput="onInput"/>
+      <text>{{textLength}}/20</text>
+    </view>
+    <image class="theme" src="{{imgSrc}}" @tap="upImage(-1)">
       <view>更换封面</view>
     </image>
     <view class="add">
-      <image src="./icon-nr_add@2x.png"></image>
-      <view class="options">
-        <image src="./icon-add_text@2x.png"></image>
-        <image src="./icon-add_video@2x.png"></image>
-        <image src="./icon-add_img@2x.png"></image>
-        <image src="./icon-add_ticket@2x.png"></image>
+      <image src="./icon-nr_add@2x.png" @tap="showMore(-1)"></image>
+      <view class="options" wx:if="{{showAdd}}">
+        <image wx:for="{{contentType}}"
+               wx:key="{{index}}" src="{{item.image}}"
+               @tap="addMore({{item.type}})"></image>
       </view>
     </view>
-    <view class="content-page">
-      <view class="con-item-fa con-item-video">
-        <image src="./icon-del@2x.png" class="con-close"></image>
-        <view class="con-item">
-          <view class="cantainer"></view>
-          <image src="./icon-video@2x.png" class="video-ico"></image>
-        </view>
-        <view class="add">
-          <image src="./icon-nr_add@2x.png"></image>
-          <view class="options">
-            <image src="./icon-add_text@2x.png"></image>
-            <image src="./icon-add_video@2x.png"></image>
-            <image src="./icon-add_img@2x.png"></image>
-            <image src="./icon-add_ticket@2x.png"></image>
+    <view class="content-all">
+      <view class="content-page" wx:for="{{contentList}}" wx:key="{{index}}">
+        <view class="con-item-fa con-item-video" wx:if="{{item.type === 2}}">
+          <image src="./icon-del@2x.png" class="con-close"
+                 @tap="delItem({{index}})"></image>
+          <view class="con-item">
+            <image class="cantainer" @tap="upVideo({{index}})"
+                   src="{{item.image}}"></image>
+            <image src="./icon-video@2x.png" class="video-ico"
+                   @tap="upVideo({{index}})"></image>
+          </view>
+          <view class="add" @tap.catch="showMore({{index}})">
+            <image src="./icon-nr_add@2x.png"></image>
+          </view>
+          <view class="add">
+            <view class="options" wx:if="{{item.showAdds}}">
+              <image wx:for="{{contentType}}"
+                     wx:key="{{index}}" src="{{item.image}}"
+                     @tap="addMore({{item.type}})"></image>
+            </view>
           </view>
         </view>
-      </view>
-      <view class="con-item-fa con-item-text">
-        <image src="./icon-del@2x.png" class="con-close"></image>
-        <view class="con-item">
-          <scroll-view class="text-detail" scroll-y>看对方考虑对方Kafka
-            就是阿散井卡积分卡就是卡积分坷拉金坷垃加啊四风口浪尖副卡世界风卡拉胶疯狂拉升就卡就是发卡JFK
-            垃圾啊是风口浪尖啊是付款啦付款啦就是考虑放假啊开始发卡收费卡手机发看拉萨解放看拉萨解放卡拉及时反馈了解啊是风口浪尖ask
-            积分卡时间立刻就卡时间克拉斯就疯狂拉升就付款啦就打开啦就是看多久啊是附件阿克苏寄卡升级疯狂拉升就疯狂拉升就饭卡上就疯狂拉升就疯狂拉升就疯狂拉升就疯狂拉升就发分厘卡时间发神经封口蜡就
-          </scroll-view>
-        </view>
-        <view class="add">
-          <image src="./icon-nr_add@2x.png"></image>
-          <view class="options">
-            <image src="./icon-add_text@2x.png"></image>
-            <image src="./icon-add_video@2x.png"></image>
-            <image src="./icon-add_img@2x.png"></image>
-            <image src="./icon-add_ticket@2x.png"></image>
+        <view class="con-item-fa con-item-text" wx:if="{{item.type === 1}}">
+          <image src="./icon-del@2x.png" class="con-close"
+                 @tap="delItem({{index}})"></image>
+          <view class="con-item">
+            <view class="text-detail">
+              <view>
+                {{item.text}}
+              </view>
+            </view>
+          </view>
+          <view class="add" @tap.catch="showMore({{index}})">
+            <image src="./icon-nr_add@2x.png"></image>
+          </view>
+          <view class="add">
+            <view class="options" wx:if="{{item.showAdds}}">
+              <image wx:for="{{contentType}}"
+                     wx:key="{{index}}" src="{{item.image}}"
+                     @tap="addMore({{item.type}})"></image>
+            </view>
           </view>
         </view>
-      </view>
-      <view class="con-item-fa con-item-image">
-        <image src="./icon-del@2x.png" class="con-close"></image>
-        <view class="con-item">
-          <view class="cantainer"></view>
-        </view>
-        <view class="add">
-          <image src="./icon-nr_add@2x.png"></image>
-          <view class="options">
-            <image src="./icon-add_text@2x.png"></image>
-            <image src="./icon-add_video@2x.png"></image>
-            <image src="./icon-add_img@2x.png"></image>
-            <image src="./icon-add_ticket@2x.png"></image>
+        <view class="con-item-fa con-item-image" wx:if="{{item.type === 0}}">
+          <image src="./icon-del@2x.png" class="con-close"
+                 @tap="delItem({{index}})"></image>
+          <view class="con-item">
+            <image class="cantainer" @tap="upImage({{index}})"
+                   src="{{item.image}}"></image>
+          </view>
+          <view class="add" @tap="showMore({{index}})">
+            <image src="./icon-nr_add@2x.png"></image>
+          </view>
+          <view class="add">
+            <view class="options" wx:if="{{item.showAdds}}">
+              <image wx:for="{{contentType}}"
+                     wx:key="{{index}}" src="{{item.image}}"
+                     @tap="addMore({{item.type}})"></image>
+            </view>
           </view>
         </view>
-      </view>
-      <view class="con-item-fa con-item-coupon">
-        <image src="./icon-del@2x.png" class="con-close"></image>
-        <view class="con-item">
-          <Coupon></Coupon>
-        </view>
-        <view class="add">
-          <image src="./icon-nr_add@2x.png"></image>
-          <view class="options">
-            <image src="./icon-add_text@2x.png"></image>
-            <image src="./icon-add_video@2x.png"></image>
-            <image src="./icon-add_img@2x.png"></image>
-            <image src="./icon-add_ticket@2x.png"></image>
+        <view class="con-item-fa con-item-coupon" wx:if="{{item.type === 3}}">
+          <image src="./icon-del@2x.png" class="con-close"
+                 @tap="delItem({{index}})"></image>
+          <view class="con-item">
+            <repeat for="{{item.text ? item.text : 1}}" key="index"
+                    index="index"
+                    item="item">
+              <Coupon :coupon.sync="item"></Coupon>
+            </repeat>
+
           </view>
+          <view class="add" catchtap="showMore({{index}})">
+            <image src="./icon-nr_add@2x.png"></image>
+          </view>
+          <view class="add">
+            <view class="options" wx:if="{{item.showAdds}}">
+              <image wx:for="{{contentType}}"
+                     wx:key="{{index}}" src="{{item.image}}"
+                     @tap="addMore({{item.type}})"></image>
+            </view>
+          </view>
+
         </view>
       </view>
     </view>
-    <view class="con-submit">
+
+    <view class="con-submit" @tap="issue">
       <view>
         发布
       </view>
@@ -90,22 +115,140 @@
 <script>
   import wepy from 'wepy'
   import Coupon from '@/base/coupon/coupon'
+  import Uploads from 'api/uploads'
+  import content from 'api/content'
   export default class createContent extends wepy.page {
     config = {
       navigationBarTitleText: '创建内容',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }
+
     components = {
       Coupon: Coupon
     }
+
     data = {
-      imgSrc: ''
+      textLength: 0,
+      imgSrc: '',
+      showAdd: false,
+      contentList: [],
+      contentType: [{
+        type: 1,
+        image: './icon-add_text@2x.png'
+      }, {
+        type: 2,
+        image: './icon-add_video@2x.png'
+      }, {
+        type: 0,
+        image: './icon-add_img@2x.png'
+      }, {
+        type: 3,
+        image: './icon-add_ticket@2x.png'
+      }],
+      num: -1,
+      title: '',
+      allMsg: {}
     }
-    methods = {}
 
-    onLoad() {
+    methods = {
+      showMore(num) {
+        this.num = num * 1
+        if (this.num === -1) {
+          this.showAdd = true
+        } else {
+          this.contentList[this.num].showAdds = true
+        }
+      },
+      async addMore(type) {
+//        console.log(item)
+        let data = {
+          'id': 0,
+          'type': type,
+          'detail_id': 0,
+          'text': '',
+          'image': '',
+          'image_id': ''
+        }
+        if (this.num === -1) {
+          this.contentList.unshift(data)
+          this.showAdd = !this.showAdd
+        } else {
+          this.contentList[this.num].showAdds =
+            !this.contentList[this.num].showAdds
+          this.contentList.splice(this.num + 1, 0, data)
+        }
+        if (type === 1) {
+          await wepy.navigateTo({
+            url: '../compile/compile?index=' + (this.num * 1 + 1)
+          })
+        } else if (type === 3) {
+          await wepy.navigateTo({
+            url: '../choice-coupon/choice-coupon?index=' + (this.num * 1 + 1)
+          })
+        }
+      },
+      delItem(num) {
+        this.contentList.splice(num, 1)
+      },
+      async upVideo(num) {
+        const res = await wepy.chooseVideo()
+//      需要限制大小，待确定！
+        let file = res.tempFilePath
 
+        const videoId = await Uploads.uploadVideo(file)
+        this.contentList[num].image = res.thumbTempFilePath
+        this.contentList[num]['detail_id'] = videoId.id
+        let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
+        this.contentList[num]['image_id'] = imageId.id
+        this.$apply()
+      },
+      async upImage(num) {
+        num = num * 1
+        const res = await wepy.chooseImage()
+        const file = res.tempFilePaths[0]
+        const imageId = await Uploads.uploadImages(file)
+        if (num !== -1) {
+          this.contentList[num].image = imageId.url
+          this.contentList[num]['detail_id'] = imageId.id
+        } else {
+          this.imgSrc = imageId.url
+          let cover = {'image_id': imageId.id}
+          Object.assign(this.allMsg, cover)
+        }
+        this.$apply()
+      },
+      async issue() {
+        Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
+        let res = await content.createContent(this.allMsg)
+      },
+      onInput(e) {
+        this.title = e.detail.value
+        this.textLength = e.detail.cursor
+      }
+    }
+
+    onShow() {
+      wx.setStorage({
+        key: 'token',
+        data: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDQyNjY5OCwiZXhwIjoxNTE0NDMwMjk4LCJuYmYiOjE1MTQ0MjY2OTgsImp0aSI6IkphTXdCYTAyOVNyMzJma08ifQ.xQy3PN1A2gh7WsVVgs3kSmxlcakAGwa3i0xbV-f_wcg'
+      })
+      console.log(this.$parent.globalData.fontText)
+      if (this.$parent.globalData.fontText !== '' &&
+        this.$parent.globalData.fontText) {
+        const index = this.$parent.globalData.index
+        this.contentList[index].text = this.$parent.globalData.fontText
+        this.$parent.globalData.fontText = ''
+      } else if (this.$parent.globalData.coupon &&
+        this.$parent.globalData.coupon !== '') {
+        const index = this.$parent.globalData.couIndex
+        this.contentList[index].text = []
+        this.contentList[index].text.push(this.$parent.globalData.coupon)
+        this.contentList[index].detail_id = this.$parent.globalData.coupon.id
+        this.$parent.globalData.coupon = ''
+      }
+      console.log(this.contentList)
+      this.$apply()
     }
   }
 </script>
@@ -113,6 +256,26 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+  view
+    box-sizing: border-box
+
+  .inps
+    height: 30px
+    position: relative
+    input
+      height: 100%
+      width: 100%
+      line-height: 30px
+      padding-left: $padding
+      font-size: $font-size-small
+      color: $color-theme
+    text
+      position: absolute
+      col-center()
+      font-size: $font-size-small
+      right: 12px
+      color: $color-text-d
+
   .theme
     height: 36.53vw
     width: 100vw
@@ -139,67 +302,84 @@
     image
       height: 32px
       width: 32px
-    view
 
-      background: $color-white
-      padding: 8px 25px
-      display: flex
-      display: none
-      justify-content: space-between
-      border-radius: 4px
-      border: 0.5px solid $color-split-line
-      image
-        height: 20px
-        width: 20px
-        margin-left: 36.5px
-        &:first-child
-          margin-left: 0
+  .options
+    margin-bottom: 10px
+    background: $color-white
+    padding: 8px 25px
+    display: flex
+    justify-content: space-between
+    border-radius: 4px
+    border: 0.5px solid $color-split-line
+    image
+      height: 20px
+      width: 20px
+      margin-left: 36.5px
+      &:first-child
+        margin-left: 0
 
-  .content-page
-    padding: 0 $padding
+  .content-all
+    padding-bottom: 19vw
+    .content-page
+      padding: 0 $padding
+      .con-item-fa
+        position: relative
+        .con-close
+          height: 10px
+          width: 10px
+          position: absolute
+          left: 5px
+          top: 5px
+          z-index: 300
+      .con-item
+        background: $color-white
+        border-radius: 4px
+        border: 0.5px solid $color-split-line
+        padding: 12.5px 17.5px
+        position: relative
+        .cantainer
+          height: 20vw
+          background-color: $color-theme
+          background-size: cover
 
-    .con-item-fa
-      position: relative
-      .con-close
-        height: 10px
-        width: 10px
-        position: absolute
-        left: 5px
-        top: 5px
-        z-index: 300
-    .con-item
-      background: $color-white
-      border-radius: 4px
-      border: 0.5px solid $color-split-line
-      padding: 12.5px 17.5px
-      position: relative
-      .cantainer
+    .con-item-video
+      .video-ico
+        height: 42px
+        width: 42px
+        all-center()
+
+    .con-item-text
+      .con-item .text-detail
         height: 20vw
-        background: $color-theme
 
-  .con-item-video
-    .video-ico
-      height: 42px
-      width: 42px
-      all-center()
+        padding: 6.5px 7.5px
+        background: $color-background
+        font-size: $font-size-small
 
-  .con-item-text
-    .con-item .text-detail
-      height: 20vw
-      padding: 6.5px 7.5px
-      background: $color-background
-      font-size: $font-size-small
-      line-height: 18px
-      color: $color-theme
-      font-family: 'PingFang SC'
+        font-family: 'PingFang SC'
+        view
+          line-height: 16px
+          color: $color-theme
+          display: -webkit-box
+          -webkit-box-orient: vertical
+          -webkit-line-clamp: 4
+          overflow: hidden
 
-  .coupon
-    margin-bottom: 0px
-    padding-top: 20vw
+    .coupon
+      margin-bottom: 0px
+      padding-top: 20vw
 
   .con-submit
-    padding: 0 $padding $padding
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
     view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
       height: 11.73vw
       line-height: 11.73vw
       background: $color-theme

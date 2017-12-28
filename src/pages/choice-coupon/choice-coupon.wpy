@@ -1,0 +1,145 @@
+<template>
+  <view class="choiceCoupon">
+    <view class="eva-title">可添加优惠券</view>
+    <scroll-view class="cou-all" scroll-y>
+      <repeat for="{{couponList}}" key="index" index="index"
+              item="item">
+        <Coupon :coupon.sync="item">
+          <checkbox-group
+            @change="checkboxChange({{index}},{{item.id}})"
+            id="checkboxs">
+            <label class="radioLabel {{item.checked?'active':''}}">
+              <checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"
+                        hidden="true"/>
+              {{item.txt}}
+              <image class="radio-Icon"
+                     src="{{item.is_showed?'./icon-select@2x.png':'./icon-checkbox@2x.png'}}"></image>
+            </label>
+          </checkbox-group>
+        </Coupon>
+      </repeat>
+    </scroll-view>
+    <view class="con-submit" @tap="submitOk">
+      <view>
+        完成
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Coupon from '@/base/coupon/coupon'
+  import content from 'api/content'
+  export default class choiceCoupon extends wepy.page {
+    config = {
+      navigationBarTitleText: '添加优惠券',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      Coupon: Coupon
+    }
+    data = {
+      couponList: [],
+      num: -1,
+      index: -1
+    }
+    methods = {
+      checkboxChange(index, id) {
+        this.couponList.map((item, idx) => {
+          if (idx === index) {
+            item.is_showed = true
+          } else {
+            item.is_showed = false
+          }
+          return item
+        })
+        this.num = index
+      },
+      async submitOk() {
+        this.$parent.globalData.coupon = this.couponList[this.num]
+        this.$parent.globalData.couIndex = this.index
+        await wepy.navigateBack({
+          delta: 1
+        })
+      }
+    }
+
+    async load() {
+      let data = {status: 1}
+      let res = await content.coupon(data)
+      this.couponList = res
+      this.$apply()
+    }
+
+    async onLoad(options) {
+      this.load()
+      this.index = options.index * 1
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  .choiceCoupon
+    padding: 0 $padding
+
+  .eva-title
+    display: block
+    font-size: $font-size-medium
+    position: relative
+    color: $color-theme
+    padding-left: 20px
+    line-height: 40px
+    &::before
+      content: ''
+      col-center()
+      height: 12px
+      width: 4px
+      left: 12px
+      background: $color-assist-f
+
+  .cou-all
+    height: 128.6vw
+    background: $color-white
+    padding-top: 10px
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    view
+      position: absolute
+      bottom: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
+  .coupon
+    position: relative
+    #checkboxs
+      position: absolute
+      col-center()
+      right: 30px
+      display: flex
+      justify-content: center
+      align-items: center
+    .radio-Icon
+      position: relative
+      z-index: 10000
+      width: 16px
+      height: 16px
+
+    .radioLabel.active
+      color: $color-assist-f
+</style>

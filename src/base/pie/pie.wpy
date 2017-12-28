@@ -7,7 +7,7 @@
 
 <script>
   import wepy from 'wepy'
-  import wxCharts from 'common/libs/wxcharts'
+  import WxCharts from 'common/libs/wxcharts'
   export default class Square extends wepy.page {
     config = {
       navigationBarTitleText: ''
@@ -15,13 +15,14 @@
     data = {
       pieChart: ''
     }
+
     infoPie(res) {
       let series = [{
         name: '',
         data: 0
       }]
       res = series.concat(res)
-      this.pieChart = new wxCharts({
+      this.pieChart = new WxCharts({
         animation: true,
         canvasId: 'pieCanvas',
         type: 'ring',
@@ -33,34 +34,6 @@
         legend: false,
         disablePieStroke: false
       })
-
-    }
-    onLoad() {
-//      this.pieChart = new wxCharts({
-//        animation: true,
-//        canvasId: 'pieCanvas',
-//        type: 'ring',
-//        series: [{
-//          name: '',
-//          data: 0
-//        }, {
-//          name: '男性',
-//          data: 35
-//        }, {
-//          name: '女性',
-//          data: 78
-//        }, {
-//          name: '未知',
-//          data: 85
-//        }],
-//        width: 200,
-//        height: 150,
-//        dataLabel: false,
-//        dataPointShape: false,
-//        legend: false,
-//        disablePieStroke: false
-//      })
-//      console.log(this.pieChart)
     }
   }
 </script>

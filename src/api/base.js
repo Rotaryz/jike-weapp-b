@@ -9,4 +9,5 @@ export default class base {
   static post = http.post.bind(http)
   static delete = http.delete.bind(http)
   static updateImg = http.updateImg.bind(http)
+  static upload = http.upload.bind(http)
 }

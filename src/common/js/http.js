@@ -9,7 +9,7 @@ export default class http {
       method: method,
       data: data
     }
-    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9yZWdpc3RlciIsImlhdCI6MTUxMzkxMjI1MSwiZXhwIjoxNTEzOTE1ODUxLCJuYmYiOjE1MTM5MTIyNTEsImp0aSI6IjNCd2VXOFRiOHQ2MEZ4Y2QifQ.T_pUHoOAxSKgN6UbWiY1-xWdDsDGX_4GPwpiSr2Txdo'
+    const Authorization = wepy.getStorageSync('token')
     if (Authorization) {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
@@ -81,6 +81,32 @@ export default class http {
       error.serverData = serverData
     }
     return error
+  }
+
+  /**
+   * 上传文件
+   */
+  static async upload(url, data, name = 'file', loading = true) {
+    const param = {
+      url: url,
+      filePath: data,
+      name: name
+    }
+    const Authorization = wepy.getStorageSync('token')
+    param.header = Object.assign({}, {Authorization})
+    console.log(param)
+    if (loading) {
+      Tips.loading()
+    }
+
+    const res = await wepy.uploadFile(param)
+    const resData = JSON.parse(res.data)
+    Tips.loaded()
+    if (resData.status_code === 200 && resData.error === 0) {
+      return resData.data
+    } else {
+      throw this.requestException(resData)
+    }
   }
 
   static get(url, data, loading = true) {

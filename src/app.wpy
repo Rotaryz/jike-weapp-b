@@ -55,17 +55,18 @@
     config = {
       pages: [
         'pages/create-content/create-content',
-        'pages/content/content',
-        'pages/data/data',
-        'pages/shop/shop',
-        'pages/cancel-record/cancel-record',
+        'pages/choice-coupon/choice-coupon',
+        'pages/compile/compile',
         'pages/business/business',
+        'pages/shop/shop',
+        'pages/data/data',
+        'pages/content/content',
+        'pages/cancel-record/cancel-record',
         'pages/evaluate/evaluate',
         'pages/client/client',
         'pages/marketing/marketing',
         'pages/qrCode/qrCode',
         'pages/order/order',
-        'pages/server/server',
         'pages/logIn/logIn',
         'pages/mine/mine'
       ],
