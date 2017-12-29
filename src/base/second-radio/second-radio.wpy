@@ -5,7 +5,7 @@
       <view class="radioBox-body">
         <view class="radioBox-title">
           <view class="radioBox-title-item" wx:for="{{items}}" wx:key="{{item}}">
-            <view class="radioBox-title-item-box {{item.id===checked.one?'active':''}}" catchtap="titleChiose({{index}})">
+            <view class="radioBox-title-item-box {{item.id===checkedOne?'active':''}}" catchtap="titleChiose({{index}})">
               <view class="radioBox-title-item-before"></view>
               {{item.name}}
               <image src="./image/icon-rightred20@2x.png" class="radioBox-title-item-arrow normal"></image>
@@ -15,9 +15,9 @@
         <view class="radioBox-list">
           <radio-group catchchange="radioChiose">
             <view class="radioBox-list-item" wx:for="{{secondItems}}" wx:key="{{item}}">
-              <label class="radioLabel {{item.id===checked.two?'active':''}}">
-                <radio value="{{item.id}}" checked="{{item.id==checked.two}}" hidden="true" />{{item.name}}
-                <image class="radio-Icon" src="{{item.id==checked.two?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
+              <label class="radioLabel {{item.id===checkedTwo?'active':''}}">
+                <radio value="{{item.id}}" checked="{{item.id==checkedTwo}}" hidden="true" />{{item.name}}
+                <image class="radio-Icon" src="{{item.id==checkedTwo?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
               </label>
             </view>
           </radio-group>
@@ -96,7 +96,8 @@
     data = {
       showCover: false,
       radioMsg: null,
-      checked: null,
+      checkedOne: null,
+      checkedTwo: null,
       items: [],
       secondItems: []
     }
@@ -110,7 +111,8 @@
       },
       init(radioList) {
         this.radioMsg = radioList
-        this.checked = radioList.radioChecked
+        this.checkedOne = radioList.radioChecked.one
+        this.checkedTwo = radioList.radioChecked.two
         this.items = radioList[radioList.oneTitle]
         if (radioList.radioChecked.one) {
           this.secondItems = this._seekId(radioList[radioList.oneTitle], radioList.radioChecked.one)[0][radioList.twoTitle]
@@ -121,9 +123,8 @@
         this.$apply()
       },
       closeCover() {
-        let res = this._seekId(this.items, this.checked.one)[0][this.radioMsg.twoTitle]
-        console.log(res)
-        let chioseRes = this._seekId(res, this.checked.two)[0]
+        let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
+        let chioseRes = this._seekId(res, this.checkedTwo)[0]
         this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
         this.radioMsg = null
         this.checked = null
@@ -133,15 +134,13 @@
         this.$apply()
       },
       radioChiose(e) {
-        this.checked.two = e.detail.value
-        console.log(this.checked)
+        this.checkedTwo = e.detail.value
         this.$apply()
       },
       titleChiose(idx) {
-        this.checked.one = this.items[idx].id
-        this.checked.two = null
+        this.checkedOne = this.items[idx].id
+        this.checkedTwo = null
         this.secondItems = this.items[idx][this.radioMsg.twoTitle]
-        console.log(this.checked)
         this.$apply()
       }
     }
@@ -285,7 +284,7 @@
         bottom: -50px
 
         .radioBox-closeX
-          width: 20px
-          height: 20px
+          width: 24px
+          height: 24px
 
 </style>

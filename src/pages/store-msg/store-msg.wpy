@@ -67,7 +67,7 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;">
+          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;">
           </map>
       </view>
     </view>
@@ -189,9 +189,38 @@
       </view>
     </view>
 
-    <RadioBox></RadioBox>
-    <TwoRadioBox></TwoRadioBox>
-    <TwoColumnRadioBox></TwoColumnRadioBox>
+    <view class="twoColumnRadioBox" wx:if="{{twocolumnboxShow}}" @tap.stop="showNull">
+      <view class="radioBox-Msg">
+        <view class="radioBox-head">商圈</view>
+        <view class="radioBox-body">
+          <view class="radioBox-title">
+            <view class="radioBox-title-item">
+              <view class="radioBox-title-item-box active}}">
+                <view class="radioBox-title-item-before"></view>
+                {{region[2]}}
+                <image src="./image/icon-rightred20@2x.png" class="radioBox-title-item-arrow"></image>
+              </view>
+            </view>
+          </view>
+          <view class="radioBox-list">
+            <view class="radioBox-list-item" wx:for="{{areaArr}}" wx:key="{{item}}" @tap="areaRadioChiose({{item}})">
+              <view class="radioLabel {{item.id==areaId?'active':''}}">{{item.name}}</view>
+              <image class="radio-Icon" src="{{item.id==areaId?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
+            </view>
+          </view>
+        </view>
+        <view class="radioBox-closeBtn" catchtap="areacloseCover">
+          <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{radioboxShow}}">
+      <RadioBox></RadioBox>
+    </view>
+    <view wx:if="{{twoRadioboxShow}}">
+      <TwoRadioBox></TwoRadioBox>
+    </view>
     <Toast></Toast>
   </view>
 </template>
@@ -202,7 +231,6 @@
   import base from '@/common/mixins/base'
   import RadioBox from '@/base/radio/radio'
   import TwoRadioBox from '@/base/second-radio/second-radio'
-  import TwoColumnRadioBox from '@/base/radio-twoColumn/radio-twoColumn'
   import QQMapWX from '@/common/libs/qqmap-wx-jssdk'
   import Store from '@/api/store'
   import Toast from '@/base/toast/toast'
@@ -220,7 +248,6 @@
     components = {
       RadioBox,
       TwoRadioBox,
-      TwoColumnRadioBox,
       Toast
     }
 
@@ -270,7 +297,10 @@
         {value: '5', txt: '星期六', checked: false},
         {value: '6', txt: '星期日', checked: false}
       ],
-      weekChecked: []
+      weekChecked: [],
+      radioboxShow: false,
+      twoRadioboxShow: false,
+      twocolumnboxShow: false
     }
 
     async onLoad() {
@@ -323,7 +353,11 @@
     }
 
     methods = {
+      showNull() {
+
+      },
       industryChiose() {
+        this.twoRadioboxShow = true
         this.showMap = false
         let radioChecked
         if (this.industryId) {
@@ -348,26 +382,24 @@
       },
       areaChiose() {
         this.showMap = false
-        console.log(this.showMap)
-        let self = this
-        let radioChecked = this.areaId
         if (this.region[2]) {
-          let listMsg = {
-            headTxt: '商圈',
-            title: this.region[2],
-            radioChecked,
-            items: this.areaArr
-          }
-          this.$invoke('TwoColumnRadioBox', 'init', listMsg)
+          this.twocolumnboxShow = true
         } else {
           this.$invoke('Toast', 'show', '请选择地区')
-          setTimeout(() => {
-            self.$apply()
-          }, 2000)
         }
         this.$apply()
       },
+      areaRadioChiose(item) {
+        this.areaId = item.id
+        this.area = item.name
+        this.$apply()
+      },
+      areacloseCover() {
+        this.showMap = true
+        this.twocolumnboxShow = false
+      },
       showRadio() {
+        this.radioboxShow = true
         this.showMap = false
         this.$invoke('RadioBox', 'init', {
           headTxt: '营业状态',
@@ -378,7 +410,6 @@
             {value: '2', txt: '筹建中'},
             {value: '3', txt: '已关闭'}]
         })
-        console.log(this.showMap)
         this.$apply()
       },
       txtChange(e) {
@@ -401,12 +432,15 @@
             this._mapAuto(mapAddress)
             break
         }
+        this.$apply()
       },
       async bindRegionChange(e) {
         this.region = e.detail.value
         this.mapAddress = this.region[0] + this.region[1] + this.region[2]
         this._mapAuto(this.mapAddress)
         this.areaArr = await Store.getArea(this.region[2])
+        this.showMap = true
+        this.$apply()
       },
       mapTap(e) {
         console.log(e)
@@ -508,6 +542,7 @@
 
     events = {
       radioChioseOK(item) {
+        this.radioboxShow = false
         this.storeStatus = Number(item[0].value)
         this.storeStatusTxt = item[0].txt
         this.showMap = true
@@ -515,7 +550,6 @@
         console.log(this)
       },
       secondRadioOK(item, title) {
-        this.showMap = true
         switch (title) {
           case 'industries':
             if (item) {
@@ -524,14 +558,10 @@
             }
             break
         }
-        this.$apply()
-        console.log(item)
-      },
-      twoColumnRadioOK(item) {
-        this.area = item.name
-        this.areaId = item.id
+        this.twoRadioboxShow = false
         this.showMap = true
         this.$apply()
+        console.log(item)
       }
     }
 
@@ -822,8 +852,8 @@
         z-index: 9999
 
         .radioBox-closeX
-          width: 20px
-          height: 20px
+          width: 24px
+          height: 24px
 
 
 
@@ -884,4 +914,105 @@
           font-size: $font-size-small-s
           color: $color-text-d
           padding-bottom: 10px
+
+    .twoColumnRadioBox
+      position: fixed
+      z-index: 1000
+      left: 0
+      top: 0
+      height: 100vh
+      width: 100vw
+      background: rgba(54, 53, 71, .5)
+
+      .radioBox-Msg
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        background: $color-white
+        width: 265.5px
+        min-height: 40px
+        border-radius: 4px
+
+        .radioBox-head
+          height: 40px
+          background: $color-theme
+          line-height: 40px
+          text-align: center
+          color: $color-white
+          font-size: $font-size-medium-x
+
+        .radioBox-body
+          max-height: 360px
+          display: flex
+          background: $color-background
+
+          .radioBox-title
+            width: 90px
+            max-height: 360px
+
+            .radioBox-title-item
+
+              .radioBox-title-item-box.active
+                background: $color-white
+                line-height: 38px
+                font-size: $font-size-small
+                display: flex
+                align-items: center
+                position: relative
+                border-bottom: 1px solid $color-row-line
+                border-right: 0 none
+                color: $color-assist-f
+
+                .radioBox-title-item-before
+                  width: 2px
+                  height: 38px
+                  background: $color-assist-f
+                  margin-right: 10px
+
+                .radioBox-title-item-arrow
+                  width: 10px
+                  height: 10px
+                  position: absolute
+                  right: 7px
+                  top: 15px
+
+          .radioBox-list
+            background: $color-white
+            padding: 0 10px
+            width: 175.5px
+            max-height: 360px
+
+          .radioBox-list-item
+            line-height: 39px
+            height: 39px
+            border-bottom: 1px solid $color-row-line
+            display: flex
+            align-items: center
+            justify-content: space-between
+
+            .radioLabel
+              font-size: $font-size-small
+
+            .radio-Icon
+              width: 16px
+              height: 16px
+
+            .radioLabel.active
+              color: $color-assist-f
+
+        .radioBox-closeBtn
+          width: 34px
+          height: 34px
+          display: flex
+          justify-content: center
+          align-items: center
+          position: absolute
+          left: 50%
+          transform: translate(-50%, 0)
+          bottom: -50px
+
+          .radioBox-closeX
+            width: 24px
+            height: 24px
 </style>

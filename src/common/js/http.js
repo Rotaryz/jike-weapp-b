@@ -10,9 +10,9 @@ export default class http {
       data: data
     }
     // const Authorization = wepy.getStorageSync('token')
-    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9yZWdpc3RlciIsImlhdCI6MTUxMzkxMjI1MSwiZXhwIjoxNTEzOTE1ODUxLCJuYmYiOjE1MTM5MTIyNTEsImp0aSI6IjNCd2VXOFRiOHQ2MEZ4Y2QifQ.T_pUHoOAxSKgN6UbWiY1-xWdDsDGX_4GPwpiSr2Txdo'
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDQyNjY5OCwiZXhwIjoxNTE0NDMwMjk4LCJuYmYiOjE1MTQ0MjY2OTgsImp0aSI6IkphTXdCYTAyOVNyMzJma08ifQ.xQy3PN1A2gh7WsVVgs3kSmxlcakAGwa3i0xbV-f_wcg'
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization})
+      param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
     param.header = Object.assign({}, param.header, {'Current-merchant': wepy.getStorageSync('merchantId') || 100000})
     if (loading) {
@@ -52,6 +52,27 @@ export default class http {
     Tips.loaded()
     if (res.statusCode === 200 && resData.error === 0) {
       return resData
+    } else {
+      throw this.requestException(resData)
+    }
+  }
+
+  static async upload(url, data, name = 'file', loading = true) {
+    const param = {
+      url: url,
+      filePath: data,
+      name: name
+    }
+    const Authorization = wepy.getStorageSync('token')
+    param.header = Object.assign({}, {Authorization})
+    if (loading) {
+      Tips.loading()
+    }
+    const res = await wepy.uploadFile(param)
+    const resData = JSON.parse(res.data)
+    Tips.loaded()
+    if (resData.status_code === 200 && resData.error === 0) {
+      return resData.data
     } else {
       throw this.requestException(resData)
     }
@@ -102,9 +123,5 @@ export default class http {
 
   static delete(url, data, loading = true) {
     return this.request('DELETE', url, data, loading)
-  }
-
-  static updateImg (url, name, loading = true) {
-    return this.update(url, name, loading)
   }
 }

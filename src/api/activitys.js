@@ -1,8 +1,8 @@
 import base from './base'
 
-export default class Activity extends base {
+export default class Activitys extends base {
   /**
-   * 获取活动列表
+   * 获取分享活动列表
    * @param
    * @returns {Promise.<*>}
    */
@@ -11,7 +11,7 @@ export default class Activity extends base {
     return await this.get(url)
   }
   /**
-   * 关闭活动
+   * 关闭分享活动
    * @param
    * @returns {Promise.<*>}
    */

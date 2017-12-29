@@ -1,0 +1,1273 @@
+<template>
+  <view class="create-prize">
+    <view class="prizeType-cover" wx:if="{{prizeTypeCover}}">
+      <view class="prizeType-container">
+        <view class="prizeType-container-head">选择类型</view>
+        <view class="prizeType-list">
+          <view class="prizeType-list-item" @tap="chioseType(1)">
+            <view class="prizeType-list-item-left">
+              <view class="prizeType-list-item-title">兑换券</view>
+              <view class="prizeType-list-item-msg">商家将优惠的服务和商品</view>
+              <view class="prizeType-list-item-msg">免费做奖品给客户</view>
+            </view>
+            <image src="{{prizeType===1?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+          </view>
+
+          <view class="prizeType-list-item" @tap="chioseType(2)">
+            <view class="prizeType-list-item-left">
+              <view class="prizeType-list-item-title">随机红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量的随即金额的红包</view>
+              <view class="prizeType-list-item-msg">作为活动的奖品</view>
+            </view>
+            <image src="{{prizeType===2?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+          </view>
+
+          <view class="prizeType-list-item last" @tap="chioseType(3)">
+            <view class="prizeType-list-item-left">
+              <view class="prizeType-list-item-title">固定红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量的固定金额的红包</view>
+              <view class="prizeType-list-item-msg">作为活动的奖品</view>
+            </view>
+            <image src="{{prizeType===3?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+          </view>
+        </view>
+
+        <view class="prizeType-closeBtn" @tap="closeTypeCover">
+          <image src="./image/icon-del@2x.png" class="prizeType-closeX"></image>
+        </view>
+      </view>
+    </view>
+
+    <view class="create-prize-body">
+      <view class="prize-picker">
+        <view class="prize-picker-title">奖品类型</view>
+        <view class="prize-picker-right" @tap="showTypeCover">
+          <view class="prize-picker-txt">{{prizeTypeTxt}}</view>
+          <image src="./image/Rectangle @2x.png" class="prize-picker-arrow"></image>
+        </view>
+      </view>
+
+      <view class="prize-txtbox">
+        <view class="prize-txtbox-title">奖品名称</view>
+        <view class="prize-txtbox-right">
+          <input type="text" maxlength="10" class="prize-txtbox-input" placeholder="请输入" placeholder-class="prize-txtbox-placeholder" value="{{prizeName}}" bindblur="nameChange" />
+          <view class="prize-txtbox-input-length">{{prizeName.length}}/10</view>
+        </view>
+      </view>
+
+      <view class="exBox" wx:if="{{prizeType===1}}">
+
+        <view class="time-picker">
+          <view class="prize-picker-title">有效期</view>
+          <view class="prize-picker-right" @tap="timeChiose">
+            <view class="prize-picker-txt">{{beginTime&&endTime?beginTime+' 至 '+endTime:''}}</view>
+            <image class="prize-picker-arrow" src="./image/Rectangle @2x.png"></image>
+          </view>
+        </view>
+
+        <view class="exBox-imgBox">
+          <view class="prize-picker-title">奖品图片</view>
+          <view class="exBox-imgBox-right">
+            <view class="exBox-imgBox-right-imgOuter">
+              <image src="./image/icon-add.png" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl}}"></image>
+              <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
+              <image class="exBox-img-delBtn" src="./image/icon-del24@2x.png" wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
+            </view>
+            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）</view>
+          </view>
+        </view>
+
+        <view class="exBox-prize-countBox">
+          <view class="prize-picker-title">奖品数量</view>
+          <view class="exBox-prizecount-right">
+            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <view class="countBox">
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+            </view>
+            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+          </view>
+        </view>
+
+        <view class="exBox-prize-description">
+          <view class="prize-picker-title">使用须知</view>
+          <view class="prize-picker-textarea">
+            <textarea maxlength="20" class="prize-picker-textarea-input" placeholder="请输入" placeholder-class="prize-picker-textarea-placeholder" bindblur="exdescrpChange"></textarea>
+            <view class="textarea-length">{{exdescripte.length}}/20</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="randomRP" wx:if="{{prizeType===2}}">
+
+        <view class="randomRP-imgBox">
+          <view class="prize-txtbox-title">奖品图片</view>
+          <view class="randomRP-imgBox-right">
+            <image class="randomRP-img" src="./image/pic-moneybg@2x.png"></image>
+            <view class="randomRP-imgtxt">默认模板</view>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-countBox">
+          <view class="prize-picker-title">红包总个数</view>
+          <view class="exBox-prizecount-right">
+            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <view class="countBox">
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+            </view>
+            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-total">
+          <view class="prize-picker-title">红包总金额</view>
+          <view class="prize-picker-right">
+            <txt>￥</txt>
+            <view class="inputBox">
+              <input type="digit" class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}" bindblur="totalChange"/>
+            </view>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-max-min">
+          <view class="prize-picker-title">红包金额区间</view>
+          <view class="prize-picker-right">
+            <view class="max-box">
+              <text>最大</text>
+              <view class="inputBox">
+                <input type="digit" class="randomRP-prize-total-input {{maxMoneyTest?'':'error'}}" value="{{redpackMax}}" bindblur="maxChange"/>
+              </view>
+            </view>
+            <view class="min-box">
+              <text>最小</text>
+              <view class="inputBox">
+                0.01
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="fixed-redpacket" wx:if="{{prizeType===3}}">
+
+        <view class="randomRP-imgBox">
+          <view class="prize-txtbox-title">奖品图片</view>
+          <view class="randomRP-imgBox-right">
+            <image class="randomRP-img" src="./image/pic-moneybg@2x.png"></image>
+            <view class="randomRP-imgtxt">默认模板</view>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-countBox">
+          <view class="prize-picker-title">红包总个数</view>
+          <view class="exBox-prizecount-right">
+            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <view class="countBox">
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+            </view>
+            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-total">
+          <view class="prize-picker-title">每个红包金额</view>
+          <view class="prize-picker-right">
+            <txt>￥</txt>
+            <view class="inputBox">
+              <input type="digit" class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}" bindblur="fixedChange" value="{{fixedRedpacket}}"/>
+            </view>
+          </view>
+        </view>
+
+        <view class="randomRP-prize-total">
+          <view class="prize-picker-title">红包总金额</view>
+          <view class="prize-picker-right">
+            <view class="totalTxt">{{fixedRedpacketTotal}}</view>
+          </view>
+        </view>
+
+      </view>
+    </view>
+    <view class="create-prize-foot" @tap="createSubmit">
+      <view class="createBtn">提交</view>
+    </view>
+
+    <view class="times" wx:if="{{prizeTimeShow}}">
+      <view class="times-ti">
+        <view class="set-time">设置时间</view>
+        <view class="time-ok">
+          <view class="{{timeTimes === 1 ?'tactive':''}}" @tap="tapTime(1)">
+            {{btime}}
+          </view>
+          <view>至</view>
+          <view class="{{timeTimes === 2 ?'tactive':''}}" @tap="tapTime(2)">
+            {{etime}}
+          </view>
+        </view>
+        <view class="time-sure">
+          <text>取消</text>
+          <text @tap="sureTime">确定</text>
+        </view>
+        <picker-view bindchange="bindTimeChange" value="{{value}}">
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{yearLen}}"
+                  wx:key="{{index}}" value="{{year + item}}">{{
+              year + item}}年
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{mounth}}"
+                  wx:key="{{index}}" value="{{item}}">{{item + 1}}月
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{day}}"
+                  wx:key="{{index}}" value="{{item}}">{{item + 1}}日
+            </view>
+          </picker-view-column>
+        </picker-view>
+        <view class="times-closeBtn" @tap="closeTimeCover">
+          <image src="./image/icon-del@2x.png" class="times-closeX"></image>
+        </view>
+      </view>
+    </view>
+
+    <view class="payment" wx:if="{{paymentIn}}">
+      <view class="payment-main">
+        <view class="payment-main-head">在线支付</view>
+        <view wx:if="{{!paymentSuccess}}">
+          <view class="payment-total">
+            <view class="payment-total-left">红包总金额</view>
+            <view class="payment-total-right"><text class="payment-total-small">￥</text>200</view>
+          </view>
+          <view class="payment-type-head">选择支付方式</view>
+          <view class="payment-type">
+            <view class="payment-type-left">
+              <image src="./image/icon-balance@2x.png" class="payment-type-left-img"></image>
+              <view class="payment-type-title">账户余额</view>
+            </view>
+            <image src="{{paymentType===1?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="payment-type-radio"></image>
+          </view>
+          <view class="payment-type">
+            <view class="payment-type-left">
+              <image src="./image/icon-wx@2x.png" class="payment-type-left-img"></image>
+              <view class="payment-type-title">微信</view>
+            </view>
+            <image src="{{paymentType===2?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="payment-type-radio"></image>
+          </view>
+          <view class="payment-btn">支付</view>
+        </view>
+
+        <view class="payment-success" wx:if="{{paymentSuccess}}">
+          <image src="./image/pic-good@2x.png" class="payment-success-img"></image>
+          <view class="success-txt">支付成功</view>
+        </view>
+      </view>
+    </view>
+
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '@/common/mixins/base'
+  import PrizePool from '@/api/prizePool'
+  import Confirm from '@/base/confirm/confirm'
+  import Toast from '@/base/toast/toast'
+  import Upload from '@/api/uploads'
+
+  export default class CreatePrizePage extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '新建奖品',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#f9f9f9'
+    }
+
+    components = {
+      Toast,
+      Confirm
+    }
+
+    data = {
+      prizeType: 1,
+      prizeTypeTxt: '兑换券',
+      prizeTypeCover: false,
+      prizeTimeShow: false,
+      prizeName: '',
+      year: 0,
+      yearLen: 4,
+      mounth: 12,
+      btime: '选择开始时间',
+      etime: '选择结束时间',
+      beginTime: '',
+      endTime: '',
+      timeTimes: 1,
+      tapTimes: 0,
+      day: 30,
+      value: [],
+      prizeCount: '',
+      exdescripte: '',
+      redpackMax: '',
+      total: '',
+      fixedRedpacket: '',
+      paymentType: 1,
+      paymentSuccess: false,
+      paymentIn: false,
+      EXimgUrl: ''
+    }
+
+    methods = {
+      chioseType(idx) {
+        this.prizeType = Number(idx)
+        switch (this.prizeType) {
+          case 1:
+            this.prizeTypeTxt = '兑换券'
+            break
+          case 2:
+            this.prizeTypeTxt = '随机红包'
+            break
+          case 3:
+            this.prizeTypeTxt = '固定红包'
+            break
+        }
+        this.prizeCount = 0
+        this.fixedRedpacket = ''
+        this.total = ''
+        this.redpackMax = ''
+        this.exdescripte = ''
+        this.$apply()
+      },
+      closeTypeCover() {
+        this.prizeTypeCover = false
+        this.$apply()
+      },
+      showTypeCover() {
+        this.prizeTypeCover = true
+        this.$apply()
+      },
+      nameChange(e) {
+        this.prizeName = e.detail.value
+        this.$apply()
+      },
+      timeChiose() {
+        this.prizeTimeShow = true
+        this.$apply()
+      },
+      bindTimeChange(e) {
+        this.value = e.detail.value
+        this.$apply()
+      },
+      tapTime(type) {
+        this.timeTimes = type * 1
+      },
+      closeTimeCover() {
+        this.prizeTimeShow = false
+        this.beginTime = this.btime === '选择开始时间' ? '' : this.btime
+        this.endTime = this.etime === '选择结束时间' ? '' : this.etime
+        this.$apply()
+      },
+      sureTime() {
+        this.time = `${this.value[0] + this.year}-${this.value[1] + 1
+          }-${this.value[2] + 1}`
+        if (this.timeTimes === 1) {
+          this.btime = this.time
+        } else if (this.timeTimes === 2) {
+          this.etime = this.time
+        }
+      },
+      countChange(e) {
+        this.prizeCount = e.detail.value
+        this.$apply()
+      },
+      exAddCount() {
+        this.prizeCount ++
+        this.$apply()
+      },
+      exSubCount() {
+        this.prizeCount --
+        if (this.prizeCount <= 0) {
+          this.prizeCount = 0
+        }
+        this.$apply()
+      },
+      exdescrpChange(e) {
+        this.exdescripte = e.detail.value
+        this.$apply()
+      },
+      maxChange(e) {
+        this.redpackMax = e.detail.value
+        this.$apply()
+      },
+      totalChange(e) {
+        this.total = e.detail.value
+        this.$apply()
+      },
+      fixedChange(e) {
+        this.fixedRedpacket = e.detail.value
+        this.$apply()
+      },
+      createSubmit() {
+        switch (this.prizeType) {
+          case 1:
+            console.log(this.prizeCountTest)
+            break
+          case 2:
+            this.prizeTypeTxt = '随机红包'
+            break
+          case 3:
+            this.prizeTypeTxt = '固定红包'
+            break
+        }
+      },
+      async uploadEXimg() {
+        let res = await wepy.chooseImage()
+        let upRes = await Upload.uploadImages(res.tempFilePaths[0])
+        this.EXimgUrl = upRes.url
+        this.$apply()
+      },
+      delEXimg() {
+        this.EXimgUrl = ''
+        this.$apply()
+      }
+    }
+
+    async onLoad() {
+      this.load()
+      this.info()
+    }
+
+    async load() {
+      this.loaded()
+    }
+
+    info() {
+      let now = new Date()
+      this.year = now.getFullYear()
+      let month = now.getMonth()
+      let days = now.getDate() - 1
+      this.value = [0, month, days]
+      this.dealDay(this.year, month + 1)
+    }
+
+    dealDay(year, month) {
+      let days = 0
+      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+        if (month === 2) {
+          days = 29
+        }
+      } else {
+        if (month === 2) {
+          days = 28
+        }
+      }
+      if (month === 1 || month === 3 || month === 5 || month === 7 ||
+        month === 8 || month === 10 || month === 12) {
+        days = 31
+      } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+        days = 30
+      }
+      this.day = days
+      this.$apply()
+    }
+
+    computed = {
+      prizeCountTest() {
+        let reg = /(^[1-9]([0-9]*)$|^[0-9]$)/
+        return reg.test(this.prizeCount) && this.prizeCount > 0
+      },
+      maxMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        let mean = this.total / this.prizeCount
+        let max = this.total - (this.prizeCount - 1) * 0.01
+        return reg.test(this.redpackMax) && this.redpackMax >= mean && this.redpackMax <= max
+      },
+      fixedRedpacketTotal() {
+        return '￥' + this.prizeCount * this.fixedRedpacket
+      },
+      fixedRpMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        return reg.test(this.fixedRedpacket) && this.fixedRedpacket > 0
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .create-prize
+    background: $color-background
+
+    .create-prize-body
+      height: 85vh
+      padding-left: 12px
+      margin-top: 2vh
+      background: $color-white
+      box-sizing: border-box
+
+      .top-rule
+        height: 10px
+        background: $color-background
+
+      .prize-picker
+        display: flex
+        height: 40px
+        align-items: center
+        justify-content: space-between
+        padding-right: 12px
+        border-bottom: 0.5px solid $color-col-line
+
+        .prize-picker-title
+          font-size: $font-size-medium
+          color: $color-text-title
+
+        .prize-picker-right
+          display: flex
+          height: 40px
+          width: 100px
+          justify-content: flex-end
+          align-items: center
+
+          .prize-picker-txt
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-picker-arrow
+            width: 10px
+            height: 10px
+            margin-left: 8px
+
+      .prize-txtbox
+        display: flex
+        height: 40px
+        align-items: center
+        padding-right: 12px
+        border-bottom: 0.5px solid $color-col-line
+
+        .prize-txtbox-title
+          flex: 1
+          font-size: $font-size-medium
+          color: $color-text-title
+
+        .prize-txtbox-right
+          flex: 3
+          display: flex
+          justify-content: space-between
+          align-items: center
+
+          .prize-txtbox-input
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-txtbox-placeholder
+            font-size: $font-size-medium
+            color: $color-text-d
+
+          .prize-txtbox-input-length
+            font-size: $font-size-small-s
+            color: $color-text-d
+
+      .exBox
+
+        .time-picker
+          display: flex
+          height: 40px
+          align-items: center
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            flex: 1
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-picker-right
+            flex: 3
+            display: flex
+            justify-content: space-between
+            align-items: center
+            height: 40px
+
+            .prize-picker-txt
+              font-size: $font-size-medium
+              color: $color-text-title
+
+            .prize-picker-arrow
+              width: 10px
+              height: 10px
+              margin-left: 8px
+
+        .exBox-imgBox
+          height: 74px
+          display: flex
+          align-items: center
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            flex: 1
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .exBox-imgBox-right
+            flex: 3
+            display: flex
+            flex-direction: column
+            justify-content: center
+            height: 74px
+
+            .exBox-imgBox-right-imgOuter
+              position: relative
+              width: 32px
+              height: 32px
+
+              .exBox-imgBox-right-uploadBtn
+                position: absolute
+                width: 32px
+                height: 32px
+                left: 0px
+                top: 0
+
+              .exBox-img
+                position: absolute
+                width: 32px
+                height: 32px
+                left: 0px
+                top: 0
+
+              .exBox-img-delBtn
+                width: 13px
+                height: 13px
+                position: absolute
+                top: -5px
+                right: -5px
+
+            .exBox-imgBox-right-txt
+              font-size: $font-size-small-s
+              color: $color-text-d
+              margin-top: 5px
+
+        .exBox-prize-countBox
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .exBox-prizecount-right
+            display: flex
+
+            .subBtn
+              width: 22px
+              height: 22px
+
+            .addBtn
+              width: 22px
+              height: 22px
+
+            .countBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              margin: 0 3px
+              display: flex
+              align-items: center
+
+              .countBox-input
+                width: 50px
+                height: 18px
+                line-height: 20px
+                font-size: $font-size-medium
+                border: 0 none
+                color: $color-text
+                text-align: center
+
+              .countBox-input.error
+                color: $color-assist-f
+
+        .exBox-prize-description
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+            line-height: 30px
+
+          .prize-picker-textarea
+            position: relative
+            height: 55px
+            width: 88vw
+            padding: 10px
+            background: $color-background
+
+            .prize-picker-textarea-input
+              width: 88vw
+              height: 55px
+              background: $color-background
+              font-size: $font-size-medium
+              color: $color-text-title
+
+            .prize-picker-textarea-placeholder
+              color: $color-text-d
+            .textarea-length
+              position: absolute
+              bottom: 10px
+              right: 10px
+              font-size: $font-size-small-s
+              color: $color-text-d
+
+      .randomRP
+
+        .randomRP-imgBox
+          display: flex
+          height: 53px
+          border-bottom: .5px solid $color-col-line
+          align-items: center
+
+          .prize-txtbox-title
+            flex: 1
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .randomRP-imgBox-right
+            flex: 3
+            display: flex
+
+            .randomRP-img
+              width: 33.5px
+              height: 30px
+
+            .randomRP-imgtxt
+              font-size: $font-size-small-s
+              color: $color-text-d
+              align-self: flex-end
+              margin-left: 8px
+
+        .randomRP-prize-countBox
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .exBox-prizecount-right
+            display: flex
+
+            .subBtn
+              width: 22px
+              height: 22px
+
+            .addBtn
+              width: 22px
+              height: 22px
+
+            .countBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              margin: 0 3px
+              display: flex
+              align-items: center
+
+              .countBox-input
+                width: 50px
+                height: 18px
+                line-height: 20px
+                font-size: $font-size-medium
+                border: 0 none
+                color: $color-text
+                text-align: center
+
+              .countBox-input.error
+                color: $color-assist-f
+
+        .randomRP-prize-total
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-picker-right
+            display: flex
+            align-items: center
+            font-size: $font-size-medium
+            color: $color-text-d
+
+            .inputBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              display: flex
+              align-items: center
+              margin-left: 8px
+              justify-content: center
+
+            .randomRP-prize-total-input
+              font-size: $font-size-medium
+              width: 50px
+              height: 18px
+              text-align: center
+              color: $color-text-title
+
+        .randomRP-prize-max-min
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-picker-right
+            display: flex
+            align-items: center
+            font-size: $font-size-medium
+            color: $color-text-d
+
+            .max-box
+              display: flex
+              align-items: center
+              font-size: $font-size-small
+              color: $color-text-d
+
+            .min-box
+              display: flex
+              align-items: center
+              font-size: $font-size-small
+              color: $color-text-d
+              margin-left: 20px
+
+            .inputBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              display: flex
+              align-items: center
+              margin-left: 8px
+              justify-content: center
+              font-size: $font-size-medium
+
+            .randomRP-prize-total-input
+              font-size: $font-size-medium
+              width: 50px
+              height: 18px
+              text-align: center
+              color: $color-text-title
+
+            .randomRP-prize-total-input.error
+              color: $color-assist-f
+
+      .fixed-redpacket
+
+        .randomRP-imgBox
+          display: flex
+          height: 53px
+          border-bottom: .5px solid $color-col-line
+          align-items: center
+
+          .prize-txtbox-title
+            flex: 1
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .randomRP-imgBox-right
+            flex: 3
+            display: flex
+
+            .randomRP-img
+              width: 33.5px
+              height: 30px
+
+            .randomRP-imgtxt
+              font-size: $font-size-small-s
+              color: $color-text-d
+              align-self: flex-end
+              margin-left: 8px
+
+        .randomRP-prize-countBox
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .exBox-prizecount-right
+            display: flex
+
+            .subBtn
+              width: 22px
+              height: 22px
+
+            .addBtn
+              width: 22px
+              height: 22px
+
+            .countBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              margin: 0 3px
+              display: flex
+              align-items: center
+
+              .countBox-input
+                width: 50px
+                height: 18px
+                line-height: 20px
+                font-size: $font-size-medium
+                border: 0 none
+                color: $color-text
+                text-align: center
+
+              .countBox-input.error
+                color: $color-assist-f
+
+        .randomRP-prize-total
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          padding-right: 12px
+          border-bottom: 0.5px solid $color-col-line
+
+          .prize-picker-title
+            font-size: $font-size-medium
+            color: $color-text-title
+
+          .prize-picker-right
+            display: flex
+            align-items: center
+            font-size: $font-size-medium
+            color: $color-text-d
+
+            .totalTxt
+              color: $color-text-title
+              font-size: $font-size-medium
+
+            .inputBox
+              width: 50px
+              height: 20px
+              border: 1px solid $color-col-line
+              display: flex
+              align-items: center
+              margin-left: 8px
+              justify-content: center
+
+            .randomRP-prize-total-input
+              font-size: $font-size-medium
+              width: 50px
+              height: 18px
+              text-align: center
+              color: $color-text-title
+
+            .randomRP-prize-total-input.error
+              color: $color-assist-f
+
+    .create-prize-foot
+      height: 13vh
+      padding: 0 12px
+      display: flex
+      align-items: center
+
+      .createBtn
+        width: 100%
+        height: 44px
+        background: $color-theme
+        color: $color-white
+        border-radius: 2px
+        line-height: 44px
+        text-align: center
+        font-size: $font-size-medium
+
+        &:active
+          background: $color-btn-tap
+
+    .prizeType-cover
+      position: fixed
+      z-index: 1000
+      left: 0
+      top: 0
+      height: 100vh
+      width: 100vw
+      background: rgba(54, 53, 71, .5)
+
+      .prizeType-container
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        background: $color-white
+        width: 265px
+        height: 260px
+        border-radius: 4px
+
+        .prizeType-container-head
+          height: 40px
+          background: $color-theme
+          color: $color-white
+          font-size: $font-size-medium-x
+          text-align: center
+          line-height: 40px
+
+        .prizeType-list
+          padding: 0 10px
+
+          .prizeType-list-item
+            height: 70px
+            display: flex
+            border-bottom: .5px solid $color-col-line
+            align-items: center
+            justify-content: space-between
+
+            .prizeType-list-item-left
+              display: flex
+              flex-direction: column
+              justify-content: center
+
+              .prizeType-list-item-title
+                font-size: $font-size-medium
+                line-height: 26px
+
+              .prizeType-list-item-msg
+                font-size: $font-size-small-s
+                line-height: 14px
+                color: $color-text-d
+
+            .prizeType-list-item-check
+              width: 16px
+              height: 16px
+
+          .prizeType-list-item.last
+            border-bottom: 0 none
+
+        .prizeType-closeBtn
+          width: 34px
+          height: 34px
+          display: flex
+          justify-content: center
+          align-items: center
+          position: absolute
+          left: 50%
+          transform: translate(-50%, 0)
+          bottom: -100px
+
+          .prizeType-closeX
+            width: 24px
+            height: 24px
+
+    .times
+      position: fixed
+      height: 100%
+      width: 100%
+      z-index: 1000
+      top: 0
+      background: $color-mask-bgc
+
+      .times-ti
+        height: 325px
+        width: 265px
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        background: $color-white
+        border-radius: 2px
+
+        .set-time
+          height: 40px
+          line-height: 40px
+          text-align: center
+          background-color: $color-theme
+          color: $color-white
+          font-size: $font-size-medium-x
+          font-family: $font-family-light
+        picker-view
+          position: absolute
+          bottom: 0
+          height: 200px
+          width: 100%
+          text-align: center
+          font-size: $font-size-medium
+        .time-ok
+          height: 45px
+          display: flex
+          font-size: $font-size-small
+          align-items: center
+          background: $color-background
+          position: relative
+          view
+            flex: 1
+            text-align: center
+            border-bottom: 2px solid $color-text-d
+            &:nth-child(2)
+              position: absolute
+              left: 50%
+              top: 50%
+              transform: translate(-50%, -50%)
+              width: 18px
+              height: 18px
+              line-height: 18px
+              border-radius: 50%
+              text-align: center
+              font-size: $font-size-small-s
+              background: $color-text-d
+              color: $color-white
+            &:nth-child(1), &:nth-child(3)
+              line-height: 1
+              padding-bottom: 9.5px
+              margin: 19.5px 24px 0
+          .tactive
+            border-bottom: 2px solid  $color-assist-f
+            color: $color-text
+        .time-sure
+          height: 39.5px
+          border-bottom: 0.5px solid $color-split-line
+          padding: 18.5px $padding 0
+          display: flex
+          color: $color-text
+          justify-content: space-between
+          font-size: $font-size-small
+
+        .times-closeBtn
+          width: 34px
+          height: 34px
+          display: flex
+          justify-content: center
+          align-items: center
+          position: absolute
+          left: 50%
+          transform: translate(-50%, 0)
+          bottom: -80px
+
+          .times-closeX
+            width: 24px
+            height: 24px
+
+    .payment
+      position: fixed
+      z-index: 1000
+      left: 0
+      top: 0
+      height: 100vh
+      width: 100vw
+      background: rgba(54, 53, 71, .5)
+
+      .payment-main
+        position: absolute
+        left: 0
+        right: 0
+        bottom: 0
+        background: $color-background
+
+        .payment-main-head
+          height: 40px
+          background: $color-white
+          text-align: center
+          line-height: 40px
+          font-size: $font-size-medium-x
+          color: $color-text-d
+          border-bottom: 0.5px solid $color-col-line
+
+        .payment-total
+          height: 50px
+          display: flex
+          justify-content: space-between
+          align-items: center
+          padding: 0 12px
+          background: $color-white
+
+          .payment-total-left
+            font-size: $font-size-medium
+
+          .payment-total-right
+            font-size: $font-size-medium-x
+            font-family: PingFangSC-Medium
+            color: $color-assist-f
+
+            .payment-total-small
+              font-size: $font-size-small-s
+
+        .payment-type-head
+          height: 30px
+          line-height: 30px
+          padding-left: 12px
+          font-size: $font-size-medium
+          color: $color-text-d
+
+        .payment-type
+          height: 40px
+          padding: 0 12px
+          border-bottom: .5px solid $color-col-line
+          display: flex
+          justify-content: space-between
+          background: $color-white
+          align-items: center
+
+          .payment-type-left
+            display: flex
+            align-items: center
+
+            .payment-type-left-img
+              width: 16px
+              height: 16px
+              margin-right: 10px
+
+            .payment-type-title
+              font-size: $font-size-medium
+              color: $color-text-title
+
+          .payment-type-radio
+            width: 16px
+            height: 16px
+
+        .payment-btn
+          margin: 12px
+          height: 40px
+          background: $color-theme
+          line-height: 40px
+          text-align: center
+          color: $color-white
+          font-size: $font-size-medium
+
+        .payment-success
+          height: 234px
+          display: flex
+          flex-direction: column
+          justify-content: center
+          align-items: center
+          background: $color-white
+
+          .payment-success-img
+            width: 67.5px
+            height: 65px
+            margin-bottom: 12px
+
+          .success-txt
+            font-size: $font-size-medium-x
+
+</style>

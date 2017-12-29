@@ -120,6 +120,7 @@
         this.maxNum = item.promotion_stock
         this.prizeCheckedItem = item
         this.prizeCheckedIdx = idx
+        this.prizeCount = 0
         this.$apply()
       },
       saveMsg() {
@@ -296,8 +297,8 @@
         bottom: -50px
 
         .addprize-closeX
-          width: 20px
-          height: 20px
+          width: 24px
+          height: 24px
 
 
 </style>

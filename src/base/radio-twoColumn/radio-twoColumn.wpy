@@ -63,7 +63,8 @@
       showNull() {
 
       },
-      init(radioList) {
+      init(List) {
+        let radioList = JSON.parse(List)
         this.radioMsg = radioList
         this.checked = radioList.radioChecked
         this.items = radioList.items
@@ -197,7 +198,7 @@
         bottom: -50px
 
         .radioBox-closeX
-          width: 20px
-          height: 20px
+          width: 24px
+          height: 24px
 
 </style>

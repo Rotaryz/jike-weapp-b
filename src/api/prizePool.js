@@ -6,9 +6,12 @@ export default class PrizePool extends base {
    * @param
    * @returns {Promise.<*>}
    */
-  static async getPrizelist() {
+  static async getPrizelist(status = 1, type = 1) {
     const url = `${this.baseUrl}/api/activity/prize-pool`
-    return await this.get(url)
+    let data = {
+      use_status: status,
+      use_type: type
+    }
+    return await this.get(url, data)
   }
-
 }

@@ -137,7 +137,7 @@
 
 <script>
   import wepy from 'wepy'
-  import Activity from '@/api/activity'
+  import Activity from '@/api/activitys'
   import base from '@/common/mixins/base'
   import AddPrize from '@/base/addprize/addprize'
   import PrizePool from '@/api/prizePool'
@@ -177,23 +177,33 @@
     }
 
     methods = {
-      couponChange(e) {
+      async couponChange(e) {
         this.couponIng = e.detail.value
         if (e.detail.value) {
           this.detailCompile = 'coupon'
           this.prizeListArr = this.couponMsg ? this.couponMsg.activity_promotion.slice() : []
         } else {
           this.detailCompile = ''
+          let id = this.couponMsg.id
+          let res = await Activity.ActivityClose(id)
+          if (res.error === 0) {
+            this.$invoke('Toast', 'show', '优惠券分享有礼关闭成功')
+          }
         }
         this.$apply()
       },
-      contentChange(e) {
+      async contentChange(e) {
         this.contentIng = e.detail.value
         if (e.detail.value) {
           this.detailCompile = 'content'
           this.prizeListArr = this.contentMsg ? this.contentMsg.activity_promotion.slice() : []
         } else {
           this.detailCompile = ''
+          let id = this.contentMsg
+          let res = await Activity.ActivityClose(id)
+          if (res.error === 0) {
+            this.$invoke('Toast', 'show', '内容分享有礼关闭成功')
+          }
         }
         this.$apply()
       },
@@ -257,13 +267,13 @@
           let sqlRes
           if (!sqlType) {
             sqlRes = await Activity.newActivity(data)
-            console.log(999)
           } else {
             let activityId = this[this.detailCompile + 'Msg'].id
             sqlRes = await Activity.chengeActivity(data, activityId)
-            console.log(888)
           }
-          console.log(sqlRes)
+          if (sqlRes.error === 0) {
+            this.$invoke('Toast', 'show', '优惠券分享有礼设置成功')
+          }
         } else {
           this.$invoke('Toast', 'show', '资料填写不完整')
           return
@@ -301,7 +311,7 @@
 
     async load() {
       this.nowDate = new Date().toLocaleDateString()
-      const res = await Activity.getShareList()
+      let res = await Activity.getShareList()
       this.prizePollList = await PrizePool.getPrizelist()
       let self = this
       res.forEach((item) => {
@@ -653,7 +663,7 @@
               align-items: center
               justify-content: center
               font-size: $font-size-medium
-              border: 1px solid $color-col-line
+              border: 0.5px solid $color-col-line
 
               .prizeList-addItem-plus
                 width: 10px
