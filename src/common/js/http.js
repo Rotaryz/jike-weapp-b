@@ -14,10 +14,10 @@ export default class http {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
     if (loading) {
-      // Tips.loading()
+      Tips.loading()
     }
     const res = await wepy.request(param)
-    // Tips.loaded()
+    Tips.loaded()
     if (this.isSuccess(res)) {
       const result = res.data.data ? res.data.data : res.data
       return result
@@ -94,7 +94,6 @@ export default class http {
     }
     const Authorization = wepy.getStorageSync('token')
     param.header = Object.assign({}, {Authorization})
-    console.log(param)
     if (loading) {
       Tips.loading()
     }

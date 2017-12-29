@@ -1,0 +1,608 @@
+<template>
+  <view class="lives" scroll-y="true"
+        enable-back-to-top="true">
+    <view class="live" id="lis">
+      <scroll-view class="live_conpon" scroll-y>
+        <view class="con-item" wx:for="{{activityPromotion}}"
+              wx:key="index"
+              @tap="conponDetail({{item.promotion_id}},{{index}})">
+          <image class="con_bk" src="./pic-play_couponbg.png"
+                 wx:if="{{showBk !== index}}"></image>
+          <image class="con_bk" src="./pic-play_couponbg1.png"
+                 wx:if="{{showBk === index}}"></image>
+          <view class="con-title">
+            <view></view>
+            <view>{{item.promotion_title}}</view>
+            <view class="monlogo">{{item.promotion_shop_price}}</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="live_video video-bk" wx:if="{{!showVideo}}">
+        <image src="./pic-livenone@2x.png"></image>
+      </view>
+      <video class="live_video"
+             src="{{videoSrc}}"
+             poster="{{videoImage}}"
+             wx:if="{{showVideo}}">
+        <cover-view class="live_conpon" wx:if="{{state}}"
+                    animation="{{animation}}">
+          <!--优惠券-->
+          <cover-view class="conpon-derail">
+            <cover-view class="con-item">
+              <cover-image class="con_bk"
+                           src="./pic-play_couponbg1.png"></cover-image>
+              <cover-view class="con-title">
+                <cover-view>{{title1}}</cover-view>
+                <cover-view>{{title2}}</cover-view>
+                <cover-view class="monlogo">{{conDes.platform_price}}
+                </cover-view>
+              </cover-view>
+            </cover-view>
+
+            <cover-view class="con-msg">
+              <cover-view class="con-header">{{conDes.title}}</cover-view>
+              <cover-view>{{conDes.not_allow_time}}</cover-view>
+              <cover-view>有效期至{{conDes.sell_end_at}}</cover-view>
+            </cover-view>
+          </cover-view>
+          <!--优惠券价格-->
+          <cover-view class="money">
+            <cover-view class="money-init">
+              <cover-view class="money-detail">{{conDes.platform_price}}
+              </cover-view>
+              <cover-view class="money-init-s">门市价:￥{{conDes.shop_price}}
+              </cover-view>
+            </cover-view>
+            <cover-view class="buy-count">100人已购买</cover-view>
+          </cover-view>
+          <!--服务详情-->
+          <cover-view class="service-detail">
+            <cover-view class="header" @tap="test">服务详情
+              <cover-view class="line"></cover-view>
+            </cover-view>
+            <cover-view class="detail-wrapper">
+              <cover-view class="item-wrapper" wx:for="{{conDes.detail}}"
+                          wx:key="index">
+                <cover-view class="line"></cover-view>
+                <cover-view class="content left">
+                  <cover-view class="circle"></cover-view>
+                  <cover-view class="font">{{item.servie}}</cover-view>
+                </cover-view>
+                <cover-view class="content middle">{{item.number}}次</cover-view>
+                <cover-view class="content right">￥{{item.price}}</cover-view>
+              </cover-view>
+            </cover-view>
+          </cover-view>
+          <!--购买详情-->
+          <cover-view class="know-detail">
+            <cover-view class="header">购买须知
+              <cover-view class="line"></cover-view>
+            </cover-view>
+
+            <cover-view class="detail-wrapper">
+              <cover-view class="item-wrapper">
+                <cover-view class="title ">
+                  是否需要预约：
+                </cover-view>
+                <cover-view class="content">
+                  <cover-view
+                    class="circle "></cover-view>
+                  <cover-view class="value">
+                    {{conDes.note.need_subscribe === '0' ? '需要预约' : '不需要预约'}}
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+              <cover-view class="item-wrapper">
+                <cover-view class="title ">
+                  单人购买上限：
+                </cover-view>
+                <cover-view class="content">
+                  <cover-view class="circle"></cover-view>
+                  <cover-view class="value">
+                    {{conDes.note.buy_upper_limit === '-1' ? '无上限' :
+                    conDes.note.buy_upper_limit + '人'}}
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+              <cover-view class="item-wrapper">
+                <cover-view class="title ">使用人数：
+                </cover-view>
+                <cover-view class="content">
+                  <cover-view class="circle"></cover-view>
+                  <cover-view class="value">
+                    {{conDes.note.can_use_number === '-1' ? '不限人数' :
+                    conDes.note.can_use_number + '人'}}
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+            </cover-view>
+          </cover-view>
+          <cover-view class="btn-buy" @tap="postOrder">点击购买</cover-view>
+        </cover-view>
+      </video>
+    </view>
+    <view>
+      <view class="upVideo">
+        <view class="eva-title">视频</view>
+        <view class="upload">
+          <image class="video-box" @tap="upVideo" src="{{videoImage}}">
+            <image src="./pic-livebg@2x.png"></image>
+          </image>
+          <view class="tip">上传十分钟视频</view>
+        </view>
+      </view>
+      <view class="upCoupon">
+        <view class="eva-title">优惠券</view>
+        <view class="de-all">
+          <view class="de-item" wx:for="{{activityPromotion}}"
+                wx:key="{{index}}">
+            {{item.promotion_title}}
+            <view class="close-box" @tap="delCou({{index}})">
+              <image src="./close.png"></image>
+            </view>
+          </view>
+          <view class="add-cou" @tap="choice">
+            <image src="./icon-add20@2x.png"></image>
+            添加服务
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="con-submit" @tap="submitOk">
+      <view>
+        保存
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Uploads from 'api/uploads'
+  import live from 'api/live'
+  export default class Live extends wepy.page {
+    config = {
+      navigationBarTitleText: '直播优惠',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    data = {
+      videoImage: '',
+      showVideo: false,
+      videoSrc: '',
+      activityPromotion: [],
+      fileId: 0,
+      imageId: 0,
+      allMsg: {},
+      scrollTops: 0,
+      id: 0
+    }
+    methods = {
+      async upVideo() {
+        const res = await wepy.chooseVideo({sourceType: ['album']})
+//      需要限制大小，待确定！
+        let file = res.tempFilePath
+        const videoId = await Uploads.uploadVideo(file)
+        let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
+        if (videoId && imageId) {
+          this.videoSrc = res.tempFilePath
+          this.videoImage = res.thumbTempFilePath
+          this.showVideo = true
+          this.fileId = videoId.id
+          this.imageId = imageId.id
+          this.$apply()
+        }
+      },
+      async choice() {
+        await wepy.navigateTo({
+          url: '../choice-coupon/choice-coupon'
+        })
+      },
+      delCou(index) {
+        this.activityPromotion.splice(index, 1)
+      },
+      async submitOk() {
+        let res = null
+        if (this.id !== 0) {
+//        更新
+          res = await live.putlive(this.id, this.allMsg)
+        } else {
+          Object.assign(this.allMsg, {
+            name: '直播活动',
+            is_paused: 0,
+            file_id: this.fileId,
+            image_id: this.imageId,
+            activity_promotions: this.activityPromotion
+          })
+//          新建
+          res = await live.createlive(this.allMsg)
+        }
+
+        console.log(res)
+        if (res.error === 0) {
+          wepy.showToast({
+            title: '保存成功',
+            icon: 'success',
+            duration: 1000
+          })
+          wepy.pageScrollTo({
+            scrollTop: 0
+          })
+        }
+      }
+    }
+
+    onShow() {
+      if (this.$parent.globalData.coupon &&
+        this.$parent.globalData.coupon !== '') {
+        this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
+        this.$parent.globalData.coupon = ''
+        this.$apply()
+      }
+      console.log(this.activityPromotion)
+    }
+
+    async onLoad() {
+      let res = await live.watchlive()
+      if (res.error !== 1) {
+        this.id = res.id
+        this.videoSrc = res.file_url
+        this.showVideo = true
+        this.videoImage = res.image_url
+        this.activityPromotion = res.activity_promotion
+      }
+      this.$apply()
+      console.log(res)
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  /*.lives*/
+  /*height: 100vh*/
+
+  view
+    box-sizing: border-box
+
+  .eva-title
+    display: block
+    font-size: $font-size-medium
+    position: relative
+    color: $color-text-d
+    padding-left: 20px
+    line-height: 40px
+    &::before
+      content: ''
+      col-center()
+      height: 12px
+      width: 4px
+      left: 12px
+      background: $color-assist-f
+
+  .upload
+    height: 111px
+    background: $color-white
+    padding: 16px 0px 16px 40px
+    display: flex
+    font-size: $font-size-small-s
+    position: relative
+    .tip
+      position: absolute
+      bottom: 16px
+      left: 126px
+      color: $color-text-d
+    .video-box
+      height: 80px
+      width: 80px
+      border: 0.5px dashed $color-text-d
+      border-radius: 4px
+      position: relative
+      image
+        width: 32px
+        height: 22px
+        z-index: 100
+        all-center()
+
+  .de-all
+    background: $color-white
+    padding: 9px $padding 18.5px
+    display: flex
+    flex-direction: column
+    align-items: center
+    margin-bottom: 70px
+    .de-item
+      width: 100%
+      height: 40px
+      line-height: 40px
+      text-indent: 12px
+      border: 0.5px solid $color-split-line
+      position: relative
+      font-size: $font-size-small
+      color: $color-theme
+      margin-top: 4.5px
+      .close-box
+        position: absolute
+        right: 0px
+        height: 100%
+        width: 50px
+        top: 0
+        image
+          height: 9.2px
+          width: 9.2px
+          col-center()
+          right: 12px
+    .add-cou
+      display: inline-block
+      border: 0.5px solid $color-split-line
+      height: 24px
+      line-height: 24px
+      width: 103.5px
+      border-radius: 50px
+      position: relative
+      font-size: $font-size-medium
+      color: $color-theme
+      text-align: right
+      padding-right: 18px
+      margin-top: 11.5px
+      image
+        left: 16px
+        height: 10px
+        width: 10px
+        col-center()
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    z-index: 200
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
+  /*::-webkit-scrollbar*/
+  /*width: 0*/
+  /*height: 0*/
+  /*color: transparent*/
+
+  .live
+    width: 100%
+    background-color: $color-theme
+    display: flex
+    height: 121vw
+    .live_conpon
+      flex: 2.54
+      height: 100%
+    .video-bk
+      background: #292937
+      image
+        width: 51px
+        height: 32px
+        all-center()
+    .live_video
+      flex: 7.46
+      height: 100%
+      position: relative
+      .live_conpon
+        position: absolute
+        width: 100%
+        height: 100%
+        z-index: 10000
+        top: 0
+        background: $color-master-gray
+        .money
+          height: 40px
+          background: #fff
+          position: relative
+          display: flex
+          align-items: center
+          padding: 0 7.5px 0 11.5px
+          font-size: $font-size-small-s
+          margin-bottom: 10px
+          color: #3F3F3F
+          cover-view
+            flex: 1
+          .money-init
+            flex: 2
+            cover-view
+              display: inline
+            .money-detail
+              margin-right: 6px
+              font-size: $font-size-large-xx
+              color: $color-orange
+              position: relative
+              padding-left: 4px
+              &:before
+                position: absolute
+                content: '￥'
+                color: $color-orange
+                left: 0px
+                font-size: $font-size-small-s
+                bottom: 2px
+            .money-init-s
+              transform: translateY(-10px)
+          .buy-count
+            text-align right
+        .conpon-derail
+          display: flex
+          height: 84px
+          align-items: center
+          padding: 0 10px
+          font-size: $font-size-small-s
+          .con-item
+
+            position: relative
+            margin: 0
+            .con-title
+              padding-left: 16px
+              width: 100%
+              margin-top: 4px
+              .con-title-s
+                width: 50px
+                white-space: wrap
+              .monlogo:before
+                left: -6px
+          .con-msg
+            height: 60px
+            flex: 8
+            margin-left: 10px
+            position: relative
+            cover-view
+              color: #696671
+              line-height: $font-size-medium
+              &:last-child
+                position: absolute
+                bottom: 0
+                width: 100%
+            .con-header
+              font-size: $font-size-medium
+              color: #5d5d5d
+              font-family: $font-family-regular
+              line-height: $font-size-large-m
+
+        .btn-buy
+          height: 40px
+          line-height: 40px
+          width: 100%
+          text-align: center
+          background: $color-orange
+          color: $color-white
+          font-size: $font-size-medium
+          position: absolute
+          bottom: -1px
+
+  .con-item
+    height: 60px
+    width: 70px
+    position: relative
+    margin: 10px auto 0
+    .con_bk
+      position: absolute
+      width: 100%
+      height: 100%
+      row-center()
+    .con-title
+      position: absolute
+      z-index: 10
+      font-size: $font-size-small-s
+      color: #5D5D5D
+      width: 100%
+      view
+        color: #5D5D5D
+        padding-bottom: 4px
+        padding-left: 16px
+        &:first-child
+          padding-top: 4px
+      .monlogo
+        font-size: $font-size-large-xx
+        color: #5D5D5D
+        position: relative
+        text-indent: 5px
+        font-family: $font-family-m
+        &:before
+          content: '￥'
+          color: #5D5D5D
+          font-size: $font-size-small-s
+          position: absolute
+          top: 3px
+          left: 9px
+
+  //优惠券详情
+  .service-detail
+    margin-bottom: 10px
+    padding-left: 12px
+    background-color: $color-white
+    .header
+      height: 39px
+      line-height: 39px
+      font-size: $font-size-medium
+      color: $color-text-l
+      position: relative
+
+    .detail-wrapper
+      .item-wrapper
+        display: flex
+        align-items: center
+        height: 28px
+        padding-right: 12px
+        position: relative
+        &:last-child
+          border-none()
+        .content
+          flex: 1
+          color: $color-text-dd
+          font-size: $font-size-small
+          &.left
+            text-align: left
+            .circle
+              display: inline-block
+              vertical-align: middle
+              width: 4.5px
+              height: 4.5px
+              margin-right: 5.25px
+              border-radius: 50%
+              background-color: $color-circle
+            .font
+              display: inline-block
+              vertical-align: middle
+          &.middle
+            text-align: center
+          &.right
+            text-align: right
+
+  .line
+    position: absolute
+    height: 1px
+    width: 100%
+    background: $color-row-line
+    bottom: 0
+
+  .know-detail
+    padding-left: 12px
+    padding-bottom: 10px
+    background-color: $color-white
+    .header
+      height: 39px
+      line-height: 39px
+      font-size: $font-size-medium
+      color: $color-text-l
+      position: relative
+    .detail-wrapper
+      padding: 7.5px 0
+      .item-wrapper
+        margin-bottom: 13px
+        &:last-child
+          margin-bottom: 0
+        .title
+          margin-bottom: 8.5px
+          font-size: $font-size-small
+          color: $color-text
+        .content
+          font-size: 0
+          .circle
+            display: inline-block
+            vertical-align: middle
+            width: 4.5px
+            height: 4.5px
+            margin-right: 5.25px
+            border-radius: 50%
+            background-color: $color-circle
+          .circle_s
+            margin-top: 11px
+          .value
+            display: inline-block
+            vertical-align: middle
+            font-size: $font-size-small
+</style>

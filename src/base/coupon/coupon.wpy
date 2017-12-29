@@ -7,7 +7,9 @@
     <view class="content">
       <view class="left">
         <view class="price">
-          <text class="number">{{coupon.platform_price}}</text>
+          <text class="number">{{coupon.platform_price ? coupon.platform_price
+            : coupon.promotion_shop_price}}
+          </text>
           <text class="yuan">元</text>
         </view>
         <view class="desc" wx:if="{{coupon.promotion_type === 'discount'}}">
@@ -18,7 +20,9 @@
         <view class="desc-wrapper">
           <view class="description">
             <view class="top">
-              <view class="name">{{coupon.title}}</view>
+              <view class="name">{{coupon.title ? coupon.title
+                : coupon.promotion_title}}
+              </view>
               <view class="valid">有效期至{{coupon.end_at}}</view>
             </view>
             <view class="bottom">{{coupon.not_allow_time}}</view>

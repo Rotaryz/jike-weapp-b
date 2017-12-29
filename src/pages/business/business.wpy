@@ -8,7 +8,8 @@
     </NavHeader>
     <view class="business">
       <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
-        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})" id="checkboxs">
+        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})"
+                        id="checkboxs">
           <label class="radioLabel {{item.checked?'active':''}}">
             <checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"
                       hidden="true"/>
@@ -33,7 +34,7 @@
                 bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>
       </view>
     </view>
-    <view class="times" animation="{{animation}}" wx:if="{{showTime}}">
+    <view class="times" wx:if="{{showTime}}">
       <view class="times-ti">
         <view class="set-time">设置时间</view>
         <view class="time-ok">
@@ -67,7 +68,6 @@
             </view>
           </picker-view-column>
         </picker-view>
-
       </view>
       <image src="./icon-close_white@2x.png" @tap="hideTime"></image>
     </view>
@@ -189,7 +189,7 @@
       bindChange(e) {
         this.value = e.detail.value
       },
-      async sureTime() {
+      sureTime() {
         this.time = `${this.value[0] + this.year}-${this.value[1] + 1
           }-${this.value[2] + 1}`
         if (this.timeTimes === 1) {
@@ -352,13 +352,14 @@
       position: absolute
       height: 24px
       width: 24px
-      bottom: 90px
+      bottom: 16vw
       row-center()
 
   #checkboxs
     display: flex
     justify-content: center
     align-items: center
+
   .radio-Icon
     width: 16px
     height: 16px

@@ -54,13 +54,14 @@
 
     config = {
       pages: [
+        'pages/live/live',
+        'pages/shop/shop',
+        'pages/content/content',
         'pages/create-content/create-content',
+        'pages/business/business',
         'pages/choice-coupon/choice-coupon',
         'pages/compile/compile',
-        'pages/business/business',
-        'pages/shop/shop',
         'pages/data/data',
-        'pages/content/content',
         'pages/cancel-record/cancel-record',
         'pages/evaluate/evaluate',
         'pages/client/client',
