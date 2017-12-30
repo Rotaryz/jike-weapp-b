@@ -54,6 +54,7 @@
 
     config = {
       pages: [
+        'pages/registration/registration',
         'pages/live/live',
         'pages/shop/shop',
         'pages/content/content',

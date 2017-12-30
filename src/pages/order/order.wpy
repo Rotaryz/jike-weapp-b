@@ -276,8 +276,8 @@
           background-color: $color-theme
           border-bottom: none
     image
-      height: 24px
-      width: 24px
+      height: 20px
+      width: 20px
       row-center()
-      bottom: 90px
+      bottom: 16vw
 </style>

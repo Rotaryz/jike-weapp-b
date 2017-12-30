@@ -52,14 +52,14 @@
         if (this.index !== -1) {
           this.couponList.map((item, idx) => {
             if (idx === index) {
-              item.is_showed = true
+              item.is_showed = !item.is_showed
             } else {
               item.is_showed = false
             }
             return item
           })
         } else {
-          this.couponList[index].is_showed = true
+          this.couponList[index].is_showed = !this.couponList[index].is_showed
         }
         this.num = index
       },

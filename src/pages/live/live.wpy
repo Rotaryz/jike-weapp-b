@@ -24,109 +24,15 @@
              src="{{videoSrc}}"
              poster="{{videoImage}}"
              wx:if="{{showVideo}}">
-        <cover-view class="live_conpon" wx:if="{{state}}"
-                    animation="{{animation}}">
-          <!--优惠券-->
-          <cover-view class="conpon-derail">
-            <cover-view class="con-item">
-              <cover-image class="con_bk"
-                           src="./pic-play_couponbg1.png"></cover-image>
-              <cover-view class="con-title">
-                <cover-view>{{title1}}</cover-view>
-                <cover-view>{{title2}}</cover-view>
-                <cover-view class="monlogo">{{conDes.platform_price}}
-                </cover-view>
-              </cover-view>
-            </cover-view>
-
-            <cover-view class="con-msg">
-              <cover-view class="con-header">{{conDes.title}}</cover-view>
-              <cover-view>{{conDes.not_allow_time}}</cover-view>
-              <cover-view>有效期至{{conDes.sell_end_at}}</cover-view>
-            </cover-view>
-          </cover-view>
-          <!--优惠券价格-->
-          <cover-view class="money">
-            <cover-view class="money-init">
-              <cover-view class="money-detail">{{conDes.platform_price}}
-              </cover-view>
-              <cover-view class="money-init-s">门市价:￥{{conDes.shop_price}}
-              </cover-view>
-            </cover-view>
-            <cover-view class="buy-count">100人已购买</cover-view>
-          </cover-view>
-          <!--服务详情-->
-          <cover-view class="service-detail">
-            <cover-view class="header" @tap="test">服务详情
-              <cover-view class="line"></cover-view>
-            </cover-view>
-            <cover-view class="detail-wrapper">
-              <cover-view class="item-wrapper" wx:for="{{conDes.detail}}"
-                          wx:key="index">
-                <cover-view class="line"></cover-view>
-                <cover-view class="content left">
-                  <cover-view class="circle"></cover-view>
-                  <cover-view class="font">{{item.servie}}</cover-view>
-                </cover-view>
-                <cover-view class="content middle">{{item.number}}次</cover-view>
-                <cover-view class="content right">￥{{item.price}}</cover-view>
-              </cover-view>
-            </cover-view>
-          </cover-view>
-          <!--购买详情-->
-          <cover-view class="know-detail">
-            <cover-view class="header">购买须知
-              <cover-view class="line"></cover-view>
-            </cover-view>
-
-            <cover-view class="detail-wrapper">
-              <cover-view class="item-wrapper">
-                <cover-view class="title ">
-                  是否需要预约：
-                </cover-view>
-                <cover-view class="content">
-                  <cover-view
-                    class="circle "></cover-view>
-                  <cover-view class="value">
-                    {{conDes.note.need_subscribe === '0' ? '需要预约' : '不需要预约'}}
-                  </cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="item-wrapper">
-                <cover-view class="title ">
-                  单人购买上限：
-                </cover-view>
-                <cover-view class="content">
-                  <cover-view class="circle"></cover-view>
-                  <cover-view class="value">
-                    {{conDes.note.buy_upper_limit === '-1' ? '无上限' :
-                    conDes.note.buy_upper_limit + '人'}}
-                  </cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="item-wrapper">
-                <cover-view class="title ">使用人数：
-                </cover-view>
-                <cover-view class="content">
-                  <cover-view class="circle"></cover-view>
-                  <cover-view class="value">
-                    {{conDes.note.can_use_number === '-1' ? '不限人数' :
-                    conDes.note.can_use_number + '人'}}
-                  </cover-view>
-                </cover-view>
-              </cover-view>
-            </cover-view>
-          </cover-view>
-          <cover-view class="btn-buy" @tap="postOrder">点击购买</cover-view>
-        </cover-view>
       </video>
     </view>
     <view>
       <view class="upVideo">
         <view class="eva-title">视频</view>
         <view class="upload">
-          <image class="video-box" @tap="upVideo" src="{{videoImage}}">
-            <image src="./pic-livebg@2x.png"></image>
+          <image class="video-box {{showVideo === '' ? '' : 'no-border'}}" @tap="upVideo" src="{{videoImage}}">
+            <image src="./pic-livebg@2x.png"
+                   wx:if="{{showVideo === ''}}"></image>
           </image>
           <view class="tip">上传十分钟视频</view>
         </view>
@@ -202,20 +108,21 @@
         this.activityPromotion.splice(index, 1)
       },
       async submitOk() {
+        Object.assign(this.allMsg, {
+          name: '直播活动',
+          is_paused: 0,
+          file_id: this.fileId,
+          image_id: this.imageId,
+          activity_promotions: this.activityPromotion
+        })
         let res = null
         if (this.id !== 0) {
 //        更新
           res = await live.putlive(this.id, this.allMsg)
         } else {
-          Object.assign(this.allMsg, {
-            name: '直播活动',
-            is_paused: 0,
-            file_id: this.fileId,
-            image_id: this.imageId,
-            activity_promotions: this.activityPromotion
-          })
 //          新建
           res = await live.createlive(this.allMsg)
+          await this.load()
         }
 
         console.log(res)
@@ -242,17 +149,23 @@
       console.log(this.activityPromotion)
     }
 
-    async onLoad() {
+    async load() {
       let res = await live.watchlive()
+      console.log(res)
       if (res.error !== 1) {
         this.id = res.id
         this.videoSrc = res.file_url
         this.showVideo = true
         this.videoImage = res.image_url
+        this.fileId = res.file_id
+        this.imageId = res.file_id
         this.activityPromotion = res.activity_promotion
       }
       this.$apply()
-      console.log(res)
+    }
+
+    async onLoad() {
+      await this.load()
     }
   }
 </script>
@@ -304,6 +217,8 @@
         height: 22px
         z-index: 100
         all-center()
+    .no-border
+      border: none
 
   .de-all
     background: $color-white

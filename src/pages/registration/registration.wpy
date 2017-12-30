@@ -1,0 +1,569 @@
+<template>
+  <view class="registration">
+    <view class="map">
+      <view class="map-title">
+        <image src="./Group9.png"></image>
+        广东省广州市白云区黄石街道国际单位A3白云科技…
+      </view>
+      <map name="address">
+        <cover-image src="./pic-mapbg@2x.png" class="bk">
+        </cover-image>
+        <cover-image src="./icon-manoutside.png" class="peo"></cover-image>
+      </map>
+      <view class="reg_red">
+        <image class="line" src="./pic-dashed@2x.png"></image>
+        <view wx:for="{{redPac}}" wx:key="{{index}}">
+          <view class="red-title {{item.showTitle ===1 ? 'award': ''}}">{{
+            item.title}}
+          </view>
+          <image src="./Rectangle 5.png" class="award"
+                 wx:if="{{item.showTitle ===1}}"></image>
+          <image src="{{item.image}}"></image>
+        </view>
+      </view>
+    </view>
+    <view class="activity">
+      <view class="eva-title">活动信息</view>
+      <view class="acts">
+        <view class="acti-item">
+          活动名称
+          <input type="text" value="{{name}}" maxlength="10"/>
+          <text class="num">{{nameLen}}/10</text>
+        </view>
+        <view class="acti-item">
+          活动时间
+          <text>当天 至 2017-12-30 </text>
+          <image src="./icon-pressed.png"></image>
+        </view>
+        <view class="acti-item" @tap="isChioce(way)">
+          签到范围
+          <text>{{value}}</text>
+          <image src="./icon-pressed.png"></image>
+        </view>
+        <!--<view class="acti-item">-->
+        <!--增加次数-->
+        <!--<input type="text" value="{{degree}}" maxlength="2"/>-->
+        <!--</view>-->
+      </view>
+    </view>
+    <view class="rules">
+      <view class="eva-title">签到规则</view>
+      <view class="acts">
+        <view class="acti-item">
+          首次签到奖励红包
+          <view class="bo-tip" @tap="isChioce">
+            <image src="./icon-add20@2x.png"></image>
+            添加奖品
+          </view>
+        </view>
+        <view class="acti-item">
+          连续签到3天奖励红包
+          <view class="bo-tip" @tap="isChioce">
+            <image src="./icon-add20@2x.png"></image>
+            添加奖品
+          </view>
+        </view>
+        <view class="acti-item">
+          连续签到7天奖励红包
+          <view class="bo-tip" @tap="isChioce">
+            <image src="./icon-add20@2x.png"></image>
+            添加奖品
+          </view>
+        </view>
+        <view class="acti-item">
+          活动说明
+        </view>
+        <textarea name="" id="" placeholder="请输入"
+                  placeholder-style="color:#9b9b9b" maxlength="30">
+          <text class="num">0/30</text>
+        </textarea>
+      </view>
+    </view>
+    <view class="order-detail" wx:if="{{showChioce}}">
+      <view class="order-box">
+        <view>签到范围</view>
+        <view wx:if="{{way}}">
+          <view class="ways" wx:for="{{wayList}}" wx:key="{{index}}">
+            {{item.title}}
+            <view class="sel" @tap="chioceWay({{index}})">
+              <image
+                src="{{item.sel?'./icon-selected@2x.png':'./icon-selected.png'}}"></image>
+            </view>
+          </view>
+          <view class="ways">
+            <input type="number" placeholder="请输入公里数"
+                   placeholder-style="color:#9b9b9b" bindinput="setWay">
+            <text>公里</text>
+          </view>
+        </view>
+        <view class="prize" wx:if="{{!way}}">
+          <view class="ways" wx:for="{{redPack}}" wx:key="{{index}}">
+            {{item.promotion_title}}
+            <text>剩余{{item.promotion_stock}}个</text>
+            <view class="sel" @tap="selRed({{index}})">
+              <image
+                src="{{item.sel?'./icon-selected@2x.png':'./icon-selected.png'}}"></image>
+            </view>
+          </view>
+          <view class="add-weight ways">
+            <view>添加数量</view>
+            <image src="./jian.png" @tap="subtract"></image>
+            <text>{{addNum}}</text>
+            <image src="./add.png" @tap="addReds"></image>
+          </view>
+          <view class="submit" @tap="save">保存</view>
+        </view>
+      </view>
+      <image src="./icon-close_white@2x.png" @tap="hideDetail"></image>
+    </view>
+    <view class="con-submit" @tap="submitOk">
+      <view>
+        保存
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import regist from 'api/regist'
+  export default class Registration extends wepy.page {
+    config = {
+      navigationBarTitleText: '签到红包',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    data = {
+      redPac: [{
+        title: '奖励',
+        image: './icon-1_money.png',
+        showTitle: 1,
+        ispacket: 1
+      }, {
+        title: '第二天',
+        image: './icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+
+      }, {
+        title: '奖励',
+        image: './icon-22_money.png',
+        showTitle: 1,
+        ispacket: 2
+      }, {
+        title: '第四天',
+        image: './icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+      }, {
+        title: '第五天',
+        image: './icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+      }, {
+        title: '第六天',
+        image: './icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+      }, {
+        title: '奖励',
+        image: './icon-33_money.png',
+        showTitle: 1,
+        ispacket: 3
+      }],
+      name: '签到红包',
+      nameLen: 4,
+      showChioce: false,
+      way: true,
+      wayList: [{
+        title: '500米',
+        sel: false
+      }, {
+        title: '1公里',
+        sel: false
+      }, {
+        title: '2公里',
+        sel: false
+      }],
+      isInput: false,
+      value: '',
+      degree: '',
+      redPack: [],
+      addNum: 0,
+      numTimes: 0
+    }
+    methods = {
+      isChioce(type) {
+        this.showChioce = true
+        if (type === 'way') {
+          this.way = true
+        } else {
+          this.way = false
+        }
+      },
+      chioceWay(index) {
+        this.wayList.map((item, idx) => {
+          if (idx === index) {
+            item.sel = !item.sel
+          } else {
+            item.sel = false
+          }
+        })
+//        console.log(this.wayList[index].sel)
+        if (this.wayList[index].sel) {
+          this.value = this.wayList[index].title
+        }
+      },
+      setWay(e) {
+        this.wayList.map((item, idx) => {
+          item.sel = false
+        })
+        this.value = e.detail.value + '公里'
+        console.log(this.value)
+      },
+      hideDetail() {
+        this.showChioce = false
+      },
+      selRed(index) {
+        this.redPack.map((item, idx) => {
+          if (idx === index) {
+            item.sel = !item.sel
+          } else {
+            item.sel = false
+          }
+        })
+        if (this.redPack[index].sel) {
+          this.numTimes = index
+        }
+      },
+      addReds() {
+        let number = this.redPack[this.numTimes]['promotion_stock']
+        console.log(this.redPack[this.numTimes])
+        if (this.addNum < number) {
+          this.addNum++
+          this.redPack[this.numTimes]['promotion_stock'] = number - this.addNum
+        }
+      },
+      subtract() {
+        let number = this.redPack[this.numTimes]['promotion_stock']
+        if (this.addNum > 0) {
+          this.addNum--
+          this.redPack[this.numTimes]['promotion_stock'] = number + this.addNum
+        }
+      },
+      save() {
+
+      }
+    }
+    watch = {
+      redPack(newValue, oldValue) {
+        return newValue
+      }
+    }
+
+    async load() {
+      let res = await regist.seeRegist()
+      let data = await regist.Redpack()
+      this.redPack = data
+      console.log(data)
+//      if (res.error !== 1) {
+//        this.id = res.id
+//      }
+      this.$apply()
+    }
+
+    async onLoad() {
+      await this.load()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  .map
+    padding: 0 $padding
+    background: $color-theme
+    .map-title
+      font-size: $font-size-small
+      line-height: 26px
+      color: $color-white
+      no-wrap()
+      image
+        height: 10px
+        width: 8px
+    map
+      width: 100%
+      height: 64vw
+      border-radius: 20px
+      .bk
+        height: 100%
+        width: 100%
+        position: relative
+      .peo
+        position: absolute
+        z-index: 1000
+        bottom: 28.5px
+        right: 17.5px
+        height: 58px
+        width: 44px
+
+  .rules
+    margin-bottom: 60px
+
+  .reg_red
+    display: flex
+    flex-direction: row
+    justify-content: space-around
+    color: $color-text-tr
+    padding: 10.5px 0 18px
+    position: relative
+    .line
+      position: absolute
+      height: 1px
+      width: 80vw
+      top: 60%
+    > view
+      width: 10%
+      font-size: $font-size-small-s
+      line-height: $font-size-medium
+      position: relative
+      text-align: center
+      height: 43.5px
+      no-wrap()
+      .red-title
+        margin-bottom: 7px
+        height: 33%
+        color: #696671
+        position: relative
+        z-index: 1100
+      image
+        height: 24px
+        width: 26px
+        position: absolute
+        bottom: 0
+        left: 2px
+        z-index: 100
+
+      .award
+        height: 17.5px
+        position: absolute
+        top: 0
+        left: 0
+        color: rgba(255, 255, 255, .6)
+        background-size: cover
+        width: 31.5px
+        line-height: 14px
+
+  .eva-title
+    display: block
+    font-size: $font-size-medium
+    position: relative
+    color: $color-text-d
+    padding-left: 20px
+    line-height: 40px
+    &::before
+      content: ''
+      col-center()
+      height: 12px
+      width: 4px
+      left: 12px
+      background: $color-assist-f
+
+  .acts
+    padding: 0 $padding 15px
+    background: $color-white
+    .acti-item
+      font-size: $font-size-medium
+      color: #464646
+      border-bottom: 0.5px solid $color-split-line
+      height: 39.5px
+      line-height: 39.5px
+      position: relative
+      display: flex
+      text
+        margin-left: 39px
+      input
+        width: 67%
+        height: 100%
+        margin-left: 39px
+      image
+        height: 11px
+        width: 11px
+        col-center()
+        right: 12px
+      .num
+        col-center()
+        right: 12px
+        font-size: $font-size-small-s
+        color: $color-text-d
+    textarea
+      box-sizing: border-box
+      height: 75px
+      width: 100%
+      background: #E6E6E6
+      font-size: $font-size-medium
+      padding-left: 9px
+      position: relative
+      border: 0.5px solid $color-split-line
+      .num
+        bottom: 2px
+        right: 6px
+        position: absolute
+        font-size: $font-size-small-s
+        color: $color-text-d
+
+  .rules .acts
+    .acti-item
+      position: relative
+      view
+        border: 0.5px solid $color-split-line
+        border-radius: 50px
+        padding: 2.5px 10px 2.5px 20px
+        position: absolute
+        col-center()
+        right: 12px
+        line-height: 20px
+        font-size: $font-size-medium
+        image
+          col-center()
+          height: 10px
+          width: 10px
+          position: absolute
+          left: 7.5px
+      .bo-tip
+        line-height: 16.5px
+        font-size: $font-size-small
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    z-index: 200
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
+  .order-detail
+    position: fixed
+    z-index: 1200
+    background: $color-mask-bgc
+    top: 0
+    width: 100vw
+    height: 100vh
+    .order-box
+      border-radius: 2px
+      max-height: 200px
+      overflow-y: scroll
+      width: 265px
+      row-center()
+      top: 47%
+      padding-bottom: 13px
+      background: $color-white
+      > view
+        font-size: $font-size-small
+        color: $color-text
+        padding: 0 10px
+        position: relative
+        .sel
+          border: none
+          height: 100%
+          width: 40px
+          position: absolute
+          padding: 0
+          right: 0
+          top: 0
+          image
+            all-center()
+            height: 16px
+            width: 16px
+        &:first-child
+          height: 40px
+          line-height: 40px
+          text-align: center
+          color: $color-white
+          border-top-right-radius: 2px
+          border-top-left-radius: 2px
+          background-color: $color-theme
+        .ways
+          height: 43.5px
+          line-height: 43.5px
+          border-bottom: 0.5px solid $color-split-line
+          position: relative
+          input
+            width: 178.5px
+            height: 40px
+            line-height: 40px
+            font-size: $font-size-medium
+            padding-left: 9.5px
+            background: #F9F9F9
+            border: 0.5px solid #E6E6E6
+          &:last-child
+            padding: 13px 0
+            position: relative
+            text
+              color: $color-text
+              font-size: $font-size-medium
+              position: absolute
+              right: 20px
+              col-center()
+      .prize
+        > view
+          position: relative
+          text
+            margin-left: 33.5px
+        .add-weight
+          padding: 0px
+          border: 0.5px dashed $color-split-line
+          margin-top: 6.5px
+          display: flex
+          align-items: center
+          justify-content: center
+          view
+            font-size: $font-size-medium
+            color: $color-text-d
+            margin-right: 15px
+          text
+            padding: 0
+            background: $color-white
+            border: 0.5px solid #E6E6E6
+            font-size: $font-size-medium
+            box-sizing: border-box
+            height: 20px
+            text-align: center
+            line-height: 20px
+            width: 40px
+            margin-left: -5px
+            margin-right: 14px
+          image
+            position: static
+        .submit
+          width: 100%
+          margin-top: 14px
+          background: $color-theme
+          height: 40px
+          padding: 0px
+          border-radius: 2px
+          line-height: 40px
+          text-align: center
+          box-sizing: border-box
+          color: $color-white
+
+    image
+      height: 20px
+      width: 20px
+      row-center()
+      bottom: 4vh
+
+</style>
