@@ -52,6 +52,7 @@
 
     config = {
       navigationBarTitleText: '新建账号',
+      navigationBarBackgroundColor: '#fff',
       navigationBarTextStyle: 'black',
       backgroundColor: '#F9F9F9'
     }
