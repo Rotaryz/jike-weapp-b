@@ -40,5 +40,22 @@ export default class Activitys extends base {
     const url = `${this.baseUrl}/api/activity/share/${id}`
     return await this.put(url, data)
   }
-
+  /**
+   * 活动总览
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async getAllActivity() {
+    const url = `${this.baseUrl}/api/activity/show-status`
+    return await this.get(url)
+  }
+  /**
+   * 开启关闭活动
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async switchActivity(data) {
+    const url = `${this.baseUrl}/api/activity/change-status`
+    return await this.get(url, data)
+  }
 }

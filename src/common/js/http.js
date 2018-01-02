@@ -10,7 +10,7 @@ export default class http {
       data: data
     }
     // const Authorization = wepy.getStorageSync('token')
-    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDQyNjY5OCwiZXhwIjoxNTE0NDMwMjk4LCJuYmYiOjE1MTQ0MjY2OTgsImp0aSI6IkphTXdCYTAyOVNyMzJma08ifQ.xQy3PN1A2gh7WsVVgs3kSmxlcakAGwa3i0xbV-f_wcg'
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDg1ODI1MSwiZXhwIjoxNTE0ODYxODUxLCJuYmYiOjE1MTQ4NTgyNTEsImp0aSI6IlFOWWZBMEdmVGhJbHphcDcifQ.WG7G-RNiM9CgSi5ZgB1YG-KXKubhBlENaSF5kRNhhoM'
     if (Authorization) {
       param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
     }
@@ -19,7 +19,6 @@ export default class http {
       Tips.loading()
     }
     const res = await wepy.request(param)
-    Tips.loaded()
     if (this.isSuccess(res)) {
       const result = res.data.data ? res.data.data : res.data
       return result
@@ -49,7 +48,6 @@ export default class http {
     }
     const res = await wepy.uploadFile(param)
     const resData = JSON.parse(res.data)
-    Tips.loaded()
     if (res.statusCode === 200 && resData.error === 0) {
       return resData
     } else {
@@ -63,14 +61,14 @@ export default class http {
       filePath: data,
       name: name
     }
-    const Authorization = wepy.getStorageSync('token')
+    const Authorization = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDg1ODI1MSwiZXhwIjoxNTE0ODYxODUxLCJuYmYiOjE1MTQ4NTgyNTEsImp0aSI6IlFOWWZBMEdmVGhJbHphcDcifQ.WG7G-RNiM9CgSi5ZgB1YG-KXKubhBlENaSF5kRNhhoM'
+    // const Authorization = wepy.getStorageSync('token')
     param.header = Object.assign({}, {Authorization})
     if (loading) {
       Tips.loading()
     }
     const res = await wepy.uploadFile(param)
     const resData = JSON.parse(res.data)
-    Tips.loaded()
     if (resData.status_code === 200 && resData.error === 0) {
       return resData.data
     } else {

@@ -86,6 +86,7 @@
             content: this.complaintInTxt
           }
           let res = await Account.complaint(data)
+          this.loaded()
           console.log(res)
           if (res.error === 0) {
             this.$invoke('Toast', 'show', '投诉成功')

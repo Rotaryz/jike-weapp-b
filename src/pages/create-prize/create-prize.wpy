@@ -237,24 +237,24 @@
         <view wx:if="{{!paymentSuccess}}">
           <view class="payment-total">
             <view class="payment-total-left">红包总金额</view>
-            <view class="payment-total-right"><text class="payment-total-small">￥</text>200</view>
+            <view class="payment-total-right"><text class="payment-total-small">￥</text>{{prizeType===3?prizeCount*fixedRedpacket:total}}</view>
           </view>
           <view class="payment-type-head">选择支付方式</view>
-          <view class="payment-type">
+          <view class="payment-type" @tap.stop="payChange(1)">
             <view class="payment-type-left">
-              <image src="./image/icon-balance@2x.png" class="payment-type-left-img"></image>
-              <view class="payment-type-title">账户余额</view>
+              <image src="{{payEnough?'./image/icon-balance@2x.png':'./image/icon-balanceno@2x.png'}}" class="payment-type-left-img"></image>
+              <view class="payment-type-title {{payEnough?'':'nothing'}}">账户余额</view>
             </view>
-            <image src="{{paymentType===1?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="payment-type-radio"></image>
+            <image src="{{payEnough?(paymentType===1?'./image/icon-selected@2x.png':'./image/radio@2x.png'):'./image/icon-nopoint@2x.png'}}" class="payment-type-radio"></image>
           </view>
-          <view class="payment-type">
+          <view class="payment-type" @tap.stop="payChange(2)">
             <view class="payment-type-left">
               <image src="./image/icon-wx@2x.png" class="payment-type-left-img"></image>
               <view class="payment-type-title">微信</view>
             </view>
             <image src="{{paymentType===2?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="payment-type-radio"></image>
           </view>
-          <view class="payment-btn">支付</view>
+          <view class="payment-btn" @tap.stop="paymentMoney">支付</view>
         </view>
 
         <view class="payment-success" wx:if="{{paymentSuccess}}">
@@ -275,9 +275,10 @@
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
   import Upload from '@/api/uploads'
+  import users from '@/common/mixins/users'
 
   export default class CreatePrizePage extends wepy.page {
-    mixins = [base]
+    mixins = [base, users]
 
     config = {
       navigationBarTitleText: '新建奖品',
@@ -316,7 +317,11 @@
       paymentType: 1,
       paymentSuccess: false,
       paymentIn: false,
-      EXimgUrl: ''
+      EXimgUrl: '',
+      EXimgId: '',
+      paymentMsg: '',
+      payEnough: true,
+      paymengMoneyIn: false
     }
 
     methods = {
@@ -337,7 +342,6 @@
         this.fixedRedpacket = ''
         this.total = ''
         this.redpackMax = ''
-        this.exdescripte = ''
         this.$apply()
       },
       closeTypeCover() {
@@ -409,28 +413,102 @@
         this.fixedRedpacket = e.detail.value
         this.$apply()
       },
-      createSubmit() {
+      async createSubmit() {
+        let payRes = await PrizePool.getStoreBalance()
+        let payResMax = Number(payRes.remaining)
         switch (this.prizeType) {
           case 1:
-            console.log(this.prizeCountTest)
+            let res1 = this._testEXmsg()
+            if (res1) {
+              let data1 = await PrizePool.createEXchange(res1)
+              if (data1.error === 0) {
+                this.$back()
+              }
+            }
             break
           case 2:
-            this.prizeTypeTxt = '随机红包'
+            let res2 = this._testRandomRedpack()
+            if (res2) {
+              this.paymentMsg = Object.assign({}, res2)
+              if (payResMax >= this.total) {
+                this.paymentType = 1
+                this.payEnough = true
+              } else {
+                this.paymentType = 2
+                this.payEnough = false
+              }
+              this.paymentIn = true
+            }
             break
           case 3:
-            this.prizeTypeTxt = '固定红包'
+            let res3 = this._testFixedRedpack()
+            if (res3) {
+              this.paymentMsg = Object.assign({}, res3)
+              if (payResMax >= this.prizeCount * this.fixedRedpacket) {
+                this.paymentType = 1
+                this.payEnough = true
+              } else {
+                this.paymentType = 2
+                this.payEnough = false
+              }
+              this.paymentIn = true
+            }
             break
         }
+        this.loaded()
+        this.$apply()
       },
       async uploadEXimg() {
         let res = await wepy.chooseImage()
+        if (!res) {
+          return
+        }
         let upRes = await Upload.uploadImages(res.tempFilePaths[0])
         this.EXimgUrl = upRes.url
+        this.EXimgId = upRes.id
+        this.loaded()
         this.$apply()
       },
       delEXimg() {
         this.EXimgUrl = ''
         this.$apply()
+      },
+      payChange(idx) {
+        if (this.paymengMoneyIn) {
+          this.$invoke('Toast', 'show', '订单处理中')
+          return
+        }
+        if (idx * 1 === 1 && !this.payEnough) {
+          return
+        }
+        this.paymentType = Number(idx)
+        this.$apply()
+      },
+      async paymentMoney() {
+        if (this.paymengMoneyIn) {
+          this.$invoke('Toast', 'show', '不要重复提交订单')
+          return
+        }
+        this.paymengMoneyIn = true
+        let code = await this.$getCode()
+        let data
+        switch (this.paymentType) {
+          case 1:
+            data = Object.assign({}, this.paymentMsg, {pay_type: 'remaining_pay'})
+            break
+          case 2:
+            data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code})
+            break
+        }
+        let res = await PrizePool.createRedpack(data)
+        if (res.error === 0) {
+          this.paymentSuccess = true
+          this.$apply()
+          setTimeout(() => {
+            this.$back()
+          }, 2000)
+        }
+        this.loaded()
       }
     }
 
@@ -491,6 +569,92 @@
         let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
         return reg.test(this.fixedRedpacket) && this.fixedRedpacket > 0
       }
+    }
+
+    _testPropety() {
+      let arr = Array.prototype.slice.call(arguments, 0)
+      return arr.every((item) => {
+        return item
+      })
+    }
+
+    _testEXmsg() {
+      if (!this.prizeCountTest) {
+        this.$invoke('Toast', 'show', '奖品数量有误')
+        return false
+      }
+      let data = {
+        promotion_type: 'exchange',
+        title: this.prizeName,
+        start_at: this.beginTime,
+        end_at: this.endTime,
+        note: this.exdescripte,
+        stock: this.prizeCount,
+        use_type: 1
+      }
+      let values = Object.values(data)
+      let res = this._testPropety(...values)
+      if (!res || !this.EXimgUrl) {
+        this.$invoke('Toast', 'show', '资料填写不完整')
+        return false
+      }
+      return Object.assign({}, data, {
+        promotion_images: [{id: 0, image_id: this.EXimgId}],
+        note: {remarks: this.exdescripte}
+      })
+    }
+
+    _testRandomRedpack() {
+      if (!this.prizeCountTest) {
+        this.$invoke('Toast', 'show', '奖品数量有误')
+        return false
+      }
+      if (!this.maxMoneyTest) {
+        this.$invoke('Toast', 'show', '红包最大值不合规')
+        return false
+      }
+      let data = {
+        title: this.prizeName,
+        is_lucky_redpacket: 1,
+        num: this.prizeCount,
+        min_price: 0.01,
+        max_price: this.redpackMax,
+        total_amount: this.total
+      }
+      let values = Object.values(data)
+      let res = this._testPropety(...values)
+      if (!res) {
+        this.$invoke('Toast', 'show', '资料填写不完整')
+        return false
+      }
+      return data
+    }
+
+    _testFixedRedpack() {
+      if (!this.fixedRpMoneyTest) {
+        this.$invoke('Toast', 'show', '红包金额输入错误')
+        return false
+      }
+      if (!this.prizeCountTest) {
+        this.$invoke('Toast', 'show', '奖品数量有误')
+        return false
+      }
+      let data = {
+        title: this.prizeName,
+        num: this.prizeCount,
+        min_price: this.fixedRedpacket,
+        max_price: this.fixedRedpacket,
+        total_amount: this.prizeCount * this.fixedRedpacket
+      }
+      let values = Object.values(data)
+      let res = this._testPropety(...values)
+      if (!res) {
+        this.$invoke('Toast', 'show', '资料填写不完整')
+        return false
+      }
+      return Object.assign({}, data, {
+        is_lucky_redpacket: 0
+      })
     }
   }
 </script>
@@ -1240,6 +1404,10 @@
             .payment-type-title
               font-size: $font-size-medium
               color: $color-text-title
+
+            .payment-type-title.nothing
+              font-size: $font-size-medium
+              color: $color-text-d
 
           .payment-type-radio
             width: 16px

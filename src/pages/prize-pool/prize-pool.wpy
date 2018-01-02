@@ -8,13 +8,13 @@
         <view class="tab-box-btn {{menuTab?'':'active'}}">已过期</view>
       </view>
     </view>
-    <view class="prize-pool-body">
+    <view class="prize-pool-body" wx:if="{{menuTab}}">
       <view class="prize-pool-body-main">
         <view class="prizeItem" wx:for="{{useablePrizeList}}" wx:key="{{item}}">
           <view class="prizeItem-top">
             <view class="prizeItem-top-left">
-              <image class="prizeItem-top-left-img" src="{{}}" wx:if="{{item.promotion_type==='exchange'}}"></image>
-              <view class="prizeItem-top-left-Msg" wx:if="{{item.promotion_type!=='exchange'}}"><text class="prizeItem-top-left-Msg-txt">￥</text>{{item.promotion_type==='redpacket'?item.max_price :item.max_price + '~' + item.max_price}}</view>
+              <image class="prizeItem-top-left-img" src="{{item.promotion_img}}" wx:if="{{item.promotion_type==='exchange'}}"></image>
+              <view class="prizeItem-top-left-Msg" wx:if="{{item.promotion_type!=='exchange'}}"><text class="prizeItem-top-left-Msg-txt">￥</text>{{item.promotion_type==='redpacket'?item.max_price :item.min_price + '~' + item.max_price}}</view>
             </view>
             <view class="prizeItem-top-right">
               <view class="prizeItem-top-right-up">
@@ -41,6 +41,36 @@
       <!--</view>-->
       <view class="prize-pool-body-foot">
         <view class="createBtn" @tap="createPrize">新建奖品</view>
+      </view>
+    </view>
+
+    <view class="pastDue-body" wx:if="{{!menuTab}}">
+      <view class="prizeItem" wx:for="{{pastDuePrizeList}}" wx:key="{{item}}">
+        <view class="prizeItem-top">
+          <view class="prizeItem-top-left">
+            <image class="prizeItem-top-left-img" src="{{item.promotion_img}}" wx:if="{{item.promotion_type==='exchange'}}"></image>
+            <view class="prizeItem-top-left-Msg" wx:if="{{item.promotion_type!=='exchange'}}"><text class="prizeItem-top-left-Msg-txt">￥</text>{{item.promotion_type==='redpacket'?item.max_price :item.min_price + '~' + item.max_price}}</view>
+          </view>
+          <view class="prizeItem-top-right">
+            <view class="prizeItem-top-right-up">
+              <view class="prizeItem-top-right-title">{{item.promotion_title}}</view>
+              <view class="prizeItem-top-right-time" wx:if="{{item.start_at && item.end_at}}">{{item.start_at+' 至 '+item.end_at}}</view>
+            </view>
+            <view class="prizeItem-top-right-progressBox">
+              <view class="prizeItem-surplus">共{{item.init_stock}}个 / 剩余{{item.promotion_stock}}个</view>
+              <progress percent="{{item.promotion_stock/item.init_stock*100}}" color="#9b9b9b" stroke-width="4" class="prizeItem-top-right-progress"></progress>
+            </view>
+          </view>
+        </view>
+        <view class="prizeItem-bottom">
+          <view class="prizeItem-bottom-btn" @tap.stop="deleteEXchange({{item.promotion_id}})">删除</view>
+          <view class="prizeItem-bottom-btn redy" @tap.stop="detailEXchange({{item.promotion_id}})">编辑</view>
+        </view>
+        <view class="prizeItem-fillet">
+          <view class="prizeItem-fillet-txt">
+            {{item.promotion_type==='exchange'?'兑':(item.promotion_type==='redpacket'?'固':'随')}}
+          </view>
+        </view>
       </view>
     </view>
     <Confirm></Confirm>
@@ -72,33 +102,66 @@
 
     data = {
       menuTab: 1,
-      useablePrizeList: null
+      useablePrizeList: null,
+      pastDuePrizeList: null,
+      EXchangeId: null
     }
 
     methods = {
-      changeTab(idx) {
+      async changeTab(idx) {
         this.menuTab = Number(idx)
         switch (this.menuTab) {
           case 0:
+            this.loadPastDue()
             break
           case 1:
+            this.load()
             break
         }
         this.$apply()
       },
       createPrize() {
         this.$navigate('/pages/create-prize/create-prize')
+      },
+      async deleteEXchange(id) {
+        this.EXchangeId = id
+        this.$invoke('Confirm', 'show')
+      },
+      detailEXchange(id) {
+        this.$navigate('/pages/exchange-editor/exchange-editor?id=' + id)
       }
     }
 
     async onLoad() {
+
+    }
+
+    onShow() {
+      this.menuTab = 1
+      this.$apply()
       this.load()
     }
 
     async load() {
       this.useablePrizeList = await PrizePool.getPrizelist() || []
-      console.log(this.useablePrizeList)
       this.loaded()
+    }
+
+    async loadPastDue() {
+      this.pastDuePrizeList = await PrizePool.getPrizelist(0) || []
+      this.loaded()
+    }
+
+    events = {
+      async confirm() {
+        let res = await PrizePool.delexchange(this.EXchangeId)
+        this.loaded()
+        if (res.error === 0) {
+          this.$invoke('Toast', 'show', '删除成功')
+          this.loadPastDue()
+        }
+        this.$apply()
+      }
     }
   }
 </script>
@@ -219,28 +282,6 @@
               top: 5px
               right: 5px
 
-          .prizeItem-bottom
-            display: flex
-            justify-content: flex-end
-            align-items: center
-            height: 39px
-            border-top: 1px dashed $color-col-line
-
-            .prizeItem-bottom-btn
-              width: 60px
-              height: 22px
-              border: 0.5px solid $color-text-d
-              display: flex
-              align-items: center
-              justify-content: center
-              font-size: $font-size-small
-              border-radius: 2px
-              margin-left: 5px
-
-            .prizeItem-bottom-btn.redy
-              color: $color-assist-f
-              border: 0.5px solid $color-assist-f
-
       .prize-pool-body-foot
         height: 13vh
         padding: 0 12px
@@ -260,5 +301,111 @@
 
           &:active
             background: $color-btn-tap
+
+    .pastDue-body
+      height: 93vh
+      padding: 0 12px
+      overflow-y: auto
+
+      .prizeItem
+        margin-top: 10px
+        border: 1px solid $color-col-line
+        border-radius: 2px
+        background: $color-white
+        position: relative
+
+        .prizeItem-top
+          display: flex
+          height: 50px
+          padding: 10px
+
+          .prizeItem-top-left
+            width: 90px
+            height: 50px
+            display: flex
+            align-items: center
+            justify-content: center
+            background: $color-text-d
+            border-radius: 2px
+
+            .prizeItem-top-left-img
+              width: 50px
+              height: 25px
+
+            .prizeItem-top-left-Msg
+              text-align: center
+              font-size: $font-size-small
+              color: $color-white
+              font-family: PingFangSC-Medium
+
+              .prizeItem-top-left-Msg-txt
+                font-size: 8px
+                color: $color-white
+
+          .prizeItem-top-right
+            display: flex
+            flex-direction: column
+            justify-content: space-between
+            margin-left: 10px
+
+            .prizeItem-top-right-up
+
+              .prizeItem-top-right-title
+                font-size: $font-size-medium
+                color: $color-text
+
+              .prizeItem-top-right-time
+                font-size: $font-size-small-s
+                color: $color-text-d
+                line-height: 18px
+
+            .prizeItem-top-right-progressBox
+
+              .prizeItem-top-right-progress
+                width: 140px
+
+              .prizeItem-surplus
+                font-size: $font-size-small-s
+                color: $color-text-d
+                line-height: 18px
+
+        .prizeItem-fillet
+          position: absolute
+          right: 0
+          top: 0
+          width: 25px
+          height: 25px
+          background: $color-text-d
+          border-radius: 0 0 0 100%
+
+          .prizeItem-fillet-txt
+            font-size: $font-size-small-s
+            color: $color-white
+            position: absolute
+            top: 5px
+            right: 5px
+
+        .prizeItem-bottom
+          display: flex
+          justify-content: flex-end
+          align-items: center
+          height: 39px
+          border-top: 1px dashed $color-col-line
+
+          .prizeItem-bottom-btn
+            width: 60px
+            height: 22px
+            border: 0.5px solid $color-text-d
+            display: flex
+            align-items: center
+            justify-content: center
+            font-size: $font-size-small
+            border-radius: 2px
+            margin-left: 5px
+
+          .prizeItem-bottom-btn.redy
+            color: $color-assist-f
+            border: 0.5px solid $color-assist-f
+            margin-right: 10px
 
 </style>

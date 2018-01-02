@@ -4,7 +4,7 @@
       <view class="mine-head-avtarBox">
         <image class="mine-head-avatar" src="{{avatarUrl}}"></image>
         <view class="mine-head-name">{{storeMsg.shop_name}}</view>
-        <view class="switch-store">
+        <view class="switch-store" @tap="switchStore">
           <image src="./image/icon-switch@2x.png" class="switch-store-img"></image>
           <view class="switch-store-txt">
             <view class="trigon"><view class="trigon-content"></view></view>
@@ -31,6 +31,7 @@
   import wepy from 'wepy'
   import Store from '@/api/store'
   import base from '@/common/mixins/base'
+  import Account from '@/api/account'
 
   export default class Mine extends wepy.page {
     mixins = [base]
@@ -74,6 +75,11 @@
           skipUrl = url
         }
         this.$navigate(skipUrl)
+      },
+      async switchStore() {
+        let res = await Account.getAnnexList()
+        this.loaded()
+        console.log(res)
       }
     }
   }

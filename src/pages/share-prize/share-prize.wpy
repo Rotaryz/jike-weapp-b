@@ -186,6 +186,7 @@
           this.detailCompile = ''
           let id = this.couponMsg.id
           let res = await Activity.ActivityClose(id)
+          this.loaded()
           if (res.error === 0) {
             this.$invoke('Toast', 'show', '优惠券分享有礼关闭成功')
           }
@@ -201,6 +202,7 @@
           this.detailCompile = ''
           let id = this.contentMsg
           let res = await Activity.ActivityClose(id)
+          this.loaded()
           if (res.error === 0) {
             this.$invoke('Toast', 'show', '内容分享有礼关闭成功')
           }
@@ -271,6 +273,7 @@
             let activityId = this[this.detailCompile + 'Msg'].id
             sqlRes = await Activity.chengeActivity(data, activityId)
           }
+          this.loaded()
           if (sqlRes.error === 0) {
             this.$invoke('Toast', 'show', '优惠券分享有礼设置成功')
           }
@@ -278,7 +281,6 @@
           this.$invoke('Toast', 'show', '资料填写不完整')
           return
         }
-
         this.detailCompile = ''
         this.load()
         this.$apply()

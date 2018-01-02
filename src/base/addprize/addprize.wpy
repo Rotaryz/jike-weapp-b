@@ -2,31 +2,28 @@
   <view class="addprize" @tap.stop="showNull" wx:if="{{coverShow}}">
     <view class="addprize-container">
       <view class="addprize-container-head">添加奖品</view>
-      <view class="prizeList">
-        <view class="prizeItem" wx:for="{{prizeList}}" wx:key="{{item}}" @tap="checkedPrize({{item}}, {{index}})">
-          <view class="prizeItem-left">
-            <view class="prizeItem-name">{{item.promotion_title}}</view>
-            <view class="prizeItem-count">剩余{{item.promotion_stock}}个</view>
+      <view class="addprize-container-body">
+        <view class="prizeList">
+          <view class="prizeItem" wx:for="{{prizeList}}" wx:key="{{item}}" @tap="checkedPrize({{item}}, {{index}})">
+            <view class="prizeItem-left">
+              <view class="prizeItem-name">{{item.promotion_title}}</view>
+              <view class="prizeItem-count">剩余{{item.promotion_stock}}个</view>
+            </view>
+            <image src="{{index===prizeCheckedIdx?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeItem-checkImg"></image>
           </view>
-          <image src="{{index===prizeCheckedIdx?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeItem-checkImg"></image>
         </view>
-
         <view class="prizeItem-addBox">
           <view class="prizeItem-addBox-gray">添加数量</view>
           <view class="prizeItem-addBox-container">
-            <view class="subBtn" @tap="subCount">
-              <view class="minus"></view>
+            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
+            <view class="countBox">
+              <input type="number" class="countBox-input" bindblur="countChange" value="{{prizeCount}}" />
             </view>
-            <view class="countBox" @tap="showNumInput">
-              <view class="countBox-number" wx:if="{{!NumInput}}">{{prizeCount}}</view>
-              <input type="number" class="countBox-input" bindblur="countChange" value="{{prizeCount}}" wx:if="{{NumInput}}" focus="{{NumInput}}"/>
-            </view>
-            <view class="addBtn" @tap="addCount"><text>+</text></view>
+            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
           </view>
         </view>
         <view class="prizeItem-saveBtn" @tap="saveMsg">保存</view>
       </view>
-
       <view class="addprize-closeBtn" @tap="closeCover">
         <image src="./image/icon-del@2x.png" class="addprize-closeX"></image>
       </view>
@@ -110,9 +107,6 @@
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
         }
       },
-      showNumInput() {
-        this.NumInput = true
-      },
       checkedPrize(item, idx) {
         console.log(item)
         this.prizeCheckedId = item.id
@@ -169,9 +163,13 @@
         color: $color-white
         font-size: $font-size-medium-x
 
-      .prizeList
+      .addprize-container-body
         background: $color-white
         padding: 0 10px 10px
+
+      .prizeList
+        max-height: 250px
+        overflow-y: auto
 
         .prizeItem
           display: flex
@@ -192,98 +190,63 @@
             width: 16px
             height: 16px
 
-        .prizeItem-addBox
-          height: 40px
-          border: .5px dashed $color-col-line
-          margin-top: 7px
+      .prizeItem-addBox
+        height: 40px
+        border: .5px dashed $color-col-line
+        margin-top: 7px
+        display: flex
+        justify-content: center
+        align-items: center
+        font-size: $font-size-small
+
+        .prizeItem-addBox-gray
+          color: $color-text-d
+
+        .prizeItem-addBox-container
           display: flex
-          justify-content: center
-          align-items: center
-          font-size: $font-size-small
 
-          .prizeItem-addBox-gray
-            color: $color-text-d
+          .subBtn
+            width: 20px
+            height: 20px
 
-          .prizeItem-addBox-container
+          .addBtn
+            width: 20px
+            height: 20px
+
+          .countBox
+            width: 50px
+            height: 18px
+            border: 1px solid $color-col-line
+            margin: 0 3px
+            font-size: $font-size-medium
             display: flex
+            align-items: center
+            justify-content: center
 
-            .subBtn
-              width: 20px
-              height: 20px
-              border: 1px solid $color-col-line
-              display: flex
-              justify-content: center
-              align-items: center
-              margin-left: 8px
-
-              .minus
-                width: 9px
-                height: 2px
-                background: #000
-
-              &:active
-                background: $color-btn-tap
-                border: 1px solid $color-btn-tap
-
-                .minus
-                  width: 9px
-                  height: 2px
-                  background: #fff
-
-            .addBtn
-              font-size: 20px
-              width: 20px
-              height: 20px
-              line-height: 20px
-              display: flex
-              justify-content: center
-              align-items: center
-              color: $color-white
-              background: $color-theme
-              border: 1px solid $color-theme
-
-              &:active
-                background: $color-btn-tap
-
-            .countBox
+            .countBox-input
               width: 50px
-              height: 20px
-              border: 1px solid $color-col-line
-              margin: 0 3px
-              line-height: 20px
-              text-align: center
+              height: 18px
               font-size: $font-size-medium
+              border: 0 none
+              color: $color-text
+              text-align: center
 
-              .countBox-number
-                width: 50px
-                height: 20px
-                line-height: 20px
-                color: $color-text
-                font-size: $font-size-medium
+            .countBox-input.error
+              color: $color-assist-f
 
-              .countBox-input
-                width: 50px
-                height: 18px
-                font-size: $font-size-medium
-                border: 0 none
-                color: $color-text
+      .prizeItem-saveBtn
+        height: 40px
+        background: $color-theme
+        color: $color-white
+        display: flex
+        justify-content: center
+        align-items: center
+        font-size: $font-size-medium
+        border-radius: 2px
+        margin-top: 10px
 
-              .countBox-input.error
-                color: $color-assist-f
-
-        .prizeItem-saveBtn
-          height: 40px
-          background: $color-theme
-          color: $color-white
-          display: flex
-          justify-content: center
-          align-items: center
-          font-size: $font-size-medium
-          border-radius: 2px
-          margin-top: 10px
-
-          &:active
-            background: $color-btn-tap
+        &:active
+          background: $color-btn-tap
 
       .addprize-closeBtn
         width: 34px

@@ -94,9 +94,9 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox">
-              <image src="./image/icon-add.png" class="store-msg-logo-img"></image>
-              <image src="" class="store-msg-logo-imgupdate"></image>
-              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle"></image>
+              <image src="./image/icon-add.png" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl}}"></image>
+              <image src="{{logoUrl}}" class="store-msg-logo-imgupdate" wx:if="{{logoUrl}}"></image>
+              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{logoUrl}}" @tap="dellogo"></image>
             </view>
           </view>
           <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
@@ -104,23 +104,13 @@
       </view>
 
       <view class="store-msg-logo">
-        <view class="store-msg-logo-title">门店logo</view>
+        <view class="store-msg-logo-title">门店图片</view>
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
-            <view class="store-msg-logo-imgBox">
-              <image src="./image/icon-add.png" class="store-msg-logo-img"></image>
-              <image src="" class="store-msg-logo-imgupdate"></image>
-              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle"></image>
-            </view>
-            <view class="store-msg-logo-imgBox">
-              <image src="./image/icon-add.png" class="store-msg-logo-img"></image>
-              <image src="" class="store-msg-logo-imgupdate"></image>
-              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle"></image>
-            </view>
-            <view class="store-msg-logo-imgBox">
-              <image src="./image/icon-add.png" class="store-msg-logo-img"></image>
-              <image src="" class="store-msg-logo-imgupdate"></image>
-              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle"></image>
+            <view class="store-msg-logo-imgBox" wx:for="{{storeImgs}}" wx:key="{{item}}">
+              <image src="./image/icon-add.png" class="store-msg-logo-img" wx:if="{{!item.image_url}}" @tap="uploadStoreImg({{index}})"></image>
+              <image src="{{item.image_url}}" class="store-msg-logo-imgupdate" wx:if="{{item.image_url}}"></image>
+              <image src="./image/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{item.image_url}}" @tap="delStoreImg({{index}})"></image>
             </view>
           </view>
 
@@ -234,9 +224,12 @@
   import QQMapWX from '@/common/libs/qqmap-wx-jssdk'
   import Store from '@/api/store'
   import Toast from '@/base/toast/toast'
+  import users from '@/common/mixins/users'
+  import Upload from '@/api/uploads'
+  import Tips from '@/common/js/tips'
 
   export default class StoreMsg extends wepy.page {
-    mixins = [base]
+    mixins = [base, users]
 
     config = {
       navigationBarTitleText: '门店基础信息',
@@ -286,6 +279,7 @@
       hourBegin: '',
       hourEnd: '',
       hourChioseArr: [7, 0, 21, 0],
+      temporaryHour: [7, 0, 21, 0],
       hourIn: true,
       weekIn: false,
       weekValue: [
@@ -300,7 +294,11 @@
       weekChecked: [],
       radioboxShow: false,
       twoRadioboxShow: false,
-      twocolumnboxShow: false
+      twocolumnboxShow: false,
+      logoUrl: '',
+      logoId: 0,
+      storeImgs: []
+
     }
 
     async onLoad() {
@@ -333,10 +331,17 @@
       this.area = res.business_circle ? res.business_circle.name : ''
       this.areaId = res.business_circle_id ? res.business_circle_id : ''
       this.storeStatus = res.open_status ? res.open_status : ''
+      this.logoUrl = res.logo_image || ''
+      this.logoId = res.logo_image_id || 0
+      this.storeImgs = res.shop_image_data ? res.shop_image_data.slice(0, 3) : [
+        {id: 0, image_id: 0, image_url: ''},
+        {id: 0, image_id: 0, image_url: ''},
+        {id: 0, image_id: 0, image_url: ''}
+      ]
       let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
       this.storeStatusTxt = arr[this.storeStatus]
       this.areaArr = res.business_circle ? await Store.getArea(res.business_circle.district) : []
-      this.weekChecked = res.week_day ? res.week_day.split(',') : []
+      this.weekChecked = res.week_day || []
       this._choiseChecked(this.weekValue)
       this.hourBegin = res.open_time ? res.open_time : ''
       this.hourEnd = res.close_time ? res.close_time : ''
@@ -344,6 +349,7 @@
       this.hourChioseArr[1] = res.open_time ? (res.open_time.split(':')[1] === '00' ? '0' : '1') : ''
       this.hourChioseArr[2] = res.close_time ? res.close_time.split(':')[0] : ''
       this.hourChioseArr[3] = res.close_time ? (res.close_time.split(':')[1] === '00' ? '0' : '1') : ''
+      this.temporaryHour = this.hourChioseArr.slice()
       this._mapAuto()
       this.loaded()
     }
@@ -439,6 +445,7 @@
         this.mapAddress = this.region[0] + this.region[1] + this.region[2]
         this._mapAuto(this.mapAddress)
         this.areaArr = await Store.getArea(this.region[2])
+        this.loaded()
         this.showMap = true
         this.$apply()
       },
@@ -491,12 +498,13 @@
       hourCancle() {
         this.hourIn = false
         this.weekIn = true
-        this.hourChioseArr = []
+        this.hourChioseArr = this.temporaryHour.slice()
         this.$apply()
       },
       hourSubmit() {
         this.hourIn = false
         this.weekIn = true
+        this.temporaryHour = this.hourChioseArr.slice()
         let beginMinute = this.hourChioseArr[1] === 0 ? '00' : '30'
         let endMinute = this.hourChioseArr[3] === 0 ? '00' : '30'
         this.hourBegin = this.hourChioseArr[0] + ':' + beginMinute
@@ -518,9 +526,10 @@
         this.showMap = false
         this.$apply()
       },
-      storeMsgSubmit() {
-        let res = this._testPropety(this.name, this.description, this.tel, this.telTest, this.industry.id, this.areaId, this.site, this.storeStatus, this.hourBegin, this.hourEnd, this.weekChecked.length, this.longitude, this.latitude)
-        if (res) {
+      async storeMsgSubmit() {
+        let res = this._testPropety(this.name, this.description, this.tel, this.telTest, this.industry.id, this.areaId, this.site, this.storeStatus, this.hourBegin, this.hourEnd, this.weekChecked.length, this.longitude, this.latitude, this.logoUrl)
+        let res2 = this._testImages()
+        if (res && res2) {
           let data = {
             shop_name: this.name,
             describe: this.description,
@@ -533,10 +542,47 @@
             close_time: this.hourEnd,
             week_day: this.weekChecked,
             longitude: this.longitude,
-            latitude: this.latitude
+            latitude: this.latitude,
+            logo_image_id: this.logoId,
+            shop_images: this.storeImgs
           }
-          console.log(data)
+          let upRes = await Store.setStoreMsg(data)
+          this.loaded()
+          if (upRes.error === 0) {
+            Tips.success('保存成功')
+          }
         }
+      },
+      async uploadlogo() {
+        let res = await wepy.chooseImage()
+        if (!res) {
+          return
+        }
+        let upRes = await Upload.uploadImages(res.tempFilePaths[0])
+        this.loaded()
+        console.log(upRes)
+        this.logoUrl = upRes.url
+        this.logoId = upRes.id
+        this.$apply()
+      },
+      dellogo() {
+        this.logoUrl = ''
+        this.logoId = ''
+        this.$apply()
+      },
+      async uploadStoreImg(idx) {
+        let res = await wepy.chooseImage()
+        if (!res) {
+          return
+        }
+        let upRes = await Upload.uploadImages(res.tempFilePaths[0])
+        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {image_id: upRes.id, image_url: upRes.url})
+        this.loaded()
+        this.$apply()
+      },
+      delStoreImg(idx) {
+        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {image_id: 0, image_url: ''})
+        this.$apply()
       }
     }
 
@@ -595,9 +641,23 @@
 
     _testPropety() {
       let arr = Array.prototype.slice.call(arguments, 0)
-      return arr.every((item) => {
+      let res = arr.every((item) => {
         return item
       })
+      if (!res) {
+        this.$invoke('Toast', 'show', '资料填写不完整')
+      }
+      return res
+    }
+
+    _testImages() {
+      let res = this.storeImgs.some((item) => {
+        return item.image_url
+      })
+      if (!res) {
+        this.$invoke('Toast', 'show', '请上传门店图片')
+      }
+      return res
     }
   }
 </script>

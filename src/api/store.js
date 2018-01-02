@@ -22,5 +22,23 @@ export default class Store extends base {
     const url = `${this.baseUrl}/api/merchants/business-circle`
     return await this.get(url, data)
   }
+  /**
+   * 商家证照编辑
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async setLicense(data) {
+    const url = `${this.baseUrl}/api/merchants/set-credential-data`
+    return await this.post(url, data)
+  }
+  /**
+   * 门店信息编辑
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async setStoreMsg(data) {
+    const url = `${this.baseUrl}/api/merchants/set-data`
+    return await this.post(url, data)
+  }
 
 }

@@ -1,17 +1,187 @@
 <template>
   <view class="marketing-wrapper">
-    营销1
+    <view class="container">
+      <view class="marketing-item" wx:for="{{list}}" wx:key="{{item}}" @tap="showDetail({{item.url}})">
+        <view class="item-left">
+          <image src="{{item.img}}" class="item-left-img"></image>
+          <view class="item-left-txt">{{item.name}}</view>
+        </view>
+        <view class="item-right" @tap.stop="showNull({{index}})">
+          <view class="switchbox {{item.checked?'':'checked'}}" wx:if="{{index!==4}}" @tap="switchChange({{index}}, {{item.checked}})">
+            <view class="switch-circle {{item.checked?'':'checked'}}"></view>
+          </view>
+          <image src="./image/Rectangle @2x.png" class="item-right-arrow" wx:if="{{index===4}}"></image>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import Activity from '@/api/activitys'
+  import Tips from '@/common/js/tips'
+  import base from '@/common/mixins/base'
 
   export default class Marketing extends wepy.page {
+    mixins = [base]
+    config = {
+      navigationBarTitleText: '营销',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
 
+    data = {
+      list: [
+        {name: '大转盘', img: './image/icon-turntable@2x.png', url: ''},
+        {name: '签到红包', img: './image/icon-sign@2x.png', url: ''},
+        {name: '分享有礼', img: './image/icon-share@2x.png', url: '/pages/share-prize/share-prize'},
+        {name: '直播优惠', img: './image/icon-livetv@2x.png', url: ''},
+        {name: '奖品池', img: './image/icon-prizepool@2x.png', url: '/pages/prize-pool/prize-pool'}
+      ]
+    }
+
+    methods = {
+      showNull(idx) {
+        if (idx * 1 === 4) {
+          this.$navigate('/pages/prize-pool/prize-pool')
+        }
+      },
+      showDetail(url) {
+        this.$navigate(url)
+      },
+      async switchChange(idx, checked) {
+        let type
+        switch (idx * 1) {
+          case 0:
+            type = 'lucky_draw'
+            break
+          case 1:
+            type = 'sign'
+            break
+          case 2:
+            type = 'share'
+            break
+          case 3:
+            type = 'vedio_live'
+            break
+        }
+        let data = {
+          activity_type: type,
+          is_paused: checked ? 0 : 1
+        }
+        const res = await Activity.switchActivity(data)
+        this.loaded()
+        if (res.error === 0) {
+          let msg = checked ? '开启成功' : '关闭成功'
+          this.list = this._checkedChange(idx, checked)
+          this.$apply()
+          Tips.success(msg)
+        } else {
+          Tips.error('操作失败')
+        }
+      }
+    }
+
+    async onLoad() {
+      this.load()
+    }
+    async load() {
+      let res = await Activity.getAllActivity()
+      this.list.map((item) => {
+        switch (item.name) {
+          case '大转盘':
+            item.checked = res.lucky_draw
+            break
+          case '签到红包':
+            item.checked = res.sign
+            break
+          case '分享有礼':
+            item.checked = res.share
+            break
+          case '直播优惠':
+            item.checked = res.video_live
+            break
+        }
+        return item
+      })
+      this.$apply()
+      this.loaded()
+    }
+
+    _checkedChange(idx, checked) {
+      return this.list.map((item, index) => {
+        if (index * 1 === idx * 1) {
+          item.checked = checked ? 0 : 1
+        }
+        return item
+      })
+    }
   }
 </script>
 
 <style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .marketing-wrapper
+
+    .container
+      margin: 5px 5px 0
+      background: $color-white
+
+      .marketing-item
+        height: 50px
+        display: flex
+        justify-content: space-between
+        align-items: center
+        border-bottom: .5px solid $color-col-line
+
+        .item-left
+          display: flex
+          align-items: center
+
+          .item-left-img
+            width: 24px
+            height: 24px
+            margin: 0 10px
+
+          .item-left-txt
+            font-size: $font-size-medium
+            color: $color-text-title
+
+        .item-right
+          padding-right: 10px
+
+          .item-right-arrow
+            width: 10px
+            height: 10px
+            margin-right: 20px
+
+          .switchbox
+            width: 44px
+            height: 24px
+            border-radius: 12px
+            background: #eaeaea
+            display: flex
+            align-items: center
+            position: relative
+
+            .switch-circle
+              width: 20px
+              height: 20px
+              background: $color-text-d
+              border-radius: 10px
+              position: absolute
+              left: 2px
+              top: 2px
+
+          .switchbox.checked
+            background: $color-assist-f
+
+            .switch-circle.checked
+              background: $color-white
+              left: 22px
+              top: 2px
 
 </style>
