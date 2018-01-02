@@ -34,10 +34,10 @@
 
     data = {
       list: [
-        {name: '大转盘', img: './image/icon-turntable@2x.png', url: ''},
-        {name: '签到红包', img: './image/icon-sign@2x.png', url: ''},
+        {name: '大转盘', img: './image/icon-turntable@2x.png', url: '/pages/wheel-controller/wheel-controller'},
+        {name: '签到红包', img: './image/icon-sign@2x.png', url: '/pages/registration/registration'},
         {name: '分享有礼', img: './image/icon-share@2x.png', url: '/pages/share-prize/share-prize'},
-        {name: '直播优惠', img: './image/icon-livetv@2x.png', url: ''},
+        {name: '直播优惠', img: './image/icon-livetv@2x.png', url: '/pages/live/live'},
         {name: '奖品池', img: './image/icon-prizepool@2x.png', url: '/pages/prize-pool/prize-pool'}
       ]
     }
