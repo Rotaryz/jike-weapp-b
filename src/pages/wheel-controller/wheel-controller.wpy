@@ -2,17 +2,17 @@
   <view class="wheel-controller">
     <view class="wheel-wrapper">
       <view class="header-wrapper">
-        <view class="switch-wrapper">
-          <view class="switch">
-            <view class="switch-ball"></view>
-          </view>
-          <view class="text">
-            开启活动
-          </view>
-        </view>
-        <view class="edit-wrapper">
-          <view class="btn">编辑</view>
-        </view>
+        <!--<view class="switch-wrapper">-->
+          <!--<view class="switch">-->
+            <!--<view class="switch-ball"></view>-->
+          <!--</view>-->
+          <!--<view class="text">-->
+            <!--开启活动-->
+          <!--</view>-->
+        <!--</view>-->
+        <!--<view class="edit-wrapper">-->
+          <!--<view class="btn">编辑</view>-->
+        <!--</view>-->
       </view>
       <view class="content-wrapper">
         <view class="wheel">
@@ -20,21 +20,25 @@
             <image src="./pic-pointer@2x.png" class="full-image"></image>
           </view>
           <view class="wheel-content" ref="wheel">
-            <view class="wheel-image">
-              <image src="./pic-zp@2x.png" class="full-image"></image>
-            </view>
-            <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
-              <view class="prize prize-{{index}}">
-                <view class="name">80元优惠券</view>
-                <view class="img-wrapper">
-                  <image src="./pic-coupon.png" mode="aspectFit"></image>
-                </view>
+            <view class="wheel-relative">
+              <view class="wheel-image">
+                <image src="./pic-zp@2x.png" class="full-image"></image>
               </view>
-            </repeat>
-            <view class="prize prize-5">
-              <view class="name">谢谢惠顾</view>
-              <view class="img-wrapper">
-                <image src="./pic-face@2x.png" mode="aspectFit"></image>
+              <view class="wheel-prize-wrapper">
+                <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
+                  <view class="prize prize-{{index}}">
+                    <view class="name">{{item.promotion_title}}</view>
+                    <view class="img-wrapper">
+                      <image src="{{item.promotion_img}}" mode="aspectFit"></image>
+                    </view>
+                  </view>
+                </repeat>
+                <view class="prize prize-5">
+                  <view class="name">谢谢惠顾</view>
+                  <view class="img-wrapper">
+                    <image src="./pic-face@2x.png" mode="aspectFit"></image>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
@@ -91,15 +95,15 @@
         <view class="join input-wrapper border-bottom-1px">
           <view class="label">参与次数</view>
           <view class="select-wrapper">
-            <view class="select-box">
-              <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0}}" src="./icon-selected@2x.png" class="full-image"></image>
+            <view class="select-box" @tap="selectJoinTime(1)">
+              <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
+                <image wx:if="{{joinTimes === 1}}" src="./icon-selected@2x.png" class="full-image"></image>
               </view>
               <view class="text">一天一次</view>
             </view>
-            <view class="select-box">
-              <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1}}" src="./icon-selected@2x.png" class="full-image"></image>
+            <view class="select-box" @tap="selectJoinTime(0)">
+              <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
+                <image wx:if="{{joinTimes === 0}}" src="./icon-selected@2x.png" class="full-image"></image>
               </view>
               <view class="text">一人一次</view>
             </view>
@@ -119,10 +123,12 @@
         <view class="explain">
           <view class="title">活动说明</view>
           <view class="text-wrapper">
-          <textarea value="{{explain}}"
-                    @input="handleInput('explain')"
-                    placeholder="请输入"
-                    placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
+            <textarea value="{{activityDesc}}"
+                      maxlength="30"
+                      @input="handleInput('activityDesc')"
+                      placeholder="请输入"
+                      placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
+            <view class="length-wrapper">{{activityDescLength}}/30</view>
           </view>
         </view>
       </view>
@@ -134,33 +140,61 @@
           设置总中奖概率
           <view class="chance-input">
             <input type="number"
-                   value="{{chance}}"
+                   value="{{percentage}}"
                    maxlength="3"
-                   @input="handleInput('chance')"/>
+                   @input="handleInput('percentage')"/>
           </view>
         </view>
-        <view class="item-wrapper">
-          <view class="name">50元现金红包</view>
-          <view class="quantity">10000个</view>
-          <view class="del">
-            <image src="./icon-yx_delete@2x.png"></image>
+        <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
+          <view class="item-wrapper">
+            <view class="name">{{item.promotion_title}}</view>
+            <view class="quantity">{{item.promotion_stock}}个</view>
+            <view class="del" @tap="delectPrize({{index}}, {{item}})">
+              <image src="./icon-yx_delete@2x.png"></image>
+            </view>
           </view>
-        </view>
+        </repeat>
         <view class="add-wrapper">
-          <view class="btn">
+          <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
             <view class="add-image">
               <image src="./icon-yx_add@2x.png" class="full-image"></image>
             </view>
             添加奖品
           </view>
         </view>
+        <prize-pool-modal title="添加奖品" @cancel.user="cancelSelectPrize">
+          <view class="prize-pool-modal" slot="content">
+            <repeat for="{{prizePool}}" index="index" key="key" item="item">
+              <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
+                <view class="name">{{item.promotion_title}}</view>
+                <view class="stock">剩余{{item.promotion_stock}}个</view>
+                <view class="check-box-wrapper">
+                  <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
+                    <image wx:if="{{selectPromotion.promotion_id === item.promotion_id}}" src="./icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                </view>
+              </view>
+            </repeat>
+            <view class="number-control">
+              <view class="text">添加数量</view>
+              <view class="dec" @tap.stop="decSelectStock">-</view>
+              <view class="number">{{selectStock}}</view>
+              <view class="add" @tap.stop="addSelectStock">+</view>
+            </view>
+            <view class="save-wrapper">
+              <view class="btn" @tap.stop="saveSelectPrize()">保存</view>
+            </view>
+          </view>
+        </prize-pool-modal>
       </view>
     </view>
-    <view class="btn-group">
-      <view class="btn-cancel">取消</view>
-      <view class="split"></view>
-      <view class="btn-save">保存</view>
+    <view class="btn-group border-top-1px">
+      <!--<view class="btn-cancel">取消</view>-->
+      <!--<view class="split"></view>-->
+      <view class="btn-save" @tap="submitForm">保存</view>
     </view>
+    <toast></toast>
   </view>
 </template>
 
@@ -168,24 +202,205 @@
   import wepy from 'wepy'
   import BaseModal from '@/base/base-modal/base-modal'
   import DatePicker from '@/base/date-picker/date-picker'
+  import Toast from '@/base/toast/toast'
+  import Activitys from 'api/activitys'
+  import Tips from 'common/js/tips'
+
+  const ADD_TYPE = 0
+  const UPDATE_TYPE = 1
 
   export default class WheelController extends wepy.page {
     data = {
+      type: ADD_TYPE,
+      id: 0,
       name: '',
       nameLength: 0,
       fromDate: '',
       toDate: '',
       activityPickerType: 'start',
-      joinTimes: 0,
+      joinTimes: 1,
       activityDesc: '',
+      activityDescLength: 0,
       isPaused: 0,
       percentage: '56',
-      activityPromotions: new Array(5)
+      prizePool: [],
+      activityPromotions: [],
+      deletePromtions: [],
+      selectPromotion: {},
+      selectStock: 0
+    }
+
+    async onLoad() {
+      await this.load()
+    }
+
+    async load() {
+      await this._getLucky(true)
+      await this._getPrizePool()
+    }
+
+    async _getLucky(loading) {
+      const res = await Activitys.getLucky(loading)
+      if (res.id) {
+        this.id = res.id
+        this.type = UPDATE_TYPE
+        this.name = res.name
+        this.nameLength = this.name.length
+        this.fromDate = res.from_date
+        this.toDate = res.to_date
+        this.joinTimes = res.join_times
+        this.activityDesc = res.activity_desc
+        this.activityDescLength = this.activityDesc.length
+        this.isPaused = res.is_paused
+        this.percentage = res.percentage
+        this.activityPromotions = res.activity_promotion
+      } else {
+        this.type = ADD_TYPE
+      }
+      this.$apply()
+    }
+
+    async _getPrizePool() {
+      const res = await Activitys.getPrizePool()
+      this.prizePool = res
+      this.$apply()
+    }
+
+    _handleInput(name, value) {
+      this[name] = value
+      if (name === 'name') {
+        this.nameLength = value.length
+      } else if (name === 'activityDesc') {
+        this.activityDescLength = value.length
+      }
+      this.$apply()
+    }
+
+    _toast(message) {
+      this.$invoke('toast', 'show', message)
+    }
+
+    methods = {
+      handleInput(name, e) {
+        this._handleInput(name, e.detail.value)
+      },
+      changeActivityPicker(type) {
+        this.activityPickerType = type
+      },
+      cancelActivityPicker() {
+        this.$invoke('activity-time-modal', 'hide')
+      },
+      confirmActivityPicker(date) {
+        if (this.activityPickerType === 'start') {
+          this.fromDate = date
+          this.activityPickerType = 'end'
+        } else {
+          this.toDate = date
+        }
+      },
+      selectJoinTime(status) {
+        this.joinTimes = Math.floor(status)
+      },
+      changePrize(promotion) {
+        if (this.selectPromotion.promotion_id === promotion.promotion_id && this.selectPromotion.promotion_type === promotion.promotion_type) {
+          return
+        }
+        const preIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        const nowIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        this.prizePool[preIndex].promotion_stock += this.selectStock
+        this.prizePool[nowIndex].promotion_stock -= this.selectStock
+        this.selectPromotion = promotion
+      },
+      decSelectStock() {
+        if (this.selectStock === 1) {
+          return
+        }
+        this.selectStock--
+      },
+      addSelectStock() {
+        const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        const stock = this.prizePool[prizeIndex].promotion_stock
+        if (this.selectStock === stock) {
+          return
+        }
+        this.selectStock++
+      },
+      cancelSelectPrize() {
+        const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        this.prizePool[prizeIndex].promotion_stock += this.selectStock
+        this.selectStock = 0
+      },
+      saveSelectPrize() {
+        let prize = this.prizePool.find((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        let selectPrize = Object.assign({}, prize)
+        selectPrize.promotion_stock = this.selectStock
+        this.activityPromotions.push(selectPrize)
+        this.selectStock = 0
+        this.$invoke('prize-pool-modal', 'hide')
+        this.$apply()
+      },
+      delectPrize(index, prize) {
+        const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === prize.promotion_id)
+        this.prizePool[prizeIndex].promotion_stock += prize.promotion_stock
+        this.activityPromotions.splice(index, 1)
+        if (prize.activity_promotion_id) {
+          let delPrize = Object.assign({}, prize)
+          delPrize.promotion_stock = 0
+          this.deletePromtions.push(delPrize)
+        }
+      },
+      async submitForm() {
+        if (this.activityPromotions.length < 5) {
+          this._toast('奖品数未满5个')
+          return
+        }
+        const data = {
+          name: this.name,
+          from_date: this.fromDate,
+          to_date: this.toDate,
+          join_times: this.joinTimes,
+          activity_desc: this.activityDesc,
+          is_paused: this.isPaused,
+          percentage: this.percentage,
+          activity_promotions: [...this.activityPromotions, ...this.deletePromtions]
+        }
+        const res = this.type === ADD_TYPE ? await Activitys.addLucky(data) : await Activitys.updateLucky(this.id, data)
+        if (res.error === 0) {
+          Tips.success('保存成功')
+          this.deletePromtions = []
+          this._getLucky(false)
+          wepy.pageScrollTo({scrollTop: 0})
+        } else {
+          this._toast(res.message)
+        }
+      },
+      showActivityTimeModal() {
+        this.$invoke('activity-time-modal', 'show')
+      },
+      showPrizePoolModal() {
+        this.selectStock = 1
+        this.selectPromotion = this.prizePool[0]
+        this.$invoke('prize-pool-modal', 'show')
+      }
+    }
+
+    watch = {
+      selectStock(newStock, oldStock) {
+        const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        if (newStock > oldStock) {
+          this.prizePool[prizeIndex].promotion_stock -= 1
+        } else if (newStock !== 0) {
+          this.prizePool[prizeIndex].promotion_stock += 1
+        }
+        this.$apply()
+      }
     }
 
     components = {
       'activity-time-modal': BaseModal,
-      'activity-time-picker': DatePicker
+      'activity-time-picker': DatePicker,
+      'prize-pool-modal': BaseModal,
+      'toast': Toast
     }
 
     config = {
@@ -199,6 +414,9 @@
   @import '../../common/stylus/mixin'
 
   .wheel-controller
+    width: 100%
+    overflow: hidden
+    padding-bottom: 63px
     background-color: $color-background
     .input-wrapper
       display: flex
@@ -210,6 +428,8 @@
         font-size: $font-size-medium
         color: $color-text-td
     .wheel-wrapper
+      position: relative
+      width: 100%
       padding-bottom: 17.5px
       background-color: $color-theme
       .header-wrapper
@@ -260,6 +480,7 @@
           width: 100%
           height: 0
           padding-top: 100%
+          box-sizing: border-box
           .wheel-pointer
             position: absolute
             top: 50%
@@ -270,41 +491,52 @@
             transform: translate(-50%, -50%)
           .wheel-content
             position: absolute
-            top: 0
-            left: 0
-            display: flex
-            justify-content: center
+            top: 50%
+            left: 50%
             width: 100%
             height: 100%
-            transition-timing-function: ease-in-out
-            transition-property: transform
-            .wheel-image
-              position: absolute
+            transform: translate(-50%, -50%)
+            .wheel-relative
+              position: relative
               width: 100%
               height: 100%
-            .prize
-              position: absolute
-              width: 45%
-              height: 100%
-              box-sizing: border-box
-              padding-top: 11%
-              text-align: center
-              for $i in 0 1 2 3 4 5
-                &.prize-{$i}
-                  z-index: (-($i) + 6)
-                  transform: rotate($i * 60deg)
-              .name
-                margin-bottom: 10%
-                font-size: $font-size-small-s
-                color: $color-assist-f
-              .img-wrapper
-                width: 37.04%
-                height: 13.11%
-                margin: 0 auto
-                box-sizing: border-box
-                image
-                  max-width: 100%
-                  max-height: 100%
+              .wheel-image
+                position: absolute
+                width: 100%
+                height: 100%
+                top: 0
+                left: 0
+              .wheel-prize-wrapper
+                position: relative
+                width: 100%
+                height: 100%
+                display: flex
+                justify-content: center
+                .prize
+                  position: absolute
+                  top: 0
+                  left: 27.7%
+                  width: 45%
+                  height: 100%
+                  box-sizing: border-box
+                  padding-top: 11%
+                  text-align: center
+                  for $i in 0 1 2 3 4 5
+                    &.prize-{$i}
+                      z-index: (-($i) + 6)
+                      transform: rotate($i * 60deg)
+                  .name
+                    margin-bottom: 10%
+                    font-size: $font-size-small-s
+                    color: $color-assist-f
+                  .img-wrapper
+                    width: 37.04%
+                    height: 13.11%
+                    margin: 0 auto
+                    box-sizing: border-box
+                    image
+                      max-width: 100%
+                      max-height: 100%
         .pan-wrapper
           width: 100%
           height: 26px
@@ -344,7 +576,7 @@
               text-align: center
             .to
               color: $color-text-d
-          .sell-time-modal
+          .activity-time-modal
             height: 285px
             .header
               position: relative
@@ -422,6 +654,12 @@
             textarea
               width: 100%
               height: 100%
+            .length-wrapper
+              position: absolute
+              bottom: 5px
+              right: 7.5px
+              font-size: $font-size-small-s
+              color: $color-text-d
     .prize-wrapper
       background-color: $color-white
       .container
@@ -486,10 +724,86 @@
             .add-image
               width: 10px
               height: 10px
+        .prize-pool-modal
+          padding: 0 12px
+          .prize
+            display: flex
+            align-items: center
+            height: 42px
+            .name
+              flex: 0 0 84px
+              width: 84px
+              font-size: $font-size-small
+            .stock
+              flex: 1
+              font-size: $font-size-small
+            .check-box-wrapper
+              flex: 0 0 30px
+              display: flex
+              align-items: center
+              justify-content: flex-end
+              width: 30px
+              height: 100%
+              .check-box
+                width: 16px
+                height: 16px
+                border-radius: 50%
+                border-1px($color-text-d, 50%)
+                &.unselected
+                  border-none()
+          .number-control
+            display: flex
+            align-items: center
+            justify-content: center
+            height: 40px
+            margin-top: 6.5px
+            margin-bottom: 4px
+            border-radius: 4px
+            border-1px($color-split-line, 4px, dashed)
+            font-size: $font-size-small
+            .text
+              margin-right: 5px
+              color: $color-text-d
+            .dec, .add
+              font-family: $font-family-regular
+              width: 22px
+              height: 22px
+              border-radius: 2px
+              line-height: 22px
+              text-align: center
+              border-1px()
+              font-size: $font-size-medium
+            .add
+              color: $color-white
+              background-color: $color-theme
+            .number
+              width: 48px
+              height: 22px
+              margin: 0 2.5px
+              border-radius: 2px
+              line-height: 22px
+              text-align: center
+              border-1px()
+          .save-wrapper
+            padding: 10px 0
+            .btn
+              height: 40px
+              line-height: 40px
+              text-align: center
+              border-radius: 4px
+              font-size: $font-size-medium
+              color: $color-white
+              background-color: $color-theme
     .btn-group
+      position: fixed
+      bottom: 0
+      left: 0
       display: flex
-      height: 40px
+      width: 100%
+      z-index: 10
+      box-sizing: border-box
       padding: 11.5px 12px
+      background-color: $color-white
       .btn-cancel
         flex: 1
         height: 40px

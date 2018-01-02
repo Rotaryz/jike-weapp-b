@@ -38,7 +38,7 @@
       },
       close() {
         this.show = false
-        this.$emit('close')
+        this.$emit('cancel')
         this.$emit('hide')
       },
       hide() {
@@ -73,6 +73,7 @@
         height: 40px
         line-height: 40px
         text-align: center
+        font-size: $font-size-medium-x
         color: $color-white
         background-color: $color-theme
       .content-wrapper

@@ -309,17 +309,6 @@
     }
 
     _handleInput(name, value) {
-      if (name.indexOf('service') > -1) {
-        name = name.split('service')
-        const type = name[0]
-        const index = Math.floor(name[1])
-        if (index + 1 > this.services.length) {
-          this.services.push({})
-        }
-        this.services[index][type] = value
-        this.$apply()
-        return
-      }
       this[name] = value
       if (name === 'title') {
         this.titleLength = value.length
@@ -442,7 +431,6 @@
         } else {
           this._toast(res.message)
         }
-        console.log(res)
       },
       showCategoryModal() {
         this.$invoke('categories-modal', 'show')
