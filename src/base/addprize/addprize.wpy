@@ -1,0 +1,267 @@
+<template>
+  <view class="addprize" @tap.stop="showNull" wx:if="{{coverShow}}">
+    <view class="addprize-container">
+      <view class="addprize-container-head">添加奖品</view>
+      <view class="addprize-container-body">
+        <view class="prizeList">
+          <view class="prizeItem" wx:for="{{prizeList}}" wx:key="{{item}}" @tap="checkedPrize({{item}}, {{index}})">
+            <view class="prizeItem-left">
+              <view class="prizeItem-name">{{item.promotion_title}}</view>
+              <view class="prizeItem-count">剩余{{item.promotion_stock}}个</view>
+            </view>
+            <image src="{{index===prizeCheckedIdx?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeItem-checkImg"></image>
+          </view>
+        </view>
+        <view class="prizeItem-addBox">
+          <view class="prizeItem-addBox-gray">添加数量</view>
+          <view class="prizeItem-addBox-container">
+            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
+            <view class="countBox">
+              <input type="number" class="countBox-input" bindblur="countChange" value="{{prizeCount}}" />
+            </view>
+            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
+          </view>
+        </view>
+        <view class="prizeItem-saveBtn" @tap="saveMsg">保存</view>
+      </view>
+      <view class="addprize-closeBtn" @tap="closeCover">
+        <image src="./image/icon-del@2x.png" class="addprize-closeX"></image>
+      </view>
+    </view>
+
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+
+  export default class AddPrize extends wepy.component {
+    mixins = [base]
+
+    data = {
+      NumShow: false,
+      coverShow: false,
+      prizeCount: 0,
+      maxNum: 0,
+      NumInput: false,
+      prizeList: [],
+      prizeCheckedId: null,
+      prizeCheckedType: null,
+      prizeCheckedItem: null,
+      prizeCheckedIdx: null
+    }
+
+    components = {
+      Toast
+    }
+
+    onLoad() {
+    }
+
+    methods = {
+      showNull() {
+
+      },
+      countChange(e) {
+        console.log(e.detail.value)
+        this.NumInput = false
+        if (e.detail.value > this.maxNum) {
+          this.prizeCount = this.maxNum
+          this.$invoke('Toast', 'show', '已达奖品池最大数量')
+        } else {
+          this.prizeCount = e.detail.value
+        }
+        console.log(this.prizeCount)
+        this.$apply()
+      },
+      closeCover() {
+        this.coverShow = false
+        this.prizeCount = 0
+        this.prizeCheckedIdx = null
+        this.maxNum = 0
+        this.prizeList = []
+        this.prizeCheckedId = null
+        this.prizeCheckedType = null
+        this.prizeCheckedItem = null
+        this.$apply()
+      },
+      async init(list) {
+        this.prizeList = list
+        this.coverShow = true
+        this.$apply()
+      },
+      subCount() {
+        this.prizeCount--
+        if (this.prizeCount <= 0) {
+          this.prizeCount = 0
+        }
+      },
+      addCount() {
+        this.prizeCount++
+        if (this.prizeCount > this.maxNum) {
+          this.prizeCount = this.maxNum
+          this.$invoke('Toast', 'show', '已达奖品池最大数量')
+        }
+      },
+      checkedPrize(item, idx) {
+        console.log(item)
+        this.prizeCheckedId = item.id
+        this.prizeCheckedType = item.promotion_type
+        this.maxNum = item.promotion_stock
+        this.prizeCheckedItem = item
+        this.prizeCheckedIdx = idx
+        this.prizeCount = 0
+        this.$apply()
+      },
+      saveMsg() {
+        let res = Object.assign({}, this.prizeCheckedItem, {promotion_stock: Number(this.prizeCount)})
+        this.$emit('addPrizeOK', res)
+        this.coverShow = false
+        this.prizeCount = 0
+        this.prizeCheckedIdx = null
+        this.maxNum = 0
+        this.prizeList = []
+        this.prizeCheckedId = null
+        this.prizeCheckedType = null
+        this.prizeCheckedItem = null
+        this.$apply()
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .addprize
+    position: fixed
+    z-index: 1000
+    left: 0
+    top: 0
+    height: 100vh
+    width: 100vw
+    background: rgba(54, 53, 71, .5)
+
+    .addprize-container
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+      width: 265px
+      min-height: 40px
+      border-radius: 4px
+
+      .addprize-container-head
+        height: 40px
+        background: $color-theme
+        line-height: 40px
+        text-align: center
+        color: $color-white
+        font-size: $font-size-medium-x
+
+      .addprize-container-body
+        background: $color-white
+        padding: 0 10px 10px
+
+      .prizeList
+        max-height: 250px
+        overflow-y: auto
+
+        .prizeItem
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: space-between
+          font-size: $font-size-small
+          border-bottom: 1px solid $color-col-line
+
+          .prizeItem-left
+            width: 220px
+            display: flex
+
+            .prizeItem-name
+              width: 140px
+
+          .prizeItem-checkImg
+            width: 16px
+            height: 16px
+
+      .prizeItem-addBox
+        height: 40px
+        border: .5px dashed $color-col-line
+        margin-top: 7px
+        display: flex
+        justify-content: center
+        align-items: center
+        font-size: $font-size-small
+
+        .prizeItem-addBox-gray
+          color: $color-text-d
+
+        .prizeItem-addBox-container
+          display: flex
+
+          .subBtn
+            width: 20px
+            height: 20px
+
+          .addBtn
+            width: 20px
+            height: 20px
+
+          .countBox
+            width: 50px
+            height: 18px
+            border: 1px solid $color-col-line
+            margin: 0 3px
+            font-size: $font-size-medium
+            display: flex
+            align-items: center
+            justify-content: center
+
+            .countBox-input
+              width: 50px
+              height: 18px
+              font-size: $font-size-medium
+              border: 0 none
+              color: $color-text
+              text-align: center
+
+            .countBox-input.error
+              color: $color-assist-f
+
+      .prizeItem-saveBtn
+        height: 40px
+        background: $color-theme
+        color: $color-white
+        display: flex
+        justify-content: center
+        align-items: center
+        font-size: $font-size-medium
+        border-radius: 2px
+        margin-top: 10px
+
+        &:active
+          background: $color-btn-tap
+
+      .addprize-closeBtn
+        width: 34px
+        height: 34px
+        display: flex
+        justify-content: center
+        align-items: center
+        position: absolute
+        left: 50%
+        transform: translate(-50%, 0)
+        bottom: -50px
+
+        .addprize-closeX
+          width: 24px
+          height: 24px
+
+
+</style>

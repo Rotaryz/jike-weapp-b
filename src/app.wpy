@@ -52,15 +52,26 @@ export default class extends wepy.app {
 
   config = {
     pages: [
+      'pages/shop/shop',
+      'pages/marketing/marketing',
+      'pages/data/data',
+      'pages/mine/mine',
       'pages/wheel-controller/wheel-controller',
       'pages/package-manage/package-manage',
       'pages/package-detail/package-detail',
       'pages/package-controller/package-controller',
       'pages/service-controller/service-controller',
       'pages/service-manage/service-manage',
-      'pages/shop/shop',
-      'pages/marketing/marketing',
-      'pages/mine/mine'
+      'pages/store-msg/store-msg',
+      'pages/store-license/store-license',
+      'pages/account-management/account-management',
+      'pages/create-account/create-account',
+      'pages/set-account/set-account',
+      'pages/contact-sales/contact-sales',
+      'pages/share-prize/share-prize',
+      'pages/prize-pool/prize-pool',
+      'pages/create-prize/create-prize',
+      'pages/exchange-editor/exchange-editor'
     ],
     window: {
       backgroundColor: '#F9F9F9',

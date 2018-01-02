@@ -17,7 +17,6 @@ export default class http {
       Tips.loading()
     }
     const res = await wepy.request(param)
-    Tips.loaded()
     if (this.isSuccess(res)) {
       const result = res.data.data ? res.data.data : res.data
       return result
@@ -93,9 +92,5 @@ export default class http {
 
   static delete(url, data, loading = true) {
     return this.request('DELETE', url, data, loading)
-  }
-
-  static updateImg(url, name, loading = true) {
-    return this.update(url, name, loading)
   }
 }

@@ -1,0 +1,243 @@
+<template>
+  <view class="createAccount">
+    <view class="createAccount-head">
+      <view class="createAccount-txt">
+        <view class="createAccount-txt-title">手机</view>
+        <input type="number" class="createAccount-txt-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11" bindblur="phoneChange"/>
+      </view>
+
+      <view class="createAccount-txt last">
+        <view class="createAccount-txt-title">密码</view>
+        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母组合)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
+      </view>
+
+    </view>
+
+    <view class="createAccount-body">
+      <view class="store-msg-picker">
+        <view class="store-msg-picker-title">门店</view>
+        <view class="store-msg-picker-right" @tap="showRadioBox">
+          <view class="store-msg-picker-txt">{{checkedStore}}</view>
+          <image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>
+        </view>
+      </view>
+
+      <!--<view class="store-msg-picker">-->
+        <!--<view class="store-msg-picker-title">权限</view>-->
+        <!--<view class="store-msg-picker-right" @tap="showCheckBox">-->
+          <!--<view class="store-msg-picker-txt">{{jurisdictionTxt}}</view>-->
+          <!--<image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>-->
+        <!--</view>-->
+      <!--</view>-->
+    </view>
+
+    <view class="createAccount-btn" @tap="submitMsg">提交</view>
+    <RadioBox></RadioBox>
+    <CheckBox></CheckBox>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Account from '@/api/account'
+  import RadioBox from '@/base/radio/radio'
+  import CheckBox from '@/base/checkbox/checkbox'
+  import base from '@/common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
+
+  export default class CreateAccount extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '新建账号',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      RadioBox,
+      CheckBox,
+      Toast
+    }
+
+    data = {
+      storeList: [],
+      checkedStore: '',
+      checkedStoreId: '',
+      jurisdictionTxt: '',
+      phoneNum: '',
+      telTest: true,
+      passTest: false,
+      password: ''
+    }
+
+    methods = {
+      showRadioBox() {
+        let arr = this.storeList
+        let items = arr.map((item, index) => {
+          return {
+            value: index,
+            txt: item.shop_name,
+            id: item.id
+          }
+        })
+        this.$invoke('RadioBox', 'init', {
+          headTxt: '门店选择',
+          radioChecked: 0,
+          items
+        })
+      },
+      showCheckBox() {
+        this.jurisdictionTxt = ''
+        this.$invoke('CheckBox', 'init', {
+          headTxt: '权限',
+          radioChecked: [],
+          items: [
+            {value: 0, txt: '大转盘', checked: false},
+            {value: 1, txt: '签到红包', checked: false}]
+        })
+      },
+      phoneChange(e) {
+        let reg = /^1[3|4|5|7|8][0-9]{9}$/
+        this.telTest = reg.test(e.detail.value)
+        this.phoneNum = e.detail.value
+        this.$apply()
+      },
+      passwordChange(e) {
+        console.log(e.detail.value)
+        let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
+        this.passTest = reg.test(e.detail.value)
+        if (!this.passTest) {
+          this.$invoke('Toast', 'show', '密码格式不正确')
+        }
+        this.password = e.detail.value
+      },
+      async submitMsg() {
+        if (this.passTest && this.telTest && this.phoneNum && this.checkedStore && this.checkedStoreId) {
+          let data = {
+            mobile: this.phoneNum,
+            password: this.password,
+            belongs_to: this.checkedStoreId
+          }
+          const res = await Account.setSubAccount(data)
+          this.loaded()
+          if (res.error === 0) {
+            Tips.success('新建账号成功')
+          }
+        } else {
+          this.$invoke('Toast', 'show', '资料未填写完整')
+        }
+      }
+    }
+
+    events = {
+      radioChioseOK(item) {
+        this.checkedStore = item[0] ? item[0].txt : ''
+        this.checkedStoreId = item[0] ? item[0].id : ''
+        this.$apply()
+      },
+      checkboxChioseOK(item) {
+        console.log(item)
+        item.forEach((item) => {
+          this.jurisdictionTxt += item.txt + '、'
+        })
+        this.jurisdictionTxt = this.jurisdictionTxt.slice(0, -1)
+        this.$apply()
+      }
+    }
+
+    async onLoad() {
+      this.load()
+    }
+
+    async load() {
+      let res = await Account.getAnnexList()
+      this.storeList = res || []
+      this.loaded()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .createAccount
+
+    .createAccount-head
+      margin-top: 10px
+      padding-left: 12px
+      background: $color-white
+
+      .createAccount-txt
+        display: flex
+        align-items: center
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        font-size: $font-size-medium
+
+        .createAccount-txt-title
+          flex: 3
+
+        .createAccount-txt-input
+          flex: 7
+          height: 38px
+
+        .error
+          color: $color-assist-f
+
+        .createAccount-txt-placeholder
+          color: $color-text-d
+
+      .createAccount-txt.last
+        border-bottom: 0 none
+
+    .createAccount-body
+      background: $color-white
+      margin-top: 10px
+      padding-left: 12px
+
+      .store-msg-picker
+        display: flex
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        justify-content: space-between
+        align-items: center
+        padding-right: 12px
+
+        .sitebox
+          width: 50vw
+          display: flex
+          justify-content: flex-end
+
+        .store-msg-picker-title
+          width: 60px
+          line-height: 39px
+          color: $color-text-title
+          font-size: $font-size-medium
+
+        .store-msg-picker-right
+          display: flex
+          align-items: center
+          height: 39px
+
+          .store-msg-picker-arrow
+            width: 10px
+            height: 10px
+
+          .store-msg-picker-txt
+            font-size: $font-size-medium
+            margin-right: 10px
+
+    .createAccount-btn
+      margin: 10px 12px
+      background: $color-theme
+      height: 44px
+      line-height: 44px
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      border-radius: 2px
+
+</style>

@@ -1,0 +1,235 @@
+<template>
+  <view class="radioBox" wx:if="{{showCover}}">
+    <view class="radioBox-Msg">
+      <view class="radioBox-head">{{radioMsg.headTxt}}</view>
+
+      <view class="radioBox-list">
+        <radio-group bindchange="radioChiose">
+          <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
+            <label class="radioLabel {{item.txt===checked?'active':''}}">
+              <radio value="{{item.txt}}" checked="{{item.txt==checked}}" hidden="true"/>{{item.txt}}
+              <image class="radio-Icon" src="{{item.txt==checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
+            </label>
+          </view>
+        </radio-group>
+      </view>
+
+      <view class="radioBox-closeBtn" @tap="closeCover">
+        <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+
+  export default class RadioBox extends wepy.component {
+    mixins = [base]
+
+//  {
+//    headTxt: '营业状态',
+//    radioChecked: '营业中',
+//    items: [
+//      {value: '0', txt: '营业中'},
+//      {value: '1', txt: '暂停营业'},
+//      {value: '2', txt: '筹建中'},
+//      {value: '3', txt: '已关门'}]
+//  }
+
+    data = {
+      showCover: false,
+      checked: '',
+      radioMsg: null
+    }
+
+    onLoad() {
+    }
+
+    methods = {
+      init(radioList) {
+        console.log(radioList)
+        this.radioMsg = radioList
+        this.checked = radioList.radioChecked
+        this.showCover = true
+        this.$apply()
+      },
+      closeCover() {
+        let res = this._checkRes(this.radioMsg.items, this.checked)
+        this.$emit('radioChioseOK', res)
+        this.radioMsg = null
+        this.showCover = false
+        this.$apply()
+      },
+      radioChiose(e) {
+        this.checked = e.detail.value
+        this.$apply()
+      }
+    }
+
+    _checkRes(arr, checked) {
+      return arr.filter((item) => {
+        return item.txt === checked
+      })
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .radioBox
+    position: fixed
+    z-index: 1000
+    left: 0
+    top: 0
+    height: 100vh
+    width: 100vw
+    background: rgba(54, 53, 71, .5)
+
+    .radioBox-Msg
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+      background: $color-white
+      width: 265.5px
+      min-height: 40px
+      border-radius: 4px
+
+      .radioBox-head
+        height: 40px
+        background: $color-theme
+        line-height: 40px
+        text-align: center
+        color: $color-white
+        font-size: $font-size-medium-x
+
+      .radioBox-list
+        max-height: 330px
+        padding: 10px 12px 20px
+
+        .radioBox-list-item
+          line-height: 39px
+          border-bottom: 1px solid $color-row-line
+          font-size: $font-size-small
+
+          .radioLabel
+            display: block
+            width: 100%
+            position: relative
+
+            .radio-Icon
+              width: 16px
+              height: 16px
+              position: absolute
+              right: 2px
+              top: 11px
+
+          .radioLabel.active
+            color: $color-assist-f
+
+      .twoColumn-radioBox-list
+
+        .radioBox-title
+          width: 90px
+          max-height: 360px
+
+          .radioBox-title-item
+
+            .radioBox-title-item-box
+              line-height: 38px
+              font-size: $font-size-small
+              display: flex
+              align-items: center
+              position: relative
+              border-bottom: 1px solid $color-row-line
+              border-right: 1px solid $color-row-line
+
+              .radioBox-title-item-before
+                width: 2px
+                height: 38px
+                background: $color-background
+                margin-right: 10px
+
+              .radioBox-title-item-arrow
+                opacity: 0
+                width: 10px
+                height: 10px
+                position: absolute
+                right: 7px
+                top: 15px
+
+              .normal
+                opacity: 0
+                width: 10px
+                height: 10px
+                position: absolute
+                right: 7px
+                top: 15px
+
+            .radioBox-title-item-box.active
+              background: $color-white
+              border-right: 0 none
+              color: $color-assist-f
+
+              .radioBox-title-item-before
+                width: 2px
+                height: 38px
+                background: $color-assist-f
+                margin-right: 10px
+
+              .normal
+                opacity: 1
+
+              .radioBox-title-item-arrow
+                width: 10px
+                height: 10px
+                position: absolute
+                right: 7px
+                top: 15px
+
+        .radioBox-list
+          background: $color-white
+          padding: 0 10px
+          width: 175.5px
+          max-height: 360px
+
+        .radioBox-list-item
+          line-height: 39px
+          border-bottom: 1px solid $color-row-line
+          font-size: $font-size-small
+
+          .radioLabel
+            display: block
+            width: 100%
+            position: relative
+
+            .radio-Icon
+              width: 16px
+              height: 16px
+              position: absolute
+              right: 0
+              top: 11px
+
+          .radioLabel.active
+            color: $color-assist-f
+
+      .radioBox-closeBtn
+        width: 34px
+        height: 34px
+        display: flex
+        justify-content: center
+        align-items: center
+        position: absolute
+        left: 50%
+        transform: translate(-50%, 0)
+        bottom: -50px
+
+        .radioBox-closeX
+          width: 24px
+          height: 24px
+
+</style>

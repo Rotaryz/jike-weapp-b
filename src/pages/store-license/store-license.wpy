@@ -1,0 +1,263 @@
+<template>
+  <view class="store-license">
+    <view class="store-license-head">
+      <view class="store-license-txt">
+        <view class="store-license-txt-title">证件类型</view>
+        <view class="store-license-txt-right">
+          <view class="store-license-txt-msg">{{credentialType}}</view>
+        </view>
+      </view>
+
+      <view class="store-license-txt">
+        <view class="store-license-txt-title">姓名</view>
+        <view class="store-license-txt-right">
+          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}"/>
+        </view>
+      </view>
+
+      <view class="store-license-txt">
+        <view class="store-license-txt-title">证件号码</view>
+        <view class="store-license-txt-right">
+          <input type="idcard" placeholder="输入身份证" bindblur="idChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" maxlength="20" value="{{credentialNumber}}"/>
+        </view>
+      </view>
+    </view>
+
+    <view class="store-license-body">
+      <view class="store-license-body-title">
+        <view class="store-license-body-block"></view>
+        证件图片
+      </view>
+      <view class="store-license-body-imgBox">
+        <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
+          <image src="./image/pic-id_fm@2x.png" class="store-license-imgBC-img"></image>
+          <image src="{{item.image_url}}" class="store-license-upImg"></image>
+          <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">保存</view>
+
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Store from '@/api/store'
+  import base from '@/common/mixins/base'
+  import Upload from '@/api/uploads'
+  import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
+
+  export default class StoreLicense extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '门店证照',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      Toast
+    }
+
+    data = {
+      storeMsg: null,
+      credentialType: '身份证',
+      credentialNumber: '',
+      userName: '',
+      images: [
+        {title: '上传身份证正面'},
+        {title: '上传身份证反面'},
+        {title: '手持证件照'},
+        {title: '商户承诺函证明'}],
+      nothing: true
+    }
+
+    methods = {
+      async uploadImg(idx) {
+        let res = await wepy.chooseImage()
+        if (!res) {
+          return
+        }
+        let upRes = await Upload.uploadImages(res.tempFilePaths[0])
+        this.loaded()
+        this.images[idx].image_url = upRes.url
+        this.images[idx].image_id = upRes.id
+        this.$apply()
+      },
+      async submitMsg() {
+        let res = this._testEmperty()
+        if (!res) {
+          this.$invoke('Toast', 'show', '资料填写不完整')
+          return
+        }
+        let images = this.images.map((item) => {
+          return {
+            id: item.id || 0,
+            image_id: item.image_id
+          }
+        })
+        let data = {
+          credential_type: this.credentialType,
+          user_name: this.userName,
+          credential_number: this.credentialNumber,
+          credential_images: images
+        }
+        let upRes = await Store.setLicense(data)
+        this.loaded()
+        if (upRes.error === 0) {
+          Tips.success('保存成功')
+        }
+      },
+      nameChange(e) {
+        this.userName = e.detail.value
+        this.$apply()
+      },
+      idChange(e) {
+        this.credentialNumber = e.detail.value
+        this.$apply()
+      }
+    }
+
+    async onLoad() {
+      this.load()
+      console.log(this)
+    }
+
+    async load() {
+      let res = await Store.getMsgList()
+      this.storeMsg = res
+      this.credentialType = res.credential_type || '身份证'
+      this.credentialNumber = res.credential_number || ''
+      this.userName = res.user_name || ''
+      let images = res.credential_images ? res.credential_images.slice(0, 4) : []
+      this.images = this._computedImg(this.images, images)
+      if (res.credential_images && res.credential_images.length > 0) {
+        this.nothing = false
+      }
+      this.loaded()
+    }
+
+    _computedImg(arr, Msg) {
+      return arr.map((item, index) => {
+        item = Object.assign({}, item, Msg[index])
+        return item
+      })
+    }
+
+    _testEmperty() {
+      let arr = [this.userName, this.credentialNumber]
+      this.images.forEach((item) => {
+        arr.push(item.image_url)
+      })
+      return arr.every((msg) => {
+        return msg
+      })
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .store-license
+
+    .store-license-head
+      margin-top: 10px
+      background: $color-white
+      padding-left: 12px
+
+      view:last-child
+        border-bottom: 0 none
+
+      .store-license-txt
+        display: flex
+        font-size: $font-size-medium
+        height: 39px
+        border-bottom: 1px solid $color-col-line
+        align-items: center
+
+        .store-license-txt-title
+          width: 60px
+          margin-right: 48px
+          color: $color-text-title
+
+        .store-license-txt-input
+          height: 38px
+
+        .store-license-txt-holder
+          color: $color-text-d
+
+    .store-license-body
+      margin-top: 10px
+      background: $color-white
+
+      .store-license-body-title
+        font-size: $font-size-medium
+        height: 43px
+        display: flex
+        align-items: center
+        color: $color-text-d
+
+        .store-license-body-block
+          width: 5px
+          height: 13px
+          background: $color-assist-f
+          margin-right: 7px
+
+      .store-license-body-imgBox
+        display: flex
+        flex-wrap: wrap
+        padding-left: 12px
+
+        .store-license-imgBC
+          width: 41.6vw
+          height: 26vw
+          position: relative
+          margin-right: 15px
+          margin-bottom: 15px
+
+          .store-license-imgBC-img
+            width: 41.6vw
+            height: 26vw
+            position: absolute
+            left: 0px
+            top: 0
+
+          .store-license-imgBtn
+            width: 90px
+            height: 20px
+            border: 1px solid $color-col-line
+            font-size: $font-size-small-s
+            position: absolute
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+            line-height: 20px
+            text-align: center
+            border-radius: 2px
+            background: rgba(255, 255, 255, .9)
+
+          .store-license-upImg
+            position: absolute
+            width: 41.6vw
+            height: 26vw
+
+    .store-licenseBtn
+      margin: 10px 12px
+      background: $color-theme
+      height: 44px
+      line-height: 44px
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      border-radius: 2px
+
+    .store-licenseBtn.disab
+      background:  $color-btn-dis
+</style>
