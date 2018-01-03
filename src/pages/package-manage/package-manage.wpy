@@ -216,7 +216,9 @@
     }
 
     config = {
-      navigationBarTitleText: '礼包管理'
+      navigationBarTitleText: '礼包管理',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
     }
   }
 </script>

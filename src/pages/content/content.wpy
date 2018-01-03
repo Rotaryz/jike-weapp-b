@@ -44,7 +44,9 @@
   import wepy from 'wepy'
   import NavHeader from '@/base/nav-header/nav-header'
   import content from 'api/content'
+  import base from 'common/mixins/base'
   export default class Content extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '内容管理',
       navigationBarBackgroundColor: '#363547',
@@ -114,6 +116,7 @@
       let data = {status: num}
       let res = await content.contentList(data)
       this.contentList = res
+      this.loaded()
       this.$apply()
     }
 

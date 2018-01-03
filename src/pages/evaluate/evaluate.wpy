@@ -33,7 +33,9 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
+  import base from 'common/mixins/base'
   export default class Square extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '服务评价',
       navigationBarBackgroundColor: '#363547',
@@ -53,6 +55,7 @@
 //    评论内容
       let data = await shop.getComment()
       this.commentList = data
+      this.loaded()
       this.$apply()
     }
 

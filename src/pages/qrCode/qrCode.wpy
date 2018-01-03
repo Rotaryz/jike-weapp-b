@@ -64,7 +64,7 @@
         image: './pic-validate@2x.png'
       }],
       showInput: true,
-      code: '0123456789'
+      code: ''
     }
 
     async _verification(data) {
@@ -73,7 +73,10 @@
 
     async show(code) {
       let res = await this._verification(code)
+<<<<<<< HEAD
       console.log(res)
+=======
+>>>>>>> origin/dev_Rotary
       if (res.error === 0) {
 //                成功时
         wepy.showToast({
@@ -88,8 +91,13 @@
           icon: 'loading',
           duration: 1000
         })
+<<<<<<< HEAD
       }
       this.$apply()
+=======
+//                失败时
+      }
+>>>>>>> origin/dev_Rotary
     }
 
     methods = {
@@ -108,7 +116,11 @@
           if (idx === index && idx === this.codeNum.length - 1) {
             item.image = './pic-validatered@2x.png'
             code = this.code.replace(/ /g, '')
+<<<<<<< HEAD
             await this.show(code)
+=======
+            this.show(code)
+>>>>>>> origin/dev_Rotary
           }
           return item
         })
@@ -207,5 +219,4 @@
         .nums
           height: 89px
           width: 194px
-
 </style>

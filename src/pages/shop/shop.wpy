@@ -43,7 +43,7 @@
       </view>
       <view class="shop-extend">
         <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}"
-                   @tap="isLead">
+                   @tap="isLead({{index}})">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -58,7 +58,9 @@
   import wepy from 'wepy'
   import shop from 'api/shop'
   import http from 'common/js/http'
+  import base from 'common/mixins/base'
   export default class Shop extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '商家助手',
       navigationBarBackgroundColor: '#363547',
@@ -76,7 +78,7 @@
       navList: [{
         text: '服务',
         image: './icon-service@2x.png',
-        src: 'pages/service-manage/service-manage'
+        src: '/pages/service-manage/service-manage'
       }, {
         text: '客户',
         image: './icon-customer@2x.png',
@@ -120,9 +122,14 @@
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
       if (this.leader === 0) {
-        this.navList.splice(3, 1)
-        this.navList.push({text: '', image: ''})
+        this.navList.forEach((item, idx) => {
+          if (item.text === '商圈') {
+            this.navList.splice(idx, 1)
+            this.navList.push({text: '', image: ''})
+          }
+        })
       }
+      this.loaded()
       this.$apply()
     }
 
@@ -131,20 +138,38 @@
       res = JSON.parse(res.result)
       let code = res.code
       let data = await shop.verification(code)
+      this.loaded()
+      if (data.error !== 1) {
+        wepy.showToast({
+          title: '核销成功',
+          icon: 'success',
+          duration: 1500
+        })
+      } else {
+        wepy.showToast({
+          title: '核销失败',
+          icon: 'loading',
+          duration: 1500
+        })
+      }
       console.log(data)
+
     }
 
     methods = {
-      async isLead() {
-        if (this.leader === 1) {
-          await wepy.navigateTo({
-            url: '../package-manage/package-manage?leader=1'
-          })
-        } else {
-          await wepy.navigateTo({
-            url: '../package-manage/package-manage?leader=0'
-          })
+      async isLead(index) {
+        if (index === 2) {
+          if (this.leader === 1) {
+            await wepy.navigateTo({
+              url: '/pages/package-manage/package-manage?leader=1'
+            })
+          } else {
+            await wepy.navigateTo({
+              url: '/pages/package-manage/package-manage?leader=0'
+            })
+          }
         }
+
         this.$apply()
       },
       async showData(time, index) {
