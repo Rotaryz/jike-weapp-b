@@ -47,6 +47,19 @@ export default class http {
   }
 
   /**
+   * 判断是否登录
+   * @param msg
+   * @returns {Promise.<void>}
+   */
+  static async isLogin(msg) {
+    if (msg === '凭证已失效') {
+      await wepy.navigateTo({
+        url: '../logIn/logIn'
+      })
+    }
+  }
+
+  /**
    * 判断请求是否成功
    */
   static isSuccess(res) {
