@@ -52,7 +52,6 @@
 
       },
       init(radioList) {
-        console.log(radioList)
         this.radioMsg = radioList
         this.checked = radioList.radioChecked.slice()
         this.items = radioList.items.slice()

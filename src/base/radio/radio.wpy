@@ -50,7 +50,6 @@
 
     methods = {
       init(radioList) {
-        console.log(radioList)
         this.radioMsg = radioList
         this.checked = radioList.radioChecked
         this.showCover = true

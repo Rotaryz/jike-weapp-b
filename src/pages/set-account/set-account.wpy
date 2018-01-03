@@ -121,7 +121,6 @@
             belongs_to: this.checkedStoreId
           }
           const res = await Account.setSubAccount(data)
-          console.log(res)
           this.loaded()
         } else {
           this.$invoke('Toast', 'show', '资料未填写完整')
