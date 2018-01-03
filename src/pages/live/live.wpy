@@ -30,10 +30,10 @@
       <view class="upVideo">
         <view class="eva-title">视频</view>
         <view class="upload">
-          <image class="video-box {{showVideo === '' ? '' : 'no-border'}}"
+          <image class="video-box {{!showVideo ? '' : 'no-border'}}"
                  @tap="upVideo" src="{{videoImage}}">
             <image src="./pic-livebg@2x.png"
-                   wx:if="{{showVideo === ''}}"></image>
+                   wx:if="{{!showVideo}}"></image>
           </image>
           <view class="tip">上传十分钟视频</view>
         </view>

@@ -518,6 +518,7 @@
             seventh_redpacket: this.redPack[this.paizrList[2].record]
           })
         let res = null
+        console.log(this.id)
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
         } else {
@@ -545,7 +546,7 @@
     async load() {
       let res = await regist.seeRegist()
       this.loaded()
-      if (res.error !== 0) {
+      if (res.error !== 1) {
         this.id = res.id
         this.name = res.title
         this.btime = res.from_date
