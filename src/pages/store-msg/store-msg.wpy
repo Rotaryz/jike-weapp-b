@@ -453,8 +453,6 @@
         let self = this
         this.mapCtx.getCenterLocation({
           success: (res) => {
-            console.log(res.longitude)
-            console.log(res.latitude)
             self.mapCtx.translateMarker({
               markerId: 0,
               autoRotate: false,
@@ -508,7 +506,6 @@
         this.hourEnd = this.hourChioseArr[2] + ':' + endMinute
       },
       weekChange(e) {
-        console.log(e.detail.value)
         this.weekChecked = e.detail.value
         this._choiseChecked(this.weekValue)
         this.$apply()
@@ -557,7 +554,6 @@
         }
         let upRes = await Upload.uploadImages(res.tempFilePaths[0])
         this.loaded()
-        console.log(upRes)
         this.logoUrl = upRes.url
         this.logoId = upRes.id
         this.$apply()
@@ -590,7 +586,6 @@
         this.storeStatusTxt = item[0].txt
         this.showMap = true
         this.$apply()
-        console.log(this)
       },
       secondRadioOK(item, title) {
         switch (title) {
@@ -604,7 +599,6 @@
         this.twoRadioboxShow = false
         this.showMap = true
         this.$apply()
-        console.log(item)
       }
     }
 
@@ -621,7 +615,6 @@
           self.$apply()
         },
         fail: function(res) {
-          console.log(res)
         }
       })
     }

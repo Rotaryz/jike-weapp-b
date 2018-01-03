@@ -67,7 +67,6 @@
 
       },
       countChange(e) {
-        console.log(e.detail.value)
         this.NumInput = false
         if (e.detail.value > this.maxNum) {
           this.prizeCount = this.maxNum
@@ -75,7 +74,6 @@
         } else {
           this.prizeCount = e.detail.value
         }
-        console.log(this.prizeCount)
         this.$apply()
       },
       closeCover() {
@@ -108,7 +106,6 @@
         }
       },
       checkedPrize(item, idx) {
-        console.log(item)
         this.prizeCheckedId = item.id
         this.prizeCheckedType = item.promotion_type
         this.maxNum = item.promotion_stock

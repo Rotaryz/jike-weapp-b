@@ -43,7 +43,7 @@
         this.$navigate('/pages/create-account/create-account')
       },
       showDetail(id) {
-        console.log(id)
+
       }
     }
 
