@@ -22,7 +22,9 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
+  import base from 'common/mixins/base'
   export default class record extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '核销记录',
       navigationBarBackgroundColor: '#363547',
@@ -49,6 +51,7 @@
       let res = await shop.verificationLog(data)
       this.verification = this.verification.concat(res)
       this.$apply()
+      this.loaded()
       return res
     }
 

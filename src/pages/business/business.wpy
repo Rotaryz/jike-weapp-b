@@ -78,7 +78,9 @@
   import wepy from 'wepy'
   import NavHeader from '@/base/nav-header/nav-header'
   import shop from 'api/shop'
+  import base from 'common/mixins/base'
   export default class business extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '商区',
       navigationBarBackgroundColor: '#363547',
@@ -115,11 +117,15 @@
     }
 
     async _checkBusiness(data) {
-      return await shop.checkBusiness(data)
+      let res = await shop.checkBusiness(data)
+      this.loaded()
+      return res
     }
 
     async _setMapShowed(data) {
-      return await shop.setMapShowed(data)
+      let res = await shop.setMapShowed(data)
+      this.loaded()
+      return res
     }
 
     methods = {
@@ -241,8 +247,8 @@
       this.conList = this.conList.concat(await
         this._checkBusiness({})
       )
-      let res = await
-        shop.industries()
+      let res = await shop.industries()
+      this.loaded()
       this.navList = this.navList.concat(res)
       this.$apply()
     }

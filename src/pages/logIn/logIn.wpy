@@ -78,8 +78,9 @@
   import wepy from 'wepy'
   import users from 'common/mixins/users'
   import logIn from 'api/logIn'
+  import base from 'common/mixins/base'
   export default class Square extends wepy.page {
-    mixins = [users]
+    mixins = [users, base]
     config = {
       navigationBarTitleText: '集客商家助手'
     }
@@ -164,9 +165,11 @@
           this.loginType.login = false
           this.submitType = 3
         }
+        this.password = ''
       },
       async setCode() {
         await logIn.messageBind({mobile: this.phoneSusses})
+        this.loaded()
         let time = 60
         this.phoneCodeTime = time + 's'
         let timer = setInterval(() => {
@@ -277,6 +280,7 @@
             }
           }
         }
+        this.loaded()
       }
     }
   }
