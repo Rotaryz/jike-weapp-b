@@ -205,11 +205,14 @@
   import Toast from '@/base/toast/toast'
   import Activitys from 'api/activitys'
   import Tips from 'common/js/tips'
+  import base from 'common/mixins/base'
 
   const ADD_TYPE = 0
   const UPDATE_TYPE = 1
 
   export default class WheelController extends wepy.page {
+    mixins = [base]
+
     data = {
       type: ADD_TYPE,
       id: 0,
@@ -237,6 +240,7 @@
     async load() {
       await this._getLucky(true)
       await this._getPrizePool()
+      this.loaded()
     }
 
     async _getLucky(loading) {
@@ -373,6 +377,7 @@
         } else {
           this._toast(res.message)
         }
+        this.loaded()
       },
       showActivityTimeModal() {
         this.$invoke('activity-time-modal', 'show')
