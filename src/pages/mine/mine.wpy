@@ -80,7 +80,7 @@
         this.$navigate(skipUrl)
       },
       async switchStore() {
-        let res = await Account.getAnnexList()
+        await Account.getAnnexList()
         this.loaded()
       }
     }

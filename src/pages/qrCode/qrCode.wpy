@@ -22,6 +22,7 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
+
   export default class Square extends wepy.page {
     config = {
       navigationBarTitleText: '扫码核销',
@@ -87,7 +88,8 @@
           icon: 'loading',
           duration: 1000
         })
-      this.$apply()
+        this.$apply()
+      }
     }
 
     methods = {
