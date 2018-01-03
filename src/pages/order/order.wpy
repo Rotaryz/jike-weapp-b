@@ -123,8 +123,8 @@
         this.isDetail = true
         let data = await shop.Orders(id)
         this.datail = data
+        this.loaded()
         this.$apply()
-        console.log(data)
       },
       showDays() {
         this.showDay = !this.showDay
@@ -133,7 +133,6 @@
         this.dayPage = num
         this.dayType = this.days[num].type
         this.load(this.navNum, this.dayType, '', this.page)
-        console.log(this.dayPage)
       },
       showMsg(index) {
         this.navNum = index
@@ -154,10 +153,8 @@
         this.searchValue = ''
       },
       async loadMore(e) {
-        console.log(this.page)
         if (!this.nothing) {
           this.page++
-          console.log(this.page)
           let res = await this.load(this.navNum, this.dayType,
             this.searchValue, this.page, 2)
           if (res.length === 0) {

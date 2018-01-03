@@ -148,12 +148,10 @@
         this.$parent.globalData.coupon = ''
         this.$apply()
       }
-      console.log(this.activityPromotion)
     }
 
     async load() {
       let res = await live.watchlive()
-      console.log(res)
       if (res.error !== 1) {
         this.id = res.id
         this.videoSrc = res.file_url
