@@ -38,7 +38,7 @@
         <view class="store-msg-picker-title">地区</view>
         <picker mode="region" bindchange="bindRegionChange" value="{{region}}" class="sitebox">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{region[2]}}</view>
+            <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
             <image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>
           </view>
         </picker>
@@ -298,7 +298,6 @@
       logoUrl: '',
       logoId: 0,
       storeImgs: []
-
     }
 
     async onLoad() {
@@ -323,7 +322,7 @@
       this.tel = res.mobile ? res.mobile : ''
       this.site = res.address ? res.address : ''
       this.mapAddress = res.address ? res.address : ''
-      this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : []
+      this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
       this.longitude = res.longitude ? res.longitude : 113.324520
       this.latitude = res.latitude ? res.latitude : 23.099994
       this.markers[0].longitude = this.longitude
@@ -333,7 +332,7 @@
       this.storeStatus = res.open_status ? res.open_status : ''
       this.logoUrl = res.logo_image || ''
       this.logoId = res.logo_image_id || 0
-      this.storeImgs = res.shop_image_data ? res.shop_image_data.slice(0, 3) : [
+      this.storeImgs = res.shop_image_data && res.shop_image_data.length > 0 ? res.shop_image_data.slice() : [
         {id: 0, image_id: 0, image_url: ''},
         {id: 0, image_id: 0, image_url: ''},
         {id: 0, image_id: 0, image_url: ''}
@@ -374,7 +373,7 @@
         } else {
           radioChecked = {
             two: '',
-            one: ''
+            one: 1
           }
         }
         let listMsg = {
