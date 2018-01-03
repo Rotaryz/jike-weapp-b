@@ -111,10 +111,13 @@
   import wepy from 'wepy'
   import Coupons from 'api/coupons'
   import Confirm from '@/base/confirm/confirm'
+  import base from 'common/mixins/base'
 
   const TABS = ['待上线', '已上线', '已下线']
 
   export default class ServiceManage extends wepy.page {
+    mixins = [base]
+
     data = {
       tabs: TABS,
       tabIndex: 0,
@@ -148,6 +151,7 @@
           break
       }
       this.$apply()
+      this.loaded()
     }
 
     methods = {

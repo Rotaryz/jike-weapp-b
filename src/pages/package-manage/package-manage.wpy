@@ -135,10 +135,13 @@
   import wepy from 'wepy'
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
+  import base from 'common/mixins/base'
 
   const TABS = ['待上线', '已上线', '已下线', '待审核']
 
   export default class PackageManage extends wepy.page {
+    mixins = [base]
+
     data = {
       tabs: TABS,
       tabIndex: 0,
@@ -176,6 +179,7 @@
           break
       }
       this.$apply()
+      this.loaded()
     }
 
     methods = {
@@ -197,6 +201,7 @@
         const res = await Packages.deletePackage(this.deleteId)
         console.log(res)
         this._getPackageLists()
+        this.loaded()
       },
       edit(id) {
         this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
