@@ -1,0 +1,372 @@
+<template>
+  <view>
+    <NavHeader>
+      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+            wx:key="{{index}}" @tap="showType({{item.id}},{{index}})">
+        <text>{{item.name}}</text>
+      </view>
+    </NavHeader>
+    <view class="business">
+      <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
+        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})"
+                        id="checkboxs">
+          <label class="radioLabel {{item.checked?'active':''}}">
+            <checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"
+                      hidden="true"/>
+            {{item.txt}}
+            <image class="radio-Icon"
+                   src="{{item.is_showed?'./icon-select@2x.png':'./icon-checkbox@2x.png'}}"></image>
+          </label>
+        </checkbox-group>
+        <!--<checkbox-group-->
+        <!--bindchange="checkboxChange({{index}},{{item.merchant_id}})">-->
+        <!--<label class="checkbox">-->
+        <!--<checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"/>-->
+        <!--</label>-->
+        <!--</checkbox-group>-->
+        <view>{{item.shop_name}}</view>
+        <view class="bus-tt" wx:if="{{item.start_showed_at}}"
+              @tap="checkboxChange({{index}},{{item.merchant_id}})">
+          {{item.start_showed_at}}至{{
+          item.end_showed_at}}
+        </view>
+        <switch color="#EF705D" checked="{{item.is_showed}}"
+                bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>
+      </view>
+    </view>
+    <view class="times" wx:if="{{showTime}}">
+      <view class="times-ti">
+        <view class="set-time">设置时间</view>
+        <view class="time-ok">
+          <view class="{{timeTimes === 1 ?'tactive':''}}" @tap="tapTime(1)">
+            {{btime}}
+          </view>
+          <view>至</view>
+          <view class="{{timeTimes === 2 ?'tactive':''}}" @tap="tapTime(2)">
+            {{etime}}
+          </view>
+        </view>
+        <view class="time-sure">
+          <text @tap="cancel">取消</text>
+          <text @tap="sureTime">确定</text>
+        </view>
+        <picker-view bindchange="bindChange" value="{{value}}">
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{yearLen}}"
+                  wx:key="{{index}}" value="{{year + item}}">{{
+              year + item}}年
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{mounth}}"
+                  wx:key="{{index}}" value="{{item}}">{{item + 1}}月
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view style="line-height: 34px" wx:for="{{day}}"
+                  wx:key="{{index}}" value="{{item}}">{{item + 1}}日
+            </view>
+          </picker-view-column>
+        </picker-view>
+      </view>
+      <image src="./icon-close_white@2x.png" @tap="hideTime"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import NavHeader from '@/base/nav-header/nav-header'
+  import shop from 'api/shop'
+  export default class business extends wepy.page {
+    config = {
+      navigationBarTitleText: '商区',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      NavHeader: NavHeader
+    }
+    data = {
+      industryParentId: '',
+      navNum: 0,
+      navList: [{
+        name: '全部',
+        id: ''
+      }],
+      merchantId: [],
+      conList: [{
+        'shop_name': '全部',
+        'merchant_id': ''
+      }],
+      year: 0,
+      yearLen: 4,
+      mounth: 12,
+      day: 31,
+      showTime: false,
+      animation: {},
+      time: '',
+      value: [],
+      btime: '选择开始时间',
+      etime: '选择结束时间',
+      timeTimes: 1,
+      tapTimes: 0,
+      section: ''
+    }
+
+    async _checkBusiness(data) {
+      return await shop.checkBusiness(data)
+    }
+
+    async _setMapShowed(data) {
+      return await shop.setMapShowed(data)
+    }
+
+    methods = {
+      async showType(id, index) {
+        this.navNum = index
+        this.industryParentId = {industry_parent_id: id}
+        this.conList = [{'shop_name': '全部', id: ''}]
+        let res = await this._checkBusiness(this.industryParentId)
+        this.conList = this.conList.concat(res)
+        this.$apply()
+      },
+      async checkboxChange(e, id) {
+        if (!this.conList[e]['is_showed']) {
+          this.showTime = true
+          this.info()
+          this.timeTimes = 1
+          this.btime = '选择开始时间'
+          this.etime = '选择结束时间'
+          if (id !== '') {
+            this.merchantId = [id]
+          } else {
+            this.conList.map((item, idx) => {
+              if (idx !== 0) {
+                this.merchantId.push(item.merchant_id)
+                item['is_showed'] = true
+                return item
+              }
+            })
+          }
+        } else {
+          if (id === '') {
+            this.conList = [{'shop_name': '全部', id: ''}]
+            let res = await this._checkBusiness(this.industryParentId)
+            this.conList = this.conList.concat(res)
+            this.$apply()
+          }
+        }
+
+        this.conList[e]['is_showed'] = !this.conList[e]['is_showed']
+      },
+      async hideTime() {
+        this.showTime = false
+        let data = {
+          'merchant_ids': this.merchantId,
+          'start_showed_at': this.btime,
+          'end_showed_at': this.etime
+        }
+        let res = await this._setMapShowed(data)
+
+        if (res.error === 0) {
+          this.conList.map((item) => {
+            if (this.merchantId.indexOf(item.merchant_id) !== -1) {
+              if (this.btime !== '选择开始时间' && this.btime !== '选择开始时间') {
+                item['start_showed_at'] = this.btime
+                item['end_showed_at'] = this.etime
+                return item
+              } else {
+                item['start_showed_at'] = ''
+                item['end_showed_at'] = ''
+                return item
+              }
+            }
+          })
+          this.$apply()
+        }
+      },
+      bindChange(e) {
+        this.value = e.detail.value
+      },
+      sureTime() {
+        this.time = `${this.value[0] + this.year}-${this.value[1] + 1
+          }-${this.value[2] + 1}`
+        if (this.timeTimes === 1) {
+          this.btime = this.time
+        } else if (this.timeTimes === 2) {
+          this.etime = this.time
+        }
+      },
+      tapTime(type) {
+        this.timeTimes = type * 1
+      },
+      cancel() {
+        this.showChioce = false
+      }
+    }
+
+    dealDay(year, month) {
+      let days = 0
+      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+        if (month === 2) {
+          days = 29
+        }
+      } else {
+        if (month === 2) {
+          days = 28
+        }
+      }
+      if (month === 1 || month === 3 || month === 5 || month === 7 ||
+        month === 8 || month === 10 || month === 12) {
+        days = 31
+      } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+        days = 30
+      }
+      this.day = days
+      this.$apply()
+    }
+
+    info() {
+      let now = new Date()
+      this.year = now.getFullYear()
+      let month = now.getMonth()
+      let days = now.getDate() - 1
+      this.value = [0, month, days]
+      this.dealDay(this.year, month + 1)
+    }
+
+    async onLoad() {
+      this.info()
+      this.conList = this.conList.concat(await
+        this._checkBusiness({})
+      )
+      let res = await
+        shop.industries()
+      this.navList = this.navList.concat(res)
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  view
+    box-sizing: border-box
+
+  .business
+    font-size: $font-size-small
+    .wx-checkbox-input
+      height: 16px
+      width: 16px
+    label
+      font-size: $font-size-small
+      margin-right: 10px
+    .wx-switch-input
+      height: 21px
+      width: 41px
+      &:before
+        height: 21px
+        width: 41px
+        border: none
+        background: $color-split-line
+      &:after
+        height: 20px
+        width: 20px
+    .bus-item
+      display: flex
+      height: 43px
+      align-items: center
+      background: $color-white
+      padding: 0 $padding
+      border-bottom: 0.5px solid $color-split-line
+      .bus-tt
+        flex: 1.6
+      view
+        flex: 1
+        transform: translateY(2px)
+
+  .times
+    position: fixed
+    height 100%
+    width: 100%
+    top: 0
+    background: $color-mask-bgc
+    .times-ti
+      height: 325px
+      width: 265px
+      background: $color-white
+      all-center()
+      .set-time
+        height: 40px
+        line-height: 40px
+        text-align: center
+        background-color: $color-theme
+        color: $color-white
+        font-size: $font-size-medium-x
+        font-family: $font-family-light
+    picker-view
+      position: absolute
+      bottom: 0
+      height: 200px
+      width: 100%
+      text-align: center
+      font-size: $font-size-medium
+    .time-ok
+      height: 45px
+      display: flex
+      font-size: $font-size-small
+      align-items: center
+      background: $color-background
+      position: relative
+      view
+        flex: 1
+        text-align: center
+        border-bottom: 2px solid $color-text-d
+        &:nth-child(2)
+          position: absolute
+          all-center()
+          width: 18px
+          height: 18px
+          line-height: 18px
+          border-radius: 50%
+          text-align: center
+          font-size: $font-size-small-s
+          background: $color-text-d
+          color: $color-white
+        &:nth-child(1), &:nth-child(3)
+          line-height: 1
+          padding-bottom: 9.5px
+          margin: 19.5px 24px 0
+      .tactive
+        border-bottom: 2px solid  $color-assist-f
+        color: $color-text
+    .time-sure
+      height: 39.5px
+      border-bottom: 0.5px solid $color-split-line
+      padding: 18.5px $padding 0
+      display: flex
+      color: $color-text
+      justify-content: space-between
+      font-size: $font-size-small
+
+    image
+      position: absolute
+      height: 24px
+      width: 24px
+      bottom: 16vw
+      row-center()
+
+  #checkboxs
+    display: flex
+    justify-content: center
+    align-items: center
+
+  .radio-Icon
+    width: 16px
+    height: 16px
+
+  .radioLabel.active
+    color: $color-assist-f
+</style>

@@ -1,0 +1,130 @@
+<template>
+  <view class="container" id="area">
+    <canvas canvas-id="areaCanvas" class="canvas"
+            bindtouchstart="touchHandler"
+            disable-scroll="true"></canvas>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import WxCharts from 'common/libs/wxcharts'
+  export default class Chart extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    data = {
+      customerTrend: [],
+      areaChart: ''
+    }
+    methods = {
+      touchHandler: function (e) {
+        this.areaChart.showToolTip(e, {
+          color: '#363547',
+          background: '#363547'
+        })
+      }
+    }
+
+    infoArea(res) {
+      this.areaChart = new WxCharts({
+        canvasId: 'areaCanvas',
+
+        type: 'area',
+        categories: res.x,
+        animation: true,
+        series: [{
+          name: '',
+//        数据
+          data: res.y,
+          format(val) {
+            val = val * 1
+            return val.toFixed(0)
+          }
+        }],
+        legend: false,
+        dataLabel: false,
+        yAxis: {
+          title: '',
+          format(val) {
+            val = val * 1
+            return val.toFixed(0)
+          },
+          min: res.min_y,
+          max: res.max_y,
+          fontColor: '#9b9b9b',
+          gridColor: '#E6E6E6',
+          titleFontColor: '#9b9b9b'
+        },
+        xAxis: {
+          fontColor: '#9b9b9b',
+          gridColor: '#E6E6E6',
+          type: 'calibration'
+        },
+        extra: {
+          lineStyle: 'curve'
+        },
+        width: 350,
+        height: 220
+      })
+    }
+
+    async onLoad() {
+//      this.infoArea()
+//      this.areaChart = new wxCharts({
+//        canvasId: 'areaCanvas',
+//        enableScroll: true,
+//        type: 'area',
+//        categories: ['12-22', '12-12', '2-10', '12-9', '15-21', '12, 41'],
+//        animation: true,
+//        series: [{
+//          name: '',
+//       数据
+//          data: [1, 125, 2, 41, 5, 12, 41],
+//          format(val) {
+//            val = val * 1
+//            return val.toFixed(0)
+//          }
+//        }],
+//        legend: false,
+//        dataLabel: false,
+//        yAxis: {
+//          title: '',
+//          format(val) {
+//            val = val * 1
+//            return val.toFixed(0)
+//          },
+//          min: 0,
+//          max: 150,
+//          fontColor: '#9b9b9b',
+//          gridColor: '#E6E6E6',
+//          titleFontColor: '#9b9b9b'
+//        },
+//        xAxis: {
+//          fontColor: '#9b9b9b',
+//          gridColor: '#E6E6E6',
+//          type: 'calibration'
+//        },
+//        extra: {
+//          lineStyle: 'curve'
+//        },
+//        width: 370,
+//        height: 220
+//      })
+    }
+  }
+</script>
+
+<style lang="stylus">
+  #area
+    overflow: visible !important
+    height: 400px !important
+    canvas
+      width: 98%
+      height: 220px
+      transform: translateX(0px)
+
+  /*width: 200%
+  height: 300px
+  transform: translateX(-43%)*/
+</style>

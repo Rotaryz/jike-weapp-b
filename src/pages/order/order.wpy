@@ -1,0 +1,351 @@
+<template>
+  <scroll-view scroll-y="true" bindscrolltolower="loadMore">
+    <view class="or-header" wx:if="{{!showInput}}">
+      <view>
+        <text>服务订单</text>
+      </view>
+      <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
+        <text>{{days[dayPage].title}}</text>
+        <image src="./icon-down24@2x.png"></image>
+        <view class="day-select" wx:if="{{showDay}}">
+          <view wx:for="{{days}}" wx:key="{{index}}"
+                class="{{dayPage === index? 'tactive' : ''}}"
+                @tap="showPage({{index}})">{{
+            item.title}}
+          </view>
+        </view>
+      </view>
+      <view @tap="isInput">
+        <image src="./icon-search24@2x.png"></image>
+        <text>搜索</text>
+      </view>
+    </view>
+    <view class="inputs" wx:if="{{showInput}}">
+      <image src="./icon-search24@2x.png"></image>
+      <input type="number" placeholder="手机号搜索" bindinput="sreaching"
+             value="{{searchValue}}" bindblur="bindblurs"/>
+    </view>
+    <NavHeader>
+      <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+            wx:key="{{index}}" @tap="showMsg({{index}})" id="nav-order">
+        <text>{{item.title}}</text>
+      </view>
+    </NavHeader>
+    <view class="order-conpon" style="padding-top:{{paddingTop}}vw">
+      <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
+        <image src="./pic-orderbg@2x.png"></image>
+        <view class="order-top">
+          <view>
+            <view class="order-title">服务名称: {{item.title}}</view>
+            <view class="order-title">手机号码: {{item.customer_phone}}</view>
+          </view>
+          <text>
+            {{navList[navNum].title}}
+          </text>
+        </view>
+        <view class="order-bottom">
+          <view>订单号: {{item.order_sn}}</view>
+          <text @tap="showDetail({{item.id}})">
+            查看详情
+          </text>
+        </view>
+      </view>
+    </view>
+    <view class="order-detail" wx:if="{{isDetail}}">
+      <view class="order-box">
+        <view>订单号：{{datail.order_sn}}</view>
+        <view>下单时间：{{datail.created_at}}</view>
+        <view>手机号码：{{datail.customer_phone}}</view>
+        <view>用户ID：{{datail.customer_id}}</view>
+        <view>数量：{{datail.count}}</view>
+        <view>总价：
+          <text>￥{{datail.total}}</text>
+        </view>
+      </view>
+      <image src="./icon-close_white@2x.png" @tap="hideDetail"></image>
+    </view>
+  </scroll-view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import shop from 'api/shop'
+  import NavHeader from '@/base/nav-header/nav-header'
+  export default class order extends wepy.page {
+    config = {
+      navigationBarTitleText: '订单管理',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      NavHeader: NavHeader
+    }
+    data = {
+      showDay: false,
+      dayPage: 0,
+      isDetail: false,
+      navNum: 0,
+      navList: [{
+        title: '待使用'
+      }, {
+        title: '已使用'
+      }, {
+        title: '退款'
+      }],
+      days: [{
+        title: '今天',
+        type: 'today'
+      }, {
+        title: '昨天',
+        type: 'yesterday'
+      }, {
+        title: '7天',
+        type: 'week'
+      }, {
+        title: '30天',
+        type: 'month'
+      }],
+      showInput: false,
+      couponList: [],
+      dayType: 'today',
+      searchValue: '',
+      datail: {},
+      page: 1,
+      paddingTop: 0
+    }
+    methods = {
+      hideDetail() {
+        this.isDetail = false
+      },
+      async showDetail(id) {
+        this.isDetail = true
+        let data = await shop.Orders(id)
+        this.datail = data
+        this.$apply()
+        console.log(data)
+      },
+      showDays() {
+        this.showDay = !this.showDay
+      },
+      showPage(num) {
+        this.dayPage = num
+        this.dayType = this.days[num].type
+        this.load(this.navNum, this.dayType, '', this.page)
+        console.log(this.dayPage)
+      },
+      showMsg(index) {
+        this.navNum = index
+        this.page = 0
+        this.load(this.navNum, this.dayType, '', this.page)
+      },
+      isInput() {
+        this.showInput = true
+      },
+      sreaching(e) {
+        this.searchValue = e.detail.value
+        setTimeout(() => {
+          this.load(this.navNum, this.dayType, this.searchValue, this.page)
+        }, 1000)
+      },
+      bindblurs() {
+        this.showInput = false
+        this.searchValue = ''
+      },
+      async loadMore(e) {
+        console.log(this.page)
+        if (!this.nothing) {
+          this.page++
+          console.log(this.page)
+          let res = await this.load(this.navNum, this.dayType,
+            this.searchValue, this.page, 2)
+          if (res.length === 0) {
+            this.nothing = true
+          }
+        }
+      }
+    }
+
+    async load(status = 0, date = 'today', mobile = '', page = 1, type) {
+      let data = {status, mobile, date, page}
+      let res = await shop.wechatOrders(data)
+      if (type === 2) {
+        this.couponList = this.couponList.concat(res)
+      } else {
+        this.couponList = res
+      }
+      if (res.length === 0) {
+        this.paddingTop = 20
+      } else {
+        this.paddingTop = 0
+      }
+      this.$apply()
+      console.log(res)
+    }
+
+    async onLoad() {
+      await this.load()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  scroll-view
+    max-height: 100vh
+
+  view
+    box-sizing: border-box
+
+  .or-header
+    height: 51.5px
+    display: flex
+    background-color: $color-theme
+    padding: 18.5px 20px 0
+    justify-content: space-between
+    .active
+      border: 0.5px solid  $color-white
+    > view
+      display: inline-block
+      font-size: $font-size-small
+      color: $color-text-d
+      line-height: 24px
+      padding: 0 11px
+      border: 1px solid $color-text-d
+      border-radius: 50px
+      height: 24px
+      position: relative
+      image
+        height: 12px
+        width: 12px
+        transform: translate(3px, 2px)
+      &:first-child
+        color: $color-white
+        background: $color-assist-f
+        border: none
+      &:last-child
+        image
+          transform: translate(-3px, 2px)
+      .day-select
+        position: absolute
+        top: 34px
+        left: -50%
+        background: $color-white
+        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19)
+        z-index: 10000
+        &::before
+          content: ''
+          top: -20px
+          row-center()
+          height: 0px
+          border: 10px solid $color-white
+          border-right: 10px solid transparent
+          border-top: 10px solid transparent
+          border-left: 10px solid transparent
+        view
+          width: 115px
+          height: 29px
+          line-height: 29px
+          border-bottom: 0.5px solid  $color-split-line
+          text-indent 10.5px
+        .tactive
+          color: $color-assist-f
+
+  .inputs
+    background: $color-theme
+    position: relative
+    padding: 14.5px 23px 0
+    image
+      position: absolute
+      left: 35px
+      height: 10px
+      width: 10px
+      top: 55%
+    input
+      height: 36px
+      font-size: $font-size-small
+      color: $color-white
+      padding-left: 26px
+      border-radius: 50px
+      border: 0.5px solid $color-white
+
+  #nav-order
+    text
+      width: 40%
+
+  .order-conpon
+    padding: 0 $padding
+    .order-item
+      margin-top: 10px
+      position: relative
+      height: 25.34vw
+      display: flex
+      flex-direction: column
+      image
+        position: absolute
+        width: 100%
+        height: 100%
+      view
+        font-size: $font-size-small
+        line-height: 16.5px
+        position: relative
+        z-index: 100
+        text-indent: 12.5px
+        align-items: center
+      > view
+        display: flex
+        justify-content: space-between
+        text
+          transform: translate(-14.5px, -25%)
+      .order-top
+        height: 57.89%
+        .order-title
+          margin-top: 2px
+        text
+          color: $color-text-d
+      .order-bottom
+        height: 42.11%
+        text
+          color: $color-assist-f
+          text-align center
+          height: 24px
+          width: 60px
+          line-height: 0.7
+          transform: translate(-14.5px, 0%)
+          border: 0.5px solid $color-assist-f
+          border-radius: 2px
+
+  .order-detail
+    position: fixed
+    z-index: 120
+    background: $color-mask-bgc
+    top: 0
+    width: 100vw
+    height: 100vh
+    .order-box
+      border-radius: 2px
+      max-height: 360px
+      min-height: 200px
+      width: 265px
+      all-center()
+      background: $color-white
+      view
+        height: 40px
+        line-height: 40px
+        text-indent: 9.5px
+        font-size: $font-size-small
+        color: $color-text
+        border-bottom: 0.5px solid $color-split-line
+        text
+          color: $color-assist-f
+        &:first-child
+          border-top-right-radius: 2px
+          border-top-left-radius: 2px
+          background-color: $color-theme
+          border-bottom: none
+    image
+      height: 20px
+      width: 20px
+      row-center()
+      bottom: 16vw
+</style>
