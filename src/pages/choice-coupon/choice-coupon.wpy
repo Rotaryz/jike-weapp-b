@@ -32,7 +32,9 @@
   import Coupon from '@/base/coupon/coupon'
   import content from 'api/content'
   import live from 'api/live'
+  import base from 'common/mixins/base'
   export default class choiceCoupon extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '添加优惠券',
       navigationBarBackgroundColor: '#363547',
@@ -91,8 +93,8 @@
         let data = {use_status: 1, use_type: 0}
         res = await live.prizePool(data)
       }
-
       this.couponList = res
+      this.loaded()
       this.$apply()
     }
 

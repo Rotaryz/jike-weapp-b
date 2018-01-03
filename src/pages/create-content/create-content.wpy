@@ -118,7 +118,9 @@
   import Coupon from '@/base/coupon/coupon'
   import Uploads from 'api/uploads'
   import content from 'api/content'
+  import base from 'common/mixins/base'
   export default class createContent extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '创建内容',
       navigationBarBackgroundColor: '#363547',
@@ -252,6 +254,7 @@
             Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
             res = await content.createContent(this.allMsg)
           }
+          this.loaded()
           if (res.error === 0) {
             await wepy.navigateTo({
               url: '../content/content'
@@ -305,6 +308,7 @@
         this.title = res.title
         this.contentList = res['content_detail_data']
       }
+      this.loaded()
       this.$apply()
     }
   }

@@ -87,7 +87,9 @@
   import AeraChart from '@/base/areaChart/areaChart'
   import NavHeader from '@/base/nav-header/nav-header'
   import shop from 'api/shop'
+  import base from 'common/mixins/base'
   export default class client extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '客户',
       navigationBarBackgroundColor: '#363547',
@@ -143,6 +145,7 @@
         this.customerCity = city
         this.$com.Pie.$wxpage.infoPie(res)
       }
+      this.loaded()
       this.$apply()
     }
 
@@ -152,7 +155,6 @@
         await this._showMsg(0, time)
       },
       showMsg(num) {
-        console.log(num)
         this._showMsg(num)
       }
 

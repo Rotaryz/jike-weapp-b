@@ -158,7 +158,9 @@
 <script>
   import wepy from 'wepy'
   import regist from 'api/regist'
+  import base from 'common/mixins/base'
   export default class Registration extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '签到红包',
       navigationBarBackgroundColor: '#363547',
@@ -585,14 +587,11 @@
           record: res.seventh_redpacket.index
         }
         this.$apply()
+        this.loaded()
       }
     }
 
     async onLoad() {
-//      wx.setStorage({
-//        key: "token",
-//        data: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDg4Njg2NywiZXhwIjoxNTE0ODkwNDY3LCJuYmYiOjE1MTQ4ODY4NjcsImp0aSI6Ilo4dmk4Z291c05zczF2cFAifQ.u8Ap3c5j3c6iy8dygzoQ_EKVaZ6k-yrebwrreygCmSY'
-//      })
       let data = await regist.Redpack()
       let shop = await regist.getData()
       this.markers[0].latitude = shop.latitude

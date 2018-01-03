@@ -73,7 +73,6 @@
 
     async show(code) {
       let res = await this._verification(code)
-      console.log(res)
       if (res.error === 0) {
 //                成功时
         wepy.showToast({
@@ -88,6 +87,7 @@
           icon: 'loading',
           duration: 1000
         })
+//                失败时
       }
       this.$apply()
     }
@@ -108,7 +108,7 @@
           if (idx === index && idx === this.codeNum.length - 1) {
             item.image = './pic-validatered@2x.png'
             code = this.code.replace(/ /g, '')
-            await this.show(code)
+            this.show(code)
           }
           return item
         })
@@ -207,5 +207,4 @@
         .nums
           height: 89px
           width: 194px
-
 </style>

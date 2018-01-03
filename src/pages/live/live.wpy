@@ -30,7 +30,8 @@
       <view class="upVideo">
         <view class="eva-title">视频</view>
         <view class="upload">
-          <image class="video-box {{showVideo === '' ? '' : 'no-border'}}" @tap="upVideo" src="{{videoImage}}">
+          <image class="video-box {{showVideo === '' ? '' : 'no-border'}}"
+                 @tap="upVideo" src="{{videoImage}}">
             <image src="./pic-livebg@2x.png"
                    wx:if="{{showVideo === ''}}"></image>
           </image>
@@ -66,7 +67,9 @@
   import wepy from 'wepy'
   import Uploads from 'api/uploads'
   import live from 'api/live'
+  import base from 'common/mixins/base'
   export default class Live extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '直播优惠',
       navigationBarBackgroundColor: '#363547',
@@ -160,6 +163,7 @@
         this.imageId = res.file_id
         this.activityPromotion = res.activity_promotion
       }
+      this.loaded()
       this.$apply()
     }
 

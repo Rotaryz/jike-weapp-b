@@ -24,7 +24,7 @@
     }
 
     isArray(item) {
-      return Object.prototype.toString.apply(item) === '[object Array]'
+      return Object.prototype.toString.   apply(item) === '[object Array]'
     }
 
     isUndefined(item) {
@@ -52,82 +52,82 @@
       return this.globalData[name]
     }
 
-  config = {
-    pages: [
-      'pages/shop/shop',
-      'pages/logIn/logIn',
-      'pages/order/order',
-      'pages/registration/registration',
-      'pages/content/content',
-      'pages/live/live',
-      'pages/create-content/create-content',
-      'pages/business/business',
-      'pages/choice-coupon/choice-coupon',
-      'pages/compile/compile',
-      'pages/data/data',
-      'pages/cancel-record/cancel-record',
-      'pages/evaluate/evaluate',
-      'pages/client/client',
-      'pages/qrCode/qrCode',
-      'pages/marketing/marketing',
-      'pages/mine/mine',
-      'pages/wheel-controller/wheel-controller',
-      'pages/package-manage/package-manage',
-      'pages/service-manage/service-manage',
-      'pages/package-detail/package-detail',
-      'pages/package-controller/package-controller',
-      'pages/service-controller/service-controller',
-      'pages/store-msg/store-msg',
-      'pages/store-license/store-license',
-      'pages/account-management/account-management',
-      'pages/create-account/create-account',
-      'pages/set-account/set-account',
-      'pages/contact-sales/contact-sales',
-      'pages/share-prize/share-prize',
-      'pages/prize-pool/prize-pool',
-      'pages/create-prize/create-prize',
-      'pages/exchange-editor/exchange-editor'
-    ],
-    window: {
-      backgroundColor: '#F9F9F9',
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: '商家助手',
-      navigationBarTextStyle: 'black'
-    },
-    tabBar: {
-      color: '#C8C8C8',
-      selectedColor: '#363547',
-      backgroundColor: '#fff',
-      borderStyle: '#E5E5E5',
-      list: [
-        {
-          pagePath: 'pages/shop/shop',
-          text: '店铺',
-          iconPath: './common/images/icon-shop@2x.png',
-          selectedIconPath: './common/images/icon-shop2@2x.png'
-        },
-        {
-          pagePath: 'pages/marketing/marketing',
-          text: '营销',
-          iconPath: './common/images/icon-marketing@2x.png',
-          selectedIconPath: './common/images/icon-marketing2@2x.png'
-        },
-        {
-          pagePath: 'pages/data/data',
-          text: '数据',
-          iconPath: './common/images/icon-data@2x.png',
-          selectedIconPath: './common/images/icon-data2@2x.png'
-        },
-        {
-          pagePath: 'pages/mine/mine',
-          text: '我的',
-          iconPath: './common/images/icon-my@2x.png',
-          selectedIconPath: './common/images/icon-my2@2x.png'
-        }
-      ]
+    config = {
+      pages: [
+        'pages/shop/shop',
+        'pages/logIn/logIn',
+        'pages/order/order',
+        'pages/registration/registration',
+        'pages/content/content',
+        'pages/live/live',
+        'pages/create-content/create-content',
+        'pages/business/business',
+        'pages/choice-coupon/choice-coupon',
+        'pages/compile/compile',
+        'pages/data/data',
+        'pages/cancel-record/cancel-record',
+        'pages/evaluate/evaluate',
+        'pages/client/client',
+        'pages/qrCode/qrCode',
+        'pages/marketing/marketing',
+        'pages/mine/mine',
+        'pages/wheel-controller/wheel-controller',
+        'pages/package-manage/package-manage',
+        'pages/service-manage/service-manage',
+        'pages/package-detail/package-detail',
+        'pages/package-controller/package-controller',
+        'pages/service-controller/service-controller',
+        'pages/store-msg/store-msg',
+        'pages/store-license/store-license',
+        'pages/account-management/account-management',
+        'pages/create-account/create-account',
+        'pages/set-account/set-account',
+        'pages/contact-sales/contact-sales',
+        'pages/share-prize/share-prize',
+        'pages/prize-pool/prize-pool',
+        'pages/create-prize/create-prize',
+        'pages/exchange-editor/exchange-editor'
+      ],
+      window: {
+        backgroundColor: '#363547',
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: '商家助手',
+        navigationBarTextStyle: 'black'
+      },
+      tabBar: {
+        color: '#C8C8C8',
+        selectedColor: '#363547',
+        backgroundColor: '#fff',
+        borderStyle: '#E5E5E5',
+        list: [
+          {
+            pagePath: 'pages/shop/shop',
+            text: '店铺',
+            iconPath: './common/images/icon-shop@2x.png',
+            selectedIconPath: './common/images/icon-shop2@2x.png'
+          },
+          {
+            pagePath: 'pages/marketing/marketing',
+            text: '营销',
+            iconPath: './common/images/icon-marketing@2x.png',
+            selectedIconPath: './common/images/icon-marketing2@2x.png'
+          },
+          {
+            pagePath: 'pages/data/data',
+            text: '数据',
+            iconPath: './common/images/icon-data@2x.png',
+            selectedIconPath: './common/images/icon-data2@2x.png'
+          },
+          {
+            pagePath: 'pages/mine/mine',
+            text: '我的',
+            iconPath: './common/images/icon-my@2x.png',
+            selectedIconPath: './common/images/icon-my2@2x.png'
+          }
+        ]
+      }
     }
-  }
 
     globalData = {
       baseUrl: 'http://dev.jike-backend-api.jerryf.cn',
