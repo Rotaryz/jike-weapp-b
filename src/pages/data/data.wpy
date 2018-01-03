@@ -43,7 +43,9 @@
   import wepy from 'wepy'
   import shop from 'api/shop'
   import AeraChart from '@/base/areaChart/areaChart'
+  import base from 'common/mixins/base'
   export default class Data extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '数据流量'
     }
@@ -74,6 +76,7 @@
       this.dataList = res
       this.typeList = this.dataList.detail
       this.$com.AeraChart.$wxpage.infoArea(res)
+      this.loaded()
       this.$apply()
     }
 

@@ -57,14 +57,12 @@
 
     async onLoad() {
       await this.load()
-      console.log(this.verification)
     }
 
     methods = {
       async showMore(e) {
         if (!this.nothing) {
           this.page++
-          console.log(this.page)
           let res = await this.load(this.page)
           if (res.length === 0) {
             this.nothing = true
