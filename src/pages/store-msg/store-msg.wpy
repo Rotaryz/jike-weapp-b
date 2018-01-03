@@ -350,7 +350,7 @@
       this.hourChioseArr[2] = res.close_time ? res.close_time.split(':')[0] : ''
       this.hourChioseArr[3] = res.close_time ? (res.close_time.split(':')[1] === '00' ? '0' : '1') : ''
       this.temporaryHour = this.hourChioseArr.slice()
-      this._mapAuto()
+      this._mapAuto(this.site)
       this.loaded()
     }
 
@@ -448,9 +448,6 @@
         this.loaded()
         this.showMap = true
         this.$apply()
-      },
-      mapTap(e) {
-        console.log(e)
       },
       getCenter() {
         let self = this
