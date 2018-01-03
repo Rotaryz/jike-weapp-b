@@ -87,8 +87,6 @@
           icon: 'loading',
           duration: 1000
         })
-//                失败时
-      }
       this.$apply()
     }
 
