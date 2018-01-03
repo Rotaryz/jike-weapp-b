@@ -144,7 +144,6 @@
         this.loginType.showClose = false
       },
       showCiphertext(type) {
-        console.log(this.password)
         if (type === 'fi') {
           this.loginType.ciphertext = !this.loginType.ciphertext
         } else if (type === 'tw') {
@@ -167,8 +166,7 @@
         }
       },
       async setCode() {
-        console.log({mobile: this.phoneSusses})
-//        await logIn.messageBind({mobile: this.phoneSusses})
+        await logIn.messageBind({mobile: this.phoneSusses})
         let time = 60
         this.phoneCodeTime = time + 's'
         let timer = setInterval(() => {
@@ -234,7 +232,7 @@
               wepy.setStorageSync('token', res.access_token)
               if (res.merchant_info.merchant_data) {
                 wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
-              }else {
+              } else {
                 wepy.setStorageSync('is_leader', 0)
               }
               await wepy.switchTab({
@@ -251,14 +249,13 @@
               wepy.setStorageSync('token', res.access_token)
               if (res.merchant_info.merchant_data) {
                 wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
-              }else {
+              } else {
                 wepy.setStorageSync('is_leader', 0)
               }
               await wepy.switchTab({
                 url: '../shop/shop'
               })
             }
-            console
 //            登陆成功的跳转
           } else if (subType === 3) {
             res = await logIn.resetPassword({
@@ -268,7 +265,6 @@
               'code': this.code
             })
             if (res.error === 0) {
-              console.log('dffddfs')
               this.submitText = '登陆'
               this.loginType.register = false
               this.loginType.forget = false

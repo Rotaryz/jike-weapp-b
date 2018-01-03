@@ -118,10 +118,6 @@
     }
 
     async onLoad() {
-      wx.setStorage({
-        key: 'token',
-        data: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDAwMCwiaXNzIjoiaHR0cDovL2Rldi5qaWtlLWp3dC5qZXJyeWYuY24vYXBpL21lcmNoYW50cy9sb2dpbiIsImlhdCI6MTUxNDg4NzM2MCwiZXhwIjoxNTE0ODkwOTYwLCJuYmYiOjE1MTQ4ODczNjAsImp0aSI6IlNTd202U0hQQ3UxYzN4TXYifQ.eKqDHzqXk84H6xN4uS2FkWWXpZqolD7_qGJOBdgnZt4'
-      })
       await this.load(1)
     }
   }

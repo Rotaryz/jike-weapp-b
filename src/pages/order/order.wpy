@@ -146,7 +146,6 @@
         setTimeout(() => {
           this.load(this.navNum, this.dayType, this.searchValue, this.page)
         }, 1000)
-
       },
       bindblurs() {
         this.showInput = false
