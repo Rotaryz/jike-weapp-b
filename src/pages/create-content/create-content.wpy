@@ -307,6 +307,7 @@
           return item
         })
         this.title = res.title
+        this.textLength = this.title.length
         this.contentList = res['content_detail_data']
       }
       this.loaded()
