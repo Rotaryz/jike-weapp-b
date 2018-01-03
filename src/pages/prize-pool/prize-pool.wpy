@@ -109,6 +109,8 @@
 
     methods = {
       async changeTab(idx) {
+        this.useablePrizeList = []
+        this.pastDuePrizeList = []
         this.menuTab = Number(idx)
         switch (this.menuTab) {
           case 0:
