@@ -1,0 +1,212 @@
+<template>
+  <view class="code">
+    <view class="qr-input">
+      <view class="code-input" @tap="isInput">
+        <text wx:if="{{showInput}}">{{code}}</text>
+      </view>
+      <view>请输入10位优惠券验证码</view>
+    </view>
+    <view class="qR-num">
+      <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}"
+            @touchstart="oncap({{index}},{{item.text}})" @touchend="endTap()">
+        <view class="nums">
+          <text>{{item.text}}</text>
+          <image src="{{item.image}}"></image>
+        </view>
+      </view>
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import shop from 'api/shop'
+  export default class Square extends wepy.page {
+    config = {
+      navigationBarTitleText: '扫码核销',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    data = {
+      codeNum: [{
+        text: 1,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 2,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 3,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 4,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 5,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 6,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 7,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 8,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 9,
+        image: './pic-button1@2x.png'
+      }, {
+        text: 0,
+        image: './pic-button1@2x.png'
+      }, {
+        text: '',
+        image: './pic-validate@2x.png'
+      }],
+      showInput: true,
+      code: '0123456789'
+    }
+
+    async _verification(data) {
+      return await shop.verification(data)
+    }
+
+    methods = {
+      oncap(index, num) {
+        let that = this
+        let code = 0
+        if (this.code.length <= 17) {
+          this.code += num
+          this.code = this.code.replace(/(\d{4})/g, '$1 ')
+        }
+        this.codeNum.map((item, idx) => {
+          if (idx !== this.codeNum.length - 1) {
+            if (idx === index) {
+              item.image = './pic-button2@2x.png'
+            }
+          }
+          if (idx === index && idx === this.codeNum.length - 1) {
+            item.image = './pic-validatered@2x.png'
+            code = this.code.replace(/ /g, '')
+            async function show() {
+              let res = await that._verification(code)
+              console.log(res)
+              if (res.error === 0) {
+//                成功时
+                wepy.showToast({
+                  title: '核销成功',
+                  icon: 'success',
+                  duration: 1000
+                })
+                that.code = ''
+              } else {
+                wepy.showToast({
+                  title: '核销失败',
+                  icon: 'loading',
+                  duration: 1000
+                })
+//                失败时
+              }
+            }
+
+            show()
+          }
+          return item
+        })
+      },
+      endTap() {
+        setTimeout(() => {
+          this.codeNum.map((item, idx) => {
+            if (idx !== this.codeNum.length - 1) {
+              item.image = './pic-button1@2x.png'
+            } else {
+              item.image = './pic-validate@2x.png'
+            }
+            return item
+          })
+          this.$apply()
+        }, 100)
+      },
+      isInput() {
+        this.showInput = true
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  page, .code
+    height: 100%
+    overflow: hidden
+
+  view
+    box-sizing: border-box
+
+  .qr-input
+    height: 17.32%
+    background-color: $color-theme
+    padding: 21px $padding 0
+    .code-input
+      height: 48.07%
+      background: $color-white
+      border-radius: 2px
+      text
+        margin: 1% 0 0 19px
+        display: inline-block
+        height: 78%
+        font-size: $font-size-large-bxx
+        line-height: 1.2
+        position: relative
+        &::before
+          content: ''
+          position: absolute
+          right: 0
+          width: 1px
+          height: 100%
+          background: #555
+    view:last-child
+      font-size: $font-size-small
+      text-align: center
+      color: $color-text-d
+      margin-top: 5%
+
+  .qR-num
+    height: 82.68%
+    padding: 0 5px 15.5%
+    display: flex
+    flex-wrap: wrap
+    margin: 5px auto 0px
+    background-color: $color-white
+    width: 97.33%
+
+    .num-item
+      width: 33.33%
+      position: relative
+      .nums
+        width: 88px
+        height: 88px
+        position: absolute
+        all-center()
+        text-align: center
+        line-height: 88px
+        image
+          height: 100%
+          width: 100%
+          all-center()
+        text
+          position: absolute
+          top: 50%
+          left: 50%
+          transform: translate(-50%, -55%)
+          z-index: 100
+          font-family: $font-family-meddle
+          font-size: $font-size-large-bxx
+      &:last-child
+        width: 66.66%
+        .nums
+          height: 89px
+          width: 194px
+
+</style>

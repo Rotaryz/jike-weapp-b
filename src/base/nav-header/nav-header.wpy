@@ -1,0 +1,44 @@
+<template>
+  <view>
+    <view class="client-head">
+      <slot></slot>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Square extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  view
+    box-sizing: border-box
+
+  .client-head
+    height: 38.5px
+    background: $color-theme
+    display: flex
+    align-items: center
+    padding-top: 10.5px
+    view
+      font-family: $font-family-light
+      text-align: center
+      color: $color-white
+      font-size: $font-size-medium
+      flex: 1
+      line-height:26px
+    .choice
+      text
+        display: inline-block
+        margin: 0 auto
+        width: 71.2%
+        color: $color-assist-f
+        border-bottom: 2px solid $color-assist-f
+</style>
