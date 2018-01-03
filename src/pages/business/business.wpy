@@ -47,7 +47,7 @@
           </view>
         </view>
         <view class="time-sure">
-          <text>取消</text>
+          <text @tap="cancel">取消</text>
           <text @tap="sureTime">确定</text>
         </view>
         <picker-view bindchange="bindChange" value="{{value}}">
@@ -200,6 +200,9 @@
       },
       tapTime(type) {
         this.timeTimes = type * 1
+      },
+      cancel() {
+        this.showChioce = false
       }
     }
 

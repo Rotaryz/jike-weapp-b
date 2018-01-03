@@ -117,4 +117,23 @@ export default class shop extends base {
     const url = `${this.baseUrl}/api/appraises/star`
     return await this.get(url)
   }
+
+  /**
+   * 订单列表
+   * @returns {Promise.<*>}
+   */
+  static async wechatOrders(data) {
+    const url = `${this.baseUrl}/api/orders/wechat-orders`
+    return await this.get(url, data)
+  }
+
+  /**
+   * 订单详情
+   * @param data
+   * @returns {Promise.<*>}
+   */
+  static async Orders(id) {
+    const url = `${this.baseUrl}/api/orders/wechat-orders/${id}`
+    return await this.get(url)
+  }
 }

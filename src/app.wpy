@@ -54,10 +54,12 @@
 
     config = {
       pages: [
-        'pages/registration/registration',
-        'pages/live/live',
         'pages/shop/shop',
+        'pages/logIn/logIn',
+        'pages/order/order',
+        'pages/registration/registration',
         'pages/content/content',
+        'pages/live/live',
         'pages/create-content/create-content',
         'pages/business/business',
         'pages/choice-coupon/choice-coupon',
@@ -68,8 +70,6 @@
         'pages/client/client',
         'pages/marketing/marketing',
         'pages/qrCode/qrCode',
-        'pages/order/order',
-        'pages/logIn/logIn',
         'pages/mine/mine'
       ],
       window: {

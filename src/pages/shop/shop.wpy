@@ -42,7 +42,8 @@
         </view>
       </view>
       <view class="shop-extend">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
+        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}"
+                   @tap="isLead">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -56,6 +57,7 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
+  import http from 'common/js/http'
   export default class Shop extends wepy.page {
     config = {
       navigationBarTitleText: '商家助手',
@@ -74,19 +76,19 @@
       navList: [{
         text: '服务',
         image: './icon-service@2x.png',
-        src: '/pages'
+        src: 'pages/service-manage/service-manage'
       }, {
         text: '客户',
         image: './icon-customer@2x.png',
         src: '/pages/client/client'
       }, {
+        text: '礼包',
+        image: './icon-package@2x.png',
+        src: ''
+      }, {
         text: '商圈',
         image: './icon-tradingarea@2x.png',
         src: '/pages/business/business'
-      }, {
-        text: '礼包',
-        image: './icon-package@2x.png',
-        src: '/pages'
       }, {
         text: '评价',
         image: './icon-evaluate@2x.png',
@@ -107,12 +109,20 @@
         image: ''
       }],
       dataList: [],
+      leader: 0
     }
 
     async load(time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
+      await http.isLogin(res.message)
       this.dataList = res.detail
+      let lead = await wepy.getStorage({key: 'is_leader'})
+      this.leader = lead.data
+      if (this.leader === 0) {
+        this.navList.splice(3, 1)
+        this.navList.push({text: '', image: ''})
+      }
       this.$apply()
     }
 
@@ -125,13 +135,25 @@
     }
 
     methods = {
+      async isLead() {
+        if (this.leader === 1) {
+          await wepy.navigateTo({
+            url: '../package-manage/package-manage?leader=1'
+          })
+        } else {
+          await wepy.navigateTo({
+            url: '../package-manage/package-manage?leader=0'
+          })
+        }
+        this.$apply()
+      },
       async showData(time, index) {
         this.showTime = index
         await this.load(time)
       }
     }
 
-    async onLoad() {
+    async onShow() {
       await this.load()
     }
   }

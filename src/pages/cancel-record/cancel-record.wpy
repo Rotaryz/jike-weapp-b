@@ -60,7 +60,6 @@
     methods = {
       async showMore(e) {
         if (!this.nothing) {
-          this.showMore = false
           this.page++
           console.log(this.page)
           let res = await this.load(this.page)

@@ -1,6 +1,6 @@
 <template>
-  <view>
-    <view class="or-header">
+  <scroll-view scroll-y="true" bindscrolltolower="loadMore">
+    <view class="or-header" wx:if="{{!showInput}}">
       <view>
         <text>服务订单</text>
       </view>
@@ -15,14 +15,15 @@
           </view>
         </view>
       </view>
-      <view>
+      <view @tap="isInput">
         <image src="./icon-search24@2x.png"></image>
         <text>搜索</text>
       </view>
     </view>
-    <view class="inputs">
+    <view class="inputs" wx:if="{{showInput}}">
       <image src="./icon-search24@2x.png"></image>
-      <input type="number" placeholder="手机号搜索" confirm-type="search"/>
+      <input type="number" placeholder="手机号搜索" bindinput="sreaching"
+             value="{{searchValue}}" bindblur="bindblurs"/>
     </view>
     <NavHeader>
       <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
@@ -30,21 +31,21 @@
         <text>{{item.title}}</text>
       </view>
     </NavHeader>
-    <view class="order-conpon">
-      <view class="order-item">
+    <view class="order-conpon" style="padding-top:{{paddingTop}}vw">
+      <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
         <image src="./pic-orderbg@2x.png"></image>
         <view class="order-top">
           <view>
-            <view class="order-title">服务名称: 圣诞活动优惠券</view>
-            <view class="order-title">手机号码: 13316241009</view>
+            <view class="order-title">服务名称: {{item.title}}</view>
+            <view class="order-title">手机号码: {{item.customer_phone}}</view>
           </view>
           <text>
-            待使用
+            {{navList[navNum].title}}
           </text>
         </view>
         <view class="order-bottom">
-          <view>订单号: 13828339330</view>
-          <text @tap="showDetail">
+          <view>订单号: {{item.order_sn}}</view>
+          <text @tap="showDetail({{item.id}})">
             查看详情
           </text>
         </view>
@@ -52,22 +53,23 @@
     </view>
     <view class="order-detail" wx:if="{{isDetail}}">
       <view class="order-box">
-        <view>订单号：</view>
-        <view>下单时间：</view>
-        <view>手机号码：</view>
-        <view>用户ID：</view>
-        <view>数量：</view>
+        <view>订单号：{{datail.order_sn}}</view>
+        <view>下单时间：{{datail.created_at}}</view>
+        <view>手机号码：{{datail.customer_phone}}</view>
+        <view>用户ID：{{datail.customer_id}}</view>
+        <view>数量：{{datail.count}}</view>
         <view>总价：
-          <text>￥55</text>
+          <text>￥{{datail.total}}</text>
         </view>
       </view>
       <image src="./icon-close_white@2x.png" @tap="hideDetail"></image>
     </view>
-  </view>
+  </scroll-view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import shop from 'api/shop'
   import NavHeader from '@/base/nav-header/nav-header'
   export default class order extends wepy.page {
     config = {
@@ -102,21 +104,87 @@
       }, {
         title: '30天',
         type: 'month'
-      }]
+      }],
+      showInput: false,
+      couponList: [],
+      dayType: 'today',
+      searchValue: '',
+      datail: {},
+      page: 1,
+      paddingTop: 0
     }
     methods = {
       hideDetail() {
         this.isDetail = false
       },
-      showDetail() {
+      async showDetail(id) {
         this.isDetail = true
+        let data = await shop.Orders(id)
+        this.datail = data
+        this.$apply()
+        console.log(data)
       },
       showDays() {
         this.showDay = !this.showDay
       },
       showPage(num) {
         this.dayPage = num
+        this.dayType = this.days[num].type
+        this.load(this.navNum, this.dayType, '', this.page)
+        console.log(this.dayPage)
+      },
+      showMsg(index) {
+        this.navNum = index
+        this.page = 0
+        this.load(this.navNum, this.dayType, '', this.page)
+      },
+      isInput() {
+        this.showInput = true
+      },
+      sreaching(e) {
+        this.searchValue = e.detail.value
+        setTimeout(() => {
+          this.load(this.navNum, this.dayType, this.searchValue, this.page)
+        }, 1000)
+
+      },
+      bindblurs() {
+        this.showInput = false
+        this.searchValue = ''
+      },
+      async loadMore(e) {
+        console.log(this.page)
+        if (!this.nothing) {
+          this.page++
+          console.log(this.page)
+          let res = await this.load(this.navNum, this.dayType,
+            this.searchValue, this.page, 2)
+          if (res.length === 0) {
+            this.nothing = true
+          }
+        }
       }
+    }
+
+    async load(status = 0, date = 'today', mobile = '', page = 1, type) {
+      let data = {status, mobile, date, page}
+      let res = await shop.wechatOrders(data)
+      if (type === 2) {
+        this.couponList = this.couponList.concat(res)
+      } else {
+        this.couponList = res
+      }
+      if (res.length === 0) {
+        this.paddingTop = 20
+      } else {
+        this.paddingTop = 0
+      }
+      this.$apply()
+      console.log(res)
+    }
+
+    async onLoad() {
+      await this.load()
     }
   }
 </script>
@@ -124,14 +192,15 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
+  scroll-view
+    max-height: 100vh
+
   view
     box-sizing: border-box
 
   .or-header
-
     height: 51.5px
     display: flex
-    display: none
     background-color: $color-theme
     padding: 18.5px 20px 0
     justify-content: space-between
@@ -164,7 +233,7 @@
         left: -50%
         background: $color-white
         box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19)
-        z-index: 110
+        z-index: 10000
         &::before
           content: ''
           top: -20px

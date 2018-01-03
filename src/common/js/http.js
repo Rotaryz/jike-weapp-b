@@ -108,6 +108,15 @@ export default class http {
     }
   }
 
+  static async isLogin(msg) {
+    if (msg === '凭证已失效') {
+      await wepy.navigateTo({
+        url: '../logIn/logIn'
+      })
+    }
+
+  }
+
   static get(url, data, loading = true) {
     return this.request('GET', url, data, loading)
   }

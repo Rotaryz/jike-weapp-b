@@ -125,7 +125,6 @@
           await this.load()
         }
 
-        console.log(res)
         if (res.error === 0) {
           wepy.showToast({
             title: '保存成功',

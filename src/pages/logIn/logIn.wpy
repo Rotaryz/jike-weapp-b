@@ -36,7 +36,8 @@
         <view class="proclaimed" wx:if="{{loginType.ciphertext}}">
           <image class="icon" src="./icon-password@2x.png"></image>
           <input type="text" placeholder="{{passtext}}"
-                 placeholder-class="placeholder" value="{{password}}" maxlength="18"/>
+                 placeholder-class="placeholder" value="{{password}}"
+                 maxlength="18"/>
           <image class="close" src="./icon-display@2x.png"
                  @tap="showCiphertext('fi')"></image>
         </view>
@@ -54,7 +55,8 @@
         <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
           <image class="icon" src="./icon-password@2x.png"></image>
           <input type="text" placeholder="再次输入新密码"
-                 placeholder-class="placeholder" maxlength="18" value="{{anPassword}}"/>
+                 placeholder-class="placeholder" maxlength="18"
+                 value="{{anPassword}}"/>
           <image class="close" src="./icon-display@2x.png"
                  @tap="showCiphertext('tw')"></image>
         </view>
@@ -228,16 +230,36 @@
               password: this.password,
               code: this.code
             })
-            wepy.setStorageSync('token', res.access_token)
+            if (res.error !== 1) {
+              wepy.setStorageSync('token', res.access_token)
+              if (res.merchant_info.merchant_data) {
+                wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
+              }else {
+                wepy.setStorageSync('is_leader', 0)
+              }
+              await wepy.switchTab({
+                url: '../shop/shop'
+              })
+            }
 //            注册成功后跳转到个人中心
           } else if (subType === 1) {
             res = await logIn.login({
               mobile: this.phoneSusses,
               password: this.password
             })
-            wepy.setStorageSync('token', res.access_token)
+            if (res.error !== 1) {
+              wepy.setStorageSync('token', res.access_token)
+              if (res.merchant_info.merchant_data) {
+                wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
+              }else {
+                wepy.setStorageSync('is_leader', 0)
+              }
+              await wepy.switchTab({
+                url: '../shop/shop'
+              })
+            }
+            console
 //            登陆成功的跳转
-            console.log(res)
           } else if (subType === 3) {
             res = await logIn.resetPassword({
               'mobile': this.phoneSusses,
@@ -245,7 +267,6 @@
               'password_confirmation': this.anPassword,
               'code': this.code
             })
-            console.log(res)
             if (res.error === 0) {
               console.log('dffddfs')
               this.submitText = '登陆'
@@ -259,7 +280,6 @@
               this.$apply()
             }
           }
-//          wepy.setStorageSync('token', res.access_token)
         }
       }
     }
