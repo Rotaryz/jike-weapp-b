@@ -248,8 +248,8 @@
         this._checkBusiness({})
       )
       let res = await shop.industries()
-      this.loaded()
       this.navList = this.navList.concat(res)
+      this.loaded()
       this.$apply()
     }
   }

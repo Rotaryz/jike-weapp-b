@@ -71,15 +71,34 @@
       return await shop.verification(data)
     }
 
+    async show(code) {
+      let res = await this._verification(code)
+      if (res.error === 0) {
+//                成功时
+        wepy.showToast({
+          title: '核销成功',
+          icon: 'success',
+          duration: 1000
+        })
+        this.code = ''
+      } else {
+        wepy.showToast({
+          title: '核销失败',
+          icon: 'loading',
+          duration: 1000
+        })
+//                失败时
+      }
+    }
+
     methods = {
       oncap(index, num) {
-        let that = this
         let code = 0
         if (this.code.length <= 17) {
           this.code += num
           this.code = this.code.replace(/(\d{4})/g, '$1 ')
         }
-        this.codeNum.map((item, idx) => {
+        this.codeNum.map(async (item, idx) => {
           if (idx !== this.codeNum.length - 1) {
             if (idx === index) {
               item.image = './pic-button2@2x.png'
@@ -88,28 +107,7 @@
           if (idx === index && idx === this.codeNum.length - 1) {
             item.image = './pic-validatered@2x.png'
             code = this.code.replace(/ /g, '')
-            async function show() {
-              let res = await that._verification(code)
-              console.log(res)
-              if (res.error === 0) {
-//                成功时
-                wepy.showToast({
-                  title: '核销成功',
-                  icon: 'success',
-                  duration: 1000
-                })
-                that.code = ''
-              } else {
-                wepy.showToast({
-                  title: '核销失败',
-                  icon: 'loading',
-                  duration: 1000
-                })
-//                失败时
-              }
-            }
-
-            show()
+            this.show(code)
           }
           return item
         })
@@ -208,5 +206,4 @@
         .nums
           height: 89px
           width: 194px
-
 </style>
