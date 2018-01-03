@@ -122,8 +122,12 @@
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
       if (this.leader === 0) {
-        this.navList.splice(3, 1)
-        this.navList.push({text: '', image: ''})
+        this.navList.forEach((item, idx) => {
+          if (item.text === '商圈') {
+            this.navList.splice(idx, 1)
+            this.navList.push({text: '', image: ''})
+          }
+        })
       }
       this.loaded()
       this.$apply()
@@ -133,7 +137,23 @@
       let res = await wepy.scanCode({onlyFromCamera: false})
       res = JSON.parse(res.result)
       let code = res.code
-      await shop.verification(code)
+      let data = await shop.verification(code)
+      this.loaded()
+      if (data.error !== 1) {
+        wepy.showToast({
+          title: '核销成功',
+          icon: 'success',
+          duration: 1500
+        })
+      } else {
+        wepy.showToast({
+          title: '核销失败',
+          icon: 'loading',
+          duration: 1500
+        })
+      }
+      console.log(data)
+
     }
 
     methods = {

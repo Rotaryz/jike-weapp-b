@@ -64,7 +64,7 @@
         image: './pic-validate@2x.png'
       }],
       showInput: true,
-      code: '0123456789'
+      code: ''
     }
 
     async _verification(data) {
