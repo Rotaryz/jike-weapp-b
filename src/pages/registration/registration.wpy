@@ -370,6 +370,7 @@
       hideDetail() {
         this.showChioce = false
         this.showText = true
+        console.log(this.showText)
         this.btime = this.btimes
         this.etime = this.etimes
 
@@ -449,6 +450,7 @@
 //      保存红包
       save() {
         this.showChioce = false
+        this.showText = true
         let title = '添加奖品'
         for (let item of this.redPack) {
           if (item.sel) {
@@ -516,6 +518,7 @@
             seventh_redpacket: this.redPack[this.paizrList[2].record]
           })
         let res = null
+        console.log(this.id)
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
         } else {
@@ -542,16 +545,12 @@
 
     async load() {
       let res = await regist.seeRegist()
-      if (res.error !== 0) {
+      this.loaded()
+      if (res.error !== 1) {
         this.id = res.id
         this.name = res.title
         this.btime = res.from_date
         this.etime = res.to_date
-        if (res.scope !== null) {
-          this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
-        } else {
-          this.value = ''
-        }
 
         this.textares = res.explain
         this.redPack.forEach((item, idx) => {
@@ -587,7 +586,11 @@
           record: res.seventh_redpacket.index
         }
         this.$apply()
-        this.loaded()
+        if (res.scope !== null) {
+          this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
+        } else {
+          this.value = ''
+        }
       }
     }
 

@@ -248,7 +248,8 @@
         } else {
           let res = null
           if (this.addType === '2') {
-            Object.assign(this.allMsg, {title: this.title}, {'content_details': this.changeList})
+            Object.assign(this.allMsg, {title: this.title},
+              {'content_details': this.changeList, delete_ids: this.delete_ids})
             res = await content.merchantDetail(this.conId, this.allMsg)
           } else {
             Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
@@ -306,6 +307,7 @@
           return item
         })
         this.title = res.title
+        this.textLength = this.title.length
         this.contentList = res['content_detail_data']
       }
       this.loaded()

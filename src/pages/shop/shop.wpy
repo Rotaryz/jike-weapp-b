@@ -42,8 +42,7 @@
         </view>
       </view>
       <view class="shop-extend">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}"
-                   @tap="isLead({{index}})">
+        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -86,7 +85,9 @@
       }, {
         text: '礼包',
         image: './icon-package@2x.png',
-        src: ''
+        src: wepy.getStorage({key: 'is_leader'}) === 1 ?
+          '/pages/package-manage/package-manage?leader=1'
+          : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '商圈',
         image: './icon-tradingarea@2x.png',
@@ -155,21 +156,6 @@
     }
 
     methods = {
-      async isLead(index) {
-        if (index === 2) {
-          if (this.leader === 1) {
-            await wepy.navigateTo({
-              url: '/pages/package-manage/package-manage?leader=1'
-            })
-          } else {
-            await wepy.navigateTo({
-              url: '/pages/package-manage/package-manage?leader=0'
-            })
-          }
-        }
-
-        this.$apply()
-      },
       async showData(time, index) {
         this.showTime = index
         await this.load(time)

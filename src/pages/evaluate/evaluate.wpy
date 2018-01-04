@@ -51,7 +51,6 @@
 //    星级评定
       let res = await shop.getStar()
       this.starList = res
-      console.log(this.starList)
 //    评论内容
       let data = await shop.getComment()
       this.commentList = data
