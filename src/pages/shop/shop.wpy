@@ -58,6 +58,9 @@
   import shop from 'api/shop'
   import http from 'common/js/http'
   import base from 'common/mixins/base'
+
+  const IS_LEADER = wepy.getStorage({key: 'is_leader'})
+
   export default class Shop extends wepy.page {
     mixins = [base]
     config = {
@@ -85,9 +88,7 @@
       }, {
         text: '礼包',
         image: './icon-package@2x.png',
-        src: wepy.getStorage({key: 'is_leader'}) === 1 ?
-          '/pages/package-manage/package-manage?leader=1'
-          : '/pages/package-manage/package-manage?leader=0'
+        src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '商圈',
         image: './icon-tradingarea@2x.png',

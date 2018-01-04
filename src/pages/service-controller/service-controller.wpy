@@ -342,7 +342,7 @@
                     <image wx:if="{{buyLimit !== -1}}" src="./icon-selected@2x.png" class="full-image"></image>
                   </view> 限制数量
                   <view class="input-wrapper {{buyLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{buyLimit === -1}}" maxlength="10" @input="handleInput('buyLimit')">
+                    <input type="number" disabled="{{buyLimit === -1}}" maxlength="10" @input="handleInput('buyLimit')" />
                   </view>
                 </view>
               </view>
@@ -365,7 +365,7 @@
                     <image wx:if="{{useLimit !== -1}}" src="./icon-selected@2x.png" class="full-image"></image>
                   </view> 限制数量
                   <view class="input-wrapper {{useLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{useLimit === -1}}" maxlength="10" @input="handleInput('useLimit')">
+                    <input type="number" disabled="{{useLimit === -1}}" maxlength="10" @input="handleInput('useLimit')" />
                   </view>
                 </view>
               </view>
@@ -378,7 +378,7 @@
                      maxlength="20"
                      @input="handleInput('knowRemark')"
                      placeholder="备注：请输入"
-                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light">
+                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light" />
               <view class="count">{{knowRemarkLength}}/20</view>
             </view>
           </view>
