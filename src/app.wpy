@@ -54,8 +54,8 @@
 
     config = {
       pages: [
-        'pages/registration/registration',
         'pages/shop/shop',
+        'pages/registration/registration',
         'pages/qrCode/qrCode',
         'pages/create-content/create-content',
         'pages/service-controller/service-controller',
