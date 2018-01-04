@@ -72,8 +72,8 @@
       </view>
     </view>
 
-    <view class="store-msg-foot" @tap="showRadio">
-      <view class="store-msg-picker">
+    <view class="store-msg-foot">
+      <view class="store-msg-picker" @tap="showRadio">
         <view class="store-msg-picker-title">营业状态</view>
         <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
