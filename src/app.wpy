@@ -54,8 +54,8 @@
 
     config = {
       pages: [
-        'pages/create-content/create-content',
         'pages/shop/shop',
+        'pages/create-content/create-content',
         'pages/service-controller/service-controller',
         'pages/logIn/logIn',
         'pages/order/order',
