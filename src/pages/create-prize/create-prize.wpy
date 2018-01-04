@@ -415,12 +415,18 @@
       },
       async createSubmit() {
         let payRes = await PrizePool.getStoreBalance()
+        console.log(8888)
         let payResMax = Number(payRes.remaining)
+        console.log(9999)
         switch (this.prizeType) {
           case 1:
+            console.log(1010101)
             let res1 = this._testEXmsg()
+            console.log(151515)
             if (res1) {
+              console.log(121212)
               let data1 = await PrizePool.createEXchange(res1)
+              console.log(131313)
               if (data1.error === 0) {
                 this.$back()
               }
@@ -592,12 +598,14 @@
         stock: this.prizeCount,
         use_type: 1
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
+      console.log(898989)
+      let res = this._testPropety(this.prizeName, this.beginTime, this.endTime, this.exdescripte, this.prizeCount)
+      console.log(909090)
       if (!res || !this.EXimgUrl) {
         this.$invoke('Toast', 'show', '资料填写不完整')
         return false
       }
+      console.log(10245435)
       return Object.assign({}, data, {
         promotion_images: [{id: 0, image_id: this.EXimgId}],
         note: {remarks: this.exdescripte}
@@ -621,8 +629,7 @@
         max_price: this.redpackMax,
         total_amount: this.total
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
+      let res = this._testPropety(this.prizeName, this.prizeCount, this.redpackMax, this.total)
       if (!res) {
         this.$invoke('Toast', 'show', '资料填写不完整')
         return false
@@ -646,8 +653,7 @@
         max_price: this.fixedRedpacket,
         total_amount: this.prizeCount * this.fixedRedpacket
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
+      let res = this._testPropety(this.prizeName, this.prizeCount, this.fixedRedpacket, this.prizeCount * this.fixedRedpacket)
       if (!res) {
         this.$invoke('Toast', 'show', '资料填写不完整')
         return false
