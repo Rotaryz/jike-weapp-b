@@ -4,7 +4,7 @@
     <view class="star-fa">
       <view class="star-item" wx:for="{{starList.satr}}" wx:key="{{index}}">
         <view class="stars">
-          <image src="./icon-evaluate_red@2x.png"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate_red@2x.png"
                  wx:for="{{item.star_level}}" wx:key="{{index}}"></image>
         </view>
         <view>{{item.star_level}}星</view>

@@ -10,7 +10,7 @@
       <view>更换封面</view>
     </image>
     <view class="add">
-      <image src="./icon-nr_add@2x.png" @tap="showMore(-1)"></image>
+      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png" @tap="showMore(-1)"></image>
       <view class="options" wx:if="{{showAdd}}">
         <image wx:for="{{contentType}}"
                wx:key="{{index}}" src="{{item.image}}"
@@ -20,16 +20,16 @@
     <view class="content-all">
       <view class="content-page" wx:for="{{contentList}}" wx:key="{{index}}">
         <view class="con-item-fa con-item-video" wx:if="{{item.type === 2}}">
-          <image src="./icon-del@2x.png" class="con-close"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
                  @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
                    src="{{item.cover_image.url}}"></image>
-            <image src="./icon-video@2x.png" class="video-ico"
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-video@2x.png" class="video-ico"
                    @tap="upVideo({{index}})"></image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image src="./icon-nr_add@2x.png"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -40,7 +40,7 @@
           </view>
         </view>
         <view class="con-item-fa con-item-text" wx:if="{{item.type === 1}}">
-          <image src="./icon-del@2x.png" class="con-close"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
                  @tap="delItem({{index}})"></image>
           <view class="con-item">
             <view class="text-detail">
@@ -50,7 +50,7 @@
             </view>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image src="./icon-nr_add@2x.png"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -61,14 +61,14 @@
           </view>
         </view>
         <view class="con-item-fa con-item-image" wx:if="{{item.type === 0}}">
-          <image src="./icon-del@2x.png" class="con-close"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
                  @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upImage({{index}})"
                    src="{{item.detail[0].url}}"></image>
           </view>
           <view class="add" @tap="showMore({{index}})">
-            <image src="./icon-nr_add@2x.png"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -79,7 +79,7 @@
           </view>
         </view>
         <view class="con-item-fa con-item-coupon" wx:if="{{item.type === 3}}">
-          <image src="./icon-del@2x.png" class="con-close"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
                  @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="addCoupon({{index}})">
             <repeat for="{{item.detail.length === 1 ? item.detail : 1}}"
@@ -91,7 +91,7 @@
 
           </view>
           <view class="add" catchtap="showMore({{index}})">
-            <image src="./icon-nr_add@2x.png"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -138,16 +138,16 @@
       contentList: [],
       contentType: [{
         type: 1,
-        image: './icon-add_text@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_text@2x.png'
       }, {
         type: 2,
-        image: './icon-add_video@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_video@2x.png'
       }, {
         type: 0,
-        image: './icon-add_img@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_img@2x.png'
       }, {
         type: 3,
-        image: './icon-add_ticket@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_ticket@2x.png'
       }],
       changeList: [],
       delete_ids: [],
