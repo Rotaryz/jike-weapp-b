@@ -6,7 +6,7 @@
       </view>
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
-        <image src="./icon-down24@2x.png"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down24@2x.png"></image>
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
@@ -16,12 +16,12 @@
         </view>
       </view>
       <view @tap="isInput">
-        <image src="./icon-search24@2x.png"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
         <text>搜索</text>
       </view>
     </view>
     <view class="inputs" wx:if="{{showInput}}">
-      <image src="./icon-search24@2x.png"></image>
+      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
       <input type="number" placeholder="手机号搜索" bindinput="sreaching"
              value="{{searchValue}}" bindblur="bindblurs"/>
     </view>
@@ -33,7 +33,7 @@
     </NavHeader>
     <view class="order-conpon" style="padding-top:{{paddingTop}}vw">
       <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-        <image src="./pic-orderbg@2x.png"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
         <view class="order-top">
           <view>
             <view class="order-title">服务名称: {{item.title}}</view>
@@ -62,7 +62,7 @@
           <text>￥{{datail.total}}</text>
         </view>
       </view>
-      <image src="./icon-close_white@2x.png" @tap="hideDetail"></image>
+      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" @tap="hideDetail"></image>
     </view>
   </scroll-view>
 </template>

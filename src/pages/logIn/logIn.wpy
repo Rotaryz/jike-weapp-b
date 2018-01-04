@@ -1,6 +1,6 @@
 <template>
   <view class="logn">
-    <image class="lg-header" src="./icon-default-logo@2x.png"></image>
+    <image class="lg-header" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-default-logo@2x.png"></image>
     <image class="guidance" src="icon-login-logo@2x.png"
            wx:if="{{guidance}}"></image>
     <view class="lg-from">
@@ -12,14 +12,15 @@
                  placeholder-class="placeholder" value="{{phoneNum}}"
                  bindinput="putPhone"
                  maxlength="11"/>
-          <image class="close" src="./icon-del@2x.png"
+          <image class="close"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
                  @tap.stop="clearPhone" wx:if="{{loginType.showClose}}"></image>
         </view>
         <text wx:if="{{loginType.register}}" @tap="setCode">{{loginType.time}}
         </text>
       </view>
       <view class="lg-ch" wx:if="{{loginType.register || loginType.forget}}">
-        <image class="icon" src="./icon-code@2x.png"></image>
+        <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-code@2x.png"></image>
         <input type="text" placeholder="请输入验证码"
                placeholder-class="placeholder" value="{{code}}"
                bindinput="getCode"/>
@@ -30,15 +31,15 @@
           <input type="password" placeholder="{{passtext}}"
                  placeholder-class="placeholder" bindinput="putPassword"
                  maxlength="18" value="{{password}}"/>
-          <image class="close" src="./icon-hide@2x.png"
+          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
                  @tap="showCiphertext('fi')"></image>
         </view>
         <view class="proclaimed" wx:if="{{loginType.ciphertext}}">
-          <image class="icon" src="./icon-password@2x.png"></image>
+          <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
           <input type="text" placeholder="{{passtext}}"
                  placeholder-class="placeholder" value="{{password}}"
                  maxlength="18"/>
-          <image class="close" src="./icon-display@2x.png"
+          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
                  @tap="showCiphertext('fi')"></image>
         </view>
       </view>
@@ -49,15 +50,15 @@
                  type="password" placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
                  bindinput="anginPassword" bindblur="burlPass"/>
-          <image class="close" src="./icon-hide@2x.png"
+          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
                  @tap="showCiphertext('tw')"></image>
         </view>
         <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
-          <image class="icon" src="./icon-password@2x.png"></image>
+          <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
           <input type="text" placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
                  value="{{anPassword}}"/>
-          <image class="close" src="./icon-display@2x.png"
+          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
                  @tap="showCiphertext('tw')"></image>
         </view>
       </view>
@@ -105,12 +106,12 @@
         anCiphertext: false,
         phoneError: {
           status: true,
-          image: './icon-phone@2x.png'
+          image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png'
         },
-        passError: './icon-password@2x.png',
+        passError: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
         anPassError: {
           status: true,
-          image: './icon-password@2x.png'
+          image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
         },
         codeError: true,
         showClose: false
@@ -134,10 +135,10 @@
         }
         if (!this.submitDisabled && e.detail.value.length === 11) {
           this.loginType.phoneError.status = false
-          this.loginType.phoneError.image = './icon-cw_phone copy@2x.png'
+          this.loginType.phoneError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-cw_phone copy@2x.png'
         } else {
           this.loginType.phoneError.status = true
-          this.loginType.phoneError.image = './icon-phone@2x.png'
+          this.loginType.phoneError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png'
         }
       },
       clearPhone() {
@@ -203,7 +204,7 @@
       },
       anginPassword(e) {
         this.loginType.anPassError.status = true
-        this.loginType.anPassError.image = './icon-password@2x.png'
+        this.loginType.anPassError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
         let reg = /^[a-zA-Z0-9]{6,18}$/
         if (reg.test(e.detail.value)) {
           this.anPassword = e.detail.value
@@ -218,7 +219,7 @@
       burlPass() {
         if (this.anPassword !== this.password) {
           this.loginType.anPassError.status = false
-          this.loginType.anPassError.image = './icon-cw_password@2x.png'
+          this.loginType.anPassError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-cw_password@2x.png'
         }
       },
       getCode(e) {
@@ -241,7 +242,7 @@
                 wepy.setStorageSync('is_leader', 0)
               }
               await wepy.switchTab({
-                url: '../shop/shop'
+                url: '/pages/shop/shop'
               })
             }
 //            注册成功后跳转到个人中心
@@ -258,7 +259,7 @@
                 wepy.setStorageSync('is_leader', 0)
               }
               await wepy.switchTab({
-                url: '../shop/shop'
+                url: '/pages/shop/shop'
               })
             }
 //            登陆成功的跳转
