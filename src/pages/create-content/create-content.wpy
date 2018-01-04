@@ -10,7 +10,9 @@
       <view>更换封面</view>
     </image>
     <view class="add">
-      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png" @tap="showMore(-1)"></image>
+      <image
+        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"
+        @tap="showMore(-1)"></image>
       <view class="options" wx:if="{{showAdd}}">
         <image wx:for="{{contentType}}"
                wx:key="{{index}}" src="{{item.image}}"
@@ -20,16 +22,31 @@
     <view class="content-all">
       <view class="content-page" wx:for="{{contentList}}" wx:key="{{index}}">
         <view class="con-item-fa con-item-video" wx:if="{{item.type === 2}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
-                 @tap="delItem({{index}})"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+            class="con-close"
+            @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
                    src="{{item.cover_image.url}}"></image>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-video@2x.png" class="video-ico"
-                   @tap="upVideo({{index}})"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-video@2x.png"
+              class="video-ico"
+              @tap="upVideo({{index}})"></image>
+          </view>
+          <view class="up-down">
+            <image class="up"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
+                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+            <image class="down"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
+                   wx:if="{{index < contentList.length - 1}}"
+                   @tap="down({{index}})">
+            </image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -40,8 +57,10 @@
           </view>
         </view>
         <view class="con-item-fa con-item-text" wx:if="{{item.type === 1}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
-                 @tap="delItem({{index}})"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+            class="con-close"
+            @tap="delItem({{index}})"></image>
           <view class="con-item">
             <view class="text-detail">
               <view>
@@ -49,8 +68,19 @@
               </view>
             </view>
           </view>
+          <view class="up-down">
+            <image class="up"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
+                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+            <image class="down"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
+                   wx:if="{{index < contentList.length - 1}}"
+                   @tap="down({{index}})">
+            </image>
+          </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -61,14 +91,27 @@
           </view>
         </view>
         <view class="con-item-fa con-item-image" wx:if="{{item.type === 0}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
-                 @tap="delItem({{index}})"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+            class="con-close"
+            @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upImage({{index}})"
                    src="{{item.detail[0].url}}"></image>
           </view>
-          <view class="add" @tap="showMore({{index}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+          <view class="up-down">
+            <image class="up"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
+                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+            <image class="down"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
+                   wx:if="{{index < contentList.length - 1}}"
+                   @tap="down({{index}})">
+            </image>
+          </view>
+          <view class="add" @tap.catch="showMore({{index}})">
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -79,8 +122,10 @@
           </view>
         </view>
         <view class="con-item-fa con-item-coupon" wx:if="{{item.type === 3}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="con-close"
-                 @tap="delItem({{index}})"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+            class="con-close"
+            @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="addCoupon({{index}})">
             <repeat for="{{item.detail.length === 1 ? item.detail : 1}}"
                     key="index"
@@ -90,8 +135,19 @@
             </repeat>
 
           </view>
-          <view class="add" catchtap="showMore({{index}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+          <view class="up-down">
+            <image class="up"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
+                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+            <image class="down"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
+                   wx:if="{{index < contentList.length - 1}}"
+                   @tap="down({{index}})">
+            </image>
+          </view>
+          <view class="add" @tap.catch="showMore({{index}})">
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -100,7 +156,6 @@
                      @tap="addMore({{item.type}})"></image>
             </view>
           </view>
-
         </view>
       </view>
     </view>
@@ -266,6 +321,16 @@
       onInput(e) {
         this.title = e.detail.value
         this.textLength = e.detail.cursor
+      },
+      up(index) {
+        let first = this.contentList[index]
+        let end = this.contentList[index - 1]
+        this.contentList.splice(index - 1, 2, first, end)
+      },
+      down(index) {
+        let first = this.contentList[index]
+        let end = this.contentList[index + 1]
+        this.contentList.splice(index, 2, end, first)
       }
     }
 
@@ -394,6 +459,20 @@
           left: 5px
           top: 5px
           z-index: 300
+        .up-down
+          position: absolute
+          height: 29vw
+          width: 10px
+          right: 4px
+          top: 0
+          image
+            height: 10px
+            width: 10px
+            position: absolute
+          .up
+            top: 6px
+          .down
+            bottom: 5px
       .con-item
         background: $color-white
         border-radius: 4px
@@ -402,6 +481,7 @@
         position: relative
         .cantainer
           height: 20vw
+          width: 100%
           background-color: $color-theme
           background-size: cover
 
