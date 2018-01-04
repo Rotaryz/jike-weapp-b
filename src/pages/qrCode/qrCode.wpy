@@ -88,6 +88,7 @@
           icon: 'loading',
           duration: 1000
         })
+//                失败时
         this.$apply()
       }
     }
@@ -165,11 +166,11 @@
           width: 1px
           height: 100%
           background: #555
-    view:last-child
-      font-size: $font-size-small
-      text-align: center
-      color: $color-text-d
-      margin-top: 5%
+      view:last-child
+        font-size: $font-size-small
+        text-align: center
+        color: $color-text-d
+        margin-top: 5%
 
   .qR-num
     height: 82.68%

@@ -22,6 +22,7 @@
   import Activity from '@/api/activitys'
   import Tips from '@/common/js/tips'
   import base from '@/common/mixins/base'
+  import Toast from '@/base/toast/toast'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
@@ -30,6 +31,10 @@
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white',
       backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      Toast
     }
 
     data = {
@@ -79,7 +84,7 @@
           this.$apply()
           Tips.success(msg)
         } else {
-          Tips.error('操作失败')
+          this.$invoke('Toast', 'show', '操作失败')
         }
       }
     }
