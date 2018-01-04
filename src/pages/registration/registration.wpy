@@ -2,24 +2,32 @@
   <view class="registration">
     <view class="map">
       <view class="map-title">
-        <image src="./Group9.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/Group9.png"></image>
         {{shop.address}}
       </view>
       <map name="address" latitude="{{shop.latitude}}"
            longitude="{{shop.longitude}}"
            markers="{{markers}}">
-        <cover-image src="./pic-mapbg@2x.png" class="bk">
+        <cover-image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-mapbg@2x.png"
+          class="bk">
         </cover-image>
-        <cover-image src="./icon-manoutside.png" class="peo"></cover-image>
+        <cover-image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-manoutside.png"
+          class="peo"></cover-image>
       </map>
       <view class="reg_red">
-        <image class="line" src="./pic-dashed@2x.png"></image>
+        <image class="line"
+               src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-dashed@2x.png"></image>
         <view wx:for="{{redPac}}" wx:key="{{index}}">
           <view class="red-title {{item.showTitle ===1 ? 'award': ''}}">{{
             item.title}}
           </view>
-          <image src="./Rectangle 5.png" class="award"
-                 wx:if="{{item.showTitle ===1}}"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle 5.png"
+            class="award"
+            wx:if="{{item.showTitle ===1}}"></image>
           <image src="{{item.image}}"></image>
         </view>
       </view>
@@ -39,12 +47,14 @@
             <text>{{btime}}</text>
             至 {{etime}}
           </view>
-          <image src="./icon-pressed.png"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed.png"></image>
         </view>
         <view class="acti-item" @tap="isChioce(way)">
           签到范围
           <text>{{value}}</text>
-          <image src="./icon-pressed.png"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed.png"></image>
         </view>
         <!--<view class="acti-item">-->
         <!--增加次数-->
@@ -58,8 +68,9 @@
         <view class="acti-item" wx:for="{{paizrList}}" wx:key="{{index}}">
           {{item.title}}
           <view class="bo-tip" @tap="isChioce({{index}})">
-            <image src="./icon-add20@2x.png"
-                   wx:if="{{item.promotion_title === '添加奖品'}}"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"
+              wx:if="{{item.promotion_title === '添加奖品'}}"></image>
             {{item.promotion_title}}
           </view>
         </view>
@@ -83,7 +94,7 @@
               {{item.title}}
               <view class="sel" @tap="chioceWay({{index}})">
                 <image
-                  src="{{item.sel?'./icon-selected@2x.png':'./icon-selected.png'}}"></image>
+                  src="{{item.sel?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected.png'}}"></image>
               </view>
             </view>
             <view class="ways">
@@ -98,14 +109,18 @@
               <text>剩余{{item.promotion_stock}}个</text>
               <view class="sel" @tap="selRed({{index}})">
                 <image
-                  src="{{item.sel?'./icon-selected@2x.png':'./icon-selected.png'}}"></image>
+                  src="{{item.sel?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected.png'}}"></image>
               </view>
             </view>
             <view class="add-weight ways">
               <view>添加数量</view>
-              <image src="./jian.png" @tap="subtract"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/jian.png"
+                @tap="subtract"></image>
               <text>{{addNum}}</text>
-              <image src="./add.png" @tap="addReds"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/add.png"
+                @tap="addReds"></image>
             </view>
             <view class="submit" @tap="save">保存</view>
           </view>
@@ -145,7 +160,9 @@
         </view>
 
       </view>
-      <image src="./icon-close_white@2x.png" @tap="hideDetail"></image>
+      <image
+        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+        @tap="hideDetail"></image>
     </view>
     <view class="con-submit" @tap="submitOk">
       <view>
@@ -189,38 +206,38 @@
       showTimes: false,
       redPac: [{
         title: '奖励',
-        image: './icon-1_money.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-1_money.png',
         showTitle: 1,
         ispacket: 1
       }, {
         title: '第二天',
-        image: './icon_notchecked.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
 
       }, {
         title: '奖励',
-        image: './icon-22_money.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-22_money.png',
         showTitle: 1,
         ispacket: 2
       }, {
         title: '第四天',
-        image: './icon_notchecked.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '第五天',
-        image: './icon_notchecked.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '第六天',
-        image: './icon_notchecked.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '奖励',
-        image: './icon-33_money.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-33_money.png',
         showTitle: 1,
         ispacket: 3
       }],
@@ -370,6 +387,7 @@
       hideDetail() {
         this.showChioce = false
         this.showText = true
+        console.log(this.showText)
         this.btime = this.btimes
         this.etime = this.etimes
 
@@ -449,6 +467,7 @@
 //      保存红包
       save() {
         this.showChioce = false
+        this.showText = true
         let title = '添加奖品'
         for (let item of this.redPack) {
           if (item.sel) {
@@ -516,6 +535,7 @@
             seventh_redpacket: this.redPack[this.paizrList[2].record]
           })
         let res = null
+        console.log(this.id)
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
         } else {
@@ -542,16 +562,12 @@
 
     async load() {
       let res = await regist.seeRegist()
-      if (res.error !== 0) {
+      this.loaded()
+      if (res.error !== 1) {
         this.id = res.id
         this.name = res.title
         this.btime = res.from_date
         this.etime = res.to_date
-        if (res.scope !== null) {
-          this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
-        } else {
-          this.value = ''
-        }
 
         this.textares = res.explain
         this.redPack.forEach((item, idx) => {
@@ -587,7 +603,11 @@
           record: res.seventh_redpacket.index
         }
         this.$apply()
-        this.loaded()
+        if (res.scope !== null) {
+          this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
+        } else {
+          this.value = ''
+        }
       }
     }
 

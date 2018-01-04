@@ -32,37 +32,37 @@
     data = {
       codeNum: [{
         text: 1,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 2,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 3,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 4,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 5,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 6,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 7,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 8,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 9,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: 0,
-        image: './pic-button1@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
       }, {
         text: '',
-        image: './pic-validate@2x.png'
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
       }],
       showInput: true,
       code: ''
@@ -103,11 +103,11 @@
         this.codeNum.map(async (item, idx) => {
           if (idx !== this.codeNum.length - 1) {
             if (idx === index) {
-              item.image = './pic-button2@2x.png'
+              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button2@2x.png'
             }
           }
           if (idx === index && idx === this.codeNum.length - 1) {
-            item.image = './pic-validatered@2x.png'
+            item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validatered@2x.png'
             code = this.code.replace(/ /g, '')
             this.show(code)
           }
@@ -118,9 +118,9 @@
         setTimeout(() => {
           this.codeNum.map((item, idx) => {
             if (idx !== this.codeNum.length - 1) {
-              item.image = './pic-button1@2x.png'
+              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
             } else {
-              item.image = './pic-validate@2x.png'
+              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
             }
             return item
           })

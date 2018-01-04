@@ -14,7 +14,7 @@
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
-            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">

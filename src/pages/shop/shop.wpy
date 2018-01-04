@@ -2,15 +2,18 @@
   <view class="shop">
     <view class="shop-header">
       <navigator url="/pages/qrCode/qrCode">
-        <image src="./icon-inputcode@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-inputcode@2x.png"></image>
         <view>输码核销</view>
       </navigator>
       <view @tap="scanCodes">
-        <image src="./icon-scancode@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-scancode@2x.png"></image>
         <view>扫码核销</view>
       </view>
       <navigator url="/pages/cancel-record/cancel-record">
-        <image src="./icon-record@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-record@2x.png"></image>
         <view>核销记录</view>
       </navigator>
     </view>
@@ -42,8 +45,7 @@
         </view>
       </view>
       <view class="shop-extend">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}"
-                   @tap="isLead({{index}})">
+        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -59,6 +61,9 @@
   import shop from 'api/shop'
   import http from 'common/js/http'
   import base from 'common/mixins/base'
+
+  const IS_LEADER = wepy.getStorage({key: 'is_leader'})
+
   export default class Shop extends wepy.page {
     mixins = [base]
     config = {
@@ -77,31 +82,31 @@
       }],
       navList: [{
         text: '服务',
-        image: './icon-service@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-service@2x.png',
         src: '/pages/service-manage/service-manage'
       }, {
         text: '客户',
-        image: './icon-customer@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-customer@2x.png',
         src: '/pages/client/client'
       }, {
         text: '礼包',
-        image: './icon-package@2x.png',
-        src: ''
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-package@2x.png',
+        src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '商圈',
-        image: './icon-tradingarea@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-tradingarea@2x.png',
         src: '/pages/business/business'
       }, {
         text: '评价',
-        image: './icon-evaluate@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate@2x.png',
         src: '/pages/evaluate/evaluate'
       }, {
         text: '订单',
-        image: './icon-asset@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-asset@2x.png',
         src: '/pages/order/order'
       }, {
         text: '内容',
-        image: './icon-content@2x.png',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-content@2x.png',
         src: '/pages/content/content'
       }, {
         text: '',
@@ -155,21 +160,6 @@
     }
 
     methods = {
-      async isLead(index) {
-        if (index === 2) {
-          if (this.leader === 1) {
-            await wepy.navigateTo({
-              url: '/pages/package-manage/package-manage?leader=1'
-            })
-          } else {
-            await wepy.navigateTo({
-              url: '/pages/package-manage/package-manage?leader=0'
-            })
-          }
-        }
-
-        this.$apply()
-      },
       async showData(time, index) {
         this.showTime = index
         await this.load(time)

@@ -10,15 +10,15 @@
     <view class="content-coupon">
       <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
         <image
-          src="{{item.image_url !== '' ? item.image_url : './bk.jpg'}}"></image>
+          src="{{item.image_url !== '' ? item.image_url : 'http://jike-file.jerryf.cn/defaults/b-image/page/bk.jpg'}}"></image>
         <view>
           <view class="con-cou-item-ri">
             <view>
-              <image src="./star@2x.png"></image>
+              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
               {{item.favorite_count}}
             </view>
             <view>
-              <image src="./icon-share@2x.png"></image>
+              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
               {{item.share_count}}
             </view>
           </view>
@@ -93,6 +93,7 @@
       },
       async access(id, index) {
         let res = await content.switchOnline(id)
+        this.loaded()
         if (res.error === 0) {
           this.contentList.splice(index, 1)
           this.$apply()

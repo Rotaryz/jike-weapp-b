@@ -13,7 +13,7 @@
                         hidden="true"/>
               {{item.txt}}
               <image class="radio-Icon"
-                     src="{{item.is_showed?'./icon-select@2x.png':'./icon-checkbox@2x.png'}}"></image>
+                     src="{{item.is_showed?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
             </label>
           </checkbox-group>
         </Coupon>

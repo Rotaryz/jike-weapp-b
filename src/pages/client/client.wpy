@@ -21,9 +21,9 @@
         <view>{{customerTrend.detial.customer_count}}</view>
         <view>较前天
           <text>{{customerTrend.detial.customer_percentage}}%</text>
-          <image src="./icon-rise@2x.png"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
                  wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
-          <image src="./icon-decline@2x.png"
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
                  wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
         </view>
       </view>
@@ -125,7 +125,7 @@
       customerList: [],
       customerCity: [],
       customerSex: [],
-      cityIcon: ['./icon-first@2x.png', './icon-second@2x.png', './icon-third@2x.png']
+      cityIcon: ['http://jike-file.jerryf.cn/defaults/b-image/page/icon-first@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-second@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-third@2x.png']
     }
 
     async _showMsg(num, time = 'yesterday') {
