@@ -67,8 +67,11 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" controls="{{controls}}" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
+          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
             <Toast></Toast>
+            <cover-view class="mapIcon">
+              <cover-image src="./icon-site-msg.png" class="mapIcon-img"></cover-image>
+            </cover-view>
           </map>
       </view>
     </view>
@@ -266,16 +269,6 @@
       areaId: '',
       areaArr: [],
       region: ['', '', ''],
-      controls: [{
-        id: 1,
-        iconPath: './icon-site-msg.png',
-        position: {
-          left: 100,
-          top: 40,
-          width: 33,
-          height: 33
-        }
-      }],
       mapCtx: '',
       timeCover: false,
       hourBegin: '',
@@ -304,7 +297,6 @@
 
     async onLoad() {
       this.load()
-      console.log(this)
     }
 
     async load() {
@@ -356,20 +348,6 @@
 
     onReady() {
       this.mapCtx = wx.createMapContext('myMap')
-      let self = this
-      wepy.createSelectorQuery().select('#myMap').boundingClientRect(function(rects) {
-        self.controls = [{
-          id: 1,
-          iconPath: './icon-site-msg.png',
-          position: {
-            left: (rects.width - 33) / 2,
-            top: (rects.height - 33) / 2,
-            width: 33,
-            height: 33
-          }
-        }]
-      }).exec()
-      this.$apply()
     }
 
     methods = {
@@ -474,8 +452,6 @@
               },
               success: (resData) => {
                 self.mapAddress = resData.result.address
-                self.longitude = res.longitude
-                self.latitude = res.latitude
               }
             })
           }
@@ -792,6 +768,19 @@
       padding-right: 12px
       height: 20vh
       padding-bottom: 10px
+      position: relative
+
+      .mapIcon
+        width: 33px
+        height: 33px
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -100%)
+
+        .mapIcon-img
+          width: 33px
+          height: 33px
 
     .store-timeCover
       position: fixed
