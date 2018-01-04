@@ -54,12 +54,13 @@
 
     config = {
       pages: [
+        'pages/registration/registration',
         'pages/shop/shop',
+        'pages/qrCode/qrCode',
         'pages/create-content/create-content',
         'pages/service-controller/service-controller',
         'pages/logIn/logIn',
         'pages/order/order',
-        'pages/registration/registration',
         'pages/content/content',
         'pages/live/live',
         'pages/business/business',
@@ -69,7 +70,6 @@
         'pages/cancel-record/cancel-record',
         'pages/evaluate/evaluate',
         'pages/client/client',
-        'pages/qrCode/qrCode',
         'pages/marketing/marketing',
         'pages/mine/mine',
         'pages/wheel-controller/wheel-controller',

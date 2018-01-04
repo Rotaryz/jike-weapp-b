@@ -1,12 +1,13 @@
 <template>
-  <scroll-view scroll-y="true" bindscrolltolower="loadMore">
+  <view scroll-y="true" bindscrolltolower="loadMore">
     <view class="or-header" wx:if="{{!showInput}}">
       <view>
         <text>服务订单</text>
       </view>
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down24@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down24@2x.png"></image>
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
@@ -16,12 +17,14 @@
         </view>
       </view>
       <view @tap="isInput">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
         <text>搜索</text>
       </view>
     </view>
     <view class="inputs" wx:if="{{showInput}}">
-      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
+      <image
+        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
       <input type="number" placeholder="手机号搜索" bindinput="sreaching"
              value="{{searchValue}}" bindblur="bindblurs"/>
     </view>
@@ -31,9 +34,10 @@
         <text>{{item.title}}</text>
       </view>
     </NavHeader>
-    <view class="order-conpon" style="padding-top:{{paddingTop}}vw">
+    <scroll-view class="order-conpon" style="padding-top:{{paddingTop}}vw">
       <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
         <view class="order-top">
           <view>
             <view class="order-title">服务名称: {{item.title}}</view>
@@ -50,7 +54,7 @@
           </text>
         </view>
       </view>
-    </view>
+    </scroll-view>
     <view class="order-detail" wx:if="{{isDetail}}">
       <view class="order-box">
         <view>订单号：{{datail.order_sn}}</view>
@@ -62,9 +66,11 @@
           <text>￥{{datail.total}}</text>
         </view>
       </view>
-      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" @tap="hideDetail"></image>
+      <image
+        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+        @tap="hideDetail"></image>
     </view>
-  </scroll-view>
+  </view>
 </template>
 
 <script>
@@ -273,6 +279,7 @@
       width: 40%
 
   .order-conpon
+    box-sizing: border-box
     padding: 0 $padding
     .order-item
       margin-top: 10px
