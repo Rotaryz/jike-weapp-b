@@ -13,10 +13,10 @@
 
     </view>
 
-    <view class="createAccount-body">
+    <view class="createAccount-body" @tap="showRadioBox">
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">门店</view>
-        <view class="store-msg-picker-right" @tap="showRadioBox">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{checkedStore}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>

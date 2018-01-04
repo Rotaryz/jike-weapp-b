@@ -24,9 +24,9 @@
         </view>
       </view>
 
-      <view class="store-msg-picker">
+      <view class="store-msg-picker" @tap="industryChiose">
         <view class="store-msg-picker-title">行业类型</view>
-        <view class="store-msg-picker-right" @tap="industryChiose">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{industryName}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -44,9 +44,9 @@
         </picker>
       </view>
 
-      <view class="store-msg-picker">
+      <view class="store-msg-picker" @tap="areaChiose">
         <view class="store-msg-picker-title">商圈</view>
-        <view class="store-msg-picker-right" @tap="areaChiose">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{area}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -72,18 +72,18 @@
       </view>
     </view>
 
-    <view class="store-msg-foot">
+    <view class="store-msg-foot" @tap="showRadio">
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">营业状态</view>
-        <view class="store-msg-picker-right" @tap="showRadio">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 
-      <view class="store-msg-picker">
+      <view class="store-msg-picker" @tap="showTimeCover">
         <view class="store-msg-picker-title">营业时间</view>
-        <view class="store-msg-picker-right" @tap="showTimeCover">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{hourBegin?hourBegin + '-' + hourEnd:''}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -749,6 +749,8 @@
         display: flex
         align-items: center
         height: 39px
+        min-width: 150px
+        justify-content: flex-end
 
         .store-msg-picker-arrow
           width: 10px
