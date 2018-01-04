@@ -30,7 +30,7 @@
       </view>
       <view class="store-license-body-imgBox">
         <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
-          <image src="./image/pic-id_fm@2x.png" class="store-license-imgBC-img"></image>
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-id_fm@2x.png" class="store-license-imgBC-img"></image>
           <image src="{{item.image_url}}" class="store-license-upImg"></image>
           <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
         </view>

@@ -18,7 +18,7 @@
         </view>
         <view class="share-item-body-content">
           <view class="share-item-body-content-imgBox">
-            <image src="./image/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
           </view>
           <view class="share-item-body-content-center">
             <view class="share-item-body-content-center-txt">分享后</view>
@@ -27,7 +27,7 @@
             </view>
           </view>
           <view class="share-item-body-content-imgBox">
-            <image src="./image/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
             <view class="share-item-body-content-right-title">开红包</view>
           </view>
         </view>
@@ -52,7 +52,7 @@
         </view>
         <view class="share-item-body-content">
           <view class="share-item-body-content-imgBox">
-            <image src="./image/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
           </view>
           <view class="share-item-body-content-center">
             <view class="share-item-body-content-center-txt">分享后</view>
@@ -61,7 +61,7 @@
             </view>
           </view>
           <view class="share-item-body-content-imgBox">
-            <image src="./image/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
             <view class="share-item-body-content-right-title">开红包</view>
           </view>
         </view>
@@ -85,7 +85,7 @@
               <picker mode="date" value="{{nowDate}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
                 <view class="picker-txt">
                   <view>当天<text class="activityMsg-txt-right-gray">至</text>{{endTime}}{{detailCompile==='coupon'?couponEndTime:''}}{{detailCompile==='content'?contentEndTime:''}}</view>
-                  <image src="./image/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
+                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
                 </view>
               </picker>
             </view>
@@ -94,7 +94,7 @@
             <view class="activityMsg-txt-left">参与次数</view>
             <view class="activityMsg-txt-right">
               <view class="activityMsg-txt-right-leftTxt">
-                <image class="activityMsg-txt-right-checked" src="./image/icon-selected@2x.png"></image>
+                <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
                 一天一次
               </view>
             </view>
@@ -113,11 +113,11 @@
               <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
             </view>
             <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-              <image src="./image/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
             </view>
           </view>
           <view class="prizeList-addItem" @tap="showAddPrize">
-            <image src="./image/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
             添加奖品
           </view>
         </view>
