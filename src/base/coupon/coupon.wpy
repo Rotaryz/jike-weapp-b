@@ -1,7 +1,7 @@
 <template>
   <view class="coupon">
     <view class="coupon-bg">
-      <image class="image" src="./pic-coupon_bg@2x.png"
+      <image class="image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-coupon_bg@2x.png"
              mode="scaleToFill"></image>
     </view>
     <view class="content">
@@ -30,7 +30,7 @@
           <view class="btn-wrapper" wx:if="{{buy === 'yes'}}">
             <view class="btn">
               <text class="font">抢购</text>
-              <image class="icon" src="./icon-button_right.png"></image>
+              <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-button_right.png"></image>
             </view>
           </view>
         </view>

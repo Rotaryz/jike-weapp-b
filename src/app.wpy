@@ -55,13 +55,13 @@
     config = {
       pages: [
         'pages/shop/shop',
+        'pages/create-content/create-content',
         'pages/service-controller/service-controller',
         'pages/logIn/logIn',
         'pages/order/order',
         'pages/registration/registration',
         'pages/content/content',
         'pages/live/live',
-        'pages/create-content/create-content',
         'pages/business/business',
         'pages/choice-coupon/choice-coupon',
         'pages/compile/compile',
