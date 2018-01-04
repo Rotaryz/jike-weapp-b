@@ -24,7 +24,7 @@
     }
 
     isArray(item) {
-      return Object.prototype.toString.   apply(item) === '[object Array]'
+      return Object.prototype.toString.apply(item) === '[object Array]'
     }
 
     isUndefined(item) {
@@ -54,6 +54,7 @@
 
     config = {
       pages: [
+        'pages/service-controller/service-controller',
         'pages/shop/shop',
         'pages/logIn/logIn',
         'pages/order/order',
@@ -76,7 +77,6 @@
         'pages/service-manage/service-manage',
         'pages/package-detail/package-detail',
         'pages/package-controller/package-controller',
-        'pages/service-controller/service-controller',
         'pages/store-msg/store-msg',
         'pages/store-license/store-license',
         'pages/account-management/account-management',
@@ -91,9 +91,9 @@
       window: {
         backgroundColor: '#363547',
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#fff',
-        navigationBarTitleText: '商家助手',
-        navigationBarTextStyle: 'black'
+        navigationBarTitleText: '集客小程序',
+        navigationBarBackgroundColor: '#363547',
+        navigationBarTextStyle: 'white'
       },
       tabBar: {
         color: '#C8C8C8',

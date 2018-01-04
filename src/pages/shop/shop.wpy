@@ -152,8 +152,6 @@
           duration: 1500
         })
       }
-      console.log(data)
-
     }
 
     methods = {

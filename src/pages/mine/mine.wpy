@@ -31,7 +31,7 @@
   import wepy from 'wepy'
   import Store from '@/api/store'
   import base from '@/common/mixins/base'
-//  import Account from '@/api/account'
+  import Account from '@/api/account'
 
   export default class Mine extends wepy.page {
     mixins = [base]
@@ -80,9 +80,8 @@
         this.$navigate(skipUrl)
       },
       async switchStore() {
-//        let res = await Account.getAnnexList()
-//        console.log(res)
-//        this.loaded()
+        await Account.getAnnexList()
+        this.loaded()
       }
     }
   }
