@@ -7,13 +7,13 @@
           <view class="radioBox-list-item" wx:for="{{items}}" wx:key="{{item}}">
             <label class="radioLabel {{item.checked?'active':''}}">
               <checkbox value="{{item.txt}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
-              <image class="radio-Icon" src="{{item.checked?'./image/icon-select@2x.png':'./image/icon-checkbox@2x.png'}}"></image>
+              <image class="radio-Icon" src="{{item.checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
             </label>
           </view>
         </checkbox-group>
       </view>
       <view class="radioBox-closeBtn" @tap="closeCover">
-        <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
       </view>
     </view>
   </view>

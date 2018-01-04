@@ -9,23 +9,23 @@
               <view class="prizeItem-name">{{item.promotion_title}}</view>
               <view class="prizeItem-count">剩余{{item.promotion_stock}}个</view>
             </view>
-            <image src="{{index===prizeCheckedIdx?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}" class="prizeItem-checkImg"></image>
+            <image src="{{index===prizeCheckedIdx?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeItem-checkImg"></image>
           </view>
         </view>
         <view class="prizeItem-addBox">
           <view class="prizeItem-addBox-gray">添加数量</view>
           <view class="prizeItem-addBox-container">
-            <image src="./image/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
             <view class="countBox">
               <input type="number" class="countBox-input" bindblur="countChange" value="{{prizeCount}}" />
             </view>
-            <image src="./image/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
           </view>
         </view>
         <view class="prizeItem-saveBtn" @tap="saveMsg">保存</view>
       </view>
       <view class="addprize-closeBtn" @tap="closeCover">
-        <image src="./image/icon-del@2x.png" class="addprize-closeX"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="addprize-closeX"></image>
       </view>
     </view>
 

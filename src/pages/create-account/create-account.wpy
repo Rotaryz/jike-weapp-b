@@ -18,7 +18,7 @@
         <view class="store-msg-picker-title">门店</view>
         <view class="store-msg-picker-right" @tap="showRadioBox">
           <view class="store-msg-picker-txt">{{checkedStore}}</view>
-          <image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 

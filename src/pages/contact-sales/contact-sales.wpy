@@ -26,7 +26,7 @@
           <view class="complaint-btn {{complaintInTxt.length>0?'':'disab'}}" @tap="submitComplaint">提交</view>
         </view>
         <view class="complaint-closeBtn" @tap="closeCover">
-          <image src="./image/icon-del@2x.png" class="complaint-closeX"></image>
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="complaint-closeX"></image>
         </view>
       </view>
     </view>

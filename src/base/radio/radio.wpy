@@ -8,14 +8,14 @@
           <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
             <label class="radioLabel {{item.txt===checked?'active':''}}">
               <radio value="{{item.txt}}" checked="{{item.txt==checked}}" hidden="true"/>{{item.txt}}
-              <image class="radio-Icon" src="{{item.txt==checked?'./image/icon-selected@2x.png':'./image/radio@2x.png'}}"></image>
+              <image class="radio-Icon" src="{{item.txt==checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"></image>
             </label>
           </view>
         </radio-group>
       </view>
 
       <view class="radioBox-closeBtn" @tap="closeCover">
-        <image src="./image/icon-del@2x.png" class="radioBox-closeX"></image>
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
       </view>
     </view>
   </view>
