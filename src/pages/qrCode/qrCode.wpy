@@ -170,40 +170,40 @@
         color: $color-text-d
         margin-top: 5%
 
-    .qR-num
-      height: 82.68%
-      padding: 0 5px 15.5%
-      display: flex
-      flex-wrap: wrap
-      margin: 5px auto 0px
-      background-color: $color-white
-      width: 97.33%
+  .qR-num
+    height: 82.68%
+    padding: 0 5px 15.5%
+    display: flex
+    flex-wrap: wrap
+    margin: 5px auto 0px
+    background-color: $color-white
+    width: 97.33%
 
-      .num-item
-        width: 33.33%
-        position: relative
-        .nums
-          width: 88px
-          height: 88px
-          position: absolute
+    .num-item
+      width: 33.33%
+      position: relative
+      .nums
+        width: 88px
+        height: 88px
+        position: absolute
+        all-center()
+        text-align: center
+        line-height: 88px
+        image
+          height: 100%
+          width: 100%
           all-center()
-          text-align: center
-          line-height: 88px
-          image
-            height: 100%
-            width: 100%
-            all-center()
-          text
-            position: absolute
-            top: 50%
-            left: 50%
-            transform: translate(-50%, -55%)
-            z-index: 100
-            font-family: $font-family-meddle
-            font-size: $font-size-large-bxx
-        &:last-child
-          width: 66.66%
-          .nums
-            height: 89px
-            width: 194px
+        text
+          position: absolute
+          top: 50%
+          left: 50%
+          transform: translate(-50%, -55%)
+          z-index: 100
+          font-family: $font-family-meddle
+          font-size: $font-size-large-bxx
+      &:last-child
+        width: 66.66%
+        .nums
+          height: 89px
+          width: 194px
 </style>
