@@ -67,7 +67,8 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;">
+          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" controls="{{controls}}" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
+            <Toast></Toast>
           </map>
       </view>
     </view>
@@ -211,7 +212,6 @@
     <view wx:if="{{twoRadioboxShow}}">
       <TwoRadioBox></TwoRadioBox>
     </view>
-    <Toast></Toast>
   </view>
 </template>
 
@@ -223,7 +223,7 @@
   import TwoRadioBox from '@/base/second-radio/second-radio'
   import QQMapWX from '@/common/libs/qqmap-wx-jssdk'
   import Store from '@/api/store'
-  import Toast from '@/base/toast/toast'
+  import Toast from '@/base/cover-toast/cover-toast'
   import users from '@/common/mixins/users'
   import Upload from '@/api/uploads'
   import Tips from '@/common/js/tips'
@@ -266,13 +266,15 @@
       areaId: '',
       areaArr: [],
       region: ['', '', ''],
-      markers: [{
+      controls: [{
+        id: 1,
         iconPath: './icon-site-msg.png',
-        id: 0,
-        latitude: 0,
-        longitude: 0,
-        width: 33,
-        height: 33
+        position: {
+          left: 100,
+          top: 40,
+          width: 33,
+          height: 33
+        }
       }],
       mapCtx: '',
       timeCover: false,
@@ -325,8 +327,6 @@
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
       this.longitude = res.longitude ? res.longitude : 113.324520
       this.latitude = res.latitude ? res.latitude : 23.099994
-      this.markers[0].longitude = this.longitude
-      this.markers[0].latitude = this.latitude
       this.area = res.business_circle ? res.business_circle.name : ''
       this.areaId = res.business_circle_id ? res.business_circle_id : ''
       this.storeStatus = res.open_status ? res.open_status : ''
@@ -350,11 +350,26 @@
       this.hourChioseArr[3] = res.close_time ? (res.close_time.split(':')[1] === '00' ? '0' : '1') : ''
       this.temporaryHour = this.hourChioseArr.slice()
       this._mapAuto(this.site)
+      this.$apply()
       this.loaded()
     }
 
     onReady() {
       this.mapCtx = wx.createMapContext('myMap')
+      let self = this
+      wepy.createSelectorQuery().select('#myMap').boundingClientRect(function(rects) {
+        self.controls = [{
+          id: 1,
+          iconPath: './icon-site-msg.png',
+          position: {
+            left: (rects.width - 33) / 2,
+            top: (rects.height - 33) / 2,
+            width: 33,
+            height: 33
+          }
+        }]
+      }).exec()
+      this.$apply()
     }
 
     methods = {
@@ -452,26 +467,15 @@
         let self = this
         this.mapCtx.getCenterLocation({
           success: (res) => {
-            self.mapCtx.translateMarker({
-              markerId: 0,
-              autoRotate: false,
-              duration: 200,
-              destination: {
+            self.qqmapsdk.reverseGeocoder({
+              location: {
                 latitude: res.latitude,
                 longitude: res.longitude
               },
-              animationEnd() {
-                self.qqmapsdk.reverseGeocoder({
-                  location: {
-                    latitude: res.latitude,
-                    longitude: res.longitude
-                  },
-                  success: (resData) => {
-                    self.mapAddress = resData.result.address
-                    self.longitude = res.longitude
-                    self.latitude = res.latitude
-                  }
-                })
+              success: (resData) => {
+                self.mapAddress = resData.result.address
+                self.longitude = res.longitude
+                self.latitude = res.latitude
               }
             })
           }
@@ -609,8 +613,6 @@
           let location = res.result.location
           self.longitude = location.lng
           self.latitude = location.lat
-          self.markers[0].longitude = location.lng
-          self.markers[0].latitude = location.lat
           self.$apply()
         },
         fail: function(res) {
