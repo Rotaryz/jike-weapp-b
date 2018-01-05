@@ -496,14 +496,14 @@
           return
         }
         this.paymengMoneyIn = true
-        let code = await this.$getCode()
+        let codeRes = await wepy.login()
         let data
         switch (this.paymentType) {
           case 1:
             data = Object.assign({}, this.paymentMsg, {pay_type: 'remaining_pay'})
             break
           case 2:
-            data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code})
+            data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code: codeRes.code})
             break
         }
         let res = await PrizePool.createRedpack(data)
