@@ -82,7 +82,7 @@
   export default class business extends wepy.page {
     mixins = [base]
     config = {
-      navigationBarTitleText: '商区',
+      navigationBarTitleText: '商圈',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }

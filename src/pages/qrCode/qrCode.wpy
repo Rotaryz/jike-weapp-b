@@ -28,7 +28,7 @@
   export default class Square extends wepy.page {
     mixins = [base]
     config = {
-      navigationBarTitleText: '扫码核销',
+      navigationBarTitleText: '输码核销',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }
