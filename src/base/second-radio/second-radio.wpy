@@ -191,6 +191,7 @@
         .radioBox-title
           width: 90px
           max-height: 360px
+          overflow-y: auto
 
           .radioBox-title-item
 
