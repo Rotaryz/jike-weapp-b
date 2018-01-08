@@ -4,7 +4,7 @@
       <view class="mine-head-avtarBox">
         <image class="mine-head-avatar" src="{{avatarUrl}}"></image>
         <view class="mine-head-name">{{storeMsg.shop_name}}</view>
-        <view class="switch-store" @tap="switchStore">
+        <view class="switch-store" @tap="switchStore" wx:if="{{false}}">
           <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-switch@2x.png" class="switch-store-img"></image>
           <view class="switch-store-txt">
             <view class="trigon"><view class="trigon-content"></view></view>

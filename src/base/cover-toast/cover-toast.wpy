@@ -30,13 +30,13 @@
   @import '../../common/stylus/variable'
 
   .toast
-    position: fixed
-    z-index: 99999
-    top: 42%
+    position: absolute
     left: 50%
+    top: 50%
+    transform: translate(-50%, -50%)
+    z-index: 99999
     min-width: 200px
     max-width: 300px
-    margin-left: -100px
     padding: 10px 0
     opacity: .9
     border-radius: 6px

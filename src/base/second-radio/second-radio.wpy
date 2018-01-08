@@ -191,6 +191,7 @@
         .radioBox-title
           width: 90px
           max-height: 360px
+          overflow-y: auto
 
           .radioBox-title-item
 
@@ -250,6 +251,7 @@
           background: $color-white
           padding: 0 10px
           width: 175.5px
+          overflow-y: auto
           max-height: 360px
 
         .radioBox-list-item

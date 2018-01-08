@@ -224,7 +224,7 @@
               display: flex
               align-items: center
               justify-content: center
-              background: $color-assist-f
+              border: .5px solid $color-col-line
               border-radius: 2px
 
               .prizeItem-top-left-img
@@ -234,12 +234,12 @@
               .prizeItem-top-left-Msg
                 text-align: center
                 font-size: $font-size-small
-                color: $color-white
+                color: $color-assist-f
                 font-family: PingFangSC-Medium
 
                 .prizeItem-top-left-Msg-txt
                   font-size: 8px
-                  color: $color-white
+                  color: $color-assist-f
 
             .prizeItem-top-right
               display: flex

@@ -1,0 +1,86 @@
+<template>
+  <view class="textarea-box">
+    <view class="prize-picker-textarea" @tap="showTextarea">
+      <textarea maxlength="{{maxlength}}" wx:if="{{textareaShow}}" class="prize-picker-textarea-input" placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}" value="{{inputTxt}}" placeholder-class="prize-picker-textarea-placeholder" bindblur="blurFn" bindinput="inputFn"></textarea>
+      <view class="textarea-length">{{inputTxt.length}}/{{maxlength}}</view>
+      <view class="textarea-view {{inputTxt?'':'gary'}}" wx:if="{{!textareaShow}}">{{inputTxt?inputTxt:placeholderTxt}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Textarea extends wepy.component {
+    data = {
+      maxlength: '',
+      textareaShow: false,
+      placeholderTxt: '',
+      textareaFocus: false,
+      inputTxt: ''
+    }
+
+    methods = {
+      inputFn(e) {
+        this.inputTxt = e.detail.value
+        this.$emit('textareaInput', e.detail.value)
+        this.$apply()
+      },
+      blurFn(e) {
+        this.textareaShow = false
+        this.textareaFocus = false
+        this.$apply()
+        this.$emit('textareaBlur', e.detail.value)
+      },
+      showTextarea() {
+        this.textareaShow = true
+        setTimeout(() => {
+          this.textareaFocus = true
+          this.$apply()
+        }, 30)
+      },
+      init(msgObj) {
+        this.inputTxt = msgObj.txt || ''
+        this.placeholderTxt = msgObj.placeholder || '请输入'
+        this.maxlength = msgObj.maxLength || 20
+        this.$apply()
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+
+  .prize-picker-textarea
+    position: relative
+    height: 55px
+    width: 88vw
+    padding: 10px
+    background: $color-background
+
+    .prize-picker-textarea-input
+      width: 88vw
+      height: 55px
+      background: $color-background
+      font-size: $font-size-medium
+      color: $color-text-title
+
+    .prize-picker-textarea-placeholder
+      color: $color-text-d
+    .textarea-length
+      position: absolute
+      bottom: 10px
+      right: 10px
+      font-size: $font-size-small-s
+      color: $color-text-d
+
+    .textarea-view
+      font-size: $font-size-medium
+      color: $color-text-title
+    .textarea-view.gary
+      padding-top: 10px
+      padding-left: 3px
+      color: $color-text-d
+
+</style>
