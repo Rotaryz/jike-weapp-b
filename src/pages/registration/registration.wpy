@@ -221,15 +221,15 @@
         ispacket: 0
 
       }, {
+        title: '第三天',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+      }, {
         title: '奖励',
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-22_money.png',
         showTitle: 1,
         ispacket: 2
-      }, {
-        title: '第四天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
-        showTitle: 0,
-        ispacket: 0
       }, {
         title: '第五天',
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
@@ -272,7 +272,7 @@
         addNum: 0,
         record: -1
       }, {
-        title: '连续签到3天奖励红包',
+        title: '连续签到4天奖励红包',
         promotion_title: '添加奖品',
         addNum: 0,
         record: -1
@@ -514,6 +514,10 @@
           return false
         } else if (this.textares === '') {
           this.$invoke('Toast', 'show', '请输入描述')
+          return false
+        } else if (this.value === '' || this.value === '0公里') {
+          this.$invoke('Toast', 'show', '请输入签到范围')
+          return false
         } else {
           let disway = 0
           if (this.value.indexOf('公里') !== -1) {
@@ -601,14 +605,14 @@
           record: res.first_redpacket.index
         }
         this.paizrList[1] = {
-          title: '首次签到奖励红包',
+          title: '连续签到4天奖励红包',
           promotion_title: res.third_redpacket.promotion_title + ' ' +
           res.third_redpacket.promotion_stock + '个',
           addNum: res.third_redpacket.promotion_stock,
           record: res.third_redpacket.index
         }
         this.paizrList[2] = {
-          title: '首次签到奖励红包',
+          title: '连续签到7天奖励红包',
           promotion_title: res.seventh_redpacket.promotion_title + ' ' +
           res.seventh_redpacket.promotion_stock + '个',
           addNum: res.seventh_redpacket.promotion_stock,

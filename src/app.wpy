@@ -68,7 +68,6 @@
         'pages/compile/compile',
         'pages/data/data',
         'pages/cancel-record/cancel-record',
-        'pages/evaluate/evaluate',
         'pages/client/client',
         'pages/marketing/marketing',
         'pages/mine/mine',

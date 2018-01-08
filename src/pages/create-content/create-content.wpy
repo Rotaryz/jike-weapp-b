@@ -302,6 +302,7 @@
           return false
         } else {
           let res = null
+
           if (this.addType === '2') {
             Object.assign(this.allMsg, {title: this.title},
               {'content_details': this.changeList, delete_ids: this.delete_ids})
@@ -316,7 +317,7 @@
               url: '../content/content'
             })
           } else {
-            this.$invoke('Toast', 'show', '保存失败，请重试')
+            this.$invoke('Toast', 'show', '发布失败，请重试')
           }
         }
       },
