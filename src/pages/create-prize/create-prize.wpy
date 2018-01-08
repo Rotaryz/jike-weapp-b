@@ -90,10 +90,7 @@
 
         <view class="exBox-prize-description">
           <view class="prize-picker-title">使用须知</view>
-          <view class="prize-picker-textarea">
-            <textarea maxlength="20" class="prize-picker-textarea-input" placeholder="请输入" placeholder-class="prize-picker-textarea-placeholder" bindblur="exdescrpChange"></textarea>
-            <view class="textarea-length">{{exdescripte.length}}/20</view>
-          </view>
+          <Textarea></Textarea>
         </view>
       </view>
 
@@ -276,6 +273,7 @@
   import Toast from '@/base/toast/toast'
   import Upload from '@/api/uploads'
   import users from '@/common/mixins/users'
+  import Textarea from '@/base/textarea/textarea'
 
   export default class CreatePrizePage extends wepy.page {
     mixins = [base, users]
@@ -289,7 +287,8 @@
 
     components = {
       Toast,
-      Confirm
+      Confirm,
+      Textarea
     }
 
     data = {
@@ -321,7 +320,9 @@
       EXimgId: '',
       paymentMsg: '',
       payEnough: true,
-      paymengMoneyIn: false
+      paymengMoneyIn: false,
+      textarea: false,
+      textareaFocus: false
     }
 
     methods = {
@@ -399,6 +400,8 @@
       },
       exdescrpChange(e) {
         this.exdescripte = e.detail.value
+        this.textarea = false
+        this.textareaFocus = false
         this.$apply()
       },
       maxChange(e) {
@@ -525,7 +528,13 @@
             }, 2000)
           }
         }
-
+      },
+      showTextarea() {
+        this.textarea = true
+        setTimeout(() => {
+          this.textareaFocus = true
+          this.$apply()
+        }, 30)
       }
     }
 
@@ -535,6 +544,7 @@
     }
 
     async load() {
+      this.$invoke('Textarea', 'init', {})
       this.loaded()
     }
 
@@ -876,29 +886,6 @@
             font-size: $font-size-medium
             color: $color-text-title
             line-height: 30px
-
-          .prize-picker-textarea
-            position: relative
-            height: 55px
-            width: 88vw
-            padding: 10px
-            background: $color-background
-
-            .prize-picker-textarea-input
-              width: 88vw
-              height: 55px
-              background: $color-background
-              font-size: $font-size-medium
-              color: $color-text-title
-
-            .prize-picker-textarea-placeholder
-              color: $color-text-d
-            .textarea-length
-              position: absolute
-              bottom: 10px
-              right: 10px
-              font-size: $font-size-small-s
-              color: $color-text-d
 
       .randomRP
 

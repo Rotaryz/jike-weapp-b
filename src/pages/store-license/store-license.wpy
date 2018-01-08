@@ -134,7 +134,7 @@
       this.credentialType = res.credential_type || '身份证'
       this.credentialNumber = res.credential_number || ''
       this.userName = res.user_name || ''
-      let images = res.credential_images ? res.credential_images.slice(0, 4) : []
+      let images = res.credential_images
       this.images = this._computedImg(this.images, images)
       if (res.credential_images && res.credential_images.length > 0) {
         this.nothing = false

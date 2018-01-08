@@ -87,7 +87,8 @@
         this.$invoke('RadioBox', 'init', {
           headTxt: '门店选择',
           radioChecked: 0,
-          items
+          items,
+          test: 'test'
         })
       },
       showCheckBox() {
@@ -128,6 +129,8 @@
             setTimeout(() => {
               this.$back(1)
             }, 2000)
+          } else {
+            this.$invoke('Toast', 'show', '创建失败')
           }
         } else {
           this.$invoke('Toast', 'show', '资料未填写完整')

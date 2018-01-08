@@ -517,7 +517,8 @@
             longitude: this.longitude,
             latitude: this.latitude,
             logo_image_id: this.logoId,
-            shop_images: this.storeImgs
+            shop_images: this.storeImgs,
+            particular_address: this.region[0] + this.region[1] + this.region[2] + this.site
           }
           let upRes = await Store.setStoreMsg(data)
           this.loaded()
@@ -1026,6 +1027,7 @@
             background: $color-white
             padding: 0 10px
             width: 175.5px
+            overflow-y: auto
             max-height: 360px
 
           .radioBox-list-item
