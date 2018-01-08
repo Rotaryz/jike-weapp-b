@@ -109,17 +109,17 @@
             </view>
           </view>
         </view>
-        <view class="add input-wrapper border-bottom-1px">
-          <view class="label">增加次数</view>
-          <view class="select-wrapper">
-            <view class="select-box">
-              <view class="select unselect">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-              </view>
-              <view class="text">未中奖后分享成功再抽一次(选填)</view>
-            </view>
-          </view>
-        </view>
+        <!--<view class="add input-wrapper border-bottom-1px">-->
+          <!--<view class="label">增加次数</view>-->
+          <!--<view class="select-wrapper">-->
+            <!--<view class="select-box">-->
+              <!--<view class="select unselect">-->
+                <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>-->
+              <!--</view>-->
+              <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</view>-->
         <view class="explain">
           <view class="title">活动说明</view>
           <view class="text-wrapper">
@@ -354,7 +354,10 @@
         }
       },
       async submitForm() {
-        if (this.activityPromotions.length < 5) {
+        if (Math.floor(this.percentage) > 100 || !this.percentage) {
+          this._toast('请输入正确的概率')
+          return
+        } else if (this.activityPromotions.length < 5) {
           this._toast('奖品数未满5个')
           return
         }
@@ -383,6 +386,10 @@
         this.$invoke('activity-time-modal', 'show')
       },
       showPrizePoolModal() {
+        if (this.prizePool.length === 0) {
+          this.$invoke('toast', 'show', '奖品池暂无奖品')
+          return
+        }
         this.selectStock = 1
         this.selectPromotion = this.prizePool[0]
         this.$invoke('prize-pool-modal', 'show')
