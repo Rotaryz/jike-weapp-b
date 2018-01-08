@@ -180,6 +180,11 @@
   import Toast from '@/base/toast/toast'
   export default class Registration extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '签到红包',
       navigationBarBackgroundColor: '#363547',

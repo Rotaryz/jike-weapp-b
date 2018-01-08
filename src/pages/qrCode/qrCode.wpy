@@ -27,6 +27,11 @@
   import Toast from '@/base/toast/toast'
   export default class Square extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '输码核销',
       navigationBarBackgroundColor: '#363547',

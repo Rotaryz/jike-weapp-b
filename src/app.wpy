@@ -54,20 +54,20 @@
 
     config = {
       pages: [
+        'pages/data/data',
+        'pages/logIn/logIn',
         'pages/evaluate/evaluate',
         'pages/shop/shop',
         'pages/registration/registration',
         'pages/qrCode/qrCode',
         'pages/create-content/create-content',
         'pages/service-controller/service-controller',
-        'pages/logIn/logIn',
         'pages/order/order',
         'pages/content/content',
         'pages/live/live',
         'pages/business/business',
         'pages/choice-coupon/choice-coupon',
         'pages/compile/compile',
-        'pages/data/data',
         'pages/cancel-record/cancel-record',
         'pages/client/client',
         'pages/marketing/marketing',

@@ -6,9 +6,11 @@
         <view class="con-item" wx:for="{{activityPromotion}}"
               wx:key="index"
               @tap="conponDetail({{item.promotion_id}},{{index}})">
-          <image class="con_bk" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg.png"
+          <image class="con_bk"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg.png"
                  wx:if="{{showBk !== index}}"></image>
-          <image class="con_bk" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg1.png"
+          <image class="con_bk"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg1.png"
                  wx:if="{{showBk === index}}"></image>
           <view class="con-title">
             <view></view>
@@ -18,7 +20,8 @@
         </view>
       </scroll-view>
       <view class="live_video video-bk" wx:if="{{!showVideo}}">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livenone@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livenone@2x.png"></image>
       </view>
       <video class="live_video"
              src="{{videoSrc}}"
@@ -32,8 +35,9 @@
         <view class="upload">
           <image class="video-box {{!showVideo ? '' : 'no-border'}}"
                  @tap="upVideo" src="{{videoImage}}">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livebg@2x.png"
-                   wx:if="{{!showVideo}}"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livebg@2x.png"
+              wx:if="{{!showVideo}}"></image>
           </image>
           <view class="tip">上传十分钟视频</view>
         </view>
@@ -45,11 +49,13 @@
                 wx:key="{{index}}">
             {{item.promotion_title}}
             <view class="close-box" @tap="delCou({{index}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/close.png"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/close.png"></image>
             </view>
           </view>
           <view class="add-cou" @tap="choice">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"></image>
             添加服务
           </view>
         </view>
@@ -70,6 +76,11 @@
   import base from 'common/mixins/base'
   export default class Live extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '直播优惠',
       navigationBarBackgroundColor: '#363547',

@@ -35,6 +35,11 @@
   import base from 'common/mixins/base'
   export default class choiceCoupon extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '添加优惠券',
       navigationBarBackgroundColor: '#363547',

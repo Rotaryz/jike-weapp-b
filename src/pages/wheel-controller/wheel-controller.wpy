@@ -3,40 +3,48 @@
     <view class="wheel-wrapper">
       <view class="header-wrapper">
         <!--<view class="switch-wrapper">-->
-          <!--<view class="switch">-->
-            <!--<view class="switch-ball"></view>-->
-          <!--</view>-->
-          <!--<view class="text">-->
-            <!--开启活动-->
-          <!--</view>-->
+        <!--<view class="switch">-->
+        <!--<view class="switch-ball"></view>-->
+        <!--</view>-->
+        <!--<view class="text">-->
+        <!--开启活动-->
+        <!--</view>-->
         <!--</view>-->
         <!--<view class="edit-wrapper">-->
-          <!--<view class="btn">编辑</view>-->
+        <!--<view class="btn">编辑</view>-->
         <!--</view>-->
       </view>
       <view class="content-wrapper">
         <view class="wheel">
           <view class="wheel-pointer">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-pointer@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-pointer@2x.png"
+              class="full-image"></image>
           </view>
           <view class="wheel-content" ref="wheel">
             <view class="wheel-relative">
               <view class="wheel-image">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-zp@2x.png" class="full-image"></image>
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-zp@2x.png"
+                  class="full-image"></image>
               </view>
               <view class="wheel-prize-wrapper">
-                <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
+                <repeat for="{{activityPromotions}}" key="index" index="index"
+                        item="item">
                   <view class="prize prize-{{index}}">
                     <view class="name">{{item.promotion_title}}</view>
                     <view class="img-wrapper">
-                      <image src="{{item.promotion_img}}" mode="aspectFit"></image>
+                      <image src="{{item.promotion_img}}"
+                             mode="aspectFit"></image>
                     </view>
                   </view>
                 </repeat>
                 <view class="prize prize-5">
                   <view class="name">谢谢惠顾</view>
                   <view class="img-wrapper">
-                    <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-face@2x.png" mode="aspectFit"></image>
+                    <image
+                      src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-face@2x.png"
+                      mode="aspectFit"></image>
                   </view>
                 </view>
               </view>
@@ -63,15 +71,19 @@
                  placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
           <view class="lenth-wrapper">{{nameLength}}/10</view>
         </view>
-        <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
+        <view class="time input-wrapper border-bottom-1px"
+              @tap="showActivityTimeModal">
           <view class="label">活动时间</view>
           <view class="content">
-            <view class="start sell">{{fromDate === '' ? '当天' : fromDate}}</view>
+            <view class="start sell">{{fromDate === '' ? '当天' : fromDate}}
+            </view>
             <view class="to">至</view>
             <view class="end">{{toDate}}</view>
           </view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
           <activity-time-modal title="活动时间">
             <view class="activity-time-modal" slot="content">
@@ -81,7 +93,8 @@
                 </view>
                 <view class="to">至</view>
                 <view class="end" @tap.stop="changeActivityPicker('end')">{{toDate}}</view>
-                <view class="line-wrapper {{activityPickerType === 'end' ? 'end' : ''}}">
+                <view
+                  class="line-wrapper {{activityPickerType === 'end' ? 'end' : ''}}">
                   <view class="line"></view>
                 </view>
               </view>
@@ -97,13 +110,17 @@
           <view class="select-wrapper">
             <view class="select-box" @tap="selectJoinTime(1)">
               <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
+                <image wx:if="{{joinTimes === 1}}"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                       class="full-image"></image>
               </view>
               <view class="text">一天一次</view>
             </view>
             <view class="select-box" @tap="selectJoinTime(0)">
               <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
+                <image wx:if="{{joinTimes === 0}}"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                       class="full-image"></image>
               </view>
               <view class="text">一人一次</view>
             </view>
@@ -114,7 +131,9 @@
           <view class="select-wrapper">
             <view class="select-box">
               <view class="select unselect">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                  class="full-image"></image>
               </view>
               <view class="text">未中奖后分享成功再抽一次(选填)</view>
             </view>
@@ -145,19 +164,24 @@
                    @input="handleInput('percentage')"/>
           </view>
         </view>
-        <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
+        <repeat for="{{activityPromotions}}" index="index" key="index"
+                item="item">
           <view class="item-wrapper">
             <view class="name">{{item.promotion_title}}</view>
             <view class="quantity">{{item.promotion_stock}}个</view>
             <view class="del" @tap="delectPrize({{index}}, {{item}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_delete@2x.png"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_delete@2x.png"></image>
             </view>
           </view>
         </repeat>
         <view class="add-wrapper">
-          <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
+          <view class="btn" @tap="showPrizePoolModal"
+                wx:if="{{activityPromotions.length < 5}}">
             <view class="add-image">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_add@2x.png" class="full-image"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_add@2x.png"
+                class="full-image"></image>
             </view>
             添加奖品
           </view>
@@ -165,13 +189,17 @@
         <prize-pool-modal title="添加奖品" @cancel.user="cancelSelectPrize">
           <view class="prize-pool-modal" slot="content">
             <repeat for="{{prizePool}}" index="index" key="key" item="item">
-              <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
+              <view class="prize border-bottom-1px"
+                    @tap.stop="changePrize({{item}})">
                 <view class="name">{{item.promotion_title}}</view>
                 <view class="stock">剩余{{item.promotion_stock}}个</view>
                 <view class="check-box-wrapper">
-                  <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                    <image wx:if="{{selectPromotion.promotion_id === item.promotion_id}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
-                           class="full-image"></image>
+                  <view
+                    class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
+                    <image
+                      wx:if="{{selectPromotion.promotion_id === item.promotion_id}}"
+                      src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                      class="full-image"></image>
                   </view>
                 </view>
               </view>
@@ -212,6 +240,10 @@
 
   export default class WheelController extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     data = {
       type: ADD_TYPE,

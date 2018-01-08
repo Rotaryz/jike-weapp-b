@@ -4,8 +4,11 @@
       <view class="share-item-head">
         <view class="share-item-head-title">优惠券分享有礼</view>
         <view class="share-item-head-right">
-          <view class="share-item-head-right-txt">{{couponIng?'关闭':'开启'}}活动</view>
-          <switch class="share-switch" color="#fff" checked="{{couponIng}}" bindchange="couponChange"></switch>
+          <view class="share-item-head-right-txt">
+            {{couponIng ? '关闭' : '开启'}}活动
+          </view>
+          <switch class="share-switch" color="#fff" checked="{{couponIng}}"
+                  bindchange="couponChange"></switch>
         </view>
       </view>
       <view class="share-item-body">
@@ -14,11 +17,15 @@
             <view>优惠券详情页</view>
             <view class="share-item-body-underline"></view>
           </view>
-          <view class="share-item-body-title-right" @tap="showDetail('coupon')">编辑</view>
+          <view class="share-item-body-title-right" @tap="showDetail('coupon')">
+            编辑
+          </view>
         </view>
         <view class="share-item-body-content">
           <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"
+              class="share-item-body-content-img"></image>
           </view>
           <view class="share-item-body-content-center">
             <view class="share-item-body-content-center-txt">分享后</view>
@@ -27,7 +34,9 @@
             </view>
           </view>
           <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"
+              class="share-item-body-content-img"></image>
             <view class="share-item-body-content-right-title">开红包</view>
           </view>
         </view>
@@ -38,8 +47,11 @@
       <view class="share-item-head">
         <view class="share-item-head-title">内容分享有礼</view>
         <view class="share-item-head-right">
-          <view class="share-item-head-right-txt">{{contentIng?'关闭':'开启'}}活动</view>
-          <switch class="share-switch" color="#fff" checked="{{contentIng}}" bindchange="contentChange"></switch>
+          <view class="share-item-head-right-txt">
+            {{contentIng ? '关闭' : '开启'}}活动
+          </view>
+          <switch class="share-switch" color="#fff" checked="{{contentIng}}"
+                  bindchange="contentChange"></switch>
         </view>
       </view>
       <view class="share-item-body">
@@ -48,11 +60,15 @@
             <view>内容详情页</view>
             <view class="share-item-body-underline"></view>
           </view>
-          <view class="share-item-body-title-right" @tap="showDetail('content')">编辑</view>
+          <view class="share-item-body-title-right"
+                @tap="showDetail('content')">编辑
+          </view>
         </view>
         <view class="share-item-body-content">
           <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"
+              class="share-item-body-content-img"></image>
           </view>
           <view class="share-item-body-content-center">
             <view class="share-item-body-content-center-txt">分享后</view>
@@ -61,31 +77,43 @@
             </view>
           </view>
           <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"
+              class="share-item-body-content-img"></image>
             <view class="share-item-body-content-right-title">开红包</view>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="detail-container" wx:if="{{detailCompile}}" @tap.stop="showNull">
+    <view class="detail-container" wx:if="{{detailCompile}}"
+          @tap.stop="showNull">
       <view class="detail-list">
         <view class="activityMsg-title">
           <view class="activityMsg-title-chunk"></view>
-          {{detailCompile==='coupon'?'优惠券':''}}{{detailCompile==='content'?'内容':''}}分享有礼活动信息
+          {{detailCompile === 'coupon' ? '优惠券' : ''}}{{detailCompile === 'content' ? '内容' : ''}}分享有礼活动信息
         </view>
         <view class="activityMsg-list">
           <view class="activityMsg-txt">
             <view class="activityMsg-txt-left">活动名称</view>
-            <view class="activityMsg-txt-right">{{detailCompile==='coupon'?'优惠券':''}}{{detailCompile==='content'?'内容':''}}分享有礼</view>
+            <view class="activityMsg-txt-right">
+              {{detailCompile === 'coupon' ? '优惠券' : ''}}{{detailCompile === 'content' ? '内容' : ''}}分享有礼
+            </view>
           </view>
           <view class="activityMsg-txt">
             <view class="activityMsg-txt-left">活动时间</view>
             <view class="activityMsg-txt-right">
-              <picker mode="date" value="{{nowDate}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
+              <picker mode="date" value="{{nowDate}}" start="{{nowDate}}"
+                      bindchange="bindDateChange"
+                      class="activityMsg-txt-right-picker">
                 <view class="picker-txt">
-                  <view>当天<text class="activityMsg-txt-right-gray">至</text>{{endTime}}{{detailCompile==='coupon'?couponEndTime:''}}{{detailCompile==='content'?contentEndTime:''}}</view>
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
+                  <view>当天
+                    <text class="activityMsg-txt-right-gray">至</text>
+                    {{endTime}}{{detailCompile === 'coupon' ? couponEndTime : ''}}{{detailCompile === 'content' ? contentEndTime : ''}}
+                  </view>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"
+                    class="activityMsg-txt-right-arrow"></image>
                 </view>
               </picker>
             </view>
@@ -94,7 +122,8 @@
             <view class="activityMsg-txt-left">参与次数</view>
             <view class="activityMsg-txt-right">
               <view class="activityMsg-txt-right-leftTxt">
-                <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+                <image class="activityMsg-txt-right-checked"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
                 一天一次
               </view>
             </view>
@@ -107,17 +136,23 @@
         </view>
 
         <view class="prizeList">
-          <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
+          <view class="prizeList-item" wx:for="{{prizeListArr}}"
+                wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
             <view class="prizeList-item-left">
               <view class="prizeList-item-name">{{item.promotion_title}}</view>
-              <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
+              <view class="prizeList-item-count">{{item.promotion_stock}}个
+              </view>
             </view>
             <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png"
+                class="prizeList-item-right-del"></image>
             </view>
           </view>
           <view class="prizeList-addItem" @tap="showAddPrize">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png"
+              class="prizeList-addItem-plus"></image>
             添加奖品
           </view>
         </view>
@@ -146,6 +181,10 @@
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '分享有礼',
@@ -680,7 +719,7 @@
             .btn
               flex: 1
               display: flex
-              border:1px solid $color-col-line
+              border: 1px solid $color-col-line
               align-items: center
               justify-content: center
               font-size: $font-size-medium
@@ -694,9 +733,6 @@
               margin-left: 5px
               background: $color-theme
               color: $color-white
-
-
-
 
 
 </style>

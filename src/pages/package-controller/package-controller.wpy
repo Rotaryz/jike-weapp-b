@@ -6,31 +6,43 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{business}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
       </view>
-      <view class="category input-wrapper border-bottom-1px" @tap="showCategoryModal">
+      <view class="category input-wrapper border-bottom-1px"
+            @tap="showCategoryModal">
         <view class="label">适用品类</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{category}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <categories-modal title="选择品类" @hide.user="hideCategoriesModal">
           <view slot="content" class="categories-modal">
-            <view class="header border-bottom-1px" @tap.stop="selectAllCategories">
+            <view class="header border-bottom-1px"
+                  @tap.stop="selectAllCategories">
               全选
-              <view class="select-box {{isSelectAllCategories ? 'selected' : ''}}">
-                <image wx:if="{{isSelectAllCategories}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png" class="full-image"></image>
+              <view
+                class="select-box {{isSelectAllCategories ? 'selected' : ''}}">
+                <image wx:if="{{isSelectAllCategories}}"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                       class="full-image"></image>
               </view>
             </view>
             <repeat for="{{categories}}" index="index" key="index" item="item">
-              <view class="item border-bottom-1px" @tap.stop="selectCategory({{item}})">
+              <view class="item border-bottom-1px"
+                    @tap.stop="selectCategory({{item}})">
                 {{item.name}}
                 <view class="select-box {{item.check ? 'selected' : ''}}">
-                  <image wx:if="{{item.check}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png" class="full-image"></image>
+                  <image wx:if="{{item.check}}"
+                         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                         class="full-image"></image>
                 </view>
               </view>
             </repeat>
@@ -42,22 +54,30 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{store}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <stores-modal title="门店选择" @hide.user="hideStoresModal">
           <view class="stores-modal" slot="content">
-            <view class="select-all border-bottom-1px" @tap.stop="selectAllStores">
+            <view class="select-all border-bottom-1px"
+                  @tap.stop="selectAllStores">
               全选
               <view class="select-box {{isSelectAllStores ? 'selected' : ''}}">
-                <image wx:if="{{isSelectAllStores}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png" class="full-image"></image>
+                <image wx:if="{{isSelectAllStores}}"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                       class="full-image"></image>
               </view>
             </view>
             <repeat for="{{stores}}" key="index" index="index" item="item">
-              <view class="select-item border-bottom-1px" @tap.stop="selectStore({{item}})">
+              <view class="select-item border-bottom-1px"
+                    @tap.stop="selectStore({{item}})">
                 {{item.shop_name}}
                 <view class="select-box {{item.check ? 'selected' : ''}}">
-                  <image wx:if="{{item.check}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png" class="full-image"></image>
+                  <image wx:if="{{item.check}}"
+                         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                         class="full-image"></image>
                 </view>
               </view>
             </repeat>
@@ -69,12 +89,18 @@
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
             <view class="picture">
-              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
-                <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"></image>
+              <view class="delete" wx:if="{{item.image_url}}"
+                    @tap="deleteImage({{index}})">
+                <image class="full-image"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"></image>
               </view>
-              <image wx:if="{{item.image_url}}" src="{{item.image_url}}" class="image full-image"></image>
-              <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add@2x.png" class="full-image"></image>
+              <image wx:if="{{item.image_url}}" src="{{item.image_url}}"
+                     class="image full-image"></image>
+              <view class="add" wx:if="{{!item.image_url}}"
+                    @tap="chooseImage({{index}})">
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add@2x.png"
+                  class="full-image"></image>
               </view>
             </view>
           </repeat>
@@ -132,15 +158,20 @@
       </view>
     </view>
     <view class="sell-wrapper border-bottom-1px border-top-1px">
-      <view class="time input-wrapper border-bottom-1px" @tap="showSellTimeModal">
+      <view class="time input-wrapper border-bottom-1px"
+            @tap="showSellTimeModal">
         <view class="label">售卖时间</view>
         <view class="content">
-          <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          <view class="start sell">
+            {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
+          </view>
           <view class="to">至</view>
           <view class="end">{{sellEndTime}}</view>
         </view>
         <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+            class="full-image"></image>
         </view>
         <sell-time-modal title="售卖时间">
           <view class="sell-time-modal" slot="content">
@@ -150,7 +181,8 @@
               </view>
               <view class="to">至</view>
               <view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>
-              <view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
+              <view
+                class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
                 <view class="line"></view>
               </view>
             </view>
@@ -172,7 +204,8 @@
       </view>
     </view>
     <view class="know-wrapper border-top-1px border-bottom-1px">
-      <view class="know-content input-wrapper border-bottom-1px" @tap="showKnowModal">
+      <view class="know-content input-wrapper border-bottom-1px"
+            @tap="showKnowModal">
         <view class="label">报名须知</view>
         <!--<view class="arrow-right">-->
         <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>-->
@@ -218,6 +251,10 @@
 
   export default class packageController extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     data = {
       packageId: 0,

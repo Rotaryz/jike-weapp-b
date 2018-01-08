@@ -6,11 +6,15 @@
 
 <script>
   import wepy from 'wepy'
-
+  import base from 'common/mixins/base'
   export default class PackageDetail extends wepy.page {
-    data = {
+    mixins = [base]
 
+    onShareAppMessage() {
+      this.ShareAppMessage()
     }
+
+    data = {}
 
     onLoad(option) {
       console.log(option)

@@ -10,7 +10,9 @@
               <view class="prizeType-list-item-msg">商家将优惠的服务和商品</view>
               <view class="prizeType-list-item-msg">免费做奖品给客户</view>
             </view>
-            <image src="{{prizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image
+              src="{{prizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
+              class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item" @tap="chioseType(2)">
@@ -19,7 +21,9 @@
               <view class="prizeType-list-item-msg">商家设置一定数量的随即金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image src="{{prizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image
+              src="{{prizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
+              class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item last" @tap="chioseType(3)">
@@ -28,12 +32,16 @@
               <view class="prizeType-list-item-msg">商家设置一定数量的固定金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image src="{{prizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image
+              src="{{prizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
+              class="prizeType-list-item-check"></image>
           </view>
         </view>
 
         <view class="prizeType-closeBtn" @tap="closeTypeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="prizeType-closeX"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+            class="prizeType-closeX"></image>
         </view>
       </view>
     </view>
@@ -43,14 +51,18 @@
         <view class="prize-picker-title">奖品类型</view>
         <view class="prize-picker-right" @tap="showTypeCover">
           <view class="prize-picker-txt">{{prizeTypeTxt}}</view>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="prize-picker-arrow"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"
+            class="prize-picker-arrow"></image>
         </view>
       </view>
 
       <view class="prize-txtbox">
         <view class="prize-txtbox-title">奖品名称</view>
         <view class="prize-txtbox-right">
-          <input type="text" maxlength="10" class="prize-txtbox-input" placeholder="请输入" placeholder-class="prize-txtbox-placeholder" value="{{prizeName}}" bindblur="nameChange" />
+          <input type="text" maxlength="10" class="prize-txtbox-input"
+                 placeholder="请输入" placeholder-class="prize-txtbox-placeholder"
+                 value="{{prizeName}}" bindblur="nameChange"/>
           <view class="prize-txtbox-input-length">{{prizeName.length}}/10</view>
         </view>
       </view>
@@ -60,8 +72,11 @@
         <view class="time-picker">
           <view class="prize-picker-title">有效期</view>
           <view class="prize-picker-right" @tap="timeChiose">
-            <view class="prize-picker-txt">{{beginTime&&endTime?beginTime+' 至 '+endTime:''}}</view>
-            <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+            <view class="prize-picker-txt">
+              {{beginTime && endTime ? beginTime + ' 至 ' + endTime : ''}}
+            </view>
+            <image class="prize-picker-arrow"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
           </view>
         </view>
 
@@ -69,29 +84,45 @@
           <view class="prize-picker-title">奖品图片</view>
           <view class="exBox-imgBox-right">
             <view class="exBox-imgBox-right-imgOuter">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl}}"></image>
-              <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
-              <image class="exBox-img-delBtn" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png"
+                class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg"
+                wx:if="{{!EXimgUrl}}"></image>
+              <image class="exBox-img" src="{{EXimgUrl}}"
+                     wx:if="{{EXimgUrl}}"></image>
+              <image class="exBox-img-delBtn"
+                     src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png"
+                     wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
             </view>
-            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）</view>
+            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）
+            </view>
           </view>
         </view>
 
         <view class="exBox-prize-countBox">
           <view class="prize-picker-title">奖品数量</view>
           <view class="exBox-prizecount-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
+              class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number"
+                     class="countBox-input {{prizeCountTest?'':'error'}}"
+                     bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
+              class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
         <view class="exBox-prize-description">
           <view class="prize-picker-title">使用须知</view>
           <view class="prize-picker-textarea">
-            <textarea maxlength="20" class="prize-picker-textarea-input" placeholder="请输入" placeholder-class="prize-picker-textarea-placeholder" bindblur="exdescrpChange"></textarea>
+            <textarea maxlength="20" class="prize-picker-textarea-input"
+                      placeholder="请输入"
+                      placeholder-class="prize-picker-textarea-placeholder"
+                      bindblur="exdescrpChange"></textarea>
             <view class="textarea-length">{{exdescripte.length}}/20</view>
           </view>
         </view>
@@ -102,7 +133,8 @@
         <view class="randomRP-imgBox">
           <view class="prize-txtbox-title">奖品图片</view>
           <view class="randomRP-imgBox-right">
-            <image class="randomRP-img" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
+            <image class="randomRP-img"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
             <view class="randomRP-imgtxt">默认模板</view>
           </view>
         </view>
@@ -110,11 +142,17 @@
         <view class="randomRP-prize-countBox">
           <view class="prize-picker-title">红包总个数</view>
           <view class="exBox-prizecount-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
+              class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number"
+                     class="countBox-input {{prizeCountTest?'':'error'}}"
+                     bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
+              class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
@@ -123,7 +161,9 @@
           <view class="prize-picker-right">
             <txt>￥</txt>
             <view class="inputBox">
-              <input type="digit" class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}" bindblur="totalChange"/>
+              <input type="digit"
+                     class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}"
+                     bindblur="totalChange"/>
             </view>
           </view>
         </view>
@@ -134,7 +174,9 @@
             <view class="max-box">
               <text>最大</text>
               <view class="inputBox">
-                <input type="digit" class="randomRP-prize-total-input {{maxMoneyTest?'':'error'}}" value="{{redpackMax}}" bindblur="maxChange"/>
+                <input type="digit"
+                       class="randomRP-prize-total-input {{maxMoneyTest?'':'error'}}"
+                       value="{{redpackMax}}" bindblur="maxChange"/>
               </view>
             </view>
             <view class="min-box">
@@ -152,7 +194,8 @@
         <view class="randomRP-imgBox">
           <view class="prize-txtbox-title">奖品图片</view>
           <view class="randomRP-imgBox-right">
-            <image class="randomRP-img" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
+            <image class="randomRP-img"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
             <view class="randomRP-imgtxt">默认模板</view>
           </view>
         </view>
@@ -160,11 +203,17 @@
         <view class="randomRP-prize-countBox">
           <view class="prize-picker-title">红包总个数</view>
           <view class="exBox-prizecount-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
+              class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number"
+                     class="countBox-input {{prizeCountTest?'':'error'}}"
+                     bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
+              class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
@@ -173,7 +222,9 @@
           <view class="prize-picker-right">
             <txt>￥</txt>
             <view class="inputBox">
-              <input type="digit" class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}" bindblur="fixedChange" value="{{fixedRedpacket}}"/>
+              <input type="digit"
+                     class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}"
+                     bindblur="fixedChange" value="{{fixedRedpacket}}"/>
             </view>
           </view>
         </view>
@@ -226,7 +277,9 @@
           </picker-view-column>
         </picker-view>
         <view class="times-closeBtn" @tap="closeTimeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="times-closeX"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+            class="times-closeX"></image>
         </view>
       </view>
     </view>
@@ -237,28 +290,42 @@
         <view wx:if="{{!paymentSuccess}}">
           <view class="payment-total">
             <view class="payment-total-left">红包总金额</view>
-            <view class="payment-total-right"><text class="payment-total-small">￥</text>{{prizeType===3?prizeCount*fixedRedpacket:total}}</view>
+            <view class="payment-total-right">
+              <text class="payment-total-small">￥</text>
+              {{prizeType === 3 ? prizeCount * fixedRedpacket : total}}
+            </view>
           </view>
           <view class="payment-type-head">选择支付方式</view>
           <view class="payment-type" @tap.stop="payChange(1)">
             <view class="payment-type-left">
-              <image src="{{payEnough?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balance@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balanceno@2x.png'}}" class="payment-type-left-img"></image>
-              <view class="payment-type-title {{payEnough?'':'nothing'}}">账户余额</view>
+              <image
+                src="{{payEnough?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balance@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balanceno@2x.png'}}"
+                class="payment-type-left-img"></image>
+              <view class="payment-type-title {{payEnough?'':'nothing'}}">账户余额
+              </view>
             </view>
-            <image src="{{payEnough?(paymentType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'):'http://jike-file.jerryf.cn/defaults/b-image/page/icon-nopoint@2x.png'}}" class="payment-type-radio"></image>
+            <image
+              src="{{payEnough?(paymentType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'):'http://jike-file.jerryf.cn/defaults/b-image/page/icon-nopoint@2x.png'}}"
+              class="payment-type-radio"></image>
           </view>
           <view class="payment-type" @tap.stop="payChange(2)">
             <view class="payment-type-left">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-wx@2x.png" class="payment-type-left-img"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-wx@2x.png"
+                class="payment-type-left-img"></image>
               <view class="payment-type-title">微信</view>
             </view>
-            <image src="{{paymentType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="payment-type-radio"></image>
+            <image
+              src="{{paymentType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
+              class="payment-type-radio"></image>
           </view>
           <view class="payment-btn" @tap.stop="paymentMoney">支付</view>
         </view>
 
         <view class="payment-success" wx:if="{{paymentSuccess}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-good@2x.png" class="payment-success-img"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-good@2x.png"
+            class="payment-success-img"></image>
           <view class="success-txt">支付成功</view>
         </view>
       </view>
@@ -279,6 +346,10 @@
 
   export default class CreatePrizePage extends wepy.page {
     mixins = [base, users]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '新建奖品',
@@ -387,11 +458,11 @@
         this.$apply()
       },
       exAddCount() {
-        this.prizeCount ++
+        this.prizeCount++
         this.$apply()
       },
       exSubCount() {
-        this.prizeCount --
+        this.prizeCount--
         if (this.prizeCount <= 0) {
           this.prizeCount = 0
         }
@@ -497,7 +568,10 @@
             data = Object.assign({}, this.paymentMsg, {pay_type: 'remaining_pay'})
             break
           case 2:
-            data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code})
+            data = Object.assign({}, this.paymentMsg, {
+              pay_type: 'wechat_pay',
+              code
+            })
             break
         }
         let res = await PrizePool.createRedpack(data)

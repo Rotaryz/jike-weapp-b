@@ -178,6 +178,11 @@
   import Toast from '@/base/toast/toast'
   export default class createContent extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '创建内容',
       navigationBarBackgroundColor: '#363547',
@@ -314,7 +319,7 @@
           this.loaded()
           if (res.error === 0) {
             await wepy.navigateTo({
-              url: '../content/content'
+              url: '/pages/content/content?show=1'
             })
           } else {
             this.$invoke('Toast', 'show', '发布失败，请重试')
@@ -387,6 +392,10 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+  .create-content
+    width: 100vw
+    overflow-x: hidden
+
   view
     box-sizing: border-box
 

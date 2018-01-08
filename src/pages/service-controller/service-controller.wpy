@@ -6,43 +6,45 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{industry}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <!--<catelog-modal title="行业类型">-->
-          <!--<view slot="content" class="catelog-modal">-->
-            <!--<view class="tab-wrapper">-->
-              <!--<view class="tab {{catelogTab === 1 ? 'active' : ''}}" @tap.stop="selectCatelogTab(1)">餐饮-->
-                <!--<view class="arrow-right" wx:if="{{catelogTab === 1}}">-->
-                  <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
-                <!--</view>-->
-              <!--</view>-->
-              <!--<view class="tab {{catelogTab === 2 ? 'active' : ''}}" @tap.stop="selectCatelogTab(2)">丽人-->
-                <!--<view class="arrow-right" wx:if="{{catelogTab === 2}}">-->
-                  <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
-                <!--</view>-->
-              <!--</view>-->
-              <!--<view class="tab {{catelogTab === 3 ? 'active' : ''}}" @tap.stop="selectCatelogTab(3)">娱乐行业-->
-                <!--<view class="arrow-right" wx:if="{{catelogTab === 3}}">-->
-                  <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
-                <!--</view>-->
-              <!--</view>-->
-            <!--</view>-->
-            <!--<view class="tab-content">-->
-              <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(1)">-->
-                <!--<text>美发</text>-->
-                <!--<view class="radio {{catelogId !== 1 ? 'unselected' : ''}}">-->
-                  <!--<image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" wx:if="{{catelogId === 1}}"></image>-->
-                <!--</view>-->
-              <!--</view>-->
-              <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(2)">-->
-                <!--<text>美容</text>-->
-                <!--<view class="radio {{catelogId !== 2 ? 'unselected' : ''}}">-->
-                  <!--<image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" wx:if="{{catelogId === 2}}"></image>-->
-                <!--</view>-->
-              <!--</view>-->
-            <!--</view>-->
-          <!--</view>-->
+        <!--<view slot="content" class="catelog-modal">-->
+        <!--<view class="tab-wrapper">-->
+        <!--<view class="tab {{catelogTab === 1 ? 'active' : ''}}" @tap.stop="selectCatelogTab(1)">餐饮-->
+        <!--<view class="arrow-right" wx:if="{{catelogTab === 1}}">-->
+        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--<view class="tab {{catelogTab === 2 ? 'active' : ''}}" @tap.stop="selectCatelogTab(2)">丽人-->
+        <!--<view class="arrow-right" wx:if="{{catelogTab === 2}}">-->
+        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--<view class="tab {{catelogTab === 3 ? 'active' : ''}}" @tap.stop="selectCatelogTab(3)">娱乐行业-->
+        <!--<view class="arrow-right" wx:if="{{catelogTab === 3}}">-->
+        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_right_red@2x.png" class="full-image"></image>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--<view class="tab-content">-->
+        <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(1)">-->
+        <!--<text>美发</text>-->
+        <!--<view class="radio {{catelogId !== 1 ? 'unselected' : ''}}">-->
+        <!--<image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" wx:if="{{catelogId === 1}}"></image>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(2)">-->
+        <!--<text>美容</text>-->
+        <!--<view class="radio {{catelogId !== 2 ? 'unselected' : ''}}">-->
+        <!--<image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" wx:if="{{catelogId === 2}}"></image>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--</view>-->
         <!--</catelog-modal>-->
       </view>
       <view class="type input-wrapper border-bottom-1px" @tap="showMealModal">
@@ -50,20 +52,25 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{category}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <meal-modal title="选择类型">
           <view slot="content" class="meal-modal">
             <repeat for="{{categories}}" index="index" key="index" item="item">
-              <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{item.id}})">
+              <view class="item-wrapper border-bottom-1px"
+                    @tap.stop="selecteType({{item.id}})">
                 <view class="desc-wrapper">
                   <view class="name">{{item.name}}</view>
                   <view class="desc">{{item.describe}}
                   </view>
                 </view>
-                <view class="radio {{item.id !== categoryId ? 'unselected' : ''}}">
-                  <image wx:if="{{item.id === categoryId}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+                <view
+                  class="radio {{item.id !== categoryId ? 'unselected' : ''}}">
+                  <image wx:if="{{item.id === categoryId}}" class="full-image"
+                         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
                 </view>
               </view>
             </repeat>
@@ -75,12 +82,18 @@
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
             <view class="picture">
-              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
-                <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"></image>
+              <view class="delete" wx:if="{{item.image_url}}"
+                    @tap="deleteImage({{index}})">
+                <image class="full-image"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"></image>
               </view>
-              <image wx:if="{{item.image_url}}" src="{{item.image_url}}" class="image full-image"></image>
-              <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add@2x.png" class="full-image"></image>
+              <image wx:if="{{item.image_url}}" src="{{item.image_url}}"
+                     class="image full-image"></image>
+              <view class="add" wx:if="{{!item.image_url}}"
+                    @tap="chooseImage({{index}})">
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add@2x.png"
+                  class="full-image"></image>
               </view>
             </view>
           </repeat>
@@ -96,7 +109,7 @@
                maxlength="10"
                @input="handleInput('title')"
                placeholder="请输入"
-               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light" />
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
         <view class="lenth-wrapper">{{titleLength}}/10</view>
       </view>
       <view class="title input-wrapper border-bottom-1px">
@@ -132,7 +145,9 @@
         <view class="arrow-content-wrapper">
           <view class="content"></view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <service-modal title="服务详情">
@@ -167,14 +182,18 @@
                          placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
                 </view>
                 <view class="del" @tap.stop="deleteService({{index}})">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png" class="full-image"></image>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"
+                    class="full-image"></image>
                 </view>
               </view>
             </repeat>
             <view class="btn-wrapper">
               <view class="btn" @tap.stop="addService">
                 <view class="add">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_black@2x.png" class="full-image"></image>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_black@2x.png"
+                    class="full-image"></image>
                 </view>
                 <text>添加</text>
               </view>
@@ -184,23 +203,33 @@
       </view>
     </view>
     <view class="time-wrapper">
-      <view class="time input-wrapper border-bottom-1px" @tap="showSellTimeModal">
+      <view class="time input-wrapper border-bottom-1px"
+            @tap="showSellTimeModal">
         <view class="label">售卖时间</view>
         <view class="content">
-          <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          <view class="start sell">
+            {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
+          </view>
           <view class="to">至</view>
           <view class="end">{{sellEndTime}}</view>
         </view>
         <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+            class="full-image"></image>
         </view>
         <sell-time-modal title="售卖时间">
           <view class="sell-time-modal" slot="content">
             <view class="header">
-              <view class="start" @tap.stop="changeSellPickerType('start')">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+              <view class="start" @tap.stop="changeSellPickerType('start')">
+                {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
+              </view>
               <view class="to">至</view>
               <view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>
-              <view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}"><view class="line"></view></view>
+              <view
+                class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
+                <view class="line"></view>
+              </view>
             </view>
             <view class="picker-time-wrapper">
               <sell-time-picker @cancel.user="cancelSellTimePicker"
@@ -209,7 +238,8 @@
           </view>
         </sell-time-modal>
       </view>
-      <view class="time input-wrapper border-bottom-1px" @tap="showValidDateModal">
+      <view class="time input-wrapper border-bottom-1px"
+            @tap="showValidDateModal">
         <view class="label">劵有效期</view>
         <view class="content">
           <view class="start">自上线之日起</view>
@@ -217,7 +247,9 @@
           <view class="end">{{validDate}}</view>
         </view>
         <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+            class="full-image"></image>
         </view>
         <valid-date-modal title="券有效期">
           <view class="sell-time-modal" slot="content">
@@ -233,54 +265,68 @@
           </view>
         </valid-date-modal>
       </view>
-      <view class="not-allow-time input-wrapper border-bottom-1px" @tap="showNotAllowTimeModal">
+      <view class="not-allow-time input-wrapper border-bottom-1px"
+            @tap="showNotAllowTimeModal">
         <view class="label">不可用期
           <text class="no-require">(选填)</text>
         </view>
         <view class="content">{{notAllowTime}}</view>
         <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+            class="full-image"></image>
         </view>
         <not-allow-time-modal title="不可用时间">
           <view class="not-allow-time-modal" slot="content">
-            <view class="item-wrapper border-bottom-1px" @tap.stop="selecteNotAllowTime">
+            <view class="item-wrapper border-bottom-1px"
+                  @tap.stop="selecteNotAllowTime">
               <view class="desc-wrapper">
                 <view class="name">节假日不可用</view>
               </view>
               <view class="radio {{!notAllowTime ? 'unselected' : ''}}">
-                <image wx:if="{{notAllowTime}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+                <image wx:if="{{notAllowTime}}" class="full-image"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
           </view>
         </not-allow-time-modal>
       </view>
-      <view class="count-limit input-wrapper border-bottom-1px" @tap="showCountModal">
+      <view class="count-limit input-wrapper border-bottom-1px"
+            @tap="showCountModal">
         <view class="label">最大可售数量</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{sellCount === -1 ? '不限制' : sellCount}}</view>
           <view class="arrow-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+              class="full-image"></image>
           </view>
         </view>
         <count-modal title="设置数量">
           <view class="count-modal" slot="content">
-            <view class="item-wrapper border-bottom-1px" @tap="selectCountType(-1)">
+            <view class="item-wrapper border-bottom-1px"
+                  @tap="selectCountType(-1)">
               <view class="desc-wrapper">
                 <view class="name">无上限</view>
               </view>
               <view class="radio {{sellCount !== -1 ? 'unselected' : ''}}">
-                <image wx:if="{{sellCount === -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+                <image wx:if="{{sellCount === -1}}" class="full-image"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
-            <view class="item-wrapper border-bottom-1px" @tap="selectCountType('')">
+            <view class="item-wrapper border-bottom-1px"
+                  @tap="selectCountType('')">
               <view class="desc-wrapper">
                 <view class="name">限制数量</view>
               </view>
-              <view class="input-wrapper {{sellCount === -1 ? 'disabled' : ''}}">
-                <input type="number" disabled="{{sellCount === -1}}" maxlength="10" @input="handleInput('sellCount')"/>
+              <view
+                class="input-wrapper {{sellCount === -1 ? 'disabled' : ''}}">
+                <input type="number" disabled="{{sellCount === -1}}"
+                       maxlength="10" @input="handleInput('sellCount')"/>
               </view>
               <view class="radio {{sellCount === -1 ? 'unselected' : ''}}">
-                <image wx:if="{{sellCount !== -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+                <image wx:if="{{sellCount !== -1}}" class="full-image"
+                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
           </view>
@@ -291,81 +337,114 @@
       <view class="know-content input-wrapper" @tap="showKnowModal">
         <view class="label">购买须知</view>
         <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+            class="full-image"></image>
         </view>
       </view>
       <view class="know">1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
-2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
-3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
-4.备注：{{knowRemark}}
+        2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
+        3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
+        4.备注：{{knowRemark}}
       </view>
       <know-modal title="购买须知">
         <view class="know-modal" slot="content">
           <view class="card-wrapper border-bottom-1px">
             <view class="item-wrapper">
-              <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showSubscribe')">
+              <view class="header-wrapper"
+                    @tap.stop="toggleKnowTabShowHide('showSubscribe')">
                 <view class="title">是否需要预约</view>
                 <view class="icon-arrow {{showSubscribe ? '' : 'up'}}">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png" class="full-image"></image>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png"
+                    class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showSubscribe ? '' : 'hide'}}">
                 <view class="radio-wrapper" @tap.stop="selectSubscribe(1)">
                   <view class="radio {{subscribe !== 1 ? 'unselected' : ''}}">
-                    <image wx:if="{{subscribe === 1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 是
+                    <image wx:if="{{subscribe === 1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  是
                 </view>
                 <view class="radio-wrapper" @tap.stop="selectSubscribe(0)">
                   <view class="radio {{subscribe === 1 ? 'unselected' : ''}}">
-                    <image wx:if="{{subscribe !== 1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 否
+                    <image wx:if="{{subscribe !== 1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  否
                 </view>
               </view>
             </view>
           </view>
           <view class="card-wrapper border-top-1px border-bottom-1px">
             <view class="item-wrapper border-top-1px border-bottom-1px pb20">
-              <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showBuyLimit')">
+              <view class="header-wrapper"
+                    @tap.stop="toggleKnowTabShowHide('showBuyLimit')">
                 <view class="title">单人购买上限</view>
                 <view class="icon-arrow {{showBuyLimit ? '' : 'up'}}">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png" class="full-image"></image>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png"
+                    class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showBuyLimit ? '' : 'hide'}}">
                 <view class="radio-wrapper" @tap.stop="selectBuyLimit(-1)">
                   <view class="radio {{buyLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{buyLimit === -1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 无上限
+                    <image wx:if="{{buyLimit === -1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  无上限
                 </view>
                 <view class="radio-wrapper" @tap.stop="selectBuyLimit(1)">
                   <view class="radio {{buyLimit === -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{buyLimit !== -1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 限制数量
-                  <view class="input-wrapper {{buyLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{buyLimit === -1}}" maxlength="10" @input="handleInput('buyLimit')" />
+                    <image wx:if="{{buyLimit !== -1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  限制数量
+                  <view
+                    class="input-wrapper {{buyLimit === -1 ? 'disabled' : ''}}">
+                    <input type="number" disabled="{{buyLimit === -1}}"
+                           maxlength="10" @input="handleInput('buyLimit')"/>
                   </view>
                 </view>
               </view>
             </view>
             <view class="item-wrapper pb20">
-              <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showUseLimit')">
+              <view class="header-wrapper"
+                    @tap.stop="toggleKnowTabShowHide('showUseLimit')">
                 <view class="title">使用人数</view>
                 <view class="icon-arrow {{showUseLimit ? '' : 'up'}}">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png" class="full-image"></image>
+                  <image
+                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow_down@2x.png"
+                    class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showUseLimit ? '' : 'hide'}}">
                 <view class="radio-wrapper" @tap.stop="selectUseLimit(-1)">
                   <view class="radio {{useLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{useLimit === -1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 无上限
+                    <image wx:if="{{useLimit === -1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  无上限
                 </view>
                 <view class="radio-wrapper" @tap.stop="selectUseLimit(1)">
                   <view class="radio {{useLimit === -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{useLimit !== -1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
-                  </view> 限制数量
-                  <view class="input-wrapper {{useLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{useLimit === -1}}" maxlength="10" @input="handleInput('useLimit')" />
+                    <image wx:if="{{useLimit !== -1}}"
+                           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                           class="full-image"></image>
+                  </view>
+                  限制数量
+                  <view
+                    class="input-wrapper {{useLimit === -1 ? 'disabled' : ''}}">
+                    <input type="number" disabled="{{useLimit === -1}}"
+                           maxlength="10" @input="handleInput('useLimit')"/>
                   </view>
                 </view>
               </view>
@@ -378,7 +457,7 @@
                      maxlength="20"
                      @input="handleInput('knowRemark')"
                      placeholder="备注：请输入"
-                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light" />
+                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
               <view class="count">{{knowRemarkLength}}/20</view>
             </view>
           </view>
@@ -410,6 +489,10 @@
 
   export default class ServiceController extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     data = {
       navigationBarTitle: '创建服务',

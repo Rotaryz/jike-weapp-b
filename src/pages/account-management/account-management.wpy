@@ -3,13 +3,17 @@
     <view class="account-store-list" wx:for="{{accountList}}" wx:key="{{item}}">
       <view class="account-store-title">
         <view class="account-store-title-txt">{{item.shop_name}}</view>
-        <image class="account-store-title-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png"></image>
+        <image class="account-store-title-arrow"
+               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png"></image>
       </view>
-      <view class="store-account-item" wx:for="{{item.merchant_children}}" wx:key="{{item}}" @tap="showDetail({{item.id}})">
+      <view class="store-account-item" wx:for="{{item.merchant_children}}"
+            wx:key="{{item}}" @tap="showDetail({{item.id}})">
         <view class="store-account-item-left">
-          <view class="store-account-item-left-txt">账号：</view>{{item.mobile}}
+          <view class="store-account-item-left-txt">账号：</view>
+          {{item.mobile}}
         </view>
-        <image class="store-account-item-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed@2x.png"></image>
+        <image class="store-account-item-arrow"
+               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed@2x.png"></image>
       </view>
     </view>
     <view class="account-management-btn" @tap="newAccount">新建账号</view>
@@ -23,6 +27,11 @@
 
   export default class AccountManagement extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '账号管理',
       navigationBarTextStyle: 'black',
@@ -30,9 +39,7 @@
       backgroundColor: '#F9F9F9'
     }
 
-    components = {
-
-    }
+    components = {}
 
     data = {
       accountList: []

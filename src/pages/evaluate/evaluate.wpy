@@ -6,9 +6,9 @@
         <view class="stars">
           <image
             src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate_red@2x.png"
-            wx:for="{{item.star_level+1}}" wx:key="{{index}}"></image>
+            wx:for="{{item.star_level}}" wx:key="{{index}}"></image>
         </view>
-        <view>{{item.star_level + 1}}星</view>
+        <view>{{item.star_level}}星</view>
         <progress stroke-width="4" activeColor="#e6e6e6" activeColor="#EF705D"
                   percent="{{item.percentage}}" active="true"></progress>
         <view>{{item.count}}单</view>
@@ -37,6 +37,11 @@
   import base from 'common/mixins/base'
   export default class Square extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '服务评价',
       navigationBarBackgroundColor: '#363547',
@@ -47,11 +52,7 @@
       starList: [{
         count: 0,
         percentage: 0,
-        star_level: 4
-      }, {
-        count: 0,
-        percentage: 0,
-        star_level: 3
+        star_level: 1
       }, {
         count: 0,
         percentage: 0,
@@ -59,11 +60,15 @@
       }, {
         count: 0,
         percentage: 0,
-        star_level: 1
+        star_level: 3
       }, {
         count: 0,
         percentage: 0,
-        star_level: 0
+        star_level: 4
+      }, {
+        count: 0,
+        percentage: 0,
+        star_level: 5
       }],
       impression: [],
       commentList: []
@@ -76,9 +81,10 @@
       this.loaded()
       if (res.satr.length > 0) {
         res.satr.forEach((item) => {
-          this.starList[item.star_level - 4] = item
+          this.starList[item.star_level - 1] = item
         })
       }
+      this.starList.reverse()
       this.impression = res.impression
 //    评论内容
       this.commentList = data

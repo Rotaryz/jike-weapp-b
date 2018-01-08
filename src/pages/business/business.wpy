@@ -69,7 +69,9 @@
           </picker-view-column>
         </picker-view>
       </view>
-      <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" @tap="hideTime"></image>
+      <image
+        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+        @tap="hideTime"></image>
     </view>
   </view>
 </template>
@@ -81,6 +83,11 @@
   import base from 'common/mixins/base'
   export default class business extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '商圈',
       navigationBarBackgroundColor: '#363547',

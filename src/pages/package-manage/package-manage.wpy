@@ -3,10 +3,12 @@
     <view class="tab-wrapper">
       <repeat for="{{tabs}}" index="index" key="index" item="item">
         <view class="tab" @tap="changeTab({{index}})">
-          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}</text>
+          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}
+          </text>
         </view>
       </repeat>
-      <view class="line-wrapper" style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
+      <view class="line-wrapper"
+            style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
         <view class="line"></view>
       </view>
     </view>
@@ -14,17 +16,22 @@
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image"
+                       src="{{item.gift_bag_images[0].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -47,12 +54,16 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image"
+                       src="{{item.gift_bag_images[0].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -76,12 +87,16 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image"
+                       src="{{item.gift_bag_images[0].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -105,16 +120,21 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image"
+                       src="{{item.gift_bag_images[0].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">有<span class="count">{{item.wait_check_count}}个</span>需要审核</view>
+              <view class="status">有<span class="count">{{item.wait_check_count}}个</span>需要审核
+              </view>
               <view class="btn-group">
                 <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
@@ -125,7 +145,9 @@
       </repeat>
     </view>
     <view class="create-service border-top-1px">
-      <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
+      <navigator url="/pages/package-controller/package-controller" class="btn">
+        新建礼包
+      </navigator>
     </view>
     <confirm @confirm.user="delete"></confirm>
   </view>
@@ -141,6 +163,10 @@
 
   export default class PackageManage extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     data = {
       tabs: TABS,

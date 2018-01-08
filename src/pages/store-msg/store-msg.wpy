@@ -4,15 +4,22 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeName" class="store-msg-txt-left-title">门店名称</label>
-          <input type="text" id="storeName"  maxlength="10" class="store-msg-txt-left-input" value="{{name}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
+          <input type="text" id="storeName" maxlength="10"
+                 class="store-msg-txt-left-input" value="{{name}}"
+                 placeholder="请输入" placeholder-class="placeholderTxt"
+                 bindinput="txtChange"/>
         </view>
         <view class="wordNum">{{name.length}}/10</view>
       </view>
 
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
-          <label for="storeDescription" class="store-msg-txt-left-title">门店描述</label>
-          <input type="text" id="storeDescription"  maxlength="10" value="{{description}}" class="store-msg-txt-left-input" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
+          <label for="storeDescription"
+                 class="store-msg-txt-left-title">门店描述</label>
+          <input type="text" id="storeDescription" maxlength="10"
+                 value="{{description}}" class="store-msg-txt-left-input"
+                 placeholder="请输入" placeholder-class="placeholderTxt"
+                 bindinput="txtChange"/>
         </view>
         <view class="wordNum">{{description.length}}/10</view>
       </view>
@@ -20,7 +27,10 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeTel" class="store-msg-txt-left-title">联系电话</label>
-          <input type="number" id="storeTel" value="{{tel}}" maxlength="11" class="store-msg-txt-left-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="placeholderTxt" bindblur="txtChange" />
+          <input type="number" id="storeTel" value="{{tel}}" maxlength="11"
+                 class="store-msg-txt-left-input {{telTest?'':'error'}}"
+                 placeholder="请输入" placeholder-class="placeholderTxt"
+                 bindblur="txtChange"/>
         </view>
       </view>
 
@@ -28,7 +38,8 @@
         <view class="store-msg-picker-title">行业类型</view>
         <view class="store-msg-picker-right" @tap="industryChiose">
           <view class="store-msg-picker-txt">{{industryName}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
     </view>
@@ -36,10 +47,13 @@
     <view class="store-msg-body">
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">地区</view>
-        <picker mode="region" bindchange="bindRegionChange" value="{{region}}" class="sitebox">
+        <picker mode="region" bindchange="bindRegionChange" value="{{region}}"
+                class="sitebox">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
-            <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+            <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}
+            </view>
+            <image class="store-msg-picker-arrow"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
           </view>
         </picker>
       </view>
@@ -48,14 +62,17 @@
         <view class="store-msg-picker-title">商圈</view>
         <view class="store-msg-picker-right" @tap="areaChiose">
           <view class="store-msg-picker-txt">{{area}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeSite" class="store-msg-txt-left-title">门店地址</label>
-          <input type="text" id="storeSite" class="store-msg-txt-left-input" value="{{site}}" placeholder="请输入" placeholder-class="placeholderTxt" bindchange="txtChange" />
+          <input type="text" id="storeSite" class="store-msg-txt-left-input"
+                 value="{{site}}" placeholder="请输入"
+                 placeholder-class="placeholderTxt" bindchange="txtChange"/>
         </view>
       </view>
 
@@ -67,8 +84,11 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location markers="{{markers}}" style="width: 100%; height: 100%;">
-          </map>
+        <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16"
+             bindregionchange="getCenter" longitude="{{longitude}}"
+             latitude="{{latitude}}" show-location markers="{{markers}}"
+             style="width: 100%; height: 100%;">
+        </map>
       </view>
     </view>
 
@@ -77,15 +97,19 @@
         <view class="store-msg-picker-title">营业状态</view>
         <view class="store-msg-picker-right" @tap="showRadio">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">营业时间</view>
         <view class="store-msg-picker-right" @tap="showTimeCover">
-          <view class="store-msg-picker-txt">{{hourBegin?hourBegin + '-' + hourEnd:''}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <view class="store-msg-picker-txt">
+            {{hourBegin ? hourBegin + '-' + hourEnd : ''}}
+          </view>
+          <image class="store-msg-picker-arrow"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 
@@ -94,9 +118,16 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl}}"></image>
-              <image src="{{logoUrl}}" class="store-msg-logo-imgupdate" wx:if="{{logoUrl}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{logoUrl}}" @tap="dellogo"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png"
+                class="store-msg-logo-img" @tap="uploadlogo"
+                wx:if="{{!logoUrl}}"></image>
+              <image src="{{logoUrl}}" class="store-msg-logo-imgupdate"
+                     wx:if="{{logoUrl}}"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png"
+                class="store-msg-logo-cancle" wx:if="{{logoUrl}}"
+                @tap="dellogo"></image>
             </view>
           </view>
           <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
@@ -107,10 +138,18 @@
         <view class="store-msg-logo-title">门店图片</view>
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
-            <view class="store-msg-logo-imgBox" wx:for="{{storeImgs}}" wx:key="{{item}}">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" wx:if="{{!item.image_url}}" @tap="uploadStoreImg({{index}})"></image>
-              <image src="{{item.image_url}}" class="store-msg-logo-imgupdate" wx:if="{{item.image_url}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{item.image_url}}" @tap="delStoreImg({{index}})"></image>
+            <view class="store-msg-logo-imgBox" wx:for="{{storeImgs}}"
+                  wx:key="{{item}}">
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png"
+                class="store-msg-logo-img" wx:if="{{!item.image_url}}"
+                @tap="uploadStoreImg({{index}})"></image>
+              <image src="{{item.image_url}}" class="store-msg-logo-imgupdate"
+                     wx:if="{{item.image_url}}"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png"
+                class="store-msg-logo-cancle" wx:if="{{item.image_url}}"
+                @tap="delStoreImg({{index}})"></image>
             </view>
           </view>
 
@@ -127,9 +166,12 @@
         <view class="store-time-box">
           <view class="store-time-item">
             <view class="store-time-itemTxt">每日营业时间</view>
-            <view class="store-time-itemRes {{hourBegin?'':'gary'}}" @tap.stop="hourChiose">
-              {{hourBegin?hourBegin + '-' + hourEnd:'请选择'}}
-              <image src="{{hourIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}" class="store-time-item-arrow"></image>
+            <view class="store-time-itemRes {{hourBegin?'':'gary'}}"
+                  @tap.stop="hourChiose">
+              {{hourBegin ? hourBegin + '-' + hourEnd : '请选择'}}
+              <image
+                src="{{hourIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}"
+                class="store-time-item-arrow"></image>
             </view>
           </view>
           <view class="store-time-hourList" wx:if="{{hourIn}}">
@@ -137,19 +179,29 @@
               <view class="hourbtn" @tap.stop="hourCancle">取消</view>
               <view class="hourbtn" @tap.stop="hourSubmit">确定</view>
             </view>
-            <picker-view indicator-style="height: 50px;" style="width: 100%; height: 200px;" value="{{hourChioseArr}}" bindchange="hourChange">
+            <picker-view indicator-style="height: 50px;"
+                         style="width: 100%; height: 200px;"
+                         value="{{hourChioseArr}}" bindchange="hourChange">
               <picker-view-column>
-                <view wx:for="{{hours}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
+                <view wx:for="{{hours}}" wx:key="unique"
+                      style="line-height: 50px">{{item}}
+                </view>
               </picker-view-column>
               <picker-view-column>
-                <view wx:for="{{minutes}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
+                <view wx:for="{{minutes}}" wx:key="unique"
+                      style="line-height: 50px">{{item}}
+                </view>
               </picker-view-column>
               <view class="pickerLine">至</view>
               <picker-view-column>
-                <view wx:for="{{hours}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
+                <view wx:for="{{hours}}" wx:key="unique"
+                      style="line-height: 50px">{{item}}
+                </view>
               </picker-view-column>
               <picker-view-column>
-                <view wx:for="{{minutes}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
+                <view wx:for="{{minutes}}" wx:key="unique"
+                      style="line-height: 50px">{{item}}
+                </view>
               </picker-view-column>
             </picker-view>
           </view>
@@ -157,29 +209,39 @@
         <view class="store-time-box">
           <view class="store-time-item">
             <view class="store-time-itemTxt">每周营业时间</view>
-            <view class="store-time-itemRes {{weekday[0]?'':'gary'}}" @tap.stop="weekChiose">
-              {{weekChecked[0]?'已选':'请选择'}}
-              <image src="{{weekIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}" class="store-time-item-arrow"></image>
+            <view class="store-time-itemRes {{weekday[0]?'':'gary'}}"
+                  @tap.stop="weekChiose">
+              {{weekChecked[0] ? '已选' : '请选择'}}
+              <image
+                src="{{weekIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}"
+                class="store-time-item-arrow"></image>
             </view>
           </view>
           <view class="store-week-list" wx:if="{{weekIn}}">
             <checkbox-group @change="weekChange">
-              <view class="radioBox-list-item" wx:for="{{weekValue}}" wx:key="{{item}}">
+              <view class="radioBox-list-item" wx:for="{{weekValue}}"
+                    wx:key="{{item}}">
                 <label class="radioLabel {{item.checked?'active':''}}">
-                  <checkbox value="{{item.value}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
-                  <image class="radio-Icon" src="{{item.checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+                  <checkbox value="{{item.value}}" checked="{{item.checked}}"
+                            hidden="true"/>
+                  {{item.txt}}
+                  <image class="radio-Icon"
+                         src="{{item.checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
                 </label>
               </view>
             </checkbox-group>
           </view>
         </view>
         <view class="radioBox-closeBtn" @tap="closeTimeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+            class="radioBox-closeX"></image>
         </view>
       </view>
     </view>
 
-    <view class="twoColumnRadioBox" wx:if="{{twocolumnboxShow}}" @tap.stop="showNull">
+    <view class="twoColumnRadioBox" wx:if="{{twocolumnboxShow}}"
+          @tap.stop="showNull">
       <view class="radioBox-Msg">
         <view class="radioBox-head">商圈</view>
         <view class="radioBox-body">
@@ -188,19 +250,27 @@
               <view class="radioBox-title-item-box active}}">
                 <view class="radioBox-title-item-before"></view>
                 {{region[2]}}
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rightred20@2x.png" class="radioBox-title-item-arrow"></image>
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rightred20@2x.png"
+                  class="radioBox-title-item-arrow"></image>
               </view>
             </view>
           </view>
           <view class="radioBox-list">
-            <view class="radioBox-list-item" wx:for="{{areaArr}}" wx:key="{{item}}" @tap="areaRadioChiose({{item}})">
-              <view class="radioLabel {{item.id==areaId?'active':''}}">{{item.name}}</view>
-              <image class="radio-Icon" src="{{item.id==areaId?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"></image>
+            <view class="radioBox-list-item" wx:for="{{areaArr}}"
+                  wx:key="{{item}}" @tap="areaRadioChiose({{item}})">
+              <view class="radioLabel {{item.id==areaId?'active':''}}">
+                {{item.name}}
+              </view>
+              <image class="radio-Icon"
+                     src="{{item.id==areaId?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"></image>
             </view>
           </view>
         </view>
         <view class="radioBox-closeBtn" catchtap="areacloseCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+            class="radioBox-closeX"></image>
         </view>
       </view>
     </view>
@@ -230,6 +300,10 @@
 
   export default class StoreMsg extends wepy.page {
     mixins = [base, users]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '门店基础信息',
@@ -568,12 +642,18 @@
           return
         }
         let upRes = await Upload.uploadImages(res.tempFilePaths[0])
-        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {image_id: upRes.id, image_url: upRes.url})
+        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {
+          image_id: upRes.id,
+          image_url: upRes.url
+        })
         this.loaded()
         this.$apply()
       },
       delStoreImg(idx) {
-        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {image_id: 0, image_url: ''})
+        this.storeImgs[idx] = Object.assign(this.storeImgs[idx], {
+          image_id: 0,
+          image_url: ''
+        })
         this.$apply()
       }
     }
@@ -613,7 +693,7 @@
           self.markers[0].latitude = location.lat
           self.$apply()
         },
-        fail: function(res) {
+        fail: function (res) {
         }
       })
     }
@@ -903,8 +983,6 @@
         .radioBox-closeX
           width: 24px
           height: 24px
-
-
 
     .store-msg-logo
       padding-right: 12px

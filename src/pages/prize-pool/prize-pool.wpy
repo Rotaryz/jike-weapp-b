@@ -13,31 +13,45 @@
         <view class="prizeItem" wx:for="{{useablePrizeList}}" wx:key="{{item}}">
           <view class="prizeItem-top">
             <view class="prizeItem-top-left">
-              <image class="prizeItem-top-left-img" src="{{item.promotion_img}}" wx:if="{{item.promotion_type==='exchange'}}"></image>
-              <view class="prizeItem-top-left-Msg" wx:if="{{item.promotion_type!=='exchange'}}"><text class="prizeItem-top-left-Msg-txt">￥</text>{{item.promotion_type==='redpacket'?item.max_price :item.min_price + '~' + item.max_price}}</view>
+              <image class="prizeItem-top-left-img" src="{{item.promotion_img}}"
+                     wx:if="{{item.promotion_type==='exchange'}}"></image>
+              <view class="prizeItem-top-left-Msg"
+                    wx:if="{{item.promotion_type!=='exchange'}}">
+                <text class="prizeItem-top-left-Msg-txt">￥</text>
+                {{item.promotion_type === 'redpacket' ? item.max_price : item.min_price + '~' + item.max_price}}
+              </view>
             </view>
             <view class="prizeItem-top-right">
               <view class="prizeItem-top-right-up">
-                <view class="prizeItem-top-right-title">{{item.promotion_title}}</view>
-                <view class="prizeItem-top-right-time" wx:if="{{item.start_at && item.end_at}}">{{item.start_at+'至'+item.end_at}}</view>
+                <view class="prizeItem-top-right-title">
+                  {{item.promotion_title}}
+                </view>
+                <view class="prizeItem-top-right-time"
+                      wx:if="{{item.start_at && item.end_at}}">
+                  {{item.start_at + '至' + item.end_at}}
+                </view>
               </view>
               <view class="prizeItem-top-right-progressBox">
-                <view class="prizeItem-surplus">共{{item.init_stock}}个 / 剩余{{item.promotion_stock}}个</view>
-                <progress percent="{{item.promotion_stock/item.init_stock*100}}" color="#EF705D" stroke-width="4" class="prizeItem-top-right-progress"></progress>
+                <view class="prizeItem-surplus">
+                  共{{item.init_stock}}个 / 剩余{{item.promotion_stock}}个
+                </view>
+                <progress percent="{{item.promotion_stock/item.init_stock*100}}"
+                          color="#EF705D" stroke-width="4"
+                          class="prizeItem-top-right-progress"></progress>
               </view>
             </view>
           </view>
           <view class="prizeItem-fillet">
             <view class="prizeItem-fillet-txt">
-              {{item.promotion_type==='exchange'?'兑':(item.promotion_type==='redpacket'?'固':'随')}}
+              {{item.promotion_type === 'exchange' ? '兑' : (item.promotion_type === 'redpacket' ? '固' : '随')}}
             </view>
           </view>
         </view>
       </view>
       <!--<view class="prizeItem-bottom">-->
-        <!--<view class="prizeItem-bottom-btn" wx:if="{{item.promotion_type==='exchange'}}">删除</view>-->
-        <!--<view class="prizeItem-bottom-btn">查看</view>-->
-        <!--<view class="prizeItem-bottom-btn redy" wx:if="{{item.promotion_type==='exchange'}}">编辑</view>-->
+      <!--<view class="prizeItem-bottom-btn" wx:if="{{item.promotion_type==='exchange'}}">删除</view>-->
+      <!--<view class="prizeItem-bottom-btn">查看</view>-->
+      <!--<view class="prizeItem-bottom-btn redy" wx:if="{{item.promotion_type==='exchange'}}">编辑</view>-->
       <!--</view>-->
       <view class="prize-pool-body-foot">
         <view class="createBtn" @tap="createPrize">新建奖品</view>
@@ -48,27 +62,44 @@
       <view class="prizeItem" wx:for="{{pastDuePrizeList}}" wx:key="{{item}}">
         <view class="prizeItem-top">
           <view class="prizeItem-top-left">
-            <image class="prizeItem-top-left-img" src="{{item.promotion_img}}" wx:if="{{item.promotion_type==='exchange'}}"></image>
-            <view class="prizeItem-top-left-Msg" wx:if="{{item.promotion_type!=='exchange'}}"><text class="prizeItem-top-left-Msg-txt">￥</text>{{item.promotion_type==='redpacket'?item.max_price :item.min_price + '~' + item.max_price}}</view>
+            <image class="prizeItem-top-left-img" src="{{item.promotion_img}}"
+                   wx:if="{{item.promotion_type==='exchange'}}"></image>
+            <view class="prizeItem-top-left-Msg"
+                  wx:if="{{item.promotion_type!=='exchange'}}">
+              <text class="prizeItem-top-left-Msg-txt">￥</text>
+              {{item.promotion_type === 'redpacket' ? item.max_price : item.min_price + '~' + item.max_price}}
+            </view>
           </view>
           <view class="prizeItem-top-right">
             <view class="prizeItem-top-right-up">
-              <view class="prizeItem-top-right-title">{{item.promotion_title}}</view>
-              <view class="prizeItem-top-right-time" wx:if="{{item.start_at && item.end_at}}">{{item.start_at+' 至 '+item.end_at}}</view>
+              <view class="prizeItem-top-right-title">{{item.promotion_title}}
+              </view>
+              <view class="prizeItem-top-right-time"
+                    wx:if="{{item.start_at && item.end_at}}">
+                {{item.start_at + ' 至 ' + item.end_at}}
+              </view>
             </view>
             <view class="prizeItem-top-right-progressBox">
-              <view class="prizeItem-surplus">共{{item.init_stock}}个 / 剩余{{item.promotion_stock}}个</view>
-              <progress percent="{{item.promotion_stock/item.init_stock*100}}" color="#9b9b9b" stroke-width="4" class="prizeItem-top-right-progress"></progress>
+              <view class="prizeItem-surplus">
+                共{{item.init_stock}}个 / 剩余{{item.promotion_stock}}个
+              </view>
+              <progress percent="{{item.promotion_stock/item.init_stock*100}}"
+                        color="#9b9b9b" stroke-width="4"
+                        class="prizeItem-top-right-progress"></progress>
             </view>
           </view>
         </view>
         <view class="prizeItem-bottom">
-          <view class="prizeItem-bottom-btn" @tap.stop="deleteEXchange({{item.promotion_id}})">删除</view>
-          <view class="prizeItem-bottom-btn redy" @tap.stop="detailEXchange({{item.promotion_id}})">编辑</view>
+          <view class="prizeItem-bottom-btn"
+                @tap.stop="deleteEXchange({{item.promotion_id}})">删除
+          </view>
+          <view class="prizeItem-bottom-btn redy"
+                @tap.stop="detailEXchange({{item.promotion_id}})">编辑
+          </view>
         </view>
         <view class="prizeItem-fillet">
           <view class="prizeItem-fillet-txt">
-            {{item.promotion_type==='exchange'?'兑':(item.promotion_type==='redpacket'?'固':'随')}}
+            {{item.promotion_type === 'exchange' ? '兑' : (item.promotion_type === 'redpacket' ? '固' : '随')}}
           </view>
         </view>
       </view>
@@ -87,6 +118,10 @@
 
   export default class PrizePoolPage extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '奖品池',

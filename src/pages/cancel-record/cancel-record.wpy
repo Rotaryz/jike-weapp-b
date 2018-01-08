@@ -25,6 +25,11 @@
   import base from 'common/mixins/base'
   export default class record extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '核销记录',
       navigationBarBackgroundColor: '#363547',

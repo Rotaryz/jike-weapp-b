@@ -21,10 +21,12 @@
         <view>{{customerTrend.detial.customer_count}}</view>
         <view>较前天
           <text>{{customerTrend.detial.customer_percentage}}%</text>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-                 wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-                 wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
+            wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
+            wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
         </view>
       </view>
       <AeraChart></AeraChart>
@@ -90,6 +92,11 @@
   import base from 'common/mixins/base'
   export default class client extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '客户',
       navigationBarBackgroundColor: '#363547',

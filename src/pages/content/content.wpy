@@ -49,6 +49,11 @@
   import base from 'common/mixins/base'
   export default class Content extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '内容管理',
       navigationBarBackgroundColor: '#363547',
@@ -124,8 +129,13 @@
       this.$apply()
     }
 
-    async onLoad() {
-      await this.load(1)
+    async onLoad(options) {
+      if (options.show === '1') {
+        this.navNum = 0
+      } else {
+        this.navNum = 1
+      }
+      await this.load(this.navNum)
     }
   }
 </script>
