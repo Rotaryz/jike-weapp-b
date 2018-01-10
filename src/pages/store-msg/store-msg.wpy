@@ -526,7 +526,7 @@
             Tips.success('保存成功')
             setTimeout(() => {
               this.$back(1)
-            }, 2000)
+            }, 1000)
           }
         }
       },

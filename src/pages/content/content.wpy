@@ -63,9 +63,6 @@
       }, {
         text: '未上线',
         type: 0
-      }, {
-        text: '待通过',
-        type: 2
       }],
       textType: [{
         text: '上线',
@@ -73,9 +70,6 @@
       }, {
         text: '下线',
         type: 1
-      }, {
-        text: '通过',
-        type: 2
       }],
       contentList: []
     }

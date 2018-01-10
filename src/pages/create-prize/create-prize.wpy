@@ -16,7 +16,7 @@
           <view class="prizeType-list-item" @tap="chioseType(2)">
             <view class="prizeType-list-item-left">
               <view class="prizeType-list-item-title">随机红包</view>
-              <view class="prizeType-list-item-msg">商家设置一定数量的随即金额的红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量随机金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
             <image src="{{prizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
@@ -25,7 +25,7 @@
           <view class="prizeType-list-item last" @tap="chioseType(3)">
             <view class="prizeType-list-item-left">
               <view class="prizeType-list-item-title">固定红包</view>
-              <view class="prizeType-list-item-msg">商家设置一定数量的固定金额的红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量固定金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
             <image src="{{prizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>

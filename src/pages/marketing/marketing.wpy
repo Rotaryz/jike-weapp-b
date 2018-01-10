@@ -70,7 +70,7 @@
             type = 'share'
             break
           case 3:
-            type = 'vedio_live'
+            type = 'video_live'
             break
         }
         let data = {

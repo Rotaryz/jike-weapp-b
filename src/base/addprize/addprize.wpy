@@ -106,7 +106,7 @@
         }
       },
       checkedPrize(item, idx) {
-        this.prizeCheckedId = item.id
+        this.prizeCheckedId = item.promotion_id
         this.prizeCheckedType = item.promotion_type
         this.maxNum = item.promotion_stock
         this.prizeCheckedItem = item
