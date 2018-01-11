@@ -170,18 +170,23 @@
       </view>
     </view>
   </view>
+  <Toast></Toast>
 </template>
 
 <script>
   import wepy from 'wepy'
   import regist from 'api/regist'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
   export default class Registration extends wepy.page {
     mixins = [base]
     config = {
       navigationBarTitleText: '签到红包',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
+    }
+    components = {
+      Toast: Toast
     }
     data = {
       shop: [],
@@ -216,15 +221,15 @@
         ispacket: 0
 
       }, {
+        title: '第三天',
+        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        showTitle: 0,
+        ispacket: 0
+      }, {
         title: '奖励',
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-22_money.png',
         showTitle: 1,
         ispacket: 2
-      }, {
-        title: '第四天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
-        showTitle: 0,
-        ispacket: 0
       }, {
         title: '第五天',
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
@@ -267,7 +272,7 @@
         addNum: 0,
         record: -1
       }, {
-        title: '连续签到3天奖励红包',
+        title: '连续签到4天奖励红包',
         promotion_title: '添加奖品',
         addNum: 0,
         record: -1
@@ -504,53 +509,64 @@
         this.showChioce = false
       },
       async submitOk() {
-        let disway = 0
-        if (this.value.indexOf('公里') !== -1) {
-          disway = parseInt(this.value) * 1000
+        if (this.name === '') {
+          this.$invoke('Toast', 'show', '请输入标题')
+          return false
+        } else if (this.textares === '') {
+          this.$invoke('Toast', 'show', '请输入描述')
+          return false
+        } else if (this.value === '' || this.value === '0公里') {
+          this.$invoke('Toast', 'show', '请输入签到范围')
+          return false
         } else {
-          disway = parseInt(this.value)
-        }
-        this.redPack[this.paizrList[0].record].promotion_stock =
-          this.paizrList[0].addNum
-        this.redPack[this.paizrList[1].record].promotion_stock =
-          this.paizrList[1].addNum
-        this.redPack[this.paizrList[2].record].promotion_stock =
-          this.paizrList[2].addNum
-        if (this.btimes === '当天') {
-          let now = new Date()
-          this.btimes = now.getFullYear() + '-' + (now.getMonth() * 1 + 1) +
-            '-' + now.getDate()
-        }
-        let allMsg = {}
-        Object.assign(allMsg,
-          {
-            title: this.name,
-            from_date: this.btime,
-            to_date: this.etime,
-            scope: disway,
-            explain: this.textares,
-            is_paused: 0,
-            first_redpacket: this.redPack[this.paizrList[0].record],
-            third_redpacket: this.redPack[this.paizrList[1].record],
-            seventh_redpacket: this.redPack[this.paizrList[2].record]
-          })
-        let res = null
-        console.log(this.id)
-        if (this.id !== -1) {
-          res = await regist.putData(this.id, allMsg)
-        } else {
-          res = await regist.createData(allMsg)
-          this.load()
-        }
-        if (res.error === 0) {
-          wepy.showToast({
-            title: '保存成功',
-            icon: 'success',
-            duration: 1000
-          })
-          wepy.pageScrollTo({
-            scrollTop: 0
-          })
+          let disway = 0
+          if (this.value.indexOf('公里') !== -1) {
+            disway = parseInt(this.value) * 1000
+          } else {
+            disway = parseInt(this.value)
+          }
+          this.redPack[this.paizrList[0].record].promotion_stock =
+            this.paizrList[0].addNum
+          this.redPack[this.paizrList[1].record].promotion_stock =
+            this.paizrList[1].addNum
+          this.redPack[this.paizrList[2].record].promotion_stock =
+            this.paizrList[2].addNum
+          if (this.btimes === '当天') {
+            let now = new Date()
+            this.btimes = now.getFullYear() + '-' + (now.getMonth() * 1 + 1) +
+              '-' + now.getDate()
+          }
+          let allMsg = {}
+          Object.assign(allMsg,
+            {
+              title: this.name,
+              from_date: this.btime,
+              to_date: this.etime,
+              scope: disway,
+              explain: this.textares,
+              is_paused: 0,
+              first_redpacket: this.redPack[this.paizrList[0].record],
+              third_redpacket: this.redPack[this.paizrList[1].record],
+              seventh_redpacket: this.redPack[this.paizrList[2].record]
+            })
+          let res = null
+          console.log(this.id)
+          if (this.id !== -1) {
+            res = await regist.putData(this.id, allMsg)
+          } else {
+            res = await regist.createData(allMsg)
+            this.load()
+          }
+          if (res.error === 0) {
+            wepy.showToast({
+              title: '保存成功',
+              icon: 'success',
+              duration: 1000
+            })
+            wepy.pageScrollTo({
+              scrollTop: 0
+            })
+          }
         }
       }
     }
@@ -589,14 +605,14 @@
           record: res.first_redpacket.index
         }
         this.paizrList[1] = {
-          title: '首次签到奖励红包',
+          title: '连续签到4天奖励红包',
           promotion_title: res.third_redpacket.promotion_title + ' ' +
           res.third_redpacket.promotion_stock + '个',
           addNum: res.third_redpacket.promotion_stock,
           record: res.third_redpacket.index
         }
         this.paizrList[2] = {
-          title: '首次签到奖励红包',
+          title: '连续签到7天奖励红包',
           promotion_title: res.seventh_redpacket.promotion_title + ' ' +
           res.seventh_redpacket.promotion_stock + '个',
           addNum: res.seventh_redpacket.promotion_stock,

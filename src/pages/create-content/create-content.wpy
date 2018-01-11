@@ -165,6 +165,7 @@
         发布
       </view>
     </view>
+    <Toast></Toast>
   </view>
 </template>
 
@@ -174,6 +175,7 @@
   import Uploads from 'api/uploads'
   import content from 'api/content'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
   export default class createContent extends wepy.page {
     mixins = [base]
     config = {
@@ -183,7 +185,8 @@
     }
 
     components = {
-      Coupon: Coupon
+      Coupon: Coupon,
+      Toast: Toast
     }
 
     data = {
@@ -264,7 +267,9 @@
 //      需要限制大小，待确定！
         let file = res.tempFilePath
         const videoId = await Uploads.uploadVideo(file)
+        this.loaded()
         let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
+        this.loaded()
         if (videoId && imageId) {
           this.contentList[num]['cover_image'].url = res.thumbTempFilePath
           this.contentList[num]['detail_id'] = videoId.id
@@ -293,15 +298,11 @@
       },
       async issue() {
         if (this.title === '') {
-          await wepy.showModal({
-            title: '提示',
-            content: '请设置主标题',
-            success: function (res) {
-            }
-          })
+          this.$invoke('Toast', 'show', '请输入标题')
           return false
         } else {
           let res = null
+
           if (this.addType === '2') {
             Object.assign(this.allMsg, {title: this.title},
               {'content_details': this.changeList, delete_ids: this.delete_ids})
@@ -315,6 +316,8 @@
             await wepy.navigateTo({
               url: '../content/content'
             })
+          } else {
+            this.$invoke('Toast', 'show', '发布失败，请重试')
           }
         }
       },

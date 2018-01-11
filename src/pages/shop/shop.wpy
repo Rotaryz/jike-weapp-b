@@ -52,7 +52,7 @@
 
       </view>
     </view>
-
+    <Toast></Toast>
   </view>
 </template>
 
@@ -61,7 +61,7 @@
   import shop from 'api/shop'
   import http from 'common/js/http'
   import base from 'common/mixins/base'
-
+  import Toast from '@/base/toast/toast'
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
 
   export default class Shop extends wepy.page {
@@ -70,6 +70,9 @@
       navigationBarTitleText: '商家助手',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
+    }
+    components = {
+      Toast: Toast
     }
     data = {
       showTime: 0,
@@ -140,22 +143,21 @@
 
     async scanCodes() {
       let res = await wepy.scanCode({onlyFromCamera: false})
-      res = JSON.parse(res.result)
-      let code = res.code
-      let data = await shop.verification(code)
-      this.loaded()
-      if (data.error !== 1) {
-        wepy.showToast({
-          title: '核销成功',
-          icon: 'success',
-          duration: 1500
-        })
+      let data
+      if (res.result[1] === '"') {
+        res = JSON.parse(res.result)
+        let code = res.code
+        data = await shop.verification(code)
+        this.loaded()
+      }
+      if (data === undefined) {
+        this.$invoke('Toast', 'show', '核销成功')
       } else {
-        wepy.showToast({
-          title: '核销失败',
-          icon: 'loading',
-          duration: 1500
-        })
+        if (data.error !== 1) {
+          this.$invoke('Toast', 'show', '核销成功')
+        } else {
+          this.$invoke('Toast', 'show', '核销失败')
+        }
       }
     }
 

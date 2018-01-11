@@ -14,11 +14,13 @@
         <view>
           <view class="con-cou-item-ri">
             <view>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
               {{item.favorite_count}}
             </view>
             <view>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
               {{item.share_count}}
             </view>
           </view>
@@ -95,6 +97,7 @@
       },
       async delCon(id, index) {
         let res = await content.delContent(id)
+        this.loaded()
         if (res.error === 0) {
           this.contentList.splice(index, 1)
           this.$apply()

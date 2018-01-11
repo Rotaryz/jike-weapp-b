@@ -1,15 +1,19 @@
 <template>
-  <view class="base-modal" wx:if="{{show}}" @tap.stop="cancel">
+  <view class="base-modal" wx:if="{{show}}">
     <view class="modal" @tap.stop="">
       <view class="title-wrapper">
         {{title}}
       </view>
-      <view class="content-wrapper">
+      <view class="content-wrapper" style="height: {{contentHeight}}px; padding-bottom: {{paddingBottom}}px">
         <slot name="content"></slot>
       </view>
-      <view class="close-wrapper" @tap.stop="close">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>
+      <view class="btn-group border-top-1px">
+        <view class="btn-cancel border-right-1px" @tap.stop="cancel">取消</view>
+        <view class="btn-confirm" @tap.stop="confirm">确定</view>
       </view>
+      <!--<view class="close-wrapper" @tap.stop="close">-->
+        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>-->
+      <!--</view>-->
     </view>
   </view>
 </template>
@@ -19,11 +23,14 @@
 
   export default class BaseModal extends wepy.component {
     props = {
+      type: String,
       title: String
     }
 
     data = {
-      show: false
+      show: false,
+      contentHeight: 200,
+      paddingBottom: 0
     }
 
     methods = {
@@ -32,7 +39,14 @@
         this.$emit('cancel')
         this.$emit('hide')
       },
+      confirm() {
+        this.show = false
+        this.$emit('confirm')
+      },
       show() {
+        if (this.type === 'big') {
+          this.contentHeight = 320
+        }
         this.show = true
         this.$emit('show')
       },
@@ -77,16 +91,28 @@
         color: $color-white
         background-color: $color-theme
       .content-wrapper
-        min-height: 200px
-        max-height: 360px
         overflow: scroll
         background: $color-white
-      .close-wrapper
-        width: 23px
-        height: 23px
-        margin: auto
-        margin-top: 77.55px
-        image
-          width: 23px
-          height: 23px
+      .btn-group
+        display: flex
+        height: 40px
+        background-color: $color-white
+        .btn-cancel, .btn-confirm
+          flex: 1
+          text-align: center
+          line-height: 40px
+          font-size: $font-size-medium
+        .btn-cancel
+          color: $color-text-d
+        .btn-confirm
+          color: $color-text
+
+  /*.close-wrapper*/
+        /*width: 23px*/
+        /*height: 23px*/
+        /*margin: auto*/
+        /*margin-top: 77.55px*/
+        /*image*/
+          /*width: 23px*/
+          /*height: 23px*/
 </style>

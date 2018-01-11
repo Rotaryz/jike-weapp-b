@@ -1,6 +1,7 @@
 <template>
   <view class="logn">
-    <image class="lg-header" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-default-logo@2x.png"></image>
+    <image class="lg-header"
+           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-default-logo@2x.png"></image>
     <image class="guidance" src="icon-login-logo@2x.png"
            wx:if="{{guidance}}"></image>
     <view class="lg-from">
@@ -12,15 +13,19 @@
                  placeholder-class="placeholder" value="{{phoneNum}}"
                  bindinput="putPhone"
                  maxlength="11"/>
-          <image class="close"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
-                 @tap.stop="clearPhone" wx:if="{{loginType.showClose}}"></image>
+          <view class="eye" @tap.stop="clearPhone" >
+            <image class="close"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+                   wx:if="{{loginType.showClose}}"></image>
+          </view>
+
         </view>
         <text wx:if="{{loginType.register}}" @tap="setCode">{{loginType.time}}
         </text>
       </view>
       <view class="lg-ch" wx:if="{{loginType.register || loginType.forget}}">
-        <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-code@2x.png"></image>
+        <image class="icon"
+               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-code@2x.png"></image>
         <input type="text" placeholder="请输入验证码"
                placeholder-class="placeholder" value="{{code}}"
                bindinput="getCode"/>
@@ -31,16 +36,24 @@
           <input type="password" placeholder="{{passtext}}"
                  placeholder-class="placeholder" bindinput="putPassword"
                  maxlength="18" value="{{password}}"/>
-          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
-                 @tap="showCiphertext('fi')"></image>
+          <view class="eye"  @tap="showCiphertext('fi')">
+            <image class="close"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"></image>
+          </view>
+
         </view>
         <view class="proclaimed" wx:if="{{loginType.ciphertext}}">
-          <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
+          <image class="icon"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
           <input type="text" placeholder="{{passtext}}"
                  placeholder-class="placeholder" value="{{password}}"
                  maxlength="18"/>
-          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
-                 @tap="showCiphertext('fi')"></image>
+          <class class="eye"  @tap="showCiphertext('fi')">
+            <image class="close"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
+                  ></image>
+          </class>
+
         </view>
       </view>
       <view class="password lg-ch" wx:if="{{loginType.forget}}">
@@ -50,16 +63,23 @@
                  type="password" placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
                  bindinput="anginPassword" bindblur="burlPass"/>
-          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
-                 @tap="showCiphertext('tw')"></image>
+          <view class="eye" @tap="showCiphertext('fi')">
+            <image class="close"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
+                   ></image>
+          </view>
         </view>
         <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
-          <image class="icon" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
+          <image class="icon"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
           <input type="text" placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
                  value="{{anPassword}}"/>
-          <image class="close" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
-                 @tap="showCiphertext('tw')"></image>
+          <view class="eye" @tap="showCiphertext('tw')">
+            <image class="close"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
+                   ></image>
+          </view>
         </view>
       </view>
       <button class="{{loginType.submit ? '' : 'disable'}}"
@@ -169,6 +189,7 @@
         this.password = ''
         this.phoneNum = ''
         this.code = ''
+        this.loginType.showClose = false
       },
       async setCode() {
         await logIn.messageBind({mobile: this.phoneSusses})
@@ -322,15 +343,21 @@
         height: 18px
       .icon
         left: 0
-      .close
-        right: 10px
+      .eye
+        position: absolute
+        height: 100%
+        width: 18%
+        right: 0
+        top: 0
+        .close
+          right: 10px
       input
         text-align: left
         height: 64px
         padding-left: 29.5px
         font-size: $font-size-medium-x
         color: #363547
-        width: 90%
+        width: 70%
       .error
         color: $color-assist-f
       .placeholder
@@ -343,7 +370,7 @@
         flex: 7.5
         border-bottom: none
       text
-        flex: 2.5
+        flex: 3
         border-left: 0.5px solid $color-split-line
         font-size: $font-size-medium
         color: $color-text-gray

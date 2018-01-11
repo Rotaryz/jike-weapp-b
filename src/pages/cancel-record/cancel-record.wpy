@@ -1,10 +1,10 @@
 <template>
-  <scroll-view class="cancle" bindscrolltolower="showMore" scroll-y="true">
+  <view class="cancle" bindscrolltolower="showMore" scroll-y="true">
     <view class="reHeard">
       <view wx:for="{{navList}}" wx:key="{{index}}">{{item.name}}</view>
     </view>
 
-    <view class="reCon">
+    <scroll-view class="reCon">
       <view wx:for="{{verification}}" wx:key="{{index}}"
             class="re-items {{index % 2 === 0 ? 're-white' :''}}">
         <view class="re-title">{{item.promotion_name}}</view>
@@ -15,8 +15,8 @@
           <view class="times">{{item.updated_time}}</view>
         </view>
       </view>
-    </view>
-  </scroll-view>
+    </scroll-view>
+  </view>
 </template>
 
 <script>
@@ -87,7 +87,7 @@
     position: fixed
     width: 100vw
     top: 0
-    z-index: 200
+    z-index: 1000
     background: $color-theme
     display: flex
     view

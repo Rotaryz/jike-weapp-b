@@ -16,18 +16,24 @@
       </view>
 
     </view>
+    <Toast></Toast>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
-
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
   export default class Square extends wepy.page {
+    mixins = [base]
     config = {
-      navigationBarTitleText: '扫码核销',
+      navigationBarTitleText: '输码核销',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
+    }
+    components = {
+      Toast: Toast
     }
     data = {
       codeNum: [{
@@ -74,20 +80,14 @@
 
     async show(code) {
       let res = await this._verification(code)
-      if (res.error === 0) {
+      this.loaded()
+      console.log(res)
+      if (res.error !== 1) {
 //                成功时
-        wepy.showToast({
-          title: '核销成功',
-          icon: 'success',
-          duration: 1000
-        })
+        this.$invoke('Toast', 'show', '核销成功')
         this.code = ''
       } else {
-        wepy.showToast({
-          title: '核销失败',
-          icon: 'loading',
-          duration: 1000
-        })
+        this.$invoke('Toast', 'show', '核销失败')
 //                失败时
         this.$apply()
       }
@@ -138,7 +138,7 @@
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
   page, .code
-    height: 100%
+    height: 100vh
     overflow: hidden
 
   view
@@ -166,11 +166,11 @@
           width: 1px
           height: 100%
           background: #555
-      view:last-child
-        font-size: $font-size-small
-        text-align: center
-        color: $color-text-d
-        margin-top: 5%
+    view:last-child
+      font-size: $font-size-small
+      text-align: center
+      color: $color-text-d
+      margin-top: 5%
 
   .qR-num
     height: 82.68%

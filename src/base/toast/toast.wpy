@@ -1,7 +1,7 @@
 <template>
-  <view class="toast" wx:if="{{showToast}}">
+  <cover class="toast" wx:if="{{showToast}}">
     <view class="content">{{content}}</view>
-  </view>
+  </cover>
 </template>
 
 <script>
