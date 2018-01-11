@@ -1,5 +1,5 @@
 <template>
-  <view class="share-prize">
+  <view class="share-prize {{showCover?'fasten':''}}">
     <view class="share-item-box">
       <view class="share-item">
         <view class="share-item-title">
@@ -92,6 +92,7 @@
   import PrizePool from '@/api/prizePool'
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -116,7 +117,8 @@
       isCompile: false,
       prizeListArr: [],
       prizePollList: [],
-      delPrizeItem: null
+      delPrizeItem: null,
+      showCover: false
     }
 
     methods = {
@@ -129,38 +131,41 @@
       },
       async submitChange() {
         let data = {
-          from_date: this.nowDate.replace(/\//g, '-'),
           to_date: this.shareEndTime,
           activity_promotions: this.prizeListArr
         }
-        if (this.nowDate && endTime && this.prizeListArr.length > 0) {
+        if (this.shareEndTime && this.prizeListArr.length > 0) {
           let sqlRes
-          if (!sqlType) {
-            sqlRes = await Activity.newActivity(data)
+          if (this.isCompile) {
+            sqlRes = await Activity.chengeActivity(data, this.shareMsg.id)
+            this.loaded()
           } else {
-            let activityId = this[this.detailCompile + 'Msg'].id
-            sqlRes = await Activity.chengeActivity(data, activityId)
+            sqlRes = await Activity.newActivity(data)
+            this.loaded()
           }
-          this.loaded()
           if (sqlRes.error === 0) {
-            this.$invoke('Toast', 'show', '优惠券分享有礼设置成功')
+            Tips.success('保存成功')
+            setTimeout(() => {
+              this.$switch({url: '/pages/marketing/marketing'})
+            }, 1000)
           }
-        } else {
-          this.$invoke('Toast', 'show', '资料填写不完整')
+        } else if (!this.shareEndTime) {
+          this.$invoke('Toast', 'show', '请选择活动时间')
+          return
+        } else if (this.prizeListArr.length === 0) {
+          this.$invoke('Toast', 'show', '还没有添加奖品哦')
           return
         }
-        this.detailCompile = ''
-        this.load()
         this.$apply()
       },
       showAddPrize() {
+        this.showCover = true
         this.$invoke('AddPrize', 'init', this.prizePollList)
-        console.log(this.prizePollList)
       },
       delectPrize(item) {
         this.delPrizeItem = item
-        this.$apply()
         this.$invoke('Confirm', 'show')
+        this.$apply()
       }
     }
 
@@ -179,6 +184,7 @@
         this.isCompile = true
       }
       this.shareMsg = res
+      this.shareEndTime = res.to_date || ''
       this.prizeListArr = res.activity_promotion || []
       this.loaded()
     }
@@ -187,19 +193,19 @@
       addPrizeOK(res) {
         let data = this._checkId(this.prizeListArr, res.promotion_id, res.promotion_type)
         if (data) {
-          data.promotion_stock += res.promotion_stock
+          data.promotion_stock = data.promotion_stock * 1 + res.promotion_stock * 1
         } else {
           this.prizeListArr.push(Object.assign(res))
         }
         let prizePollData = this._checkId(this.prizePollList, res.promotion_id, res.promotion_type)
-        prizePollData.promotion_stock -= res.promotion_stock
+        prizePollData.promotion_stock = prizePollData.promotion_stock * 1 - res.promotion_stock * 1
         this.$apply()
       },
       confirm() {
         let data = this._checkId(this.prizeListArr, this.delPrizeItem.promotion_id, this.delPrizeItem.promotion_type)
         let prizePollData = this._checkId(this.prizePollList, data.promotion_id, data.promotion_type)
         if (prizePollData) {
-          prizePollData.promotion_stock += data.promotion_stock
+          prizePollData.promotion_stock = prizePollData.promotion_stock * 1 + data.promotion_stock * 1
         } else {
           this.prizePollList.push(Object.assign({}, data))
         }
@@ -445,5 +451,6 @@
           font-size: $font-size-medium
           color: $color-white
 
-
+    .fasten
+      overflow-y: hidden
 </style>

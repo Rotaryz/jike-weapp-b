@@ -90,7 +90,11 @@
 
         <view class="exBox-prize-description">
           <view class="prize-picker-title">使用须知</view>
-          <Textarea></Textarea>
+          <view class="textarea-showBox">
+            <repeat>
+              <Textarea :height="50"></Textarea>
+            </repeat>
+          </view>
         </view>
       </view>
 
@@ -544,7 +548,6 @@
     }
 
     async load() {
-      this.$invoke('Textarea', 'init', {})
       this.loaded()
     }
 
@@ -886,6 +889,9 @@
             font-size: $font-size-medium
             color: $color-text-title
             line-height: 30px
+
+          .textarea-showBox
+            width: 88vw
 
       .randomRP
 
