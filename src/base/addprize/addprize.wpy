@@ -259,7 +259,7 @@
           justify-content: center
           font-size: $font-size-medium
 
-        .firstBtn
+        .prizeItem-saveBtn.firstBtn
           color: $color-text-d
 
 </style>

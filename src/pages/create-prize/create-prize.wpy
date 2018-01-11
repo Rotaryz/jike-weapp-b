@@ -10,7 +10,7 @@
               <view class="prizeType-list-item-msg">商家将优惠的服务和商品</view>
               <view class="prizeType-list-item-msg">免费做奖品给客户</view>
             </view>
-            <image src="{{prizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image src="{{temporaryPrizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item" @tap="chioseType(2)">
@@ -19,7 +19,7 @@
               <view class="prizeType-list-item-msg">商家设置一定数量随机金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image src="{{prizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image src="{{temporaryPrizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item last" @tap="chioseType(3)">
@@ -28,12 +28,13 @@
               <view class="prizeType-list-item-msg">商家设置一定数量固定金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image src="{{prizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image src="{{temporaryPrizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
           </view>
         </view>
 
-        <view class="prizeType-closeBtn" @tap="closeTypeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="prizeType-closeX"></image>
+        <view class="foot-btnBox border-top-1px">
+          <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="chioseTypeCancel">取消</view>
+          <view class="prizeItem-saveBtn" @tap="chioseTypeSubmit">确定</view>
         </view>
       </view>
     </view>
@@ -50,7 +51,7 @@
       <view class="prize-txtbox">
         <view class="prize-txtbox-title">奖品名称</view>
         <view class="prize-txtbox-right">
-          <input type="text" maxlength="10" class="prize-txtbox-input" placeholder="请输入" placeholder-class="prize-txtbox-placeholder" value="{{prizeName}}" bindblur="nameChange" />
+          <input type="text" maxlength="10" class="prize-txtbox-input" placeholder="请输入" placeholder-class="prize-txtbox-placeholder" value="{{prizeName}}" bindinput="nameChange" />
           <view class="prize-txtbox-input-length">{{prizeName.length}}/10</view>
         </view>
       </view>
@@ -59,9 +60,23 @@
 
         <view class="time-picker">
           <view class="prize-picker-title">有效期</view>
-          <view class="prize-picker-right" @tap="timeChiose">
-            <view class="prize-picker-txt">{{beginTime&&endTime?beginTime+' 至 '+endTime:''}}</view>
-            <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <view class="prize-picker-right">
+            <view class="prize-picker-txt">
+              <view class="prize-picker-txt-time">
+                <picker mode="date" value="{{date}}" start="nowDate" end="2020-09-01" bindchange="beginTimeChange">
+                  <view class="prize-picker-txt-time-title">{{beginTime?beginTime:'开始时间'}}</view>
+                </picker>
+                <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+              </view>
+              <view class="prize-picker-txt-middle">至</view>
+              <view class="prize-picker-txt-time">
+                <picker mode="date" value="{{date}}" start="nowDate" end="2020-09-01" bindchange="endTimeChange">
+                  <view class="prize-picker-txt-time-title">{{endTime?endTime:'结束时间'}}</view>
+                </picker>
+                <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+              </view>
+            </view>
+
           </view>
         </view>
 
@@ -297,21 +312,14 @@
 
     data = {
       prizeType: 1,
+      temporaryPrizeType: 1,
       prizeTypeTxt: '兑换券',
       prizeTypeCover: false,
       prizeTimeShow: false,
       prizeName: '',
-      year: 0,
-      yearLen: 4,
-      mounth: 12,
-      btime: '选择开始时间',
-      etime: '选择结束时间',
+      nowDate: '',
       beginTime: '',
       endTime: '',
-      timeTimes: 1,
-      tapTimes: 0,
-      day: 30,
-      value: [],
       prizeCount: '',
       exdescripte: '',
       redpackMax: '',
@@ -331,7 +339,12 @@
 
     methods = {
       chioseType(idx) {
-        this.prizeType = Number(idx)
+        this.temporaryPrizeType = Number(idx)
+        this.$apply()
+      },
+      chioseTypeSubmit() {
+        this.prizeTypeCover = false
+        this.prizeType = this.temporaryPrizeType
         switch (this.prizeType) {
           case 1:
             this.prizeTypeTxt = '兑换券'
@@ -349,7 +362,7 @@
         this.redpackMax = ''
         this.$apply()
       },
-      closeTypeCover() {
+      chioseTypeCancel() {
         this.prizeTypeCover = false
         this.$apply()
       },
@@ -361,31 +374,11 @@
         this.prizeName = e.detail.value
         this.$apply()
       },
-      timeChiose() {
-        this.prizeTimeShow = true
-        this.$apply()
+      beginTimeChange(e) {
+        this.beginTime = e.detail.value
       },
-      bindTimeChange(e) {
-        this.value = e.detail.value
-        this.$apply()
-      },
-      tapTime(type) {
-        this.timeTimes = type * 1
-      },
-      closeTimeCover() {
-        this.prizeTimeShow = false
-        this.beginTime = this.btime === '选择开始时间' ? '' : this.btime
-        this.endTime = this.etime === '选择结束时间' ? '' : this.etime
-        this.$apply()
-      },
-      sureTime() {
-        this.time = `${this.value[0] + this.year}-${this.value[1] + 1
-          }-${this.value[2] + 1}`
-        if (this.timeTimes === 1) {
-          this.btime = this.time
-        } else if (this.timeTimes === 2) {
-          this.etime = this.time
-        }
+      endTimeChange(e) {
+        this.endTime = e.detail.value
       },
       countChange(e) {
         this.prizeCount = e.detail.value
@@ -544,41 +537,11 @@
 
     async onLoad() {
       this.load()
-      this.info()
     }
 
     async load() {
+      this.nowDate = new Date().toLocaleDateString()
       this.loaded()
-    }
-
-    info() {
-      let now = new Date()
-      this.year = now.getFullYear()
-      let month = now.getMonth()
-      let days = now.getDate() - 1
-      this.value = [0, month, days]
-      this.dealDay(this.year, month + 1)
-    }
-
-    dealDay(year, month) {
-      let days = 0
-      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-        if (month === 2) {
-          days = 29
-        }
-      } else {
-        if (month === 2) {
-          days = 28
-        }
-      }
-      if (month === 1 || month === 3 || month === 5 || month === 7 ||
-        month === 8 || month === 10 || month === 12) {
-        days = 31
-      } else if (month === 4 || month === 6 || month === 9 || month === 11) {
-        days = 30
-      }
-      this.day = days
-      this.$apply()
     }
 
     computed = {
@@ -783,13 +746,24 @@
             height: 40px
 
             .prize-picker-txt
-              font-size: $font-size-medium
-              color: $color-text-title
+              display: flex
+              align-items: center
 
-            .prize-picker-arrow
-              width: 10px
-              height: 10px
-              margin-left: 8px
+              .prize-picker-txt-time
+                display: flex
+                align-items: center
+                .prize-picker-txt-time-title
+                  font-size: $font-size-medium
+                  color: $color-text-title
+                .prize-picker-arrow
+                  width: 10px
+                  height: 10px
+                  margin-left: 3px
+
+              .prize-picker-txt-middle
+                font-size: $font-size-medium
+                color: $color-text-d
+                padding: 0 10px
 
         .exBox-imgBox
           height: 74px
@@ -1194,7 +1168,7 @@
         transform: translate(-50%, -50%)
         background: $color-white
         width: 265px
-        height: 260px
+        height: 400px
         border-radius: 4px
 
         .prizeType-container-head
@@ -1207,6 +1181,7 @@
 
         .prizeType-list
           padding: 0 10px
+          height: 320px
 
           .prizeType-list-item
             height: 70px
@@ -1236,20 +1211,22 @@
           .prizeType-list-item.last
             border-bottom: 0 none
 
-        .prizeType-closeBtn
-          width: 34px
-          height: 34px
-          display: flex
-          justify-content: center
-          align-items: center
-          position: absolute
-          left: 50%
-          transform: translate(-50%, 0)
-          bottom: -100px
+      .foot-btnBox
+        height: 40px
+        display: flex
+        border-box: box-sizing
+        background: $color-white
 
-          .prizeType-closeX
-            width: 24px
-            height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
+
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
     .times
       position: fixed
