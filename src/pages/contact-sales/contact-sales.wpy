@@ -12,7 +12,7 @@
     <view class="salesMsg-tel">
       <view class="salesMsg-tel-left">
         <view>联系电话</view>
-        <view class="salesMsg-telNum">{{saleMsg.mobile}}</view>
+        <view class="salesMsg-telNum">{{saleMsg.mobile?saleMsg.mobile:'11111111111'}}</view>
       </view>
       <view class="salesMsg-call" @tap="call">打电话</view>
     </view>
@@ -64,13 +64,17 @@
 
     methods = {
       showCover() {
-        this.complaintIn = true
+        if (this.salesmanId) {
+          this.complaintIn = true
+        } else {
+          this.$invoke('Toast', 'show', '请先联系客服购买哦')
+        }
       },
       closeCover() {
         this.complaintIn = false
       },
       call() {
-        let phoneNum = this.saleMsg.mobile
+        let phoneNum = this.saleMsg.mobile || '11111111111'
         wx.makePhoneCall({
           phoneNumber: phoneNum
         })
@@ -100,9 +104,15 @@
     }
 
     async load(id) {
-      let res = await Account.getSalesMsg(id)
-      this.salesmanId = id
-      this.saleMsg = res
+      if (id) {
+        let res = await Account.getSalesMsg(id)
+        this.saleMsg = res
+      } else {
+        this.saleMsg = {
+          mobile: '11111111111'
+        }
+      }
+      this.salesmanId = id || ''
       this.loaded()
     }
   }

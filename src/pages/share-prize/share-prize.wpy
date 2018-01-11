@@ -1,132 +1,81 @@
 <template>
-  <view class="share-prize">
-    <view class="share-item">
-      <view class="share-item-head">
-        <view class="share-item-head-title">优惠券分享有礼</view>
-        <view class="share-item-head-right">
-          <view class="share-item-head-right-txt">{{couponIng?'关闭':'开启'}}活动</view>
-          <switch class="share-switch" color="#fff" checked="{{couponIng}}" bindchange="couponChange"></switch>
+  <view class="share-prize {{showCover?'fasten':''}}">
+    <view class="share-item-box">
+      <view class="share-item">
+        <view class="share-item-title">
+          <view class="red-block"></view>
+          <view class="title-txt">分享有礼</view>
         </view>
-      </view>
-      <view class="share-item-body">
-        <view class="share-item-body-title">
-          <view class="share-item-body-title-left">
-            <view>优惠券详情页</view>
-            <view class="share-item-body-underline"></view>
-          </view>
-          <view class="share-item-body-title-right" @tap="showDetail('coupon')">编辑</view>
-        </view>
-        <view class="share-item-body-content">
-          <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
-          </view>
-          <view class="share-item-body-content-center">
-            <view class="share-item-body-content-center-txt">分享后</view>
-            <view class="share-item-body-content-center-line">
-              <view class="share-item-body-content-center-bias"></view>
+        <view class="share-item-body">
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_11@2x.png" class="share-main-item-body-img"></image>
+          <view class="share-main-item-body-center">
+            <view class="share-main-item-body-txt">分享</view>
+            <view class="share-main-item-body-txt">成功后</view>
+            <view class="share-main-item-body-dotBog">
+              <view class="dot" wx:for="12345678" wx:key="{{item}}"></view>
+              <image class="share-main-item-body-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-whitearrow@2x.png"></image>
             </view>
           </view>
-          <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
-            <view class="share-item-body-content-right-title">开红包</view>
-          </view>
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_12@2x.png" class="share-main-item-body-img"></image>
         </view>
       </view>
     </view>
 
-    <view class="share-item">
-      <view class="share-item-head">
-        <view class="share-item-head-title">内容分享有礼</view>
-        <view class="share-item-head-right">
-          <view class="share-item-head-right-txt">{{contentIng?'关闭':'开启'}}活动</view>
-          <switch class="share-switch" color="#fff" checked="{{contentIng}}" bindchange="contentChange"></switch>
-        </view>
+    <view class="detail-list">
+      <view class="activityMsg-title">
+        <view class="activityMsg-title-chunk"></view>
+        分享有礼活动信息
       </view>
-      <view class="share-item-body">
-        <view class="share-item-body-title">
-          <view class="share-item-body-title-left">
-            <view>内容详情页</view>
-            <view class="share-item-body-underline"></view>
-          </view>
-          <view class="share-item-body-title-right" @tap="showDetail('content')">编辑</view>
+      <view class="activityMsg-list">
+        <view class="activityMsg-txt">
+          <view class="activityMsg-txt-left">活动名称</view>
+          <view class="activityMsg-txt-right">分享后有礼</view>
         </view>
-        <view class="share-item-body-content">
-          <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
-          </view>
-          <view class="share-item-body-content-center">
-            <view class="share-item-body-content-center-txt">分享后</view>
-            <view class="share-item-body-content-center-line">
-              <view class="share-item-body-content-center-bias"></view>
-            </view>
-          </view>
-          <view class="share-item-body-content-imgBox">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png" class="share-item-body-content-img"></image>
-            <view class="share-item-body-content-right-title">开红包</view>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <view class="detail-container" wx:if="{{detailCompile}}" @tap.stop="showNull">
-      <view class="detail-list">
-        <view class="activityMsg-title">
-          <view class="activityMsg-title-chunk"></view>
-          {{detailCompile==='coupon'?'优惠券':''}}{{detailCompile==='content'?'内容':''}}分享有礼活动信息
-        </view>
-        <view class="activityMsg-list">
-          <view class="activityMsg-txt">
-            <view class="activityMsg-txt-left">活动名称</view>
-            <view class="activityMsg-txt-right">{{detailCompile==='coupon'?'优惠券':''}}{{detailCompile==='content'?'内容':''}}分享有礼</view>
-          </view>
-          <view class="activityMsg-txt">
-            <view class="activityMsg-txt-left">活动时间</view>
-            <view class="activityMsg-txt-right">
-              <picker mode="date" value="{{nowDate}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
-                <view class="picker-txt">
-                  <view>当天<text class="activityMsg-txt-right-gray">至</text>{{endTime}}{{detailCompile==='coupon'?couponEndTime:''}}{{detailCompile==='content'?contentEndTime:''}}</view>
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
-                </view>
-              </picker>
-            </view>
-          </view>
-          <view class="activityMsg-txt">
-            <view class="activityMsg-txt-left">参与次数</view>
-            <view class="activityMsg-txt-right">
-              <view class="activityMsg-txt-right-leftTxt">
-                <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
-                一天一次
+        <view class="activityMsg-txt">
+          <view class="activityMsg-txt-left">活动时间</view>
+          <view class="activityMsg-txt-right">
+            <picker mode="date" value="{{shareEndTime}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
+              <view class="picker-txt">
+                <view>当天<text class="activityMsg-txt-right-gray">至</text>{{shareEndTime}}</view>
+                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
               </view>
-            </view>
+            </picker>
           </view>
         </view>
-        <view class="activityMsg-title">
-          <view class="activityMsg-title-chunk"></view>
-          <view class="activityMsg-title-txt">添加奖品</view>
-          <view class="activityMsg-title-txt-gray">多个奖品随机发放</view>
-        </view>
-
-        <view class="prizeList">
-          <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
-            <view class="prizeList-item-left">
-              <view class="prizeList-item-name">{{item.promotion_title}}</view>
-              <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
-            </view>
-            <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+        <view class="activityMsg-txt">
+          <view class="activityMsg-txt-left">参与次数</view>
+          <view class="activityMsg-txt-right">
+            <view class="activityMsg-txt-right-leftTxt">
+              <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              一天一次
             </view>
           </view>
-          <view class="prizeList-addItem" @tap="showAddPrize">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
-            添加奖品
-          </view>
-        </view>
-
-        <view class="footBtn">
-          <view class="cancleBtn btn" @tap="cancelChange">取消</view>
-          <view class="submitBtn btn" @tap="submitChange">保存</view>
         </view>
       </view>
+      <view class="activityMsg-title">
+        <view class="activityMsg-title-chunk"></view>
+        <view class="activityMsg-title-txt">添加奖品</view>
+        <view class="activityMsg-title-txt-gray">多个奖品随机发放</view>
+      </view>
+
+      <view class="prizeList">
+        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
+          <view class="prizeList-item-left">
+            <view class="prizeList-item-name">{{item.promotion_title}}</view>
+            <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
+          </view>
+          <view class="prizeList-item-right" @tap="delectPrize({{item}})">
+            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+          </view>
+        </view>
+        <view class="prizeList-addItem" @tap="showAddPrize">
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
+          添加奖品
+        </view>
+      </view>
+    </view>
+    <view class="footBtn border-top-1px">
+      <view class="submitBtn dis" @tap="submitChange">保存</view>
     </view>
 
     <AddPrize></AddPrize>
@@ -143,6 +92,7 @@
   import PrizePool from '@/api/prizePool'
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -161,149 +111,61 @@
     }
 
     data = {
-      couponMsg: null,
-      couponIng: false,
-      detailCompile: '',
-      contentMsg: null,
-      contentIng: false,
+      shareMsg: null,
       nowDate: '',
-      couponEndTime: '',
-      contentEndTime: '',
-      temporaryEndTime: '',
+      shareEndTime: '',
       isCompile: false,
       prizeListArr: [],
       prizePollList: [],
-      delPrizeItem: null
+      delPrizeItem: null,
+      showCover: false
     }
 
     methods = {
-      async couponChange(e) {
-        this.couponIng = e.detail.value
-        if (e.detail.value) {
-          this.detailCompile = 'coupon'
-          this.prizeListArr = this.couponMsg ? this.couponMsg.activity_promotion.slice() : []
-        } else {
-          this.detailCompile = ''
-          let id = this.couponMsg.id
-          let res = await Activity.ActivityClose(id)
-          this.loaded()
-          if (res.error === 0) {
-            this.$invoke('Toast', 'show', '优惠券分享有礼关闭成功')
-          }
-        }
-        this.$apply()
-      },
-      async contentChange(e) {
-        this.contentIng = e.detail.value
-        if (e.detail.value) {
-          this.detailCompile = 'content'
-          this.prizeListArr = this.contentMsg ? this.contentMsg.activity_promotion.slice() : []
-        } else {
-          this.detailCompile = ''
-          let id = this.contentMsg
-          let res = await Activity.ActivityClose(id)
-          this.loaded()
-          if (res.error === 0) {
-            this.$invoke('Toast', 'show', '内容分享有礼关闭成功')
-          }
-        }
-        this.$apply()
-      },
       showNull() {
 
       },
       bindDateChange(e) {
-        switch (this.detailCompile) {
-          case 'coupon':
-            this.couponEndTime = e.detail.value
-            break
-          case 'content':
-            this.contentEndTime = e.detail.value
-            break
-        }
-        this.$apply()
-      },
-      cancelChange() {
-        switch (this.detailCompile) {
-          case 'coupon':
-            if (!this.isCompile) {
-              this.couponIng = !this.couponIng
-            }
-            break
-          case 'content':
-            if (!this.isCompile) {
-              this.contentIng = !this.contentIng
-            }
-            break
-        }
-        this.detailCompile = ''
-        this.isCompile = false
-        this.load()
+        this.shareEndTime = e.detail.value
         this.$apply()
       },
       async submitChange() {
-        let endTime, type, isPaused, sqlType
-        switch (this.detailCompile) {
-          case 'coupon':
-            endTime = this.couponEndTime
-            type = 1
-            console.log(this.couponIng)
-            isPaused = this.couponIng ? 0 : 1
-            sqlType = this.couponMsg ? 1 : 0
-            break
-          case 'content':
-            endTime = this.contentEndTime
-            type = 2
-            isPaused = this.contentIng ? 0 : 1
-            sqlType = this.contentMsg ? 1 : 0
-            break
-        }
         let data = {
-          from_date: this.nowDate.replace(/\//g, '-'),
-          to_date: endTime,
-          type,
-          is_paused: isPaused,
+          to_date: this.shareEndTime,
           activity_promotions: this.prizeListArr
         }
-        if (this.nowDate && endTime && this.prizeListArr.length > 0) {
+        if (this.shareEndTime && this.prizeListArr.length > 0) {
           let sqlRes
-          if (!sqlType) {
-            sqlRes = await Activity.newActivity(data)
+          if (this.isCompile) {
+            sqlRes = await Activity.chengeActivity(data, this.shareMsg.id)
+            this.loaded()
           } else {
-            let activityId = this[this.detailCompile + 'Msg'].id
-            sqlRes = await Activity.chengeActivity(data, activityId)
+            sqlRes = await Activity.newActivity(data)
+            this.loaded()
           }
-          this.loaded()
           if (sqlRes.error === 0) {
-            this.$invoke('Toast', 'show', '优惠券分享有礼设置成功')
+            Tips.success('保存成功')
+            setTimeout(() => {
+              this.$switch({url: '/pages/marketing/marketing'})
+            }, 1000)
           }
-        } else {
-          this.$invoke('Toast', 'show', '资料填写不完整')
+        } else if (!this.shareEndTime) {
+          this.$invoke('Toast', 'show', '请选择活动时间')
+          return
+        } else if (this.prizeListArr.length === 0) {
+          this.$invoke('Toast', 'show', '还没有添加奖品哦')
           return
         }
-        this.detailCompile = ''
-        this.load()
         this.$apply()
       },
-      showDetail(type) {
-        this.detailCompile = type
-        this.isCompile = true
-        switch (this.detailCompile) {
-          case 'coupon':
-            this.prizeListArr = this.couponMsg ? this.couponMsg.activity_promotion.slice() : []
-            break
-          case 'content':
-            this.prizeListArr = this.contentMsg ? this.contentMsg.activity_promotion.slice() : []
-            break
-        }
-      },
       showAddPrize() {
+        this.showCover = true
         this.$invoke('AddPrize', 'init', this.prizePollList)
       },
       delectPrize(item) {
         this.delPrizeItem = item
-        this.$apply()
         this.$invoke('Confirm', 'show')
+        this.$apply()
       }
     }
 
@@ -315,46 +177,35 @@
       this.nowDate = new Date().toLocaleDateString()
       let res = await Activity.getShareList()
       this.prizePollList = await PrizePool.getPrizelist()
-      let self = this
-      res.forEach((item) => {
-        if (item && item.type === 1) {
-          self.couponMsg = item
-          self.couponEndTime = item.to_date
-          if (item.is_paused === 0) {
-            self.couponIng = true
-          } else {
-            self.couponIng = false
-          }
-        } else if (item && item.type === 2) {
-          self.contentMsg = item
-          self.contentEndTime = item.to_date
-          if (item.is_paused === 0) {
-            self.contentIng = true
-          } else {
-            self.contentIng = false
-          }
-        }
-      })
+      if (res.error === 1 && res.status === 200) {
+        res = {}
+        this.isCompile = false
+      } else {
+        this.isCompile = true
+      }
+      this.shareMsg = res
+      this.shareEndTime = res.to_date || ''
+      this.prizeListArr = res.activity_promotion || []
       this.loaded()
     }
 
     events = {
       addPrizeOK(res) {
-        let data = this._checkId(this.prizeListArr, res.id, res.promotion_type)
+        let data = this._checkId(this.prizeListArr, res.promotion_id, res.promotion_type)
         if (data) {
-          data.promotion_stock += res.promotion_stock
+          data.promotion_stock = data.promotion_stock * 1 + res.promotion_stock * 1
         } else {
           this.prizeListArr.push(Object.assign(res))
         }
-        let prizePollData = this._checkId(this.prizePollList, res.id, res.promotion_type)
-        prizePollData.promotion_stock -= res.promotion_stock
+        let prizePollData = this._checkId(this.prizePollList, res.promotion_id, res.promotion_type)
+        prizePollData.promotion_stock = prizePollData.promotion_stock * 1 - res.promotion_stock * 1
         this.$apply()
       },
       confirm() {
-        let data = this._checkId(this.prizeListArr, this.delPrizeItem.id, this.delPrizeItem.promotion_type)
-        let prizePollData = this._checkId(this.prizePollList, data.id, data.promotion_type)
+        let data = this._checkId(this.prizeListArr, this.delPrizeItem.promotion_id, this.delPrizeItem.promotion_type)
+        let prizePollData = this._checkId(this.prizePollList, data.promotion_id, data.promotion_type)
         if (prizePollData) {
-          prizePollData.promotion_stock += data.promotion_stock
+          prizePollData.promotion_stock = prizePollData.promotion_stock * 1 + data.promotion_stock * 1
         } else {
           this.prizePollList.push(Object.assign({}, data))
         }
@@ -365,7 +216,7 @@
 
     _checkId(arr, id, type) {
       return arr.filter((item) => {
-        return item.id === id && item.promotion_type === type
+        return item.promotion_id === id && item.promotion_type === type
       })[0]
     }
   }
@@ -376,327 +227,230 @@
 
   page
     background: $color-theme
+    width: 100%
+    height: 100%
 
     .share-prize
+      width: 100%
+      height: 100%
+      overflow-y: auto
 
-      .share-item
-        margin: 10px 12px
-        height: 54vw
-        display: flex
-        flex-direction: column
+      .share-item-box
+        margin: 0 auto 20px
+        width: 93.6vw
+        height: 78.4vw
+        position: relative
 
-        .share-item-head
-          height: 20%
-          display: flex
+        .share-item
+          position: absolute
+          width: 100%
+          height: 100%
           background: #4A495C
-          align-items: center
-          justify-content: space-between
-          padding: 0 5px 0 8px
+          border-radius: 4px
 
-          .share-item-head-title
-            color: $color-white
-            font-size: $font-size-medium
-
-          .share-item-head-right
+          .share-item-title
             display: flex
             align-items: center
+            height: 17.517%
 
-            .share-item-head-right-txt
-              color: $color-text-tr
-              font-size: $font-size-small
-              margin-right: 5px
-
-            .share-switch
-
-              .wx-switch-input
-                width: 44px
-                height: 24px
-
-              .wx-switch-input::before
-                width: 43px
-                height: 22px
-
-              .wx-switch-input::after
-                width: 22px
-                height: 22px
-                background: $color-text-d
-
-              .wx-switch-input.wx-switch-input-checked::after
-                background: $color-assist-f
-
-        .share-item-body
-          background: $color-assist-f
-          height: 80%
-          padding: 0 10px
-          display: flex
-          flex-direction: column
-
-          .share-item-body-title
-            flex: 2
-            display: flex
-            justify-content: space-between
-            font-size: $font-size-medium
-            align-items: center
-            margin-top: 10px
-
-            .share-item-body-title-left
-              display: flex
-              flex-direction: column
-
-              view
-                color: $color-white
-
-              .share-item-body-underline
-                width: 40px
-                height: 4px
-                border-radius: 4px
-                background: $color-white
-                margin-top: 4px
-
-            .share-item-body-title-right
-              width: 44px
-              height: 22px
-              border-radius: 12px
-              border: 1px solid $color-white
-              text-align: center
-              line-height: 22px
+            .red-block
+              width: 4px
+              height: 14px
+              margin-left: 12px
+              background: $color-assist-f
+              margin-right: 6px
+            .title-txt
+              font-size: $font-size-medium
               color: $color-white
 
-          .share-item-body-content
-            flex: 8
+          .share-item-body
             display: flex
-            justify-content: center
             align-items: center
+            justify-content: center
 
-            .share-item-body-content-img
-              width: 20px
-              height: 22px
+            .share-main-item-body-img
+              width: 38vw
+              height: 60.4069vw
 
-            .share-item-body-content-imgBox
-              width: 32px
-              height: 32px
-              border-radius: 50%
-              background: $color-white
-              display: flex
-              justify-content: center
-              align-items: center
-              position: relative
-
-              .share-item-body-content-right-title
-                position: absolute
-                font-size: 7px
-                color: $color-white
-                width: 27px
-                height: 12px
-                border: 1px solid $color-white
-                background: $color-assist-tr
-                border-radius: 6px 6px 6px 0
-                line-height: 12px
-                text-align: center
-                right: -15px
-                top: -8px
-
-            .share-item-body-content-center
-              width: 108px
-              align-items: center
+            .share-main-item-body-center
               display: flex
               flex-direction: column
-              position: relative
+              width: 40px
+              margin: 0 5px
+              align-items: center
 
-              .share-item-body-content-center-txt
+              .share-main-item-body-txt
                 font-size: $font-size-small
                 color: $color-white
-                position: absolute
-                bottom: 7px
-                left: 50%
-                transform: translate(-50%, 0)
+                line-height: 16px
 
-              .share-item-body-content-center-line
-                position: relative
-                width: 78px
-                height: 1px
-                background: $color-white
+              .share-main-item-body-dotBog
+                display: flex
+                align-items: center
 
-                .share-item-body-content-center-bias
-                  width: 10px
-                  height: 1px
+                .dot
+                  width: 2px
+                  height: 2px
+                  border-radius: 50%
                   background: $color-white
-                  position: absolute
-                  right: 0
-                  bottom: 3px
-                  transform: rotate(30deg)
+                  margin-left: 3px
 
-      .detail-container
-        position: fixed
-        z-index: 500
-        left: 0
-        top: 0
-        height: 100vh
-        width: 100vw
-        background: rgba(54, 53, 71, .5)
+                .share-main-item-body-arrow
+                  width: 6px
+                  height: 10px
 
-        .detail-list
-          position: absolute
-          left: 0
-          bottom: 0
-          right: 0
-          background: $color-background
+      .detail-list
+        background: $color-background
 
-          .activityMsg-title
-            height: 40px
-            border-bottom: 1px solid $color-col-line
-            display: flex
-            align-items: center
-            padding-left: 12px
-            font-size: $font-size-medium
+        .activityMsg-title
+          height: 40px
+          border-bottom: 1px solid $color-col-line
+          display: flex
+          align-items: center
+          padding-left: 12px
+          font-size: $font-size-medium
+          color: $color-text-d
+
+          .activityMsg-title-chunk
+            width: 5px
+            height: 13px
+            background: $color-assist-f
+            margin-right: 5px
+
+          .activityMsg-title-txt
             color: $color-text-d
+            margin-right: 10px
 
-            .activityMsg-title-chunk
-              width: 5px
-              height: 13px
-              background: $color-assist-f
-              margin-right: 3px
+          .activityMsg-title-txt-gray
+            color: $color-text-d
+            font-size: $font-size-small
 
-            .activityMsg-title-txt
-              color: $color-text-title
-              margin-right: 10px
+        .activityMsg-list
+          padding-left: 10px
+          background: $color-white
 
-            .activityMsg-title-txt-gray
-              color: $color-text-d
-              font-size: $font-size-small
+        .activityMsg-txt
+          height: 40px
+          border-bottom: 1px solid $color-col-line
+          display: flex
+          align-items: center
+          font-size: $font-size-medium
+          background: $color-white
 
-          .activityMsg-list
-            padding-left: 10px
-            background: $color-white
+          .activityMsg-txt-left
+            flex: 3
+            color: $color-text-title
 
-          .activityMsg-txt
-            height: 40px
-            border-bottom: 1px solid $color-col-line
+          .activityMsg-txt-right
+            flex: 7
             display: flex
+            height: 100%
             align-items: center
-            font-size: $font-size-medium
-            background: $color-white
 
-            .activityMsg-txt-left
-              flex: 3
-              color: $color-text-title
-
-            .activityMsg-txt-right
-              flex: 7
+            .activityMsg-txt-right-leftTxt
               display: flex
               height: 100%
               align-items: center
 
-              .activityMsg-txt-right-leftTxt
-                display: flex
-                height: 100%
-                align-items: center
+              .activityMsg-txt-right-checked
+                width: 16px
+                height: 16px
+                margin-right: 5px
 
-                .activityMsg-txt-right-checked
-                  width: 16px
-                  height: 16px
-                  margin-right: 5px
-
-              .activityMsg-txt-right-picker
-                flex: 1
-                height: 100%
-                display: flex
-                align-items: center
-
-                .picker-txt
-                  width: 66vw
-                  height: 40px
-                  display: flex
-                  justify-content: space-between
-                  align-items: center
-
-                  .activityMsg-txt-right-gray
-                    margin: 0 6px
-                    color: $color-text-d
-
-                  .activityMsg-txt-right-arrow
-                    width: 10px
-                    height: 10px
-
-          .prizeList
-            max-height: 300px
-            overflow-y: auto
-            background: $color-white
-
-            .prizeList-item
+            .activityMsg-txt-right-picker
+              flex: 1
+              height: 100%
               display: flex
-              margin: 8px 12px
-              height: 10vw
-              border: 1px solid $color-col-line
-              border-radius: 2px
               align-items: center
-              justify-content: space-between
 
-              .prizeList-item-left
+              .picker-txt
+                width: 66vw
+                height: 40px
                 display: flex
+                justify-content: space-between
                 align-items: center
-                padding-left: 10px
 
-                .prizeList-item-name
-                  width: 40vw
-                  font-size: $font-size-small
+                .activityMsg-txt-right-gray
+                  margin: 0 6px
+                  color: $color-text-d
 
-                .prizeList-item-count
-                  font-size: $font-size-small
-                  color: $color-assist-f
-
-              .prizeList-item-right
-                height: 10vw
-                width: 8vw
-                display: flex
-                align-items: center
-                justify-content: center
-
-                .prizeList-item-right-del
+                .activityMsg-txt-right-arrow
                   width: 10px
                   height: 10px
 
-            .prizeList-addItem
-              margin: 10px auto 20px
-              width: 104px
-              height: 24px
-              border-radius: 12px
+        .prizeList
+          max-height: 300px
+          overflow-y: auto
+          background: $color-white
+          padding-bottom: 60px
+
+          .prizeList-item
+            display: flex
+            margin: 8px 12px
+            height: 10vw
+            border: 1px solid $color-col-line
+            border-radius: 2px
+            align-items: center
+            justify-content: space-between
+
+            .prizeList-item-left
+              display: flex
+              align-items: center
+              padding-left: 10px
+
+              .prizeList-item-name
+                width: 40vw
+                font-size: $font-size-small
+
+              .prizeList-item-count
+                font-size: $font-size-small
+                color: $color-assist-f
+
+            .prizeList-item-right
+              height: 10vw
+              width: 8vw
               display: flex
               align-items: center
               justify-content: center
-              font-size: $font-size-medium
-              border: 0.5px solid $color-col-line
 
-              .prizeList-addItem-plus
+              .prizeList-item-right-del
                 width: 10px
                 height: 10px
-                margin-right: 3px
 
-          .footBtn
-            height: 39px
+          .prizeList-addItem
+            margin: 10px auto 20px
+            width: 104px
+            height: 24px
+            border-radius: 12px
             display: flex
-            padding: 12px
+            align-items: center
+            justify-content: center
+            font-size: $font-size-medium
+            border: 0.5px solid $color-col-line
 
-            .btn
-              flex: 1
-              display: flex
-              border:1px solid $color-col-line
-              align-items: center
-              justify-content: center
-              font-size: $font-size-medium
-              border-radius: 2px
+            .prizeList-addItem-plus
+              width: 10px
+              height: 10px
+              margin-right: 3px
 
-            .cancleBtn
-              margin-right: 5px
-              background: $color-white
+      .footBtn
+        height: 40px
+        padding: 10px 12px
+        position: absolute
+        left: 0
+        bottom: 0
+        right: 0
+        background: $color-background
 
-            .submitBtn
-              margin-left: 5px
-              background: $color-theme
-              color: $color-white
+        .submitBtn
+          height: 40px
+          display: flex
+          align-items: center
+          justify-content: center
+          background: $color-theme
+          font-size: $font-size-medium
+          color: $color-white
 
-
-
-
-
+    .fasten
+      overflow-y: hidden
 </style>

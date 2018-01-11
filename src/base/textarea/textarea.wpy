@@ -1,10 +1,8 @@
 <template>
-  <view class="textarea-box">
-    <view class="prize-picker-textarea" @tap="showTextarea">
-      <textarea maxlength="{{maxlength}}" wx:if="{{textareaShow}}" class="prize-picker-textarea-input" placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}" value="{{inputTxt}}" placeholder-class="prize-picker-textarea-placeholder" bindblur="blurFn" bindinput="inputFn"></textarea>
-      <view class="textarea-length">{{inputTxt.length}}/{{maxlength}}</view>
-      <view class="textarea-view {{inputTxt?'':'gary'}}" wx:if="{{!textareaShow}}">{{inputTxt?inputTxt:placeholderTxt}}</view>
-    </view>
+  <view class="textarea-box" @tap="showTextarea" style="height:{{height}}px">
+    <textarea maxlength="{{maxLength}}" style="transform:translateX({{translateX}})" class="prize-picker-textarea-input" placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}" value="{{value}}" placeholder-class="prize-picker-textarea-placeholder" bindblur="blurFn" bindinput="inputFn"></textarea>
+    <view class="textarea-length">{{value.length}}/{{maxLength}}</view>
+    <view class="textarea-view {{value?'':'gary'}}">{{value?value:placeHolder}}</view>
   </view>
 </template>
 
@@ -12,37 +10,51 @@
   import wepy from 'wepy'
 
   export default class Textarea extends wepy.component {
+    props = {
+      height: {
+        type: String,
+        default: ''
+      },
+      maxLength: {
+        type: String,
+        default: 20
+      },
+      value: {
+        type: String,
+        default: ''
+      },
+      placeHolder: {
+        type: String,
+        default: '请输入'
+      }
+    }
+
     data = {
-      maxlength: '',
-      textareaShow: false,
-      placeholderTxt: '',
       textareaFocus: false,
-      inputTxt: ''
+      translateX: '2000px'
     }
 
     methods = {
       inputFn(e) {
-        this.inputTxt = e.detail.value
-        this.$emit('textareaInput', e.detail.value)
+        this.value = e.detail.value
+        this.$emit('input', e.detail.value)
         this.$apply()
       },
       blurFn(e) {
-        this.textareaShow = false
+        this.translateX = '2000px'
         this.textareaFocus = false
         this.$apply()
-        this.$emit('textareaBlur', e.detail.value)
+        this.$emit('blur', e.detail.value)
+      },
+      confirmFn(e) {
+        this.translateX = '2000px'
+        this.textareaFocus = false
+        this.$apply()
+        this.$emit('confirm', e.detail.value)
       },
       showTextarea() {
-        this.textareaShow = true
-        setTimeout(() => {
-          this.textareaFocus = true
-          this.$apply()
-        }, 30)
-      },
-      init(msgObj) {
-        this.inputTxt = msgObj.txt || ''
-        this.placeholderTxt = msgObj.placeholder || '请输入'
-        this.maxlength = msgObj.maxLength || 20
+        this.translateX = 0
+        this.textareaFocus = true
         this.$apply()
       }
     }
@@ -52,22 +64,25 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
 
-  .prize-picker-textarea
+  .textarea-box
     position: relative
-    height: 55px
-    width: 88vw
+    width: 100%
     padding: 10px
     background: $color-background
+    overflow: hidden
+    display: flex
 
     .prize-picker-textarea-input
-      width: 88vw
-      height: 55px
+      width: 100%
+      height: 100%
       background: $color-background
       font-size: $font-size-medium
       color: $color-text-title
+      position: absolute
 
     .prize-picker-textarea-placeholder
       color: $color-text-d
+      font-family: 'PingFangSC-Light'
     .textarea-length
       position: absolute
       bottom: 10px
@@ -76,11 +91,13 @@
       color: $color-text-d
 
     .textarea-view
+      padding-top: 9px
+      padding-left: 5px
       font-size: $font-size-medium
       color: $color-text-title
     .textarea-view.gary
-      padding-top: 10px
-      padding-left: 3px
+      width: 100%
+      height: 100%
       color: $color-text-d
 
 </style>

@@ -112,6 +112,9 @@
         this.loaded()
         if (upRes.error === 0) {
           Tips.success('保存成功')
+          setTimeout(() => {
+            this.$back(1)
+          }, 1000)
         }
       },
       nameChange(e) {
