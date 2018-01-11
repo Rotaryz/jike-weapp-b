@@ -11,6 +11,12 @@
       </view>
     </view>
     <view class="container" wx:if="{{tabIndex === 0}}">
+      <view class="empty-wrapper" wx:if="{{willOnLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+        </view>
+        <view class="desc">暂无数据</view>
+      </view>
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
@@ -41,6 +47,12 @@
       </repeat>
     </view>
     <view class="container" wx:if="{{tabIndex === 1}}">
+      <view class="empty-wrapper" wx:if="{{onLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+        </view>
+        <view class="desc">暂无数据</view>
+      </view>
       <repeat for="{{onLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
@@ -71,6 +83,12 @@
       </repeat>
     </view>
     <view class="container" wx:if="{{tabIndex === 2}}">
+      <view class="empty-wrapper" wx:if="{{offLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+        </view>
+        <view class="desc">暂无数据</view>
+      </view>
       <repeat for="{{offLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
@@ -120,8 +138,8 @@
 
     data = {
       tabs: TABS,
-      tabIndex: 0,
-      tabTranslateX: 0,
+      tabIndex: 1,
+      tabTranslateX: '100%',
       willOnLines: [],
       onLines: [],
       offLines: []
@@ -129,6 +147,18 @@
 
     async onLoad() {
       await this.load()
+    }
+
+    onShow() {
+      this._init()
+    }
+
+    _init() {
+      this.tabIndex = 1
+      this.tabTranslateX = '100%'
+      this.willOnLines = []
+      this.onLines = []
+      this.offLines = []
     }
 
     async load() {
