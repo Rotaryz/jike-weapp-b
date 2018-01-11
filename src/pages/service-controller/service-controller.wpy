@@ -53,7 +53,7 @@
             <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
           </view>
         </view>
-        <meal-modal title="选择类型">
+        <meal-modal title="选择类型" @confirm.user="setType">
           <view slot="content" class="meal-modal">
             <repeat for="{{categories}}" index="index" key="index" item="item">
               <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{item.id}})">
@@ -135,9 +135,9 @@
             <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
           </view>
         </view>
-        <service-modal title="服务详情">
+        <service-modal title="服务详情" type="big" @confirm.user="setServices" @cancel.user="resetServices">
           <view class="service-modal" slot="content">
-            <repeat for="{{services}}" key="index" index="index" item="item">
+            <repeat for="{{tempServices}}" key="index" index="index" item="item">
               <view class="item-wrapper">
                 <view class="input-wrapper border-bottom-1px">
                   <view class="label">服务名称</view>
@@ -184,12 +184,16 @@
       </view>
     </view>
     <view class="time-wrapper">
-      <view class="time input-wrapper border-bottom-1px" @tap="showSellTimeModal">
+      <view class="time input-wrapper border-bottom-1px">
         <view class="label">售卖时间</view>
         <view class="content">
-          <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          <picker mode="date" class="start">
+            <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          </picker>
           <view class="to">至</view>
-          <view class="end">{{sellEndTime}}</view>
+          <picker mode="date" class="end">
+            <view class="end">{{sellEndTime === '' ? '结束时间' : sellStartTime}}</view>
+          </picker>
         </view>
         <view class="arrow-right">
           <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
@@ -210,7 +214,7 @@
         </sell-time-modal>
       </view>
       <view class="time input-wrapper border-bottom-1px" @tap="showValidDateModal">
-        <view class="label">劵有效期</view>
+        <view class="label">券有效期</view>
         <view class="content">
           <view class="start">自上线之日起</view>
           <view class="to">至</view>
@@ -241,14 +245,14 @@
         <view class="arrow-right">
           <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
         </view>
-        <not-allow-time-modal title="不可用时间">
+        <not-allow-time-modal title="不可用时间" @confirm.user="setNotAllowTime" @cancel.user="resetNotAllowTime">
           <view class="not-allow-time-modal" slot="content">
             <view class="item-wrapper border-bottom-1px" @tap.stop="selecteNotAllowTime">
               <view class="desc-wrapper">
                 <view class="name">节假日不可用</view>
               </view>
-              <view class="radio {{!notAllowTime ? 'unselected' : ''}}">
-                <image wx:if="{{notAllowTime}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              <view class="radio {{!tempNotAllowTime ? 'unselected' : ''}}">
+                <image wx:if="{{tempNotAllowTime}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
           </view>
@@ -262,25 +266,25 @@
             <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>
           </view>
         </view>
-        <count-modal title="设置数量">
+        <count-modal title="设置数量" @confirm.user="setSellCount" @cancel.user="resetSellCount">
           <view class="count-modal" slot="content">
             <view class="item-wrapper border-bottom-1px" @tap="selectCountType(-1)">
               <view class="desc-wrapper">
                 <view class="name">无上限</view>
               </view>
-              <view class="radio {{sellCount !== -1 ? 'unselected' : ''}}">
-                <image wx:if="{{sellCount === -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              <view class="radio {{tempSellCount !== -1 ? 'unselected' : ''}}">
+                <image wx:if="{{tempSellCount === -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
             <view class="item-wrapper border-bottom-1px" @tap="selectCountType('')">
               <view class="desc-wrapper">
                 <view class="name">限制数量</view>
               </view>
-              <view class="input-wrapper {{sellCount === -1 ? 'disabled' : ''}}">
-                <input type="number" disabled="{{sellCount === -1}}" maxlength="10" @input="handleInput('sellCount')"/>
+              <view class="input-wrapper {{tempSellCount === -1 ? 'disabled' : ''}}">
+                <input type="number" value="{{tempSellCount === -1 ? '' : tempSellCount}}" disabled="{{tempSellCount === -1}}" maxlength="10" @input="handleInput('tempSellCount')"/>
               </view>
-              <view class="radio {{sellCount === -1 ? 'unselected' : ''}}">
-                <image wx:if="{{sellCount !== -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              <view class="radio {{tempSellCount === -1 ? 'unselected' : ''}}">
+                <image wx:if="{{tempSellCount !== -1}}" class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
               </view>
             </view>
           </view>
@@ -299,7 +303,7 @@
 3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
 4.备注：{{knowRemark}}
       </view>
-      <know-modal title="购买须知">
+      <know-modal title="购买须知" type="big">
         <view class="know-modal" slot="content">
           <view class="card-wrapper border-bottom-1px">
             <view class="item-wrapper">
@@ -418,6 +422,7 @@
       industryTab: 2,
       industryId: 1,
       category: '套餐券',
+      selectCategoryId: 1,
       categoryId: 1,
       categories: [],
       pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
@@ -428,12 +433,15 @@
       platformPrice: '',
       shopPrice: '',
       services: [{}],
+      tempServices: [{}],
       sellStartTime: '',
       sellEndTime: '',
       sellTimePickerType: 'start',
       validDate: '',
       notAllowTime: '',
+      tempNotAllowTime: '',
       sellCount: -1,
+      tempSellCount: -1,
       showSubscribe: true,
       showBuyLimit: true,
       showUseLimit: true,
@@ -505,10 +513,10 @@
         name = name.split('service')
         const type = name[0]
         const index = Math.floor(name[1])
-        if (index + 1 > this.services.length) {
-          this.services.push({})
+        if (index + 1 > this.tempServices.length) {
+          this.tempServices.push({})
         }
-        this.services[index][type] = value
+        this.tempServices[index][type] = value
         this.$apply()
         return
       }
@@ -541,8 +549,10 @@
         this.$invoke('catelog-modal', 'hide')
       },
       selecteType(typeId) {
-        this.typeId = Math.floor(typeId)
-        this.$invoke('meal-modal', 'hide')
+        this.selectCategoryId = Math.floor(typeId)
+      },
+      setType() {
+        this.categoryId = this.selectCategoryId
       },
       async chooseImage(pictureIndex) {
         const picture = await wepy.chooseImage()
@@ -567,26 +577,49 @@
         this._handleInput(name, e.detail.value)
       },
       addService() {
-        this.services.push({})
+        this.tempServices.push({})
         this.$apply()
       },
       deleteService(index) {
-        this.services.splice(Math.floor(index), 1)
+        this.tempServices.splice(Math.floor(index), 1)
         this.$apply()
+      },
+      setServices() {
+        const tempServices = this.tempServices.slice()
+        this.services = tempServices.map((item) => Object.assign({}, item))
+      },
+      resetServices() {
+        const services = this.services.slice()
+        this.tempServices = services.map((item) => Object.assign({}, item))
       },
       changeSellPickerType(type) {
         this.sellTimePickerType = type
       },
       selecteNotAllowTime() {
-        if (this.notAllowTime) {
-          this.notAllowTime = ''
+        if (this.tempNotAllowTime) {
+          this.tempNotAllowTime = ''
         } else {
-          this.notAllowTime = '节假日不可用'
+          this.tempNotAllowTime = '节假日不可用'
         }
-        this.$invoke('not-allow-time-modal', 'hide')
+      },
+      setNotAllowTime() {
+        this.notAllowTime = this.tempNotAllowTime
+      },
+      resetNotAllowTime() {
+        this.tempNotAllowTime = this.notAllowTime
       },
       selectCountType(type) {
-        this.sellCount = Math.floor(type)
+        if (!type) {
+          this.tempSellCount = 1
+          return
+        }
+        this.tempSellCount = Math.floor(type)
+      },
+      setSellCount() {
+        this.sellCount = this.tempSellCount
+      },
+      resetSellCount() {
+        this.tempSellCount = this.sellCount
       },
       toggleKnowTabShowHide(type) {
         if (this[type]) {

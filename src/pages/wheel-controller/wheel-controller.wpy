@@ -271,12 +271,16 @@
     }
 
     _handleInput(name, value) {
-      this[name] = value
       if (name === 'name') {
         this.nameLength = value.length
       } else if (name === 'activityDesc') {
         this.activityDescLength = value.length
+      } else if (name === 'percentage' && Math.floor(value) > 100) {
+        this.percentage = 100
+        this.$apply()
+        return
       }
+      this[name] = value
       this.$apply()
     }
 
@@ -316,7 +320,7 @@
         this.selectPromotion = promotion
       },
       decSelectStock() {
-        if (this.selectStock === 1) {
+        if (this.selectStock <= 0) {
           return
         }
         this.selectStock--
@@ -324,7 +328,7 @@
       addSelectStock() {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
         const stock = this.prizePool[prizeIndex].promotion_stock
-        if (this.selectStock === stock) {
+        if (stock <= 0) {
           return
         }
         this.selectStock++
@@ -335,6 +339,7 @@
         this.selectStock = 0
       },
       saveSelectPrize() {
+        console.log(this.selectStock)
         let prize = this.prizePool.find((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
         let selectPrize = Object.assign({}, prize)
         selectPrize.promotion_stock = this.selectStock
@@ -345,7 +350,7 @@
       },
       delectPrize(index, prize) {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === prize.promotion_id)
-        this.prizePool[prizeIndex].promotion_stock += prize.promotion_stock
+        this.prizePool[prizeIndex].promotion_stock = Math.floor(this.prizePool[prizeIndex].promotion_stock) + Math.floor(prize.promotion_stock)
         this.activityPromotions.splice(index, 1)
         if (prize.activity_promotion_id) {
           let delPrize = Object.assign({}, prize)
@@ -390,7 +395,7 @@
           this.$invoke('toast', 'show', '奖品池暂无奖品')
           return
         }
-        this.selectStock = 1
+        this.selectStock = 0
         this.selectPromotion = this.prizePool[0]
         this.$invoke('prize-pool-modal', 'show')
       }
