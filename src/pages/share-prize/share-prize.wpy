@@ -1,5 +1,5 @@
 <template>
-  <view class="share-prize {{showCover?'fasten':''}}">
+  <view class="share-prize">
     <view class="share-item-box">
       <view class="share-item">
         <view class="share-item-title">
@@ -117,8 +117,7 @@
       isCompile: false,
       prizeListArr: [],
       prizePollList: [],
-      delPrizeItem: null,
-      showCover: false
+      delPrizeItem: null
     }
 
     methods = {
@@ -159,7 +158,6 @@
         this.$apply()
       },
       showAddPrize() {
-        this.showCover = true
         this.$invoke('AddPrize', 'init', this.prizePollList)
       },
       delectPrize(item) {
@@ -177,7 +175,7 @@
       this.nowDate = new Date().toLocaleDateString()
       let res = await Activity.getShareList()
       this.prizePollList = await PrizePool.getPrizelist()
-      if (res.error === 1 && res.status === 200) {
+      if (res.error === 1 && res.status_code === 200) {
         res = {}
         this.isCompile = false
       } else {
@@ -186,6 +184,7 @@
       this.shareMsg = res
       this.shareEndTime = res.to_date || ''
       this.prizeListArr = res.activity_promotion || []
+      console.log(this.isCompile)
       this.loaded()
     }
 
@@ -451,6 +450,4 @@
           font-size: $font-size-medium
           color: $color-white
 
-    .fasten
-      overflow-y: hidden
 </style>

@@ -23,8 +23,9 @@
           </radio-group>
         </view>
       </view>
-      <view class="radioBox-closeBtn" catchtap="closeCover">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+      <view class="foot-btnBox border-top-1px">
+        <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
+        <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
       </view>
     </view>
   </view>
@@ -122,17 +123,6 @@
         this.showCover = true
         this.$apply()
       },
-      closeCover() {
-        let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
-        let chioseRes = this._seekId(res, this.checkedTwo)[0]
-        this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
-        this.radioMsg = null
-        this.checked = null
-        this.items = []
-        this.secondItems = []
-        this.showCover = false
-        this.$apply()
-      },
       radioChiose(e) {
         this.checkedTwo = e.detail.value
         this.$apply()
@@ -141,6 +131,22 @@
         this.checkedOne = this.items[idx].id
         this.checkedTwo = null
         this.secondItems = this.items[idx][this.radioMsg.twoTitle]
+        this.$apply()
+      },
+      cancleMsg() {
+        this.showCover = false
+        this.$emit('nothingChiose')
+        this.$apply()
+      },
+      saveMsg() {
+        let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
+        let chioseRes = this._seekId(res, this.checkedTwo)[0]
+        this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
+        this.radioMsg = null
+        this.checked = null
+        this.items = []
+        this.secondItems = []
+        this.showCover = false
         this.$apply()
       }
     }
@@ -172,7 +178,7 @@
       transform: translate(-50%, -50%)
       background: $color-white
       width: 265.5px
-      min-height: 40px
+      height: 400px
       border-radius: 4px
 
       .radioBox-head
@@ -184,13 +190,13 @@
         font-size: $font-size-medium-x
 
       .radioBox-body
-        max-height: 360px
+        height: 320px
         display: flex
         background: $color-background
 
         .radioBox-title
           width: 90px
-          max-height: 360px
+          height: 320px
           overflow-y: auto
 
           .radioBox-title-item
@@ -252,7 +258,7 @@
           padding: 0 10px
           width: 175.5px
           overflow-y: auto
-          max-height: 360px
+          height: 320px
 
         .radioBox-list-item
           line-height: 39px
@@ -271,22 +277,21 @@
               right: 0
               top: 11px
 
-          .radioLabel.active
-            color: $color-assist-f
-
-      .radioBox-closeBtn
-        width: 34px
-        height: 34px
+      .foot-btnBox
+        height: 40px
         display: flex
-        justify-content: center
-        align-items: center
-        position: absolute
-        left: 50%
-        transform: translate(-50%, 0)
-        bottom: -50px
+        border-box: box-sizing
+        background: $color-white
 
-        .radioBox-closeX
-          width: 24px
-          height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
+
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
 </style>

@@ -23,10 +23,10 @@
         <view class="complaint-center-body">
           <view class="complaint-center-body-title">投诉对象： {{saleMsg.user_name}}</view>
           <textarea placeholder="请输入投诉内容" placeholder-class="complaint-placeholder" class="complaint-input" bindblur="complaintChange"></textarea>
-          <view class="complaint-btn {{complaintInTxt.length>0?'':'disab'}}" @tap="submitComplaint">提交</view>
         </view>
-        <view class="complaint-closeBtn" @tap="closeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="complaint-closeX"></image>
+        <view class="foot-btnBox border-top-1px">
+          <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
+          <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
         </view>
       </view>
     </view>
@@ -40,6 +40,7 @@
   import Account from '@/api/account'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
 
   export default class ContactSales extends wepy.page {
     mixins = [base]
@@ -70,9 +71,6 @@
           this.$invoke('Toast', 'show', '请先联系客服购买哦')
         }
       },
-      closeCover() {
-        this.complaintIn = false
-      },
       call() {
         let phoneNum = this.saleMsg.mobile || '11111111111'
         wx.makePhoneCall({
@@ -83,7 +81,12 @@
         this.complaintInTxt = e.detail.value
         this.$apply()
       },
-      async submitComplaint() {
+      cancleMsg() {
+        this.complaintInTxt = ''
+        this.complaintIn = false
+        this.$apply()
+      },
+      async saveMsg() {
         if (this.complaintInTxt.length > 0) {
           let data = {
             salesman_id: this.salesmanId,
@@ -93,8 +96,11 @@
           this.loaded()
           console.log(res)
           if (res.error === 0) {
-            this.$invoke('Toast', 'show', '投诉成功')
+            Tips.success('投诉成功')
+            this.complaintIn = false
           }
+        } else {
+          this.$invoke('Toast', 'show', '请填写投诉内容')
         }
       }
     }
@@ -131,7 +137,7 @@
       display: flex
       align-items: center
       justify-content: space-between
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
 
       .salesMsg-left
         display: flex
@@ -141,7 +147,7 @@
           width: 48px
           height: 48px
           border-radius: 50%
-          background: #ccc
+          border: 2px solid $color-row-line
 
           .avatarImg
             width: 48px
@@ -218,7 +224,7 @@
 
         .complaint-center-body
           padding: 0 10px
-          height: 360px
+          height: 320px
 
           .complaint-center-body-title
             line-height: 37px
@@ -226,7 +232,7 @@
 
           .complaint-input
             width: 225px
-            height: 237px
+            height: 252px
             background: $color-background
             padding: 10px
             font-size: $font-size-small
@@ -248,19 +254,21 @@
         .complaint-btn.disab
           background: $color-btn-dis
 
-      .complaint-closeBtn
-        width: 34px
-        height: 34px
+      .foot-btnBox
+        height: 40px
         display: flex
-        justify-content: center
-        align-items: center
-        position: absolute
-        left: 50%
-        transform: translate(-50%, 0)
-        bottom: -50px
+        border-box: box-sizing
+        background: $color-white
 
-        .complaint-closeX
-          width: 24px
-          height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
+
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
 </style>

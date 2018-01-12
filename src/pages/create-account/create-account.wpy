@@ -8,7 +8,7 @@
 
       <view class="createAccount-txt last">
         <view class="createAccount-txt-title">密码</view>
-        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母组合)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
+        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
       </view>
 
     </view>
@@ -69,7 +69,6 @@
       checkedStoreId: '',
       jurisdictionTxt: '',
       phoneNum: '',
-      telTest: true,
       passTest: false,
       password: ''
     }
@@ -88,7 +87,8 @@
           headTxt: '门店选择',
           radioChecked: 0,
           items,
-          test: 'test'
+          test: 'test',
+          height: 320
         })
       },
       showCheckBox() {
@@ -102,21 +102,15 @@
         })
       },
       phoneChange(e) {
-        let reg = /^1[3|4|5|7|8][0-9]{9}$/
-        this.telTest = reg.test(e.detail.value)
         this.phoneNum = e.detail.value
         this.$apply()
       },
       passwordChange(e) {
-        let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
-        this.passTest = reg.test(e.detail.value)
-        if (!this.passTest) {
-          this.$invoke('Toast', 'show', '密码格式不正确')
-        }
         this.password = e.detail.value
+        this.$apply()
       },
       async submitMsg() {
-        if (this.passTest && this.telTest && this.phoneNum && this.checkedStore && this.checkedStoreId) {
+        if (this.passTest && this.telTest && this.phoneNum.length === 11 && this.checkedStore && this.checkedStoreId) {
           let data = {
             mobile: this.phoneNum,
             password: this.password,
@@ -132,8 +126,12 @@
           } else {
             this.$invoke('Toast', 'show', '创建失败')
           }
-        } else {
-          this.$invoke('Toast', 'show', '资料未填写完整')
+        } else if (this.telTest || this.phoneNum.length !== 11) {
+          this.$invoke('Toast', 'show', '手机填写错误')
+        } else if (this.passTest) {
+          this.$invoke('Toast', 'show', '密码格式错误')
+        } else if (this.checkedStore || this.checkedStoreId) {
+          this.$invoke('Toast', 'show', '请选择对应门店')
         }
       }
     }
@@ -161,6 +159,21 @@
       let res = await Account.getAnnexList()
       this.storeList = res || []
       this.loaded()
+    }
+
+    computed = {
+      telTest() {
+        let reg = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.phoneNum.length === 11) {
+          return reg.test(this.phoneNum)
+        } else {
+          return true
+        }
+      },
+      passTest() {
+        let reg = /^[a-zA-Z0-9]{6,16}$/
+        return reg.test(this.password)
+      }
     }
   }
 </script>

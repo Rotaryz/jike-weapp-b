@@ -33,7 +33,12 @@
             </view>
           </view>
         </view>
+        <view class="prize-pool-nothing" wx:if="{{prizeNothing}}">
+          <image src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_prize@2x.png" class="nothingImg"></image>
+          <view class="nothingTxt">还没有奖品，马上创建奖品</view>
+        </view>
       </view>
+
       <!--<view class="prizeItem-bottom">-->
         <!--<view class="prizeItem-bottom-btn" wx:if="{{item.promotion_type==='exchange'}}">删除</view>-->
         <!--<view class="prizeItem-bottom-btn">查看</view>-->
@@ -45,6 +50,10 @@
     </view>
 
     <view class="pastDue-body" wx:if="{{!menuTab}}">
+      <view class="prize-pool-nothing" wx:if="{{prizeDueNothing}}">
+        <image src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_prize@2x.png" class="nothingImg"></image>
+        <view class="nothingTxt">还没有奖品，马上创建奖品</view>
+      </view>
       <view class="prizeItem" wx:for="{{pastDuePrizeList}}" wx:key="{{item}}">
         <view class="prizeItem-top">
           <view class="prizeItem-top-left">
@@ -104,7 +113,9 @@
       menuTab: 1,
       useablePrizeList: null,
       pastDuePrizeList: null,
-      EXchangeId: null
+      EXchangeId: null,
+      prizeNothing: false,
+      prizeDueNothing: false
     }
 
     methods = {
@@ -146,11 +157,21 @@
 
     async load() {
       this.useablePrizeList = await PrizePool.getPrizelist() || []
+      if (this.useablePrizeList.length === 0) {
+        this.prizeNothing = true
+      } else {
+        this.prizeNothing = false
+      }
       this.loaded()
     }
 
     async loadPastDue() {
       this.pastDuePrizeList = await PrizePool.getPrizelist(0) || []
+      if (this.pastDuePrizeList.length === 0) {
+        this.prizeDueNothing = true
+      } else {
+        this.prizeDueNothing = false
+      }
       this.loaded()
     }
 
@@ -174,6 +195,22 @@
   .prize-pool
     height: 100vh
     background: $color-background
+
+    .prize-pool-nothing
+      height: 40vh
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+
+      .nothingImg
+        width: 120px
+        height: 96px
+        margin-bottom: 15px
+
+      .nothingTxt
+        font-size: $font-size-small
+        color: $color-text-d
 
     .prize-pool-tab
       height: 7vh

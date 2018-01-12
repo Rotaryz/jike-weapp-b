@@ -3,7 +3,7 @@
     <view class="radioBox-Msg">
       <view class="radioBox-head">{{radioMsg.headTxt}}</view>
 
-      <view class="radioBox-list">
+      <view class="radioBox-list" style="height:{{height}}px">
         <radio-group bindchange="radioChiose">
           <view class="radioBox-list-item" wx:for="{{radioMsg.items}}" wx:key="{{index}}">
             <label class="radioLabel {{item.txt===checked?'active':''}}">
@@ -20,11 +20,10 @@
             </label>
           </view>
         </view>
-
       </view>
-
-      <view class="radioBox-closeBtn" @tap="closeCover">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+      <view class="foot-btnBox border-top-1px">
+        <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
+        <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
       </view>
     </view>
   </view>
@@ -53,6 +52,7 @@
       checked: '',
       radioMsg: null,
       test: '',
+      height: '',
       testArr: ['国颐堂养发馆（国际单位店）', '国颐堂养发馆（时代玫瑰园店）', '国颐堂养发馆（富力城店）', '国颐堂养发馆（豪贤路店）', '国颐堂养发馆（历德雅舍店）', '国颐堂养发馆（珠江帝景店）']
     }
 
@@ -64,10 +64,18 @@
         this.radioMsg = radioList
         this.checked = radioList.radioChecked
         this.test = radioList.test || ''
+        this.height = radioList.height || 200
         this.showCover = true
         this.$apply()
       },
-      closeCover() {
+      cancleMsg() {
+        this.$emit('nothingChiose')
+        this.radioMsg = null
+        this.showCover = false
+        this.test = ''
+        this.$apply()
+      },
+      saveMsg() {
         let res = this._checkRes(this.radioMsg.items, this.checked)
         this.$emit('radioChioseOK', res)
         this.radioMsg = null
@@ -120,9 +128,8 @@
         font-size: $font-size-medium-x
 
       .radioBox-list
-        max-height: 330px
         overflow-y: auto
-        padding: 10px 12px 20px
+        padding: 0 12px
 
         .radioBox-list-item
           line-height: 39px
@@ -141,108 +148,21 @@
               right: 2px
               top: 11px
 
-          .radioLabel.active
-            color: $color-assist-f
-
-      .twoColumn-radioBox-list
-
-        .radioBox-title
-          width: 90px
-          max-height: 360px
-
-          .radioBox-title-item
-
-            .radioBox-title-item-box
-              line-height: 38px
-              font-size: $font-size-small
-              display: flex
-              align-items: center
-              position: relative
-              border-bottom: 1px solid $color-row-line
-              border-right: 1px solid $color-row-line
-
-              .radioBox-title-item-before
-                width: 2px
-                height: 38px
-                background: $color-background
-                margin-right: 10px
-
-              .radioBox-title-item-arrow
-                opacity: 0
-                width: 10px
-                height: 10px
-                position: absolute
-                right: 7px
-                top: 15px
-
-              .normal
-                opacity: 0
-                width: 10px
-                height: 10px
-                position: absolute
-                right: 7px
-                top: 15px
-
-            .radioBox-title-item-box.active
-              background: $color-white
-              border-right: 0 none
-              color: $color-assist-f
-
-              .radioBox-title-item-before
-                width: 2px
-                height: 38px
-                background: $color-assist-f
-                margin-right: 10px
-
-              .normal
-                opacity: 1
-
-              .radioBox-title-item-arrow
-                width: 10px
-                height: 10px
-                position: absolute
-                right: 7px
-                top: 15px
-
-        .radioBox-list
-          background: $color-white
-          padding: 0 10px
-          width: 175.5px
-          max-height: 360px
-
-        .radioBox-list-item
-          line-height: 39px
-          border-bottom: 1px solid $color-row-line
-          font-size: $font-size-small
-
-          .radioLabel
-            display: block
-            width: 100%
-            position: relative
-
-            .radio-Icon
-              width: 16px
-              height: 16px
-              position: absolute
-              right: 0
-              top: 11px
-
-          .radioLabel.active
-            color: $color-assist-f
-
-      .radioBox-closeBtn
-        width: 34px
-        height: 34px
+      .foot-btnBox
+        height: 40px
         display: flex
-        justify-content: center
-        align-items: center
-        position: absolute
-        left: 50%
-        transform: translate(-50%, 0)
-        bottom: -50px
+        border-box: box-sizing
+        background: $color-white
 
-        .radioBox-closeX
-          width: 24px
-          height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
+
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
 </style>

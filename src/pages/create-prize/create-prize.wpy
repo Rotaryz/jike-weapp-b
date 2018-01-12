@@ -63,20 +63,19 @@
           <view class="prize-picker-right">
             <view class="prize-picker-txt">
               <view class="prize-picker-txt-time">
-                <picker mode="date" value="{{date}}" start="nowDate" end="2020-09-01" bindchange="beginTimeChange">
+                <picker mode="date" value="{{beginTime}}" start="{{nowDate}}" end="{{endTime}}" bindchange="beginTimeChange">
                   <view class="prize-picker-txt-time-title">{{beginTime?beginTime:'开始时间'}}</view>
                 </picker>
                 <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
               </view>
               <view class="prize-picker-txt-middle">至</view>
               <view class="prize-picker-txt-time">
-                <picker mode="date" value="{{date}}" start="nowDate" end="2020-09-01" bindchange="endTimeChange">
+                <picker mode="date" value="{{endTime}}" start="{{beginTime}}" end="2020-09-01" bindchange="endTimeChange">
                   <view class="prize-picker-txt-time-title">{{endTime?endTime:'结束时间'}}</view>
                 </picker>
                 <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
               </view>
             </view>
-
           </view>
         </view>
 
@@ -156,7 +155,7 @@
             <view class="min-box">
               <text>最小</text>
               <view class="inputBox">
-                0.01
+                <input type="digit" class="randomRP-prize-total-input {{minMoneyTest?'':'error'}}" value="{{redpackMin}}" bindblur="minChange"/>
               </view>
             </view>
           </view>
@@ -207,49 +206,13 @@
       <view class="createBtn">提交</view>
     </view>
 
-    <view class="times" wx:if="{{prizeTimeShow}}">
-      <view class="times-ti">
-        <view class="set-time">设置时间</view>
-        <view class="time-ok">
-          <view class="{{timeTimes === 1 ?'tactive':''}}" @tap="tapTime(1)">
-            {{btime}}
-          </view>
-          <view>至</view>
-          <view class="{{timeTimes === 2 ?'tactive':''}}" @tap="tapTime(2)">
-            {{etime}}
-          </view>
-        </view>
-        <view class="time-sure">
-          <text>取消</text>
-          <text @tap="sureTime">确定</text>
-        </view>
-        <picker-view bindchange="bindTimeChange" value="{{value}}">
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{yearLen}}"
-                  wx:key="{{index}}" value="{{year + item}}">{{
-              year + item}}年
-            </view>
-          </picker-view-column>
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{mounth}}"
-                  wx:key="{{index}}" value="{{item}}">{{item + 1}}月
-            </view>
-          </picker-view-column>
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{day}}"
-                  wx:key="{{index}}" value="{{item}}">{{item + 1}}日
-            </view>
-          </picker-view-column>
-        </picker-view>
-        <view class="times-closeBtn" @tap="closeTimeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="times-closeX"></image>
-        </view>
-      </view>
-    </view>
 
     <view class="payment" wx:if="{{paymentIn}}">
       <view class="payment-main">
-        <view class="payment-main-head">在线支付</view>
+        <view class="payment-main-head">
+          在线支付
+          <image class="closeBtn" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close-p@2x.png" @tap="closePayment"></image>
+        </view>
         <view wx:if="{{!paymentSuccess}}">
           <view class="payment-total">
             <view class="payment-total-left">红包总金额</view>
@@ -323,6 +286,7 @@
       prizeCount: '',
       exdescripte: '',
       redpackMax: '',
+      redpackMin: '',
       total: '',
       fixedRedpacket: '',
       paymentType: 1,
@@ -332,9 +296,7 @@
       EXimgId: '',
       paymentMsg: '',
       payEnough: true,
-      paymengMoneyIn: false,
-      textarea: false,
-      textareaFocus: false
+      paymengMoneyIn: false
     }
 
     methods = {
@@ -395,14 +357,12 @@
         }
         this.$apply()
       },
-      exdescrpChange(e) {
-        this.exdescripte = e.detail.value
-        this.textarea = false
-        this.textareaFocus = false
-        this.$apply()
-      },
       maxChange(e) {
         this.redpackMax = e.detail.value
+        this.$apply()
+      },
+      minChange(e) {
+        this.redpackMin = e.detail.value
         this.$apply()
       },
       totalChange(e) {
@@ -414,11 +374,10 @@
         this.$apply()
       },
       async createSubmit() {
-        let payRes = await PrizePool.getStoreBalance()
-        let payResMax = Number(payRes.remaining)
         switch (this.prizeType) {
           case 1:
             let res1 = this._testEXmsg()
+            console.log(res1)
             if (res1) {
               let data1 = await PrizePool.createEXchange(res1)
               if (data1.error === 0) {
@@ -430,6 +389,8 @@
             let res2 = this._testRandomRedpack()
             if (res2) {
               this.paymentMsg = Object.assign({}, res2)
+              let payRes = await PrizePool.getStoreBalance()
+              let payResMax = Number(payRes.remaining)
               if (payResMax >= this.total) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -444,6 +405,8 @@
             let res3 = this._testFixedRedpack()
             if (res3) {
               this.paymentMsg = Object.assign({}, res3)
+              let payRes = await PrizePool.getStoreBalance()
+              let payResMax = Number(payRes.remaining)
               if (payResMax >= this.prizeCount * this.fixedRedpacket) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -471,6 +434,10 @@
       },
       delEXimg() {
         this.EXimgUrl = ''
+        this.$apply()
+      },
+      closePayment() {
+        this.paymentIn = false
         this.$apply()
       },
       payChange(idx) {
@@ -504,10 +471,10 @@
         this.loaded()
         if (res.error === 0) {
           this.paymentSuccess = true
-          this.$apply()
           setTimeout(() => {
             this.$back()
-          }, 2000)
+          }, 1500)
+          this.$apply()
         } else if (res.payInfo) {
           const {timestamp, nonceStr, signType, paySign} = res.payInfo
           const pay = await wepy.requestPayment({
@@ -522,16 +489,9 @@
             this.$apply()
             setTimeout(() => {
               this.$back()
-            }, 2000)
+            }, 1500)
           }
         }
-      },
-      showTextarea() {
-        this.textarea = true
-        setTimeout(() => {
-          this.textareaFocus = true
-          this.$apply()
-        }, 30)
       }
     }
 
@@ -553,7 +513,12 @@
         let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
         let mean = this.total / this.prizeCount
         let max = this.total - (this.prizeCount - 1) * 0.01
-        return reg.test(this.redpackMax) && this.redpackMax >= mean && this.redpackMax <= max
+        return reg.test(this.redpackMax) && this.redpackMax > mean && this.redpackMax < max
+      },
+      minMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        let mean = this.total / this.prizeCount
+        return reg.test(this.redpackMin) && this.redpackMin < mean && this.redpackMin >= 0.01
       },
       fixedRedpacketTotal() {
         return '￥' + this.prizeCount * this.fixedRedpacket
@@ -564,18 +529,19 @@
       }
     }
 
-    _testPropety() {
-      let arr = Array.prototype.slice.call(arguments, 0)
-      return arr.every((item) => {
-        return item
-      })
+    _testPropety(arr) {
+      for (let i = 0, j = arr.length; i < j; i++) {
+        if (!arr[i].value) {
+          this.$invoke('Toast', 'show', arr[i].txt)
+          return false
+        }
+        if (i === j - 1 && arr[i].value) {
+          return true
+        }
+      }
     }
 
     _testEXmsg() {
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
       let data = {
         promotion_type: 'exchange',
         title: this.prizeName,
@@ -585,9 +551,16 @@
         stock: this.prizeCount,
         use_type: 1
       }
-      let res = this._testPropety(this.prizeName, this.beginTime, this.endTime, this.exdescripte, this.prizeCount)
-      if (!res || !this.EXimgUrl) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.beginTime, txt: '请设置开始时间'},
+        {value: this.endTime, txt: '请设置结束时间'},
+        {value: this.EXimgUrl, txt: '请上传奖品图片'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.exdescripte, txt: '请填写使用须知'}
+      ]
+      let res = this._testPropety(errMsg)
+      if (!res) {
         return false
       }
       return Object.assign({}, data, {
@@ -597,14 +570,6 @@
     }
 
     _testRandomRedpack() {
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
-      if (!this.maxMoneyTest) {
-        this.$invoke('Toast', 'show', '红包最大值不合规')
-        return false
-      }
       let data = {
         title: this.prizeName,
         is_lucky_redpacket: 1,
@@ -613,23 +578,21 @@
         max_price: this.redpackMax,
         total_amount: this.total
       }
-      let res = this._testPropety(this.prizeName, this.prizeCount, this.redpackMax, this.total)
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.total, txt: '请填写红包总金额'},
+        {value: this.maxMoneyTest, txt: '红包最大值要小于总金额且大于平均值'},
+        {value: this.minMoneyTest, txt: '红包最小值要小于平均值且不能小于0.01'}
+      ]
+      let res = this._testPropety(errMsg)
       if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
         return false
       }
       return data
     }
 
     _testFixedRedpack() {
-      if (!this.fixedRpMoneyTest) {
-        this.$invoke('Toast', 'show', '红包金额输入错误')
-        return false
-      }
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
       let data = {
         title: this.prizeName,
         num: this.prizeCount,
@@ -637,14 +600,25 @@
         max_price: this.fixedRedpacket,
         total_amount: this.prizeCount * this.fixedRedpacket
       }
-      let res = this._testPropety(this.prizeName, this.prizeCount, this.fixedRedpacket, this.prizeCount * this.fixedRedpacket)
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.fixedRpMoneyTest, txt: '红包金额输入错误'}
+      ]
+      let res = this._testPropety(errMsg)
       if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
         return false
       }
       return Object.assign({}, data, {
         is_lucky_redpacket: 0
       })
+    }
+
+    events = {
+      input(txt) {
+        this.exdescripte = txt
+        this.$apply()
+      }
     }
   }
 </script>
@@ -1228,94 +1202,6 @@
         .prizeItem-saveBtn.firstBtn
           color: $color-text-d
 
-    .times
-      position: fixed
-      height: 100%
-      width: 100%
-      z-index: 1000
-      top: 0
-      background: $color-mask-bgc
-
-      .times-ti
-        height: 325px
-        width: 265px
-        position: absolute
-        left: 50%
-        top: 50%
-        transform: translate(-50%, -50%)
-        background: $color-white
-        border-radius: 2px
-
-        .set-time
-          height: 40px
-          line-height: 40px
-          text-align: center
-          background-color: $color-theme
-          color: $color-white
-          font-size: $font-size-medium-x
-          font-family: $font-family-light
-        picker-view
-          position: absolute
-          bottom: 0
-          height: 200px
-          width: 100%
-          text-align: center
-          font-size: $font-size-medium
-        .time-ok
-          height: 45px
-          display: flex
-          font-size: $font-size-small
-          align-items: center
-          background: $color-background
-          position: relative
-          view
-            flex: 1
-            text-align: center
-            border-bottom: 2px solid $color-text-d
-            &:nth-child(2)
-              position: absolute
-              left: 50%
-              top: 50%
-              transform: translate(-50%, -50%)
-              width: 18px
-              height: 18px
-              line-height: 18px
-              border-radius: 50%
-              text-align: center
-              font-size: $font-size-small-s
-              background: $color-text-d
-              color: $color-white
-            &:nth-child(1), &:nth-child(3)
-              line-height: 1
-              padding-bottom: 9.5px
-              margin: 19.5px 24px 0
-          .tactive
-            border-bottom: 2px solid  $color-assist-f
-            color: $color-text
-        .time-sure
-          height: 39.5px
-          border-bottom: 0.5px solid $color-split-line
-          padding: 18.5px $padding 0
-          display: flex
-          color: $color-text
-          justify-content: space-between
-          font-size: $font-size-small
-
-        .times-closeBtn
-          width: 34px
-          height: 34px
-          display: flex
-          justify-content: center
-          align-items: center
-          position: absolute
-          left: 50%
-          transform: translate(-50%, 0)
-          bottom: -80px
-
-          .times-closeX
-            width: 24px
-            height: 24px
-
     .payment
       position: fixed
       z-index: 1000
@@ -1340,6 +1226,15 @@
           font-size: $font-size-medium-x
           color: $color-text-d
           border-bottom: 0.5px solid $color-col-line
+          position: relative
+
+          .closeBtn
+            position: absolute
+            right: 0
+            top: 0
+            width: 20px
+            height: 20px
+            padding: 10px
 
         .payment-total
           height: 50px
