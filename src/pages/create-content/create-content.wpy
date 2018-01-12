@@ -269,19 +269,20 @@
       },
       async upVideo(num) {
         const res = await wepy.chooseVideo({sourceType: ['album']})
+        console.log(res)
 //      需要限制大小，待确定！
-        let file = res.tempFilePath
-        const videoId = await Uploads.uploadVideo(file)
-        this.loaded()
-        let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
-        this.loaded()
-        if (videoId && imageId) {
-          this.contentList[num]['cover_image'].url = res.thumbTempFilePath
-          this.contentList[num]['detail_id'] = videoId.id
-          this.contentList[num]['cover_image_id'] = imageId.id
-          this.$apply()
-        }
-        this.upDateList(this.contentList[num])
+//        let file = res.tempFilePath
+//        const videoId = await Uploads.uploadVideo(file)
+//        this.loaded()
+//        let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
+//        this.loaded()
+//        if (videoId && imageId) {
+//          this.contentList[num]['cover_image'].url = res.thumbTempFilePath
+//          this.contentList[num]['detail_id'] = videoId.id
+//          this.contentList[num]['cover_image_id'] = imageId.id
+//          this.$apply()
+//        }
+//        this.upDateList(this.contentList[num])
       },
       async upImage(num) {
         num = num * 1

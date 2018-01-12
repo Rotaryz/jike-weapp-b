@@ -119,7 +119,8 @@
 <style lang="stylus">
   #area
     overflow: visible !important
-    height: 400px !important
+    margin-top:   3.4666vw
+    /*height: 300px !important*/
     canvas
       width: 100%
       height: 65vw

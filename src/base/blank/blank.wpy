@@ -1,0 +1,52 @@
+<template>
+  <view class="blank" style="margin-top:{{mtops}}vw" wx:if="{{showBlank}}">
+    <view>
+      <image src="{{imgSrc}}"></image>
+      <view>{{blankTip}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class blank extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    data = {
+      showBlank: false,
+      imgSrc: '',
+      blankTip: '',
+      mtops: 0
+    }
+    methods = {
+      show(url, tip, height) {
+        console.log(height)
+        this.showBlank = true
+        this.imgSrc = url
+        this.blankTip = tip
+        this.mtops = height
+      },
+      hide() {
+        this.showBlank = false
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  view
+    text-align: center
+    font-size: $font-size-small
+    color: $color-text-d
+    line-height: 16.5px
+    image
+      width: 53.3333vw
+      height: 42.6667vw
+      margin-bottom: 11.5px
+
+
+</style>

@@ -8,7 +8,8 @@
     </view>
     <view class="qR-num">
       <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}"
-            @touchstart="oncap({{index}},{{item.text}})" @touchend="endTap()">
+            @touchstart="oncap({{index}},{{item.text}})"
+            @touchend="endTap({{item.code}})">
         <view class="nums">
           <text>{{item.text}}</text>
           <image src="{{item.image}}"></image>
@@ -76,7 +77,8 @@
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
       }],
       showInput: true,
-      code: ''
+      code: '',
+      sureCode: 0
     }
 
     async _verification(data) {
@@ -85,14 +87,14 @@
 
     async show(code) {
       let res = await this._verification(code)
-      this.loaded()
       console.log(res)
+      this.loaded()
       if (res.error !== 1) {
 //                成功时
         this.$invoke('Toast', 'show', '核销成功')
         this.code = ''
       } else {
-        this.$invoke('Toast', 'show', '核销失败')
+        this.$invoke('Toast', 'show', res.message)
 //                失败时
         this.$apply()
       }
@@ -100,32 +102,36 @@
 
     methods = {
       oncap(index, num) {
-        let code = 0
-        if (this.code.length <= 17) {
+        if (this.sureCode.length < 10 || this.sureCode === 0) {
           this.code += num
           this.code = this.code.replace(/(\d{4})/g, '$1 ')
         }
-        this.codeNum.map(async (item, idx) => {
-          if (idx !== this.codeNum.length - 1) {
-            if (idx === index) {
-              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button2@2x.png'
+        if (num !== '') {
+          this.codeNum.map(async (item, idx) => {
+            if (idx !== this.codeNum.length - 1) {
+              if (idx === index) {
+                item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button2@2x.png'
+              }
             }
+            return item
+          })
+          this.sureCode = this.code.replace(/ /g, '')
+          if (this.sureCode.length === 10) {
+            this.codeNum[10].image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validatered@2x.png'
           }
-          if (idx === index && idx === this.codeNum.length - 1) {
-            item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validatered@2x.png'
-            code = this.code.replace(/ /g, '')
-            this.show(code)
+        } else {
+          if (this.sureCode.length === 10) {
+            this.show(this.sureCode)
+          } else {
+            this.$invoke('Toast', 'show', '请输入10核销码')
           }
-          return item
-        })
+        }
       },
       endTap() {
         setTimeout(() => {
           this.codeNum.map((item, idx) => {
             if (idx !== this.codeNum.length - 1) {
               item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
-            } else {
-              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
             }
             return item
           })
@@ -135,6 +141,11 @@
       isInput() {
         this.showInput = true
       }
+    }
+
+    onLoad() {
+      this.code = ''
+      this.codeNum[10].image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
     }
   }
 </script>

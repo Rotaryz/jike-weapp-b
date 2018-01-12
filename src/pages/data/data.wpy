@@ -49,7 +49,6 @@
   import AeraChart from '@/base/areaChart/areaChart'
   import base from 'common/mixins/base'
   export default class Data extends wepy.page {
-
     mixins = [base]
 
     onShareAppMessage() {
@@ -113,8 +112,8 @@
   @import "../../common/stylus/mixin"
   page
     background: $color-white
-    height: 100vh
-    overflow-y: hidden
+    max-height: 100%
+    overflow: hidden
 
   view
     box-sizing: border-box

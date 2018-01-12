@@ -130,7 +130,7 @@
     async load(time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-      await http.isLogin(res.message)
+      let status = await http.isLogin(res.message)
       this.dataList = res.detail
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
@@ -142,7 +142,9 @@
           }
         })
       }
-      this.loaded()
+      if (status === 0) {
+        this.loaded()
+      }
       this.$apply()
     }
 
@@ -159,6 +161,7 @@
         this.$invoke('Toast', 'show', '核销成功')
       } else {
         if (data.error !== 1) {
+          console.log(data)
           this.$invoke('Toast', 'show', '核销成功')
         } else {
           this.$invoke('Toast', 'show', '核销失败')
