@@ -3,11 +3,11 @@
     <view class="salesMsg">
       <view class="salesMsg-left">
         <view class="avatarBox">
-          <image src="{{saleMsg.user_image}}" class="avatarImg"></image>
+          <image src="{{saleMsg.user_image?saleMsg.user_image:'http://jike-file.jerryf.cn/defaults/b-image/page/pic-default_portrait@2x.png'}}" class="avatarImg"></image>
         </view>
-        <view class="sales-name">{{saleMsg.user_name}}</view>
+        <view class="sales-name">{{saleMsg.user_name?saleMsg.user_name:'集客商家助手'}}</view>
       </view>
-      <view class="salesMsg-complaint" @tap="showCover">投诉</view>
+      <view class="salesMsg-complaint" @tap="showCover" wx:if="{{false}}">投诉</view>
     </view>
     <view class="salesMsg-tel">
       <view class="salesMsg-tel-left">
@@ -147,7 +147,7 @@
           width: 48px
           height: 48px
           border-radius: 50%
-          border: 2px solid $color-row-line
+          border: 1px solid $color-row-line
 
           .avatarImg
             width: 48px

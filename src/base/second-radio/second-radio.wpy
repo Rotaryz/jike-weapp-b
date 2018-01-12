@@ -28,6 +28,8 @@
         <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
       </view>
     </view>
+
+    <Toast></Toast>
   </view>
 </template>
 
@@ -35,6 +37,7 @@
   /* eslint-disable no-undef */
   import wepy from 'wepy'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
 
   export default class TwoRadioBox extends wepy.component {
     mixins = [base]
@@ -94,6 +97,10 @@
 //            ]
 //          }]
 //    }
+    components = {
+      Toast
+    }
+
     data = {
       showCover: false,
       radioMsg: null,
@@ -139,6 +146,10 @@
         this.$apply()
       },
       saveMsg() {
+        if (!this.checkedTwo) {
+          this.$invoke('Toast', 'show', '您还没有选择哦')
+          return
+        }
         let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
         let chioseRes = this._seekId(res, this.checkedTwo)[0]
         this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
@@ -207,8 +218,8 @@
               display: flex
               align-items: center
               position: relative
-              border-bottom: 1px solid $color-row-line
-              border-right: 1px solid $color-row-line
+              border-bottom: 0.5px solid $color-row-line
+              border-right: 0.5px solid $color-row-line
 
               .radioBox-title-item-before
                 width: 2px
@@ -262,7 +273,7 @@
 
         .radioBox-list-item
           line-height: 39px
-          border-bottom: 1px solid $color-row-line
+          border-bottom: 0.5px solid $color-row-line
           font-size: $font-size-small
 
           .radioLabel

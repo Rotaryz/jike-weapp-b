@@ -20,7 +20,7 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeTel" class="store-msg-txt-left-title">联系电话</label>
-          <input type="number" id="storeTel" value="{{tel}}" maxlength="11" class="store-msg-txt-left-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="placeholderTxt" bindblur="txtChange" />
+          <input type="number" id="storeTel" value="{{tel}}" maxlength="11" class="store-msg-txt-left-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
         </view>
       </view>
 
@@ -127,7 +127,7 @@
               <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{logoUrl}}" @tap="dellogo"></image>
             </view>
           </view>
-          <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
+          <view class="store-msg-logo-txt">建议上传宽200px,高200px,200k以下的图片</view>
         </view>
       </view>
 
@@ -142,7 +142,7 @@
             </view>
           </view>
 
-          <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
+          <view class="store-msg-logo-txt">建议上传宽720px,高240px,200k以下的图片</view>
         </view>
       </view>
     </view>
@@ -216,7 +216,6 @@
     data = {
       Induring: '',
       showMap: true,
-      telTest: true,
       name: '',
       description: '',
       industryName: '',
@@ -359,8 +358,6 @@
         let eventId = e.target.id
         switch (eventId) {
           case 'storeTel':
-            let reg = /^1[3|4|5|7|8][0-9]{9}$/
-            this.telTest = reg.test(e.detail.value)
             this.tel = e.detail.value
             break
           case 'storeName':
@@ -443,9 +440,24 @@
         this.$apply()
       },
       async storeMsgSubmit() {
-        let res = this._testPropety(this.name, this.description, this.tel, this.telTest, this.industry.id, this.areaId, this.site, this.storeStatus, this.hourBegin, this.hourEnd, this.weekChecked.length, this.longitude, this.latitude, this.logoUrl)
-        let res2 = this._testImages()
-        if (res && res2) {
+        let testArr = [
+          {value: this.name, txt: '请输入门店名称'},
+          {value: this.description, txt: '请输入门店描述'},
+          {value: this.telTest, txt: '请输入正确手机号'},
+          {value: this.telLengthTest, txt: '手机号不足11位'},
+          {value: this.industry.id, txt: '请选择行业'},
+          {value: this.region[2], txt: '请选择地区'},
+          {value: this.areaId, txt: '请选择商圈'},
+          {value: this.site, txt: '请输入门店地址'},
+          {value: this.storeStatusTxt, txt: '请选择营业状态'},
+          {value: this.hourBegin, txt: '请设置每日营业时间'},
+          {value: this.hourEnd, txt: '请设置每日营业时间'},
+          {value: this.weekChecked.length, txt: '请设置每周营业时间'},
+          {value: this.logoUrl, txt: '请上传门店logo'},
+          {value: this.storeImgTest, txt: '请上传门店图片'}
+        ]
+        let res = this._testPropety(testArr)
+        if (res) {
           let data = {
             shop_name: this.name,
             describe: this.description,
@@ -557,25 +569,16 @@
       })
     }
 
-    _testPropety() {
-      let arr = Array.prototype.slice.call(arguments, 0)
-      let res = arr.every((item) => {
-        return item
-      })
-      if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
+    _testPropety(arr) {
+      for (let i = 0, j = arr.length; i < j; i++) {
+        if (!arr[i].value) {
+          this.$invoke('Toast', 'show', arr[i].txt)
+          return false
+        }
+        if (i === j - 1 && arr[i].value) {
+          return true
+        }
       }
-      return res
-    }
-
-    _testImages() {
-      let res = this.storeImgs.some((item) => {
-        return item.image_url
-      })
-      if (!res) {
-        this.$invoke('Toast', 'show', '请上传门店图片')
-      }
-      return res
     }
 
     computed = {
@@ -601,6 +604,23 @@
         } else {
           return ''
         }
+      },
+      telTest() {
+        let reg = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.tel.length === 11) {
+          return reg.test(this.tel)
+        } else {
+          return true
+        }
+      },
+      telLengthTest() {
+        return this.tel.length === 11
+      },
+      storeImgTest() {
+        let res = this.storeImgs.filter((item) => {
+          return item.image_url
+        })
+        return res.length
       }
     }
   }
@@ -646,7 +666,7 @@
       padding-right: 12px
       display: flex
       height: 39px
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       justify-content: space-between
       align-items: center
 
@@ -684,7 +704,7 @@
     .store-msg-picker
       display: flex
       height: 39px
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       justify-content: space-between
       align-items: center
       padding-right: 12px
@@ -860,7 +880,7 @@
 
             .radioBox-list-item
               line-height: 39px
-              border-bottom: 1px solid $color-row-line
+              border-bottom: 0.5px solid $color-row-line
               font-size: $font-size-small
 
               .radioLabel
@@ -898,7 +918,7 @@
     .store-msg-logo
       padding-right: 12px
       display: flex
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       align-items: center
 
       .store-msg-logo-title

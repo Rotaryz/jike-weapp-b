@@ -92,8 +92,14 @@
       },
       async submitMsg() {
         let res = this._testEmperty()
-        if (!res) {
-          this.$invoke('Toast', 'show', '资料填写不完整')
+        if (!this.userName) {
+          this.$invoke('Toast', 'show', '请输入姓名')
+          return
+        } else if (!this.credentialNumber) {
+          this.$invoke('Toast', 'show', '请输入身份证号码')
+          return
+        } else if (!res) {
+          this.$invoke('Toast', 'show', '图片未全部上传')
           return
         }
         let images = this.images.map((item) => {

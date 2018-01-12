@@ -87,7 +87,7 @@
               <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
               <image class="exBox-img-delBtn" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
             </view>
-            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）</view>
+            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小200k以下）</view>
           </view>
         </view>
 
@@ -106,7 +106,7 @@
           <view class="prize-picker-title">使用须知</view>
           <view class="textarea-showBox">
             <repeat>
-              <Textarea :height="50"></Textarea>
+              <Textarea :height="55"></Textarea>
             </repeat>
           </view>
         </view>
@@ -839,7 +839,7 @@
             line-height: 30px
 
           .textarea-showBox
-            width: 88vw
+            width: 92vw
 
       .randomRP
 

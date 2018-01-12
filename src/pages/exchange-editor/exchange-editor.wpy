@@ -88,7 +88,7 @@
           <view class="prize-picker-title">使用须知</view>
           <view class="textarea-showBox">
             <repeat>
-              <Textarea :height="50" :value="exdescripte"></Textarea>
+              <Textarea :height="55" :value="exdescripte"></Textarea>
             </repeat>
           </view>
         </view>
@@ -533,7 +533,7 @@
             line-height: 30px
 
           .textarea-showBox
-            width: 88vw
+            width: 92vw
 
     .create-prize-foot
       height: 13vh
