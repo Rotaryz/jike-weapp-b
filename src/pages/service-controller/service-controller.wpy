@@ -195,61 +195,42 @@
       <view class="time input-wrapper border-bottom-1px">
         <view class="label">售卖时间</view>
         <view class="content">
-          <picker mode="date" class="start">
-            <view class="start sell">{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}</view>
+          <picker mode="date" class="sell-date" @change="setSellStartDate">
+            <view class="date">
+              <view>{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
+              <view class="arrow-right">
+                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+                       class="full-image"></image>
+              </view>
+            </view>
           </picker>
           <view class="to">至</view>
-          <picker mode="date" class="end">
-            <view class="end">{{sellEndTime === '' ? '结束时间' : sellStartTime}}</view>
+          <picker mode="date" class="sell-date"  @change="setSellEndDate">
+            <view class="date">
+              <view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>
+              <view class="arrow-right">
+                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+                       class="full-image"></image>
+              </view>
+            </view>
           </picker>
         </view>
-        <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-                 class="full-image"></image>
-        </view>
-        <sell-time-modal title="售卖时间">
-          <view class="sell-time-modal" slot="content">
-            <view class="header">
-              <view class="start" @tap.stop="changeSellPickerType('start')">
-                {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
-              </view>
-              <view class="to">至</view>
-              <view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>
-              <view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
-                <view class="line"></view>
-              </view>
-            </view>
-            <view class="picker-time-wrapper">
-              <sell-time-picker @cancel.user="cancelSellTimePicker"
-                                @confirm.user="confirmSellTimePicker"></sell-time-picker>
-            </view>
-          </view>
-        </sell-time-modal>
       </view>
       <view class="time input-wrapper border-bottom-1px" @tap="showValidDateModal">
         <view class="label">券有效期</view>
         <view class="content">
           <view class="start">自上线之日起</view>
           <view class="to">至</view>
-          <view class="end">{{validDate}}</view>
-        </view>
-        <view class="arrow-right">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-                 class="full-image"></image>
-        </view>
-        <valid-date-modal title="券有效期">
-          <view class="sell-time-modal" slot="content">
-            <view class="header">
-              <view class="start">自上线之日起</view>
-              <view class="to">至</view>
-              <view class="end">{{validDate}}</view>
+          <picker mode="date" class="sell-date" @change="setValidDate">
+            <view class="date">
+              <view>{{validDate === '' ? '结束时间' : validDate}}</view>
+              <view class="arrow-right">
+                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+                       class="full-image"></image>
+              </view>
             </view>
-            <view class="picker-time-wrapper">
-              <valid-date-picker @cancel.user="cancelValidDatePicker"
-                                 @confirm.user="confirmValidDatePicker"></valid-date-picker>
-            </view>
-          </view>
-        </valid-date-modal>
+          </picker>
+        </view>
       </view>
       <view class="not-allow-time input-wrapper border-bottom-1px" @tap="showNotAllowTimeModal">
         <view class="label">不可用期
@@ -311,8 +292,8 @@
         </count-modal>
       </view>
     </view>
-    <view class="know-wrapper">
-      <view class="know-content input-wrapper" @tap="showKnowModal">
+    <view class="know-wrapper" @tap="showKnowModal">
+      <view class="know-content input-wrapper">
         <view class="label">购买须知</view>
         <view class="arrow-right">
           <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
@@ -324,7 +305,7 @@
 3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
 4.备注：{{knowRemark}}
       </view>
-      <know-modal title="购买须知" type="big">
+      <know-modal title="购买须知" type="big" @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
         <view class="know-modal" slot="content">
           <view class="card-wrapper border-bottom-1px">
             <view class="item-wrapper">
@@ -337,16 +318,16 @@
               </view>
               <view class="select-wrapper {{showSubscribe ? '' : 'hide'}}">
                 <view class="radio-wrapper" @tap.stop="selectSubscribe(1)">
-                  <view class="radio {{subscribe !== 1 ? 'unselected' : ''}}">
-                    <image wx:if="{{subscribe === 1}}"
+                  <view class="radio {{tempSubscribe !== 1 ? 'unselected' : ''}}">
+                    <image wx:if="{{tempSubscribe === 1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
                   是
                 </view>
                 <view class="radio-wrapper" @tap.stop="selectSubscribe(0)">
-                  <view class="radio {{subscribe === 1 ? 'unselected' : ''}}">
-                    <image wx:if="{{subscribe !== 1}}"
+                  <view class="radio {{tempSubscribe === 1 ? 'unselected' : ''}}">
+                    <image wx:if="{{tempSubscribe !== 1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
@@ -365,24 +346,27 @@
                 </view>
               </view>
               <view class="select-wrapper {{showBuyLimit ? '' : 'hide'}}">
-                <view class="radio-wrapper" @tap.stop="selectBuyLimit(-1)">
-                  <view class="radio {{buyLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{buyLimit === -1}}"
+                <view class="radio-wrapper">
+                  <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(-1)">
+                    <image wx:if="{{tempBuyLimit === -1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
                   无上限
                 </view>
-                <view class="radio-wrapper" @tap.stop="selectBuyLimit(1)">
-                  <view class="radio {{buyLimit === -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{buyLimit !== -1}}"
+                <view class="radio-wrapper">
+                  <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(1)">
+                    <image wx:if="{{tempBuyLimit !== -1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
                   限制数量
-                  <view class="input-wrapper {{buyLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{buyLimit === -1}}" maxlength="10"
-                           @input="handleInput('buyLimit')"/>
+                  <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
+                    <input type="number"
+                           value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}"
+                           disabled="{{tempBuyLimit === -1}}"
+                           maxlength="10"
+                           @input="handleInput('tempBuyLimit')"/>
                   </view>
                 </view>
               </view>
@@ -396,24 +380,27 @@
                 </view>
               </view>
               <view class="select-wrapper {{showUseLimit ? '' : 'hide'}}">
-                <view class="radio-wrapper" @tap.stop="selectUseLimit(-1)">
-                  <view class="radio {{useLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{useLimit === -1}}"
+                <view class="radio-wrapper">
+                  <view class="radio {{tempUseLimit !== -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(-1)">
+                    <image wx:if="{{tempUseLimit === -1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
                   无上限
                 </view>
-                <view class="radio-wrapper" @tap.stop="selectUseLimit(1)">
-                  <view class="radio {{useLimit === -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{useLimit !== -1}}"
+                <view class="radio-wrapper">
+                  <view class="radio {{tempUseLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(1)">
+                    <image wx:if="{{tempUseLimit !== -1}}"
                            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
                            class="full-image"></image>
                   </view>
                   限制数量
-                  <view class="input-wrapper {{useLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number" disabled="{{useLimit === -1}}" maxlength="10"
-                           @input="handleInput('useLimit')"/>
+                  <view class="input-wrapper {{tempUseLimit === -1 ? 'disabled' : ''}}">
+                    <input type="number"
+                           value="{{tempUseLimit === -1 ? '' : tempUseLimit}}"
+                           disabled="{{tempUseLimit === -1}}"
+                           maxlength="10"
+                           @input="handleInput('tempUseLimit')"/>
                   </view>
                 </view>
               </view>
@@ -422,7 +409,7 @@
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
               <text-area height="50"
-                         :value="knowRemark"
+                         :value="tempKnowRemark"
                          maxLength="20"
                          @input.user="handleTextarea"
                          placeHolder="备注：请输入"></text-area>
@@ -489,10 +476,13 @@
       showBuyLimit: true,
       showUseLimit: true,
       subscribe: 1,
+      tempSubscribe: 1,
       buyLimit: -1,
+      tempBuyLimit: -1,
       useLimit: -1,
+      tempUseLimit: -1,
       knowRemark: '',
-      knowRemarkLength: 0
+      tempKnowRemark: ''
     }
 
     async onLoad(option) {
@@ -523,16 +513,22 @@
       this.platformPrice = res.platform_price
       this.shopPrice = res.shop_price
       this.services = res.detail
+      this.tempServices = this.services.map((item) => Object.assign({}, item))
       this.sellCount = res.stock
+      this.tempSellCount = this.sellCount
       this.sellStartTime = res.sell_start_at
       this.sellEndTime = res.sell_end_at
       this.validDate = res.end_at
       this.notAllowTime = res.not_allow_time
+      this.tempNotAllowTime = this.notAllowTime
       this.subscribe = res.note.need_subscribe
+      this.tempSubscribe = this.subscribe
       this.buyLimit = res.note.buy_upper_limit
+      this.tempBuyLimit = this.buyLimit
       this.useLimit = res.note.can_use_number
+      this.tempUseLimit = this.useLimit
       this.knowRemark = res.note.remarks ? res.note.remarks : ''
-      this.knowRemarkLength = this.knowRemark.length
+      this.tempKnowRemark = this.knowRemark
       this.$apply()
     }
 
@@ -568,10 +564,50 @@
         this.titleLength = value.length
       } else if (name === 'subTitle') {
         this.subTitleLength = value.length
-      } else if (name === 'knowRemark') {
-        this.knowRemarkLength = value.length
       }
       this.$apply()
+    }
+
+    _validForm() {
+      const validPicture = this.pictures.findIndex((item) => item.image_url)
+      const validServices = this.services.findIndex((item) => item.servie && item.number && item.price)
+      console.log(validPicture)
+      console.log(validServices)
+      if (!this.categoryId) {
+        this._toast('请选择类型')
+        return false
+      } else if (validPicture === -1) {
+        this._toast('请选择一张图片')
+        return false
+      } else if (!this.title) {
+        this._toast('请输入标题')
+        return false
+      } else if (!this.subTitle) {
+        this._toast('请输入副标题')
+        return false
+      } else if (!this.platformPrice) {
+        this._toast('请输入平台价')
+        return false
+      } else if (!this.shopPrice) {
+        this._toast('请输入门市价')
+        return false
+      } else if (validServices === -1) {
+        this._toast('请输入一个服务')
+        return false
+      } else if (!this.sellStartTime) {
+        this._toast('请选择售卖开始时间')
+        return false
+      } else if (!this.sellEndTime) {
+        this._toast('请选择售卖结束时间')
+        return false
+      } else if (!this.validDate) {
+        this._toast('请选择券有效期结束时间')
+        return false
+      } else if (!this.sellCount) {
+        this._toast('请选择最大可售数量')
+        return false
+      }
+      return true
     }
 
     _toast(message) {
@@ -638,6 +674,15 @@
       changeSellPickerType(type) {
         this.sellTimePickerType = type
       },
+      setSellStartDate(e) {
+        this.sellStartTime = e.detail.value
+      },
+      setSellEndDate(e) {
+        this.sellEndTime = e.detail.value
+      },
+      setValidDate(e) {
+        this.validDate = e.detail.value
+      },
       selecteNotAllowTime() {
         if (this.tempNotAllowTime) {
           this.tempNotAllowTime = ''
@@ -672,18 +717,33 @@
         }
       },
       selectSubscribe(subscribe) {
-        this.subscribe = Math.floor(subscribe)
+        this.tempSubscribe = Math.floor(subscribe)
       },
       selectBuyLimit(buyLimit) {
-        this.buyLimit = Math.floor(buyLimit)
+        this.tempBuyLimit = Math.floor(buyLimit)
       },
       selectUseLimit(useLimit) {
-        this.useLimit = Math.floor(useLimit)
+        this.tempUseLimit = Math.floor(useLimit)
       },
       handleTextarea(value) {
-        this._handleInput('knowRemark', value)
+        this._handleInput('tempKnowRemark', value)
+      },
+      setBuyKnow() {
+        this.subscribe = this.tempSubscribe
+        this.buyLimit = this.tempBuyLimit
+        this.useLimit = this.tempUseLimit
+        this.knowRemark = this.tempKnowRemark
+      },
+      resetBuyKnow() {
+        this.tempSubscribe = this.subscribe
+        this.tempBuyLimit = this.buyLimit
+        this.tempUseLimit = this.useLimit
+        this.tempKnowRemark = this.knowRemark
       },
       async submitForm() {
+        if (!this._validForm()) {
+          return
+        }
         let data = {
           promotion_type: 'coupon',
           promotion_category_id: this.categoryId,
@@ -711,7 +771,7 @@
         const res = this.promotionId ? await Coupons.editCoupon(this.promotionId, data) : await Coupons.createCoupon(data)
         if (res.error === 0) {
           Tips.success(this.promotionId ? '修改成功!' : '创建成功!')
-          this.$navigate('/pages/service-manage/service-manage')
+          this.$back()
         } else {
           this._toast(res.message)
         }
@@ -806,7 +866,7 @@
       display: flex
       align-items: center
     .arrow-right
-      width: 6px
+      width: 10px
       height: 10px
       margin-left: 10px
     .label
@@ -982,6 +1042,14 @@
             color: $color-text-d
           .start.sell
             color: $color-text
+          .sell-date
+            flex: 1
+            .date
+              display: flex
+              align-items: center
+              justify-content: center
+              .arrow-right
+                margin-left: 1px
       .not-allow-time .content
         justify-content: flex-end
       .count-limit

@@ -1,7 +1,7 @@
 <template>
-  <cover class="toast" wx:if="{{showToast}}">
+  <view class="toast" wx:if="{{showToast}}">
     <view class="content">{{content}}</view>
-  </cover>
+  </view>
 </template>
 
 <script>
@@ -15,6 +15,9 @@
 
     methods = {
       show(content) {
+        if (this.showToast) {
+          return
+        }
         this.content = content
         this.showToast = true
         setTimeout(() => {
@@ -34,15 +37,12 @@
     z-index: 99999
     top: 42%
     left: 50%
-    min-width: 200px
-    max-width: 300px
-    margin-left: -100px
-    padding: 10px 0
-    opacity: .9
-    border-radius: 6px
-    transition: all .5s ease-out
+    max-width: 170px
+    padding: 10px 15px
+    border-radius: 2px
+    transform: translateX(-50%)
     text-align: center
-    background-color: rgba(0, 0, 0, .8)
+    background-color: rgba(54, 53, 71, .9)
     .content
       line-height: 20px
       font-size: $font-size-medium
