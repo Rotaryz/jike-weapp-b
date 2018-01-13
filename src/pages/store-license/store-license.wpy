@@ -187,7 +187,7 @@
         display: flex
         font-size: $font-size-medium
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         align-items: center
 
         .store-license-txt-title
@@ -224,17 +224,17 @@
         padding-left: 12px
 
         .store-license-imgBC
-          width: 41.6vw
-          height: 26vw
+          width: 44.8vw
+          height: 28vw
           position: relative
           margin-right: 15px
           margin-bottom: 15px
 
           .store-license-imgBC-img
-            width: 41.6vw
-            height: 26vw
+            width: 44.8vw
+            height: 28vw
             position: absolute
-            left: 0px
+            left: 0
             top: 0
 
           .store-license-imgBtn
@@ -253,8 +253,11 @@
 
           .store-license-upImg
             position: absolute
-            width: 41.6vw
-            height: 26vw
+            width: 44.8vw
+            height: 28vw
+
+        view:nth-child(2n)
+          margin-right: 0
 
     .store-licenseBtn
       margin: 10px 12px

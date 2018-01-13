@@ -245,7 +245,7 @@
 
         .prizeItem
           margin-top: 10px
-          border: 1px solid $color-col-line
+          border: 0.5px solid $color-col-line
           border-radius: 2px
           background: $color-white
           position: relative
@@ -348,7 +348,7 @@
 
       .prizeItem
         margin-top: 10px
-        border: 1px solid $color-col-line
+        border: 0.5px solid $color-col-line
         border-radius: 2px
         background: $color-white
         position: relative
@@ -429,7 +429,7 @@
           justify-content: flex-end
           align-items: center
           height: 39px
-          border-top: 1px dashed $color-col-line
+          border-top: 0.5px dashed $color-col-line
 
           .prizeItem-bottom-btn
             width: 60px

@@ -24,9 +24,9 @@
         </view>
       </view>
 
-      <view class="store-msg-picker" @tap="industryChiose">
+      <view class="store-msg-picker">
         <view class="store-msg-picker-title">行业类型</view>
-        <view class="store-msg-picker-right">
+        <view class="store-msg-picker-right" @tap="industryChiose">
           <view class="store-msg-picker-txt">{{industryName}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -80,9 +80,9 @@
     </view>
 
     <view class="store-msg-foot">
-      <view class="store-msg-picker" @tap="showRadio">
+      <view class="store-msg-picker">
         <view class="store-msg-picker-title">营业状态</view>
-        <view class="store-msg-picker-right">
+        <view class="store-msg-picker-right" @tap="showRadio">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -109,9 +109,9 @@
         </view>
       </view>
 
-      <view class="time-picker" @tap="showTimeCover">
+      <view class="time-picker">
         <view class="prize-picker-title">每周营业时间</view>
-        <view class="prize-picker-right-dotted">
+        <view class="prize-picker-right-dotted" @tap="showTimeCover">
           <view class="prize-picker-txt">{{weekShowTxt}}</view>
           <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
@@ -759,13 +759,13 @@
       .prize-picker-right
         flex: 5
         display: flex
-        justify-content: center
         align-items: center
         height: 40px
 
         .prize-picker-txt
           display: flex
           align-items: center
+          margin-left: 8vw
 
           .prize-picker-txt-time
             display: flex

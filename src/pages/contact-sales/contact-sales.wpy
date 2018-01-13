@@ -7,7 +7,7 @@
         </view>
         <view class="sales-name">{{saleMsg.user_name?saleMsg.user_name:'集客商家助手'}}</view>
       </view>
-      <view class="salesMsg-complaint" @tap="showCover" wx:if="{{false}}">投诉</view>
+      <view class="salesMsg-complaint" @tap="showCover" wx:if="{{salesmanId}}">投诉</view>
     </view>
     <view class="salesMsg-tel">
       <view class="salesMsg-tel-left">

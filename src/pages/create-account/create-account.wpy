@@ -192,7 +192,7 @@
         display: flex
         align-items: center
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         font-size: $font-size-medium
 
         .createAccount-txt-title
@@ -219,7 +219,7 @@
       .store-msg-picker
         display: flex
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         justify-content: space-between
         align-items: center
         padding-right: 12px

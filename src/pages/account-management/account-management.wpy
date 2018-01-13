@@ -93,7 +93,7 @@
 
       .account-store-title
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         display: flex
         align-items: center
         justify-content: space-between
@@ -109,7 +109,7 @@
 
       .store-account-item
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         display: flex
         align-items: center
         justify-content: space-between

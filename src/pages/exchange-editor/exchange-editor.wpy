@@ -533,7 +533,7 @@
             line-height: 30px
 
           .textarea-showBox
-            width: 92vw
+            padding-right: 12px
 
     .create-prize-foot
       height: 13vh
