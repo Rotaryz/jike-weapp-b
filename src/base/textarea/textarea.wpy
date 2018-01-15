@@ -1,0 +1,126 @@
+<template>
+
+  <view class="textarea-box" @tap="showTextarea" style="height:{{height}}px">
+    <textarea maxlength="{{maxLength}}"
+              style="transform:translateX({{translateX}})"
+              class="prize-picker-textarea-input"
+              placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}"
+              value="{{value}}"
+              placeholder-class="prize-picker-textarea-placeholder"
+              bindblur="blurFn" bindinput="inputFn"></textarea>
+    <view class="textarea-length" wx:if="{{maxLength !== '-1'}}">{{textLength}}/{{maxLength}}</view>
+    <view class="textarea-view {{value?'':'gary'}}">
+      {{value ? value : placeHolder}}
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Textarea extends wepy.component {
+    props = {
+      height: {
+        type: String,
+        default: ''
+      },
+      maxLength: {
+        type: String,
+        default: 20
+      },
+      value: {
+        type: String,
+        default: ''
+      },
+      placeHolder: {
+        type: String,
+        default: '请输入'
+      }
+    }
+
+    data = {
+      textareaFocus: false,
+      translateX: '2000px'
+    }
+
+    methods = {
+      inputFn(e) {
+        this.value = e.detail.value
+        this.$emit('input', e.detail.value)
+        this.$apply()
+      },
+      blurFn(e) {
+        this.translateX = '2000px'
+        this.textareaFocus = false
+        this.$apply()
+        this.$emit('blur', e.detail.value)
+      },
+      confirmFn(e) {
+        this.translateX = '2000px'
+        this.textareaFocus = false
+        this.$apply()
+        this.$emit('confirm', e.detail.value)
+      },
+      showTextarea() {
+        this.translateX = 0
+        this.textareaFocus = true
+        this.$apply()
+      }
+    }
+
+    computed = {
+      textLength() {
+        return this.value.length
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .textarea-box
+    width: 100%
+    padding: 10px
+    background: $color-background
+    overflow: hidden
+    display: flex
+    box-sizing: border-box
+    border-radius: 2px
+    border-1px()
+
+    .prize-picker-textarea-input
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      padding: 10px 10px 0 10px
+      box-sizing: border-box
+      background: $color-background
+      font-size: $font-size-medium
+      color: $color-text-title
+
+    .prize-picker-textarea-placeholder
+      color: $color-text-d
+      font-family: 'PingFangSC-Light'
+    .textarea-length
+      position: absolute
+      bottom: 10px
+      right: 10px
+      font-size: $font-size-small-s
+      color: $color-text-d
+
+    .textarea-view
+      /*padding-top: 9px*/
+      /*padding-left: 5px*/
+      line-height: 16.5px
+      font-size: $font-size-medium
+      color: $color-text-title
+    .textarea-view.gary
+      width: 100%
+      height: 100%
+      color: $color-text-d
+
+</style>
