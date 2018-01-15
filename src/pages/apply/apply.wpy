@@ -1,0 +1,133 @@
+<template>
+  <view class="apply" style="background-color: {{couponList.length > 0 ? '#ffffff' : '#f9f9f9'}}">
+    <view class="header" wx:if="{{couponList.length > 0}}">
+      <view class="block-title">可报名的服务</view>
+    </view>
+    <view class="coupons-wrapper">
+      <view class="empty-wrapper" wx:if="{{couponList.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
+        </view>
+        <view class="desc">无可用优惠券</view>
+      </view>
+      <repeat for="{{tempCouponList}}" index="index" key="key">
+        <view class="coupon-wrapper">
+          <coupon :coupon.sync="item" :type="'checked'" @handleClick.user="selectCoupon"></coupon>
+        </view>
+      </repeat>
+    </view>
+    <view class="apply-btn-wrapper" wx:if="{{couponList.length > 0}}">
+      <view class="apply-btn" @tap="apply">提交审核</view>
+    </view>
+    <toast></toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Coupons from 'api/coupons'
+  import base from 'common/mixins/base'
+  import Coupon from '@/base/coupon/coupon'
+  import Packages from 'api/packages'
+  import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+
+  export default class Apply extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUri: URIS.image,
+      id: '',
+      checkedId: '',
+      couponList: [],
+      tempCouponList: []
+    }
+
+    async onLoad(option) {
+      this.id = option.id
+      await this._getMerchantPackages()
+      this.loaded()
+    }
+
+    async _getMerchantPackages() {
+      const res = await Coupons.getCouponList({status: 1, gift_bag_id: this.id})
+      this.couponList = res
+      if (res.length === 0) {
+        return
+      }
+      this.tempCouponList = this.couponList.map((item) => Object.assign({}, item))
+      this.checkedId = res[0].id
+      this.tempCouponList[0].checked = true
+      this.$apply()
+    }
+
+    _toast(content) {
+      this.$invoke('toast', 'show', content)
+    }
+
+    methods = {
+      selectCoupon(id) {
+        if (this.checkedId === id) {
+          return
+        }
+        const selectIndex = this.tempCouponList.findIndex((item) => item.id === id)
+        this.tempCouponList = this.couponList.map((item) => Object.assign({}, item))
+        this.checkedId = id
+        this.tempCouponList[selectIndex].checked = true
+        this.$apply()
+      },
+      async apply() {
+        const res = await Packages.applyJoinPackage(this.id, {promotion_id: this.checkedId})
+        this.loaded()
+        this._toast(res.message)
+        if (!res.error) {
+          setTimeout(() => {
+            this.$back()
+          }, 2000)
+        }
+      }
+    }
+
+    components = {
+      'coupon': Coupon,
+      'toast': Toast
+    }
+
+    config = {
+      navigationBarTitleText: '报名'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .apply
+    min-height: 100vh
+    background-color: $color-white
+    .header
+      padding: 0 12px
+      background-color: $color-background
+    .coupons-wrapper
+      padding-top: 10px
+      padding-bottom: 68px
+      .coupon-wrapper
+        margin-bottom: 10px
+    .apply-btn-wrapper
+      position: fixed
+      bottom: 0
+      left: 0
+      width: 100%
+      height: 68px
+      padding: 12px
+      box-sizing: border-box
+      background: $color-white
+      .apply-btn
+        height: 44px
+        line-height: 44px
+        text-align: center
+        font-size: $font-size-medium
+        color: $color-white
+        background-color: $color-theme
+</style>

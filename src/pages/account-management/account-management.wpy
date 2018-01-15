@@ -1,19 +1,17 @@
 <template>
   <view class="account-management">
     <view class="account-store-list" wx:for="{{accountList}}" wx:key="{{item}}">
-      <view class="account-store-title">
+      <view class="account-store-title" @tap="showList({{index}})">
         <view class="account-store-title-txt">{{item.shop_name}}</view>
-        <image class="account-store-title-arrow"
-               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png"></image>
+        <image class="account-store-title-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (item.opened?'/defaults/b-image/page/icon-lower20@2x.png':'/defaults/b-image/page/icon-pressed@2x.png')}}"></image>
       </view>
-      <view class="store-account-item" wx:for="{{item.merchant_children}}"
-            wx:key="{{item}}" @tap="showDetail({{item.id}})">
-        <view class="store-account-item-left">
-          <view class="store-account-item-left-txt">账号：</view>
-          {{item.mobile}}
+      <view class="store-account-list" wx:if="{{item.opened}}">
+        <view class="store-account-item" wx:for="{{item.merchant_children}}" wx:key="{{item}}" @tap="showDetail({{item.id}})">
+          <view class="store-account-item-left">
+            <view class="store-account-item-left-txt">账号：</view>{{item.mobile}}
+          </view>
+          <image class="store-account-item-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         </view>
-        <image class="store-account-item-arrow"
-               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed@2x.png"></image>
       </view>
     </view>
     <view class="account-management-btn" @tap="newAccount">新建账号</view>
@@ -24,14 +22,10 @@
   import wepy from 'wepy'
   import Account from '@/api/account'
   import base from '@/common/mixins/base'
+  import URIS from 'common/js/config'
 
   export default class AccountManagement extends wepy.page {
     mixins = [base]
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
     config = {
       navigationBarTitleText: '账号管理',
       navigationBarTextStyle: 'black',
@@ -39,9 +33,12 @@
       backgroundColor: '#F9F9F9'
     }
 
-    components = {}
+    components = {
+
+    }
 
     data = {
+      imageUrlHead: URIS.image,
       accountList: []
     }
 
@@ -51,6 +48,10 @@
       },
       showDetail(id) {
 
+      },
+      showList(idx) {
+        this._checked(this.accountList, idx)
+        this.$apply()
       }
     }
 
@@ -67,6 +68,14 @@
       this.accountList = res
       this.$apply()
       this.loaded()
+    }
+
+    _checked(arr, idx) {
+      arr.forEach((item, index) => {
+        if (index * 1 === idx * 1) {
+          item.opened = item.opened ? 0 : 1
+        }
+      })
     }
   }
 </script>
@@ -86,7 +95,7 @@
 
       .account-store-title
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         display: flex
         align-items: center
         justify-content: space-between
@@ -102,7 +111,7 @@
 
       .store-account-item
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         display: flex
         align-items: center
         justify-content: space-between

@@ -1,9 +1,9 @@
 import base from './base'
 
 export default class Uploads extends base {
-  static async uploadImages(data) {
+  static async uploadImages(data, name = 'file') {
     const url = `${this.baseUrl}/api/images`
-    return await this.upload(url, data)
+    return await this.upload(url, data, name)
   }
 
   /**

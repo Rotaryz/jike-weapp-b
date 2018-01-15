@@ -3,39 +3,31 @@
     <view class="createAccount-head">
       <view class="createAccount-txt">
         <view class="createAccount-txt-title">手机</view>
-        <input type="number"
-               class="createAccount-txt-input {{telTest?'':'error'}}"
-               placeholder="请输入"
-               placeholder-class="createAccount-txt-placeholder" maxlength="11"
-               bindblur="phoneChange"/>
+        <input type="number" class="createAccount-txt-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11" bindblur="phoneChange"/>
       </view>
 
       <view class="createAccount-txt last">
         <view class="createAccount-txt-title">密码</view>
-        <input type="text" class="createAccount-txt-input" password
-               placeholder="密码(6-16位数字和字母组合)" maxlength="16"
-               placeholder-class="createAccount-txt-placeholder"
-               bindblur="passwordChange"/>
+        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
       </view>
 
     </view>
 
-    <view class="createAccount-body">
+    <view class="createAccount-body" @tap="showRadioBox">
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">门店</view>
-        <view class="store-msg-picker-right" @tap="showRadioBox">
+        <view class="store-msg-picker-right">
           <view class="store-msg-picker-txt">{{checkedStore}}</view>
-          <image class="store-msg-picker-arrow"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image wx:if="{{imageUrlHead}}" class="store-msg-picker-arrow" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
       <!--<view class="store-msg-picker">-->
-      <!--<view class="store-msg-picker-title">权限</view>-->
-      <!--<view class="store-msg-picker-right" @tap="showCheckBox">-->
-      <!--<view class="store-msg-picker-txt">{{jurisdictionTxt}}</view>-->
-      <!--<image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>-->
-      <!--</view>-->
+        <!--<view class="store-msg-picker-title">权限</view>-->
+        <!--<view class="store-msg-picker-right" @tap="showCheckBox">-->
+          <!--<view class="store-msg-picker-txt">{{jurisdictionTxt}}</view>-->
+          <!--<image class="store-msg-picker-arrow" src="./image/Rectangle @2x.png"></image>-->
+        <!--</view>-->
       <!--</view>-->
     </view>
 
@@ -54,13 +46,10 @@
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class CreateAccount extends wepy.page {
     mixins = [base]
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
 
     config = {
       navigationBarTitleText: '新建账号',
@@ -76,12 +65,12 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       storeList: [],
       checkedStore: '',
       checkedStoreId: '',
       jurisdictionTxt: '',
       phoneNum: '',
-      telTest: true,
       passTest: false,
       password: ''
     }
@@ -99,7 +88,9 @@
         this.$invoke('RadioBox', 'init', {
           headTxt: '门店选择',
           radioChecked: 0,
-          items
+          items,
+          test: 'test',
+          height: 320
         })
       },
       showCheckBox() {
@@ -113,21 +104,15 @@
         })
       },
       phoneChange(e) {
-        let reg = /^1[3|4|5|7|8][0-9]{9}$/
-        this.telTest = reg.test(e.detail.value)
         this.phoneNum = e.detail.value
         this.$apply()
       },
       passwordChange(e) {
-        let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
-        this.passTest = reg.test(e.detail.value)
-        if (!this.passTest) {
-          this.$invoke('Toast', 'show', '密码格式不正确')
-        }
         this.password = e.detail.value
+        this.$apply()
       },
       async submitMsg() {
-        if (this.passTest && this.telTest && this.phoneNum && this.checkedStore && this.checkedStoreId) {
+        if (this.passTest && this.telTest && this.phoneNum.length === 11 && this.checkedStore && this.checkedStoreId) {
           let data = {
             mobile: this.phoneNum,
             password: this.password,
@@ -137,9 +122,18 @@
           this.loaded()
           if (res.error === 0) {
             Tips.success('新建账号成功')
+            setTimeout(() => {
+              this.$back(1)
+            }, 2000)
+          } else {
+            this.$invoke('Toast', 'show', '创建失败')
           }
-        } else {
-          this.$invoke('Toast', 'show', '资料未填写完整')
+        } else if (this.telTest || this.phoneNum.length !== 11) {
+          this.$invoke('Toast', 'show', '手机填写错误')
+        } else if (this.passTest) {
+          this.$invoke('Toast', 'show', '密码格式错误')
+        } else if (this.checkedStore || this.checkedStoreId) {
+          this.$invoke('Toast', 'show', '请选择对应门店')
         }
       }
     }
@@ -168,6 +162,21 @@
       this.storeList = res || []
       this.loaded()
     }
+
+    computed = {
+      telTest() {
+        let reg = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.phoneNum.length === 11) {
+          return reg.test(this.phoneNum)
+        } else {
+          return true
+        }
+      },
+      passTest() {
+        let reg = /^[a-zA-Z0-9]{6,16}$/
+        return reg.test(this.password)
+      }
+    }
   }
 </script>
 
@@ -185,7 +194,7 @@
         display: flex
         align-items: center
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         font-size: $font-size-medium
 
         .createAccount-txt-title
@@ -212,7 +221,7 @@
       .store-msg-picker
         display: flex
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         justify-content: space-between
         align-items: center
         padding-right: 12px

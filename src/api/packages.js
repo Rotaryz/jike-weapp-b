@@ -101,4 +101,14 @@ export default class Packages extends base {
     const url = `${this.baseUrl}/api/coupons/apply-join/${id}`
     return await this.post(url, data)
   }
+
+  /**
+   * 商家获取礼包详情
+   * @param id
+   * @returns {Promise.<*>}
+   */
+  static async getMerchantPackage(id) {
+    const url = `${this.baseUrl}/api/coupons/gift-bag/${id}`
+    return await this.get(url)
+  }
 }

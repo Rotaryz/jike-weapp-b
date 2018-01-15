@@ -11,19 +11,14 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
-          <input type="text" placeholder="输入姓名" bindblur="nameChange"
-                 placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input" value="{{userName}}"/>
+          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}"/>
         </view>
       </view>
 
       <view class="store-license-txt">
         <view class="store-license-txt-title">证件号码</view>
         <view class="store-license-txt-right">
-          <input type="idcard" placeholder="输入身份证" bindblur="idChange"
-                 placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input" maxlength="20"
-                 value="{{credentialNumber}}"/>
+          <input type="idcard" placeholder="输入身份证" bindblur="idChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" maxlength="20" value="{{credentialNumber}}"/>
         </view>
       </view>
     </view>
@@ -35,20 +30,14 @@
       </view>
       <view class="store-license-body-imgBox">
         <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-id_fm@2x.png"
-            class="store-license-imgBC-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-id_fm@2x.png'}}" class="store-license-imgBC-img"></image>
           <image src="{{item.image_url}}" class="store-license-upImg"></image>
-          <view class="store-license-imgBtn" @tap="uploadImg({{index}})">
-            {{item.title}}
-          </view>
+          <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
         </view>
       </view>
     </view>
 
-    <view class="store-licenseBtn {{images.length?'':'disab'}}"
-          @tap="submitMsg">保存
-    </view>
+    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">保存</view>
 
     <Toast></Toast>
   </view>
@@ -61,13 +50,10 @@
   import Upload from '@/api/uploads'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class StoreLicense extends wepy.page {
     mixins = [base]
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
 
     config = {
       navigationBarTitleText: '门店证照',
@@ -81,6 +67,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       storeMsg: null,
       credentialType: '身份证',
       credentialNumber: '',
@@ -107,8 +94,14 @@
       },
       async submitMsg() {
         let res = this._testEmperty()
-        if (!res) {
-          this.$invoke('Toast', 'show', '资料填写不完整')
+        if (!this.userName) {
+          this.$invoke('Toast', 'show', '请输入姓名')
+          return
+        } else if (!this.credentialNumber) {
+          this.$invoke('Toast', 'show', '请输入身份证号码')
+          return
+        } else if (!res) {
+          this.$invoke('Toast', 'show', '图片未全部上传')
           return
         }
         let images = this.images.map((item) => {
@@ -127,6 +120,9 @@
         this.loaded()
         if (upRes.error === 0) {
           Tips.success('保存成功')
+          setTimeout(() => {
+            this.$back(1)
+          }, 1000)
         }
       },
       nameChange(e) {
@@ -149,7 +145,7 @@
       this.credentialType = res.credential_type || '身份证'
       this.credentialNumber = res.credential_number || ''
       this.userName = res.user_name || ''
-      let images = res.credential_images ? res.credential_images.slice(0, 4) : []
+      let images = res.credential_images
       this.images = this._computedImg(this.images, images)
       if (res.credential_images && res.credential_images.length > 0) {
         this.nothing = false
@@ -193,7 +189,7 @@
         display: flex
         font-size: $font-size-medium
         height: 39px
-        border-bottom: 1px solid $color-col-line
+        border-bottom: 0.5px solid $color-col-line
         align-items: center
 
         .store-license-txt-title
@@ -230,17 +226,17 @@
         padding-left: 12px
 
         .store-license-imgBC
-          width: 41.6vw
-          height: 26vw
+          width: 44.8vw
+          height: 28vw
           position: relative
           margin-right: 15px
           margin-bottom: 15px
 
           .store-license-imgBC-img
-            width: 41.6vw
-            height: 26vw
+            width: 44.8vw
+            height: 28vw
             position: absolute
-            left: 0px
+            left: 0
             top: 0
 
           .store-license-imgBtn
@@ -259,8 +255,11 @@
 
           .store-license-upImg
             position: absolute
-            width: 41.6vw
-            height: 26vw
+            width: 44.8vw
+            height: 28vw
+
+        view:nth-child(2n)
+          margin-right: 0
 
     .store-licenseBtn
       margin: 10px 12px
@@ -273,5 +272,5 @@
       border-radius: 2px
 
     .store-licenseBtn.disab
-      background: $color-btn-dis
+      background:  $color-btn-dis
 </style>

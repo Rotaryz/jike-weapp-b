@@ -10,38 +10,31 @@
               <view class="prizeType-list-item-msg">商家将优惠的服务和商品</view>
               <view class="prizeType-list-item-msg">免费做奖品给客户</view>
             </view>
-            <image
-              src="{{prizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
-              class="prizeType-list-item-check"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (temporaryPrizeType===1?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item" @tap="chioseType(2)">
             <view class="prizeType-list-item-left">
               <view class="prizeType-list-item-title">随机红包</view>
-              <view class="prizeType-list-item-msg">商家设置一定数量的随即金额的红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量随机金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image
-              src="{{prizeType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
-              class="prizeType-list-item-check"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (temporaryPrizeType===2?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="prizeType-list-item-check"></image>
           </view>
 
           <view class="prizeType-list-item last" @tap="chioseType(3)">
             <view class="prizeType-list-item-left">
               <view class="prizeType-list-item-title">固定红包</view>
-              <view class="prizeType-list-item-msg">商家设置一定数量的固定金额的红包</view>
+              <view class="prizeType-list-item-msg">商家设置一定数量固定金额的红包</view>
               <view class="prizeType-list-item-msg">作为活动的奖品</view>
             </view>
-            <image
-              src="{{prizeType===3?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
-              class="prizeType-list-item-check"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (temporaryPrizeType===3?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="prizeType-list-item-check"></image>
           </view>
         </view>
 
-        <view class="prizeType-closeBtn" @tap="closeTypeCover">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
-            class="prizeType-closeX"></image>
+        <view class="foot-btnBox border-top-1px">
+          <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="chioseTypeCancel">取消</view>
+          <view class="prizeItem-saveBtn" @tap="chioseTypeSubmit">确定</view>
         </view>
       </view>
     </view>
@@ -51,18 +44,14 @@
         <view class="prize-picker-title">奖品类型</view>
         <view class="prize-picker-right" @tap="showTypeCover">
           <view class="prize-picker-txt">{{prizeTypeTxt}}</view>
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"
-            class="prize-picker-arrow"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="prize-picker-arrow"></image>
         </view>
       </view>
 
       <view class="prize-txtbox">
         <view class="prize-txtbox-title">奖品名称</view>
         <view class="prize-txtbox-right">
-          <input type="text" maxlength="10" class="prize-txtbox-input"
-                 placeholder="请输入" placeholder-class="prize-txtbox-placeholder"
-                 value="{{prizeName}}" bindblur="nameChange"/>
+          <input type="text" maxlength="10" class="prize-txtbox-input" placeholder="请输入" placeholder-class="prize-txtbox-placeholder" value="{{prizeName}}" bindinput="nameChange" />
           <view class="prize-txtbox-input-length">{{prizeName.length}}/10</view>
         </view>
       </view>
@@ -71,12 +60,22 @@
 
         <view class="time-picker">
           <view class="prize-picker-title">有效期</view>
-          <view class="prize-picker-right" @tap="timeChiose">
+          <view class="prize-picker-right">
             <view class="prize-picker-txt">
-              {{beginTime && endTime ? beginTime + ' 至 ' + endTime : ''}}
+              <view class="prize-picker-txt-time">
+                <picker mode="date" value="{{beginTime}}" start="{{nowDate}}" end="{{endTime}}" bindchange="beginTimeChange">
+                  <view class="prize-picker-txt-time-title">{{beginTime?beginTime:'开始时间'}}</view>
+                </picker>
+                <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+              </view>
+              <view class="prize-picker-txt-middle">至</view>
+              <view class="prize-picker-txt-time">
+                <picker mode="date" value="{{endTime}}" start="{{beginTime}}" end="2020-09-01" bindchange="endTimeChange">
+                  <view class="prize-picker-txt-time-title">{{endTime?endTime:'结束时间'}}</view>
+                </picker>
+                <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+              </view>
             </view>
-            <image class="prize-picker-arrow"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
           </view>
         </view>
 
@@ -84,46 +83,31 @@
           <view class="prize-picker-title">奖品图片</view>
           <view class="exBox-imgBox-right">
             <view class="exBox-imgBox-right-imgOuter">
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png"
-                class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg"
-                wx:if="{{!EXimgUrl}}"></image>
-              <image class="exBox-img" src="{{EXimgUrl}}"
-                     wx:if="{{EXimgUrl}}"></image>
-              <image class="exBox-img-delBtn"
-                     src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png"
-                     wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl && imageUrlHead}}"></image>
+              <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
+              <image class="exBox-img-delBtn" src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" wx:if="{{EXimgUrl && imageUrlHead}}" @tap="delEXimg"></image>
             </view>
-            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）
-            </view>
+            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小200k以下）</view>
           </view>
         </view>
 
         <view class="exBox-prize-countBox">
           <view class="prize-picker-title">奖品数量</view>
           <view class="exBox-prizecount-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
-              class="subBtn" @tap="exSubCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-reduce@2x.png'}}" class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number"
-                     class="countBox-input {{prizeCountTest?'':'error'}}"
-                     bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
-              class="addBtn" @tap="exAddCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-plus@2x.png'}}" class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
         <view class="exBox-prize-description">
           <view class="prize-picker-title">使用须知</view>
-          <view class="prize-picker-textarea">
-            <textarea maxlength="20" class="prize-picker-textarea-input"
-                      placeholder="请输入"
-                      placeholder-class="prize-picker-textarea-placeholder"
-                      bindblur="exdescrpChange"></textarea>
-            <view class="textarea-length">{{exdescripte.length}}/20</view>
+          <view class="textarea-showBox">
+            <repeat>
+              <Textarea :height="55"></Textarea>
+            </repeat>
           </view>
         </view>
       </view>
@@ -133,8 +117,7 @@
         <view class="randomRP-imgBox">
           <view class="prize-txtbox-title">奖品图片</view>
           <view class="randomRP-imgBox-right">
-            <image class="randomRP-img"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
+            <image class="randomRP-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-moneybg@2x.png'}}"></image>
             <view class="randomRP-imgtxt">默认模板</view>
           </view>
         </view>
@@ -142,17 +125,11 @@
         <view class="randomRP-prize-countBox">
           <view class="prize-picker-title">红包总个数</view>
           <view class="exBox-prizecount-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
-              class="subBtn" @tap="exSubCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-reduce@2x.png'}}" class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number"
-                     class="countBox-input {{prizeCountTest?'':'error'}}"
-                     bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
-              class="addBtn" @tap="exAddCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-plus@2x.png'}}" class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
@@ -161,9 +138,7 @@
           <view class="prize-picker-right">
             <txt>￥</txt>
             <view class="inputBox">
-              <input type="digit"
-                     class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}"
-                     bindblur="totalChange"/>
+              <input type="digit" class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}" bindblur="totalChange"/>
             </view>
           </view>
         </view>
@@ -174,15 +149,13 @@
             <view class="max-box">
               <text>最大</text>
               <view class="inputBox">
-                <input type="digit"
-                       class="randomRP-prize-total-input {{maxMoneyTest?'':'error'}}"
-                       value="{{redpackMax}}" bindblur="maxChange"/>
+                <input type="digit" class="randomRP-prize-total-input {{maxMoneyTest?'':'error'}}" value="{{redpackMax}}" bindblur="maxChange"/>
               </view>
             </view>
             <view class="min-box">
               <text>最小</text>
               <view class="inputBox">
-                0.01
+                <input type="digit" class="randomRP-prize-total-input {{minMoneyTest?'':'error'}}" value="{{redpackMin}}" bindblur="minChange"/>
               </view>
             </view>
           </view>
@@ -194,8 +167,7 @@
         <view class="randomRP-imgBox">
           <view class="prize-txtbox-title">奖品图片</view>
           <view class="randomRP-imgBox-right">
-            <image class="randomRP-img"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-moneybg@2x.png"></image>
+            <image class="randomRP-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-moneybg@2x.png'}}"></image>
             <view class="randomRP-imgtxt">默认模板</view>
           </view>
         </view>
@@ -203,17 +175,11 @@
         <view class="randomRP-prize-countBox">
           <view class="prize-picker-title">红包总个数</view>
           <view class="exBox-prizecount-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png"
-              class="subBtn" @tap="exSubCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-reduce@2x.png'}}" class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
-              <input type="number"
-                     class="countBox-input {{prizeCountTest?'':'error'}}"
-                     bindinput="countChange" value="{{prizeCount}}"/>
+              <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png"
-              class="addBtn" @tap="exAddCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-plus@2x.png'}}" class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
@@ -222,9 +188,7 @@
           <view class="prize-picker-right">
             <txt>￥</txt>
             <view class="inputBox">
-              <input type="digit"
-                     class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}"
-                     bindblur="fixedChange" value="{{fixedRedpacket}}"/>
+              <input type="digit" class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}" bindblur="fixedChange" value="{{fixedRedpacket}}"/>
             </view>
           </view>
         </view>
@@ -242,90 +206,38 @@
       <view class="createBtn">提交</view>
     </view>
 
-    <view class="times" wx:if="{{prizeTimeShow}}">
-      <view class="times-ti">
-        <view class="set-time">设置时间</view>
-        <view class="time-ok">
-          <view class="{{timeTimes === 1 ?'tactive':''}}" @tap="tapTime(1)">
-            {{btime}}
-          </view>
-          <view>至</view>
-          <view class="{{timeTimes === 2 ?'tactive':''}}" @tap="tapTime(2)">
-            {{etime}}
-          </view>
-        </view>
-        <view class="time-sure">
-          <text>取消</text>
-          <text @tap="sureTime">确定</text>
-        </view>
-        <picker-view bindchange="bindTimeChange" value="{{value}}">
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{yearLen}}"
-                  wx:key="{{index}}" value="{{year + item}}">{{
-              year + item}}年
-            </view>
-          </picker-view-column>
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{mounth}}"
-                  wx:key="{{index}}" value="{{item}}">{{item + 1}}月
-            </view>
-          </picker-view-column>
-          <picker-view-column>
-            <view style="line-height: 34px" wx:for="{{day}}"
-                  wx:key="{{index}}" value="{{item}}">{{item + 1}}日
-            </view>
-          </picker-view-column>
-        </picker-view>
-        <view class="times-closeBtn" @tap="closeTimeCover">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
-            class="times-closeX"></image>
-        </view>
-      </view>
-    </view>
 
     <view class="payment" wx:if="{{paymentIn}}">
       <view class="payment-main">
-        <view class="payment-main-head">在线支付</view>
+        <view class="payment-main-head">
+          在线支付
+          <image class="closeBtn" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-close-p@2x.png'}}" @tap="closePayment"></image>
+        </view>
         <view wx:if="{{!paymentSuccess}}">
           <view class="payment-total">
             <view class="payment-total-left">红包总金额</view>
-            <view class="payment-total-right">
-              <text class="payment-total-small">￥</text>
-              {{prizeType === 3 ? prizeCount * fixedRedpacket : total}}
-            </view>
+            <view class="payment-total-right"><text class="payment-total-small">￥</text>{{prizeType===3?prizeCount*fixedRedpacket:total}}</view>
           </view>
           <view class="payment-type-head">选择支付方式</view>
           <view class="payment-type" @tap.stop="payChange(1)">
             <view class="payment-type-left">
-              <image
-                src="{{payEnough?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balance@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-balanceno@2x.png'}}"
-                class="payment-type-left-img"></image>
-              <view class="payment-type-title {{payEnough?'':'nothing'}}">账户余额
-              </view>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (payEnough?'/defaults/b-image/page/icon-balance@2x.png':'/defaults/b-image/page/icon-balanceno@2x.png')}}" class="payment-type-left-img"></image>
+              <view class="payment-type-title {{payEnough?'':'nothing'}}">账户余额</view>
             </view>
-            <image
-              src="{{payEnough?(paymentType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'):'http://jike-file.jerryf.cn/defaults/b-image/page/icon-nopoint@2x.png'}}"
-              class="payment-type-radio"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (payEnough?(paymentType===1?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png'):'/defaults/b-image/page/icon-nopoint@2x.png')}}" class="payment-type-radio"></image>
           </view>
           <view class="payment-type" @tap.stop="payChange(2)">
             <view class="payment-type-left">
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-wx@2x.png"
-                class="payment-type-left-img"></image>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-wx@2x.png'}}" class="payment-type-left-img"></image>
               <view class="payment-type-title">微信</view>
             </view>
-            <image
-              src="{{paymentType===2?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"
-              class="payment-type-radio"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (paymentType===2?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="payment-type-radio"></image>
           </view>
           <view class="payment-btn" @tap.stop="paymentMoney">支付</view>
         </view>
 
         <view class="payment-success" wx:if="{{paymentSuccess}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-good@2x.png"
-            class="payment-success-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-good@2x.png'}}" class="payment-success-img"></image>
           <view class="success-txt">支付成功</view>
         </view>
       </view>
@@ -343,13 +255,11 @@
   import Toast from '@/base/toast/toast'
   import Upload from '@/api/uploads'
   import users from '@/common/mixins/users'
+  import Textarea from '@/base/textarea/textarea'
+  import URIS from 'common/js/config'
 
   export default class CreatePrizePage extends wepy.page {
     mixins = [base, users]
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
 
     config = {
       navigationBarTitleText: '新建奖品',
@@ -360,29 +270,25 @@
 
     components = {
       Toast,
-      Confirm
+      Confirm,
+      Textarea
     }
 
     data = {
+      imageUrlHead: URIS.image,
       prizeType: 1,
+      temporaryPrizeType: 1,
       prizeTypeTxt: '兑换券',
       prizeTypeCover: false,
       prizeTimeShow: false,
       prizeName: '',
-      year: 0,
-      yearLen: 4,
-      mounth: 12,
-      btime: '选择开始时间',
-      etime: '选择结束时间',
+      nowDate: '',
       beginTime: '',
       endTime: '',
-      timeTimes: 1,
-      tapTimes: 0,
-      day: 30,
-      value: [],
       prizeCount: '',
       exdescripte: '',
       redpackMax: '',
+      redpackMin: '',
       total: '',
       fixedRedpacket: '',
       paymentType: 1,
@@ -397,7 +303,12 @@
 
     methods = {
       chioseType(idx) {
-        this.prizeType = Number(idx)
+        this.temporaryPrizeType = Number(idx)
+        this.$apply()
+      },
+      chioseTypeSubmit() {
+        this.prizeTypeCover = false
+        this.prizeType = this.temporaryPrizeType
         switch (this.prizeType) {
           case 1:
             this.prizeTypeTxt = '兑换券'
@@ -415,7 +326,7 @@
         this.redpackMax = ''
         this.$apply()
       },
-      closeTypeCover() {
+      chioseTypeCancel() {
         this.prizeTypeCover = false
         this.$apply()
       },
@@ -427,53 +338,33 @@
         this.prizeName = e.detail.value
         this.$apply()
       },
-      timeChiose() {
-        this.prizeTimeShow = true
-        this.$apply()
+      beginTimeChange(e) {
+        this.beginTime = e.detail.value
       },
-      bindTimeChange(e) {
-        this.value = e.detail.value
-        this.$apply()
-      },
-      tapTime(type) {
-        this.timeTimes = type * 1
-      },
-      closeTimeCover() {
-        this.prizeTimeShow = false
-        this.beginTime = this.btime === '选择开始时间' ? '' : this.btime
-        this.endTime = this.etime === '选择结束时间' ? '' : this.etime
-        this.$apply()
-      },
-      sureTime() {
-        this.time = `${this.value[0] + this.year}-${this.value[1] + 1
-          }-${this.value[2] + 1}`
-        if (this.timeTimes === 1) {
-          this.btime = this.time
-        } else if (this.timeTimes === 2) {
-          this.etime = this.time
-        }
+      endTimeChange(e) {
+        this.endTime = e.detail.value
       },
       countChange(e) {
         this.prizeCount = e.detail.value
         this.$apply()
       },
       exAddCount() {
-        this.prizeCount++
+        this.prizeCount ++
         this.$apply()
       },
       exSubCount() {
-        this.prizeCount--
+        this.prizeCount --
         if (this.prizeCount <= 0) {
           this.prizeCount = 0
         }
         this.$apply()
       },
-      exdescrpChange(e) {
-        this.exdescripte = e.detail.value
-        this.$apply()
-      },
       maxChange(e) {
         this.redpackMax = e.detail.value
+        this.$apply()
+      },
+      minChange(e) {
+        this.redpackMin = e.detail.value
         this.$apply()
       },
       totalChange(e) {
@@ -485,11 +376,10 @@
         this.$apply()
       },
       async createSubmit() {
-        let payRes = await PrizePool.getStoreBalance()
-        let payResMax = Number(payRes.remaining)
         switch (this.prizeType) {
           case 1:
             let res1 = this._testEXmsg()
+            console.log(res1)
             if (res1) {
               let data1 = await PrizePool.createEXchange(res1)
               if (data1.error === 0) {
@@ -501,6 +391,8 @@
             let res2 = this._testRandomRedpack()
             if (res2) {
               this.paymentMsg = Object.assign({}, res2)
+              let payRes = await PrizePool.getStoreBalance()
+              let payResMax = Number(payRes.remaining)
               if (payResMax >= this.total) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -515,6 +407,8 @@
             let res3 = this._testFixedRedpack()
             if (res3) {
               this.paymentMsg = Object.assign({}, res3)
+              let payRes = await PrizePool.getStoreBalance()
+              let payResMax = Number(payRes.remaining)
               if (payResMax >= this.prizeCount * this.fixedRedpacket) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -544,6 +438,10 @@
         this.EXimgUrl = ''
         this.$apply()
       },
+      closePayment() {
+        this.paymentIn = false
+        this.$apply()
+      },
       payChange(idx) {
         if (this.paymengMoneyIn) {
           this.$invoke('Toast', 'show', '订单处理中')
@@ -561,68 +459,51 @@
           return
         }
         this.paymengMoneyIn = true
-        let code = await this.$getCode()
+        let codeRes = await wepy.login()
         let data
         switch (this.paymentType) {
           case 1:
             data = Object.assign({}, this.paymentMsg, {pay_type: 'remaining_pay'})
             break
           case 2:
-            data = Object.assign({}, this.paymentMsg, {
-              pay_type: 'wechat_pay',
-              code
-            })
+            data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code: codeRes.code})
             break
         }
         let res = await PrizePool.createRedpack(data)
+        this.loaded()
         if (res.error === 0) {
           this.paymentSuccess = true
-          this.$apply()
           setTimeout(() => {
             this.$back()
-          }, 2000)
+          }, 1500)
+          this.$apply()
+        } else if (res.payInfo) {
+          const {timestamp, nonceStr, signType, paySign} = res.payInfo
+          const pay = await wepy.requestPayment({
+            timeStamp: timestamp,
+            nonceStr,
+            package: res.payInfo.package,
+            signType,
+            paySign
+          })
+          if (pay.errMsg === 'requestPayment:ok') {
+            this.paymentSuccess = true
+            this.$apply()
+            setTimeout(() => {
+              this.$back()
+            }, 1500)
+          }
         }
-        this.loaded()
       }
     }
 
     async onLoad() {
       this.load()
-      this.info()
     }
 
     async load() {
+      this.nowDate = new Date().toLocaleDateString()
       this.loaded()
-    }
-
-    info() {
-      let now = new Date()
-      this.year = now.getFullYear()
-      let month = now.getMonth()
-      let days = now.getDate() - 1
-      this.value = [0, month, days]
-      this.dealDay(this.year, month + 1)
-    }
-
-    dealDay(year, month) {
-      let days = 0
-      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-        if (month === 2) {
-          days = 29
-        }
-      } else {
-        if (month === 2) {
-          days = 28
-        }
-      }
-      if (month === 1 || month === 3 || month === 5 || month === 7 ||
-        month === 8 || month === 10 || month === 12) {
-        days = 31
-      } else if (month === 4 || month === 6 || month === 9 || month === 11) {
-        days = 30
-      }
-      this.day = days
-      this.$apply()
     }
 
     computed = {
@@ -634,7 +515,12 @@
         let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
         let mean = this.total / this.prizeCount
         let max = this.total - (this.prizeCount - 1) * 0.01
-        return reg.test(this.redpackMax) && this.redpackMax >= mean && this.redpackMax <= max
+        return reg.test(this.redpackMax) && this.redpackMax > mean && this.redpackMax < max
+      },
+      minMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        let mean = this.total / this.prizeCount
+        return reg.test(this.redpackMin) && this.redpackMin < mean && this.redpackMin >= 0.01
       },
       fixedRedpacketTotal() {
         return '￥' + this.prizeCount * this.fixedRedpacket
@@ -645,18 +531,19 @@
       }
     }
 
-    _testPropety() {
-      let arr = Array.prototype.slice.call(arguments, 0)
-      return arr.every((item) => {
-        return item
-      })
+    _testPropety(arr) {
+      for (let i = 0, j = arr.length; i < j; i++) {
+        if (!arr[i].value) {
+          this.$invoke('Toast', 'show', arr[i].txt)
+          return false
+        }
+        if (i === j - 1 && arr[i].value) {
+          return true
+        }
+      }
     }
 
     _testEXmsg() {
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
       let data = {
         promotion_type: 'exchange',
         title: this.prizeName,
@@ -666,10 +553,16 @@
         stock: this.prizeCount,
         use_type: 1
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
-      if (!res || !this.EXimgUrl) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.beginTime, txt: '请设置开始时间'},
+        {value: this.endTime, txt: '请设置结束时间'},
+        {value: this.EXimgUrl, txt: '请上传奖品图片'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.exdescripte, txt: '请填写使用须知'}
+      ]
+      let res = this._testPropety(errMsg)
+      if (!res) {
         return false
       }
       return Object.assign({}, data, {
@@ -679,14 +572,6 @@
     }
 
     _testRandomRedpack() {
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
-      if (!this.maxMoneyTest) {
-        this.$invoke('Toast', 'show', '红包最大值不合规')
-        return false
-      }
       let data = {
         title: this.prizeName,
         is_lucky_redpacket: 1,
@@ -695,24 +580,21 @@
         max_price: this.redpackMax,
         total_amount: this.total
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.total, txt: '请填写红包总金额'},
+        {value: this.maxMoneyTest, txt: '红包最大值要小于总金额且大于平均值'},
+        {value: this.minMoneyTest, txt: '红包最小值要小于平均值且不能小于0.01'}
+      ]
+      let res = this._testPropety(errMsg)
       if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
         return false
       }
       return data
     }
 
     _testFixedRedpack() {
-      if (!this.fixedRpMoneyTest) {
-        this.$invoke('Toast', 'show', '红包金额输入错误')
-        return false
-      }
-      if (!this.prizeCountTest) {
-        this.$invoke('Toast', 'show', '奖品数量有误')
-        return false
-      }
       let data = {
         title: this.prizeName,
         num: this.prizeCount,
@@ -720,15 +602,25 @@
         max_price: this.fixedRedpacket,
         total_amount: this.prizeCount * this.fixedRedpacket
       }
-      let values = Object.values(data)
-      let res = this._testPropety(...values)
+      let errMsg = [
+        {value: this.prizeName, txt: '奖品名称未填写'},
+        {value: this.prizeCountTest, txt: '奖品数量有误'},
+        {value: this.fixedRpMoneyTest, txt: '红包金额输入错误'}
+      ]
+      let res = this._testPropety(errMsg)
       if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
         return false
       }
       return Object.assign({}, data, {
         is_lucky_redpacket: 0
       })
+    }
+
+    events = {
+      input(txt) {
+        this.exdescripte = txt
+        this.$apply()
+      }
     }
   }
 </script>
@@ -830,13 +722,24 @@
             height: 40px
 
             .prize-picker-txt
-              font-size: $font-size-medium
-              color: $color-text-title
+              display: flex
+              align-items: center
 
-            .prize-picker-arrow
-              width: 10px
-              height: 10px
-              margin-left: 8px
+              .prize-picker-txt-time
+                display: flex
+                align-items: center
+                .prize-picker-txt-time-title
+                  font-size: $font-size-medium
+                  color: $color-text-title
+                .prize-picker-arrow
+                  width: 10px
+                  height: 10px
+                  margin-left: 3px
+
+              .prize-picker-txt-middle
+                font-size: $font-size-medium
+                color: $color-text-d
+                padding: 0 10px
 
         .exBox-imgBox
           height: 74px
@@ -937,28 +840,8 @@
             color: $color-text-title
             line-height: 30px
 
-          .prize-picker-textarea
-            position: relative
-            height: 55px
-            width: 88vw
-            padding: 10px
-            background: $color-background
-
-            .prize-picker-textarea-input
-              width: 88vw
-              height: 55px
-              background: $color-background
-              font-size: $font-size-medium
-              color: $color-text-title
-
-            .prize-picker-textarea-placeholder
-              color: $color-text-d
-            .textarea-length
-              position: absolute
-              bottom: 10px
-              right: 10px
-              font-size: $font-size-small-s
-              color: $color-text-d
+          .textarea-showBox
+            padding-right: 12px
 
       .randomRP
 
@@ -1261,7 +1144,7 @@
         transform: translate(-50%, -50%)
         background: $color-white
         width: 265px
-        height: 260px
+        height: 400px
         border-radius: 4px
 
         .prizeType-container-head
@@ -1274,6 +1157,7 @@
 
         .prizeType-list
           padding: 0 10px
+          height: 320px
 
           .prizeType-list-item
             height: 70px
@@ -1303,108 +1187,22 @@
           .prizeType-list-item.last
             border-bottom: 0 none
 
-        .prizeType-closeBtn
-          width: 34px
-          height: 34px
-          display: flex
-          justify-content: center
-          align-items: center
-          position: absolute
-          left: 50%
-          transform: translate(-50%, 0)
-          bottom: -100px
-
-          .prizeType-closeX
-            width: 24px
-            height: 24px
-
-    .times
-      position: fixed
-      height: 100%
-      width: 100%
-      z-index: 1000
-      top: 0
-      background: $color-mask-bgc
-
-      .times-ti
-        height: 325px
-        width: 265px
-        position: absolute
-        left: 50%
-        top: 50%
-        transform: translate(-50%, -50%)
+      .foot-btnBox
+        height: 40px
+        display: flex
+        border-box: box-sizing
         background: $color-white
-        border-radius: 2px
 
-        .set-time
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
           height: 40px
-          line-height: 40px
-          text-align: center
-          background-color: $color-theme
-          color: $color-white
-          font-size: $font-size-medium-x
-          font-family: $font-family-light
-        picker-view
-          position: absolute
-          bottom: 0
-          height: 200px
-          width: 100%
-          text-align: center
-          font-size: $font-size-medium
-        .time-ok
-          height: 45px
-          display: flex
-          font-size: $font-size-small
           align-items: center
-          background: $color-background
-          position: relative
-          view
-            flex: 1
-            text-align: center
-            border-bottom: 2px solid $color-text-d
-            &:nth-child(2)
-              position: absolute
-              left: 50%
-              top: 50%
-              transform: translate(-50%, -50%)
-              width: 18px
-              height: 18px
-              line-height: 18px
-              border-radius: 50%
-              text-align: center
-              font-size: $font-size-small-s
-              background: $color-text-d
-              color: $color-white
-            &:nth-child(1), &:nth-child(3)
-              line-height: 1
-              padding-bottom: 9.5px
-              margin: 19.5px 24px 0
-          .tactive
-            border-bottom: 2px solid  $color-assist-f
-            color: $color-text
-        .time-sure
-          height: 39.5px
-          border-bottom: 0.5px solid $color-split-line
-          padding: 18.5px $padding 0
-          display: flex
-          color: $color-text
-          justify-content: space-between
-          font-size: $font-size-small
-
-        .times-closeBtn
-          width: 34px
-          height: 34px
-          display: flex
           justify-content: center
-          align-items: center
-          position: absolute
-          left: 50%
-          transform: translate(-50%, 0)
-          bottom: -80px
+          font-size: $font-size-medium
 
-          .times-closeX
-            width: 24px
-            height: 24px
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
     .payment
       position: fixed
@@ -1430,6 +1228,15 @@
           font-size: $font-size-medium-x
           color: $color-text-d
           border-bottom: 0.5px solid $color-col-line
+          position: relative
+
+          .closeBtn
+            position: absolute
+            right: 0
+            top: 0
+            width: 20px
+            height: 20px
+            padding: 10px
 
         .payment-total
           height: 50px

@@ -3,48 +3,40 @@
     <view class="wheel-wrapper">
       <view class="header-wrapper">
         <!--<view class="switch-wrapper">-->
-        <!--<view class="switch">-->
-        <!--<view class="switch-ball"></view>-->
-        <!--</view>-->
-        <!--<view class="text">-->
-        <!--开启活动-->
-        <!--</view>-->
+          <!--<view class="switch">-->
+            <!--<view class="switch-ball"></view>-->
+          <!--</view>-->
+          <!--<view class="text">-->
+            <!--开启活动-->
+          <!--</view>-->
         <!--</view>-->
         <!--<view class="edit-wrapper">-->
-        <!--<view class="btn">编辑</view>-->
+          <!--<view class="btn">编辑</view>-->
         <!--</view>-->
       </view>
       <view class="content-wrapper">
         <view class="wheel">
           <view class="wheel-pointer">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-pointer@2x.png"
-              class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}" class="full-image"></image>
           </view>
           <view class="wheel-content" ref="wheel">
             <view class="wheel-relative">
               <view class="wheel-image">
-                <image
-                  src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-zp@2x.png"
-                  class="full-image"></image>
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}" class="full-image"></image>
               </view>
               <view class="wheel-prize-wrapper">
-                <repeat for="{{activityPromotions}}" key="index" index="index"
-                        item="item">
+                <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
                   <view class="prize prize-{{index}}">
                     <view class="name">{{item.promotion_title}}</view>
                     <view class="img-wrapper">
-                      <image src="{{item.promotion_img}}"
-                             mode="aspectFit"></image>
+                      <image src="{{item.promotion_img}}" mode="aspectFit"></image>
                     </view>
                   </view>
                 </repeat>
                 <view class="prize prize-5">
                   <view class="name">谢谢惠顾</view>
                   <view class="img-wrapper">
-                    <image
-                      src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-face@2x.png"
-                      mode="aspectFit"></image>
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}" mode="aspectFit"></image>
                   </view>
                 </view>
               </view>
@@ -71,83 +63,66 @@
                  placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
           <view class="lenth-wrapper">{{nameLength}}/10</view>
         </view>
-        <view class="time input-wrapper border-bottom-1px"
-              @tap="showActivityTimeModal">
+        <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
           <view class="label">活动时间</view>
           <view class="content">
-            <view class="start sell">{{fromDate === '' ? '当天' : fromDate}}
-            </view>
+            <picker mode="date" class="sell-date" @change="setFromDate">
+              <view class="date">
+                <view>{{fromDate === '' ? '开始时间' : fromDate}}</view>
+                <view class="arrow-right">
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                         class="full-image"></image>
+                </view>
+              </view>
+            </picker>
             <view class="to">至</view>
-            <view class="end">{{toDate}}</view>
-          </view>
-          <view class="arrow-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-              class="full-image"></image>
-          </view>
-          <activity-time-modal title="活动时间">
-            <view class="activity-time-modal" slot="content">
-              <view class="header">
-                <view class="start" @tap.stop="changeActivityPicker('start')">
-                  {{fromDate === '' ? '当天' : fromDate}}
-                </view>
-                <view class="to">至</view>
-                <view class="end" @tap.stop="changeActivityPicker('end')">{{toDate}}</view>
-                <view
-                  class="line-wrapper {{activityPickerType === 'end' ? 'end' : ''}}">
-                  <view class="line"></view>
+            <picker mode="date" class="sell-date"  @change="setToDate">
+              <view class="date">
+                <view>{{toDate === '' ? '结束时间' : toDate}}</view>
+                <view class="arrow-right">
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                         class="full-image"></image>
                 </view>
               </view>
-              <view class="picker-time-wrapper">
-                <activity-time-picker @cancel.user="cancelActivityPicker"
-                                      @confirm.user="confirmActivityPicker"></activity-time-picker>
-              </view>
-            </view>
-          </activity-time-modal>
+            </picker>
+          </view>
         </view>
         <view class="join input-wrapper border-bottom-1px">
           <view class="label">参与次数</view>
           <view class="select-wrapper">
             <view class="select-box" @tap="selectJoinTime(1)">
               <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1}}"
-                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
-                       class="full-image"></image>
+                <image wx:if="{{joinTimes === 1 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一天一次</view>
             </view>
             <view class="select-box" @tap="selectJoinTime(0)">
               <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0}}"
-                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
-                       class="full-image"></image>
+                <image wx:if="{{joinTimes === 0 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一人一次</view>
             </view>
           </view>
         </view>
-        <view class="add input-wrapper border-bottom-1px">
-          <view class="label">增加次数</view>
-          <view class="select-wrapper">
-            <view class="select-box">
-              <view class="select unselect">
-                <image
-                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
-                  class="full-image"></image>
-              </view>
-              <view class="text">未中奖后分享成功再抽一次(选填)</view>
-            </view>
-          </view>
-        </view>
+        <!--<view class="add input-wrapper border-bottom-1px">-->
+          <!--<view class="label">增加次数</view>-->
+          <!--<view class="select-wrapper">-->
+            <!--<view class="select-box">-->
+              <!--<view class="select unselect">-->
+                <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
+              <!--</view>-->
+              <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</view>-->
         <view class="explain">
           <view class="title">活动说明</view>
           <view class="text-wrapper">
-            <textarea value="{{activityDesc}}"
-                      maxlength="30"
-                      @input="handleInput('activityDesc')"
-                      placeholder="请输入"
-                      placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
-            <view class="length-wrapper">{{activityDescLength}}/30</view>
+            <text-area :value.sync="activityDesc"
+                       height="75"
+                       maxLength="30"
+                       @input.user="handleActivityDesc"
+                       placeHolder="请输入"></text-area>
           </view>
         </view>
       </view>
@@ -163,43 +138,35 @@
                    maxlength="3"
                    @input="handleInput('percentage')"/>
           </view>
+          %
         </view>
-        <repeat for="{{activityPromotions}}" index="index" key="index"
-                item="item">
+        <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
           <view class="item-wrapper">
             <view class="name">{{item.promotion_title}}</view>
             <view class="quantity">{{item.promotion_stock}}个</view>
             <view class="del" @tap="delectPrize({{index}}, {{item}})">
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_delete@2x.png"></image>
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_delete@2x.png'}}"></image>
             </view>
           </view>
         </repeat>
         <view class="add-wrapper">
-          <view class="btn" @tap="showPrizePoolModal"
-                wx:if="{{activityPromotions.length < 5}}">
+          <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
             <view class="add-image">
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_add@2x.png"
-                class="full-image"></image>
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}" class="full-image"></image>
             </view>
             添加奖品
           </view>
         </view>
-        <prize-pool-modal title="添加奖品" @cancel.user="cancelSelectPrize">
+        <prize-pool-modal title="添加奖品" type="big" @cancel.user="cancelSelectPrize" @confirm.user="saveSelectPrize">
           <view class="prize-pool-modal" slot="content">
             <repeat for="{{prizePool}}" index="index" key="key" item="item">
-              <view class="prize border-bottom-1px"
-                    @tap.stop="changePrize({{item}})">
+              <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
                 <view class="name">{{item.promotion_title}}</view>
                 <view class="stock">剩余{{item.promotion_stock}}个</view>
                 <view class="check-box-wrapper">
-                  <view
-                    class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                    <image
-                      wx:if="{{selectPromotion.promotion_id === item.promotion_id}}"
-                      src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
-                      class="full-image"></image>
+                  <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                           class="full-image"></image>
                   </view>
                 </view>
               </view>
@@ -207,17 +174,22 @@
             <view class="number-control">
               <view class="text">添加数量</view>
               <view class="dec" @tap.stop="decSelectStock">-</view>
-              <view class="number">{{selectStock}}</view>
+              <view class="number">
+                <input type="number"
+                       maxlength="10"
+                       value="{{selectStock}}"
+                       @input="inputSelectStock" />
+              </view>
               <view class="add" @tap.stop="addSelectStock">+</view>
             </view>
-            <view class="save-wrapper">
-              <view class="btn" @tap.stop="saveSelectPrize()">保存</view>
-            </view>
+            <!--<view class="save-wrapper">-->
+              <!--<view class="btn" @tap.stop="saveSelectPrize()">保存</view>-->
+            <!--</view>-->
           </view>
         </prize-pool-modal>
       </view>
     </view>
-    <view class="btn-group border-top-1px">
+    <view class="btn-wrapper border-top-1px">
       <!--<view class="btn-cancel">取消</view>-->
       <!--<view class="split"></view>-->
       <view class="btn-save" @tap="submitForm">保存</view>
@@ -234,6 +206,8 @@
   import Activitys from 'api/activitys'
   import Tips from 'common/js/tips'
   import base from 'common/mixins/base'
+  import Textarea from '@/base/textarea/textarea'
+  import URIS from 'common/js/config'
 
   const ADD_TYPE = 0
   const UPDATE_TYPE = 1
@@ -241,11 +215,8 @@
   export default class WheelController extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
     data = {
+      imageUri: URIS.image,
       type: ADD_TYPE,
       id: 0,
       name: '',
@@ -262,7 +233,9 @@
       activityPromotions: [],
       deletePromtions: [],
       selectPromotion: {},
-      selectStock: 0
+      selectStock: 0,
+      baseStock: 0,
+      caculating: false
     }
 
     async onLoad() {
@@ -303,12 +276,16 @@
     }
 
     _handleInput(name, value) {
-      this[name] = value
       if (name === 'name') {
         this.nameLength = value.length
       } else if (name === 'activityDesc') {
         this.activityDescLength = value.length
+      } else if (name === 'percentage' && Math.floor(value) > 100) {
+        this.percentage = 100
+        this.$apply()
+        return
       }
+      this[name] = value
       this.$apply()
     }
 
@@ -326,29 +303,39 @@
       cancelActivityPicker() {
         this.$invoke('activity-time-modal', 'hide')
       },
-      confirmActivityPicker(date) {
-        if (this.activityPickerType === 'start') {
-          this.fromDate = date
-          this.activityPickerType = 'end'
-        } else {
-          this.toDate = date
-        }
+      setFromDate(e) {
+        this.fromDate = e.detail.value
+      },
+      setToDate(e) {
+        this.toDate = e.detail.value
       },
       selectJoinTime(status) {
         this.joinTimes = Math.floor(status)
       },
+      handleActivityDesc(value) {
+        this._handleInput('activityDesc', value)
+      },
       changePrize(promotion) {
+        this.caculating = true
         if (this.selectPromotion.promotion_id === promotion.promotion_id && this.selectPromotion.promotion_type === promotion.promotion_type) {
           return
         }
         const preIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
-        const nowIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
+        const nowIndex = this.prizePool.findIndex((item) => item.promotion_id === promotion.promotion_id && item.promotion_type === promotion.promotion_type)
         this.prizePool[preIndex].promotion_stock += this.selectStock
+        this.baseStock = this.prizePool[nowIndex].promotion_stock
+        if (this.selectStock > this.baseStock) {
+          this.selectStock = this.baseStock
+        }
         this.prizePool[nowIndex].promotion_stock -= this.selectStock
         this.selectPromotion = promotion
+        setTimeout(() => {
+          this.caculating = false
+          this.$apply()
+        }, 20)
       },
       decSelectStock() {
-        if (this.selectStock === 1) {
+        if (this.selectStock <= 0) {
           return
         }
         this.selectStock--
@@ -356,10 +343,18 @@
       addSelectStock() {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
         const stock = this.prizePool[prizeIndex].promotion_stock
-        if (this.selectStock === stock) {
+        if (stock <= 0) {
           return
         }
         this.selectStock++
+      },
+      inputSelectStock(e) {
+        let value = e.detail.value
+        if (value > this.baseStock) {
+          value = this.baseStock
+        }
+        this.selectStock = Math.floor(value)
+        return value
       },
       cancelSelectPrize() {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
@@ -367,6 +362,7 @@
         this.selectStock = 0
       },
       saveSelectPrize() {
+        this.caculating = true
         let prize = this.prizePool.find((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
         let selectPrize = Object.assign({}, prize)
         selectPrize.promotion_stock = this.selectStock
@@ -374,19 +370,27 @@
         this.selectStock = 0
         this.$invoke('prize-pool-modal', 'hide')
         this.$apply()
+        setTimeout(() => {
+          this.caculating = false
+          this.$apply()
+        }, 20)
       },
       delectPrize(index, prize) {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === prize.promotion_id)
-        this.prizePool[prizeIndex].promotion_stock += prize.promotion_stock
+        this.prizePool[prizeIndex].promotion_stock = Math.floor(this.prizePool[prizeIndex].promotion_stock) + Math.floor(prize.promotion_stock)
         this.activityPromotions.splice(index, 1)
         if (prize.activity_promotion_id) {
           let delPrize = Object.assign({}, prize)
           delPrize.promotion_stock = 0
+          delPrize.type = 'delete'
           this.deletePromtions.push(delPrize)
         }
       },
       async submitForm() {
-        if (this.activityPromotions.length < 5) {
+        if (Math.floor(this.percentage) > 100 || !this.percentage) {
+          this._toast('请输入正确的概率')
+          return
+        } else if (this.activityPromotions.length < 5) {
           this._toast('奖品数未满5个')
           return
         }
@@ -401,6 +405,7 @@
           activity_promotions: [...this.activityPromotions, ...this.deletePromtions]
         }
         const res = this.type === ADD_TYPE ? await Activitys.addLucky(data) : await Activitys.updateLucky(this.id, data)
+        this.loaded()
         if (res.error === 0) {
           Tips.success('保存成功')
           this.deletePromtions = []
@@ -409,25 +414,35 @@
         } else {
           this._toast(res.message)
         }
-        this.loaded()
       },
       showActivityTimeModal() {
         this.$invoke('activity-time-modal', 'show')
       },
       showPrizePoolModal() {
-        this.selectStock = 1
+        if (this.prizePool.length === 0) {
+          this.$invoke('toast', 'show', '奖品池暂无奖品')
+          return
+        }
+        this.selectStock = 0
         this.selectPromotion = this.prizePool[0]
+        this.baseStock = this.prizePool[0].promotion_stock
         this.$invoke('prize-pool-modal', 'show')
       }
     }
 
     watch = {
       selectStock(newStock, oldStock) {
+        if (this.caculating) {
+          return
+        }
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === this.selectPromotion.promotion_id && item.promotion_type === this.selectPromotion.promotion_type)
         if (newStock > oldStock) {
-          this.prizePool[prizeIndex].promotion_stock -= 1
-        } else if (newStock !== 0) {
-          this.prizePool[prizeIndex].promotion_stock += 1
+          this.prizePool[prizeIndex].promotion_stock -= newStock - oldStock
+          if (this.prizePool[prizeIndex].promotion_stock < 0) {
+            this.prizePool[prizeIndex].promotion_stock = 0
+          }
+        } else {
+          this.prizePool[prizeIndex].promotion_stock += Math.abs(newStock - oldStock)
         }
         this.$apply()
       }
@@ -437,7 +452,8 @@
       'activity-time-modal': BaseModal,
       'activity-time-picker': DatePicker,
       'prize-pool-modal': BaseModal,
-      'toast': Toast
+      'toast': Toast,
+      'text-area': Textarea
     }
 
     config = {
@@ -455,6 +471,10 @@
     overflow: hidden
     padding-bottom: 63px
     background-color: $color-background
+    .arrow-right
+      width: 10px
+      height: 10px
+      margin-left: 10px
     .input-wrapper
       display: flex
       align-items: center
@@ -587,6 +607,8 @@
             background-color: $color-black
     .detail-wrapper
       background-color: $color-white
+      .block-title
+        padding: 0 12px
       .container
         padding-left: 12px
         .title
@@ -613,6 +635,14 @@
               text-align: center
             .to
               color: $color-text-d
+            .sell-date
+              flex: 1
+              .date
+                display: flex
+                align-items: center
+                justify-content: center
+                .arrow-right
+                  margin-left: 1px
           .activity-time-modal
             height: 285px
             .header
@@ -685,20 +715,10 @@
             margin-bottom: 5px
           .text-wrapper
             height: 75px
-            padding: 7px 9px
-            border-1px()
-            background-color: $color-background
-            textarea
-              width: 100%
-              height: 100%
-            .length-wrapper
-              position: absolute
-              bottom: 5px
-              right: 7.5px
-              font-size: $font-size-small-s
-              color: $color-text-d
     .prize-wrapper
       background-color: $color-white
+      .block-title
+        padding: 0 12px
       .container
         padding: 0 12px
         padding-bottom: 15px
@@ -733,6 +753,7 @@
             flex: 0 0 95px
             width: 95px
             color: $color-text
+            no-wrap()
           .quantity
             flex: 1
             color: $color-assist-f
@@ -771,6 +792,7 @@
               flex: 0 0 84px
               width: 84px
               font-size: $font-size-small
+              no-wrap()
             .stock
               flex: 1
               font-size: $font-size-small
@@ -831,7 +853,7 @@
               font-size: $font-size-medium
               color: $color-white
               background-color: $color-theme
-    .btn-group
+    .btn-wrapper
       position: fixed
       bottom: 0
       left: 0

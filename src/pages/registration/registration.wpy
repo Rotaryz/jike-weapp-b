@@ -3,8 +3,8 @@
     <view class="registration {{hidePage ? 'reghide' : ''}}">
       <view class="map">
         <view class="map-title">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/Group9.png"></image>
+          <image wx:if="{{imageUri}}"
+            src="{{imageUri + '/defaults/b-image/page/Group9.png'}}"></image>
           {{shop.address}}
         </view>
         <map name="address" latitude="{{shop.latitude}}"
@@ -20,22 +20,22 @@
               <cover-image src="./pic-range_bg@2x.png"
                            class="tip"></cover-image>
             </cover-view>
-            <cover-image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-manoutside.png"
+            <cover-image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
               class="peo"></cover-image>
           </cover-view>
         </map>
         <view class="reg_red">
-          <image class="line"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-dashed@2x.png"></image>
+          <image class="line" wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/page/pic-dashed@2x.png'}}"></image>
           <view wx:for="{{redPac}}" wx:key="{{index}}">
             <view class="red-title {{item.showTitle ===1 ? 'award': ''}}">{{
               item.title}}
             </view>
             <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle 5.png"
+              src="{{imageUri + '/defaults/b-image/page/Rectangle 5.png'}}"
               class="award"
-              wx:if="{{item.showTitle ===1}}"></image>
+              wx:if="{{imageUri && item.showTitle ===1}}"></image>
             <image src="{{item.image}}"></image>
           </view>
         </view>
@@ -62,14 +62,14 @@
                 </picker>
               </view>
             </view>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
           </view>
           <view class="acti-item" @tap="isChioce(way)">
             签到范围
             <text>{{value}}</text>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-pressed.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
           </view>
           <!--<view class="acti-item">-->
           <!--增加次数-->
@@ -84,8 +84,8 @@
             {{item.title}}
             <view class="bo-tip" @tap="isChioce({{index}})">
               <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"
-                wx:if="{{item.promotion_title === '添加奖品'}}"></image>
+                src="{{imageUri + '/defaults/b-image/page/icon-add20@2x.png'}}"
+                wx:if="{{imageUri && item.promotion_title === '添加奖品'}}"></image>
               {{item.promotion_title}}
             </view>
           </view>
@@ -112,7 +112,7 @@
                 {{item.title}}
                 <view class="sel" @tap="chioceWay({{index}})">
                   <image
-                    src="{{item.sel?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected.png'}}"></image>
+                    src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/b-image/page/icon-selected.png'}}"></image>
                 </view>
               </view>
               <view class="ways" style="border:none">
@@ -135,17 +135,17 @@
               <text>剩余{{item.promotion_stock}}个</text>
               <view class="sel" @tap="selRed({{index}})">
                 <image
-                  src="{{item.sel?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected.png'}}"></image>
+                  src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png':imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
               </view>
             </view>
             <view class="add-weight ways">
               <view>添加数量</view>
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/jian.png"
+              <image wx:if="{{imageUri}}"
+                src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
                 @tap="subtract"></image>
               <input value="{{addNum}}" type="number" bindblur="setNum"/>
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/add.png"
+              <image wx:if="{{imageUri}}"
+                src="{{imageUri + '/defaults/b-image/page/add.png'}}"
                 @tap="addReds"></image>
             </view>
           </scroll-view>
@@ -172,6 +172,8 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import Textarea from '@/base/textarea/textarea'
+  import URIS from 'common/js/config'
+
   export default class Registration extends wepy.page {
     mixins = [base]
 
@@ -189,6 +191,7 @@
       Textarea: Textarea
     }
     data = {
+      imageUri: URIS.image,
       shop: [],
       markers: [{
         iconPath: './icon-shop_normal.png',
@@ -205,38 +208,38 @@
       showTimes: false,
       redPac: [{
         title: '奖励',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-1_money.png',
+        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
         showTitle: 1,
         ispacket: 1
       }, {
         title: '第二天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
 
       }, {
         title: '第三天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '奖励',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-1_money.png',
+        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
         showTitle: 1,
         ispacket: 2
       }, {
         title: '第五天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '第六天',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon_notchecked.png',
+        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
         showTitle: 0,
         ispacket: 0
       }, {
         title: '奖励',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-1_money.png',
+        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
         showTitle: 1,
         ispacket: 3
       }],

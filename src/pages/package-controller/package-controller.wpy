@@ -6,42 +6,36 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{business}}</view>
           <view class="arrow-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-              class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
           </view>
         </view>
       </view>
-      <view class="category input-wrapper border-bottom-1px"
-            @tap="showCategoryModal">
+      <view class="category input-wrapper border-bottom-1px" @tap="showCategoryModal">
         <view class="label">适用品类</view>
         <view class="arrow-content-wrapper">
-          <view class="content">{{category}}</view>
+          <view class="content">{{selectCategoryContent}}</view>
           <view class="arrow-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-              class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
           </view>
         </view>
-        <categories-modal title="选择品类" @hide.user="hideCategoriesModal">
+        <categories-modal title="选择品类" type="big" @cancel.user="resetCategories" @confirm.user="setCategories">
           <view slot="content" class="categories-modal">
-            <view class="header border-bottom-1px"
-                  @tap.stop="selectAllCategories">
+            <view class="header border-bottom-1px" @tap.stop="selectAllCategories">
               全选
-              <view
-                class="select-box {{isSelectAllCategories ? 'selected' : ''}}">
-                <image wx:if="{{isSelectAllCategories}}"
-                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+              <view class="select-box {{tempSelectAllCategories ? 'selected' : ''}}">
+                <image wx:if="{{imageUri && tempSelectAllCategories}}"
+                       src="{{imageUri + '/defaults/b-image/page/icon-select@2x.png'}}"
                        class="full-image"></image>
               </view>
             </view>
-            <repeat for="{{categories}}" index="index" key="index" item="item">
-              <view class="item border-bottom-1px"
-                    @tap.stop="selectCategory({{item}})">
+            <repeat for="{{tempCategories}}" index="index" key="index" item="item">
+              <view class="item border-bottom-1px" @tap.stop="selectCategory({{item}})">
                 {{item.name}}
                 <view class="select-box {{item.check ? 'selected' : ''}}">
-                  <image wx:if="{{item.check}}"
-                         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                  <image wx:if="{{imageUri && item.check}}"
+                         src="{{imageUri + '/defaults/b-image/page/icon-select@2x.png'}}"
                          class="full-image"></image>
                 </view>
               </view>
@@ -54,29 +48,26 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{store}}</view>
           <view class="arrow-right">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-              class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
           </view>
         </view>
-        <stores-modal title="门店选择" @hide.user="hideStoresModal">
+        <stores-modal title="门店选择" type="big" @cancel.user="resetStores" @confirm.user="setStores">
           <view class="stores-modal" slot="content">
-            <view class="select-all border-bottom-1px"
-                  @tap.stop="selectAllStores">
+            <view class="select-all border-bottom-1px" @tap.stop="selectAllStores">
               全选
-              <view class="select-box {{isSelectAllStores ? 'selected' : ''}}">
-                <image wx:if="{{isSelectAllStores}}"
-                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+              <view class="select-box {{tempSelectAllStores ? 'selected' : ''}}">
+                <image wx:if="{{imageUri && tempSelectAllStores}}"
+                       src="{{imageUri + '/defaults/b-image/page/icon-select@2x.png'}}"
                        class="full-image"></image>
               </view>
             </view>
-            <repeat for="{{stores}}" key="index" index="index" item="item">
-              <view class="select-item border-bottom-1px"
-                    @tap.stop="selectStore({{item}})">
+            <repeat for="{{tempStores}}" key="index" index="index" item="item">
+              <view class="select-item border-bottom-1px" @tap.stop="selectStore({{item}})">
                 {{item.shop_name}}
                 <view class="select-box {{item.check ? 'selected' : ''}}">
-                  <image wx:if="{{item.check}}"
-                         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png"
+                  <image wx:if="{{imageUri && item.check}}"
+                         src="{{imageUri + '/defaults/b-image/page/icon-select@2x.png'}}"
                          class="full-image"></image>
                 </view>
               </view>
@@ -89,18 +80,14 @@
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
             <view class="picture">
-              <view class="delete" wx:if="{{item.image_url}}"
-                    @tap="deleteImage({{index}})">
+              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
                 <image class="full-image"
-                       src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del@2x.png"></image>
+                       wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
               </view>
-              <image wx:if="{{item.image_url}}" src="{{item.image_url}}"
-                     class="image full-image"></image>
-              <view class="add" wx:if="{{!item.image_url}}"
-                    @tap="chooseImage({{index}})">
-                <image
-                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add@2x.png"
-                  class="full-image"></image>
+              <image wx:if="{{item.image_url}}" src="{{item.image_url}}" class="image full-image"></image>
+              <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}"
+                       class="full-image"></image>
               </view>
             </view>
           </repeat>
@@ -149,49 +136,55 @@
       </view>
       <view class="plan">
         <view class="title">活动计划</view>
-        <view class="text-wrapper">
-          <textarea value="{{plan}}"
-                    @input="handleInput('plan')"
-                    placeholder="请输入"
-                    placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"></textarea>
-        </view>
+        <text-area :value.sync="plan"
+                   maxLength="-1"
+                   height="75"
+                   placeHolder="请输入"
+                   @input.user="handleTextarea"></text-area>
       </view>
     </view>
     <view class="sell-wrapper border-bottom-1px border-top-1px">
-      <view class="time input-wrapper border-bottom-1px"
-            @tap="showSellTimeModal">
+      <view class="time input-wrapper border-bottom-1px">
         <view class="label">售卖时间</view>
         <view class="content">
-          <view class="start sell">
-            {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
-          </view>
+          <picker mode="date" class="sell-date" @change="setSellStartDate">
+            <view class="date">
+              <view>{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
+              <view class="arrow-right">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                       class="full-image"></image>
+              </view>
+            </view>
+          </picker>
           <view class="to">至</view>
-          <view class="end">{{sellEndTime}}</view>
-        </view>
-        <view class="arrow-right">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
-            class="full-image"></image>
-        </view>
-        <sell-time-modal title="售卖时间">
-          <view class="sell-time-modal" slot="content">
-            <view class="header">
-              <view class="start" @tap.stop="changeSellPickerType('start')">
-                {{sellStartTime === '' ? '自上线之日起' : sellStartTime}}
-              </view>
-              <view class="to">至</view>
-              <view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>
-              <view
-                class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">
-                <view class="line"></view>
+          <picker mode="date" class="sell-date"  @change="setSellEndDate">
+            <view class="date">
+              <view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>
+              <view class="arrow-right">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                       class="full-image"></image>
               </view>
             </view>
-            <view class="picker-time-wrapper">
-              <sell-time-picker @cancel.user="cancelSellTimePicker"
-                                @confirm.user="confirmSellTimePicker"></sell-time-picker>
-            </view>
-          </view>
-        </sell-time-modal>
+          </picker>
+        </view>
+        <!--<sell-time-modal title="售卖时间">-->
+          <!--<view class="sell-time-modal" slot="content">-->
+            <!--<view class="header">-->
+              <!--<view class="start" @tap.stop="changeSellPickerType('start')">-->
+                <!--{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}-->
+              <!--</view>-->
+              <!--<view class="to">至</view>-->
+              <!--<view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>-->
+              <!--<view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">-->
+                <!--<view class="line"></view>-->
+              <!--</view>-->
+            <!--</view>-->
+            <!--<view class="picker-time-wrapper">-->
+              <!--<sell-time-picker @cancel.user="cancelSellTimePicker"-->
+                                <!--@confirm.user="confirmSellTimePicker"></sell-time-picker>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</sell-time-modal>-->
       </view>
       <view class="stock input-wrapper">
         <view class="label">销售数量</view>
@@ -204,26 +197,25 @@
       </view>
     </view>
     <view class="know-wrapper border-top-1px border-bottom-1px">
-      <view class="know-content input-wrapper border-bottom-1px"
-            @tap="showKnowModal">
+      <view class="know-content input-wrapper border-bottom-1px" @tap="showKnowModal">
         <view class="label">报名须知</view>
         <!--<view class="arrow-right">-->
-        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png" class="full-image"></image>-->
+        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>-->
         <!--</view>-->
       </view>
       <view class="know">
         <view class="title">活动规则：</view>
         <view class="first">
           <view class="circle"></view>
-          大礼包会上架到活动联盟商家的优惠劵列表
+          大礼包会上架到活动联盟商家的优惠券列表
         </view>
         <view class="second">
           <view class="circle"></view>
-          各个商家优惠劵的数量会平均分配
+          各个商家优惠券的数量会平均分配
         </view>
         <view class="third">
           <view class="circle"></view>
-          各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。
+          各个商家的优惠券的交易金额会按照异业联盟的贡献，分配给商家。
         </view>
       </view>
     </view>
@@ -239,10 +231,12 @@
   import BaseModal from '@/base/base-modal/base-modal'
   import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
+  import Textarea from '@/base/textarea/textarea'
   import Packages from 'api/packages'
   import Uploads from 'api/uploads'
   import Tips from 'common/js/tips'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
 
   const IMAGE_INIT = {
     id: 0,
@@ -252,18 +246,20 @@
   export default class packageController extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
     data = {
+      imageUri: URIS.image,
       packageId: 0,
       business: '白云区万达商圈',
-      isSelectAllCategories: false,
+      realSelectAllCategories: false,
+      tempSelectAllCategories: false,
       categories: [],
+      tempCategories: [],
+      selectCategoryContent: '',
       selectCategoryIds: [],
-      isSelectAllStores: false,
+      realSelectAllStores: false,
+      tempSelectAllStores: false,
       stores: [],
+      tempStores: [],
       selectStoreIds: [],
       pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
       title: '',
@@ -309,7 +305,7 @@
       this.plan = res.activity_project
       this.sellStartTime = res.sell_start_at
       this.sellEndTime = res.sell_end_at
-      this.stock = res.stock === -1 ? '' : this.stock
+      this.stock = res.stock === -1 ? '' : res.stock
       this.$apply()
       this._handleCategories()
       await this._getMerchantStores()
@@ -317,18 +313,24 @@
 
     _handleCategories() {
       if (this.selectCategoryIds.length === this.categories.length) {
-        this.isSelectAllCategories = true
+        this.realSelectAllCategories = true
+        this.tempSelectAllCategories = true
       }
+      const selectCategoryContent = []
       this.selectCategoryIds.forEach((id) => {
         const selectIndex = this.categories.findIndex((item) => Math.floor(item.id) === Math.floor(id))
         this.categories[selectIndex].check = true
+        selectCategoryContent.push(this.categories[selectIndex].name)
       })
+      this.selectCategoryContent = selectCategoryContent.join('、')
+      this.tempCategories = this.categories.map((item) => Object.assign({}, item))
       this.$apply()
     }
 
     async _getIndustries() {
       const res = await Packages.getIndustries()
       this.categories = res
+      this.tempCategories = res.map((item) => Object.assign({}, item))
       this.$apply()
     }
 
@@ -338,13 +340,15 @@
       this.stores = res
       if (this.selectStoreIds.length > 0) {
         if (this.selectStoreIds.length === this.stores.length) {
-          this.isSelectAllStores = true
+          this.realSelectAllStores = true
+          this.tempSelectAllStores = true
         }
         this.selectStoreIds.forEach((id) => {
           const selectIndex = this.stores.findIndex((item) => Math.floor(item.merchant_id) === Math.floor(id))
           this.stores[selectIndex].check = true
         })
       }
+      this.tempStores = this.stores.map((item) => Object.assign({}, item))
       this.$apply()
       this.loaded()
     }
@@ -353,8 +357,14 @@
       this[name] = value
       if (name === 'title') {
         this.titleLength = value.length
+        if (this.titleLength > 10) {
+          this.titleLength = 10
+        }
       } else if (name === 'subTitle') {
         this.subTitleLength = value.length
+        if (this.subTitleLength > 10) {
+          this.subTitleLength = 10
+        }
       }
       this.$apply()
     }
@@ -363,55 +373,103 @@
       this.$invoke('toast', 'show', message)
     }
 
+    _validForm() {
+      const validPicture = this.pictures.findIndex((item) => item.image_url)
+      if (!this.selectCategoryIds.length) {
+        this._toast('请选择适用品类')
+        return false
+      } else if (!this.selectStoreIds.length) {
+        this._toast('请选择适用门店')
+        return false
+      } else if (validPicture === -1) {
+        this._toast('请选择一张图片')
+        return false
+      } else if (!this.title) {
+        this._toast('请输入标题')
+        return false
+      } else if (!this.subTitle) {
+        this._toast('请输入副标题')
+        return false
+      } else if (!this.platformPrice) {
+        this._toast('请输入平台价')
+        return false
+      } else if (!this.shopPrice) {
+        this._toast('请输入门市价')
+        return false
+      } else if (!this.plan) {
+        this._toast('请输入活动计划')
+        return false
+      } else if (!this.sellStartTime) {
+        this._toast('请选择售卖开始时间')
+        return false
+      } else if (!this.sellEndTime) {
+        this._toast('请选择售卖结束时间')
+        return false
+      }
+      return true
+    }
+
     methods = {
       selectAllCategories() {
-        this.isSelectAllCategories = !this.isSelectAllCategories
-        this.categories.map((item) => {
-          item.check = this.isSelectAllCategories
+        this.tempSelectAllCategories = !this.tempSelectAllCategories
+        this.tempCategories.map((item) => {
+          item.check = this.tempSelectAllCategories
         })
         this.$apply()
       },
       selectCategory(category) {
-        const selectIndex = this.categories.findIndex((item) => item.id === category.id)
-        this.categories[selectIndex].check = !this.categories[selectIndex].check
-        const isAllSelect = this.categories.findIndex((item) => !item.check)
+        const selectIndex = this.tempCategories.findIndex((item) => item.id === category.id)
+        this.tempCategories[selectIndex].check = !this.tempCategories[selectIndex].check
+        const isAllSelect = this.tempCategories.findIndex((item) => !item.check)
         if (isAllSelect === -1) {
-          this.isSelectAllCategories = true
+          this.tempSelectAllCategories = true
         } else {
-          this.isSelectAllCategories = false
+          this.tempSelectAllCategories = false
         }
         this.$apply()
       },
-      hideCategoriesModal() {
+      setCategories() {
+        this.realSelectAllCategories = this.tempSelectAllCategories
+        this.categories = this.tempCategories.map((item) => Object.assign({}, item))
         const selectIds = []
+        const selectContents = []
         this.categories.forEach((item) => {
           if (item.check) {
             selectIds.push(item.id)
+            selectContents.push(item.name)
           }
         })
+        this.selectCategoryContent = selectContents.join('、')
         this.selectCategoryIds = selectIds
         this.$apply()
         this._getMerchantStores()
       },
+      resetCategories() {
+        this.tempSelectAllCategories = this.realSelectAllCategories
+        this.tempCategories = this.categories.map((item) => Object.assign({}, item))
+        this.$apply()
+      },
       selectAllStores() {
-        this.isSelectAllStores = !this.isSelectAllStores
-        this.stores.map((item) => {
-          item.check = this.isSelectAllStores
+        this.tempSelectAllStores = !this.tempSelectAllStores
+        this.tempStores.map((item) => {
+          item.check = this.tempSelectAllStores
         })
         this.$apply()
       },
       selectStore(store) {
-        const selectIndex = this.stores.findIndex((item) => item.id === store.id)
-        this.stores[selectIndex].check = !this.stores[selectIndex].check
-        const isAllSelect = this.stores.findIndex((item) => !item.check)
+        const selectIndex = this.tempStores.findIndex((item) => item.id === store.id)
+        this.tempStores[selectIndex].check = !this.tempStores[selectIndex].check
+        const isAllSelect = this.tempStores.findIndex((item) => !item.check)
         if (isAllSelect === -1) {
-          this.isSelectAllStores = true
+          this.tempSelectAllStores = true
         } else {
-          this.isSelectAllStores = false
+          this.tempSelectAllStores = false
         }
         this.$apply()
       },
-      hideStoresModal() {
+      setStores() {
+        this.realSelectAllStores = this.tempSelectAllStores
+        this.stores = this.tempStores.map((item) => Object.assign({}, item))
         const selectIds = []
         this.stores.forEach((item) => {
           if (item.check) {
@@ -420,6 +478,10 @@
         })
         this.selectStoreIds = selectIds
         this.$apply()
+      },
+      resetStores() {
+        this.tempSelectAllStores = this.realSelectAllStores
+        this.tempStores = this.stores.map((item) => Object.assign({}, item))
       },
       async chooseImage(pictureIndex) {
         const picture = await wepy.chooseImage()
@@ -436,21 +498,19 @@
       handleInput(name, e) {
         this._handleInput(name, e.detail.value)
       },
-      changeSellPickerType(type) {
-        this.sellTimePickerType = type
+      handleTextarea(value) {
+        this._handleInput('plan', value)
       },
-      cancelSellTimePicker() {
-        this.$invoke('sell-time-modal', 'hide')
+      setSellStartDate(e) {
+        this.sellStartTime = e.detail.value
       },
-      confirmSellTimePicker(date) {
-        if (this.sellTimePickerType === 'start') {
-          this.sellStartTime = date
-          this.sellTimePickerType = 'end'
-        } else {
-          this.sellEndTime = date
-        }
+      setSellEndDate(e) {
+        this.sellEndTime = e.detail.value
       },
       async submitForm() {
+        if (!this._validForm()) {
+          return
+        }
         const data = {
           business_circles_name: this.business,
           industry_ids: this.selectCategoryIds,
@@ -468,7 +528,9 @@
         const res = this.packageId ? await Packages.updatePackage(this.packageId, data) : await Packages.createPackage(data)
         if (res.error === 0) {
           Tips.success(this.packageId ? '修改成功!' : '创建成功!')
-          this.$navigate('/pages/package-manage/package-manage')
+          setTimeout(() => {
+            this.$back()
+          }, 2000)
         } else {
           this._toast(res.message)
         }
@@ -490,7 +552,8 @@
       'stores-modal': BaseModal,
       'sell-time-modal': BaseModal,
       'sell-time-picker': DatePicker,
-      'toast': Toast
+      'toast': Toast,
+      'text-area': Textarea
     }
 
     config = {
@@ -518,8 +581,12 @@
     .arrow-content-wrapper
       display: flex
       align-items: center
+      .content
+        width: 126px
+        text-align: right
+        no-wrap()
     .arrow-right
-      width: 6px
+      width: 10px
       height: 10px
       margin-left: 10px
     .label
@@ -585,13 +652,9 @@
           margin-top: 13px
           margin-bottom: 5px
         .text-wrapper
+          width: 100%
           height: 75px
-          padding: 7px 9px
-          border-1px()
-          background-color: $color-background
-          textarea
-            width: 100%
-            height: 100%
+          box-sizing: border-box
       .categories-modal
         padding: 8px 12px
         .header
@@ -662,11 +725,14 @@
           display: flex
           align-items: center
           height: 100%
-          .start, .end
+          .sell-date
             flex: 1
-            text-align: center
-          .to
-            color: $color-text-d
+            .date
+              display: flex
+              align-items: center
+              justify-content: center
+              .arrow-right
+                margin-left: 1px
         .sell-time-modal
           height: 285px
           .header

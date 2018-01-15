@@ -8,7 +8,7 @@
             <view class="radioBox-title-item-box {{item.id===checkedOne?'active':''}}" catchtap="titleChiose({{index}})">
               <view class="radioBox-title-item-before"></view>
               {{item.name}}
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rightred20@2x.png" class="radioBox-title-item-arrow normal"></image>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-rightred20@2x.png'}}" class="radioBox-title-item-arrow normal"></image>
             </view>
           </view>
         </view>
@@ -17,16 +17,19 @@
             <view class="radioBox-list-item" wx:for="{{secondItems}}" wx:key="{{item}}">
               <label class="radioLabel {{item.id===checkedTwo?'active':''}}">
                 <radio value="{{item.id}}" checked="{{item.id==checkedTwo}}" hidden="true" />{{item.name}}
-                <image class="radio-Icon" src="{{item.id==checkedTwo?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"></image>
+                <image class="radio-Icon" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (item.id==checkedTwo?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}"></image>
               </label>
             </view>
           </radio-group>
         </view>
       </view>
-      <view class="radioBox-closeBtn" catchtap="closeCover">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+      <view class="foot-btnBox border-top-1px">
+        <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
+        <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
       </view>
     </view>
+
+    <Toast></Toast>
   </view>
 </template>
 
@@ -34,6 +37,8 @@
   /* eslint-disable no-undef */
   import wepy from 'wepy'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
 
   export default class TwoRadioBox extends wepy.component {
     mixins = [base]
@@ -93,7 +98,12 @@
 //            ]
 //          }]
 //    }
+    components = {
+      Toast
+    }
+
     data = {
+      imageUrlHead: URIS.image,
       showCover: false,
       radioMsg: null,
       checkedOne: null,
@@ -122,17 +132,6 @@
         this.showCover = true
         this.$apply()
       },
-      closeCover() {
-        let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
-        let chioseRes = this._seekId(res, this.checkedTwo)[0]
-        this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
-        this.radioMsg = null
-        this.checked = null
-        this.items = []
-        this.secondItems = []
-        this.showCover = false
-        this.$apply()
-      },
       radioChiose(e) {
         this.checkedTwo = e.detail.value
         this.$apply()
@@ -141,6 +140,26 @@
         this.checkedOne = this.items[idx].id
         this.checkedTwo = null
         this.secondItems = this.items[idx][this.radioMsg.twoTitle]
+        this.$apply()
+      },
+      cancleMsg() {
+        this.showCover = false
+        this.$emit('nothingChiose')
+        this.$apply()
+      },
+      saveMsg() {
+        if (!this.checkedTwo) {
+          this.$invoke('Toast', 'show', '您还没有选择哦')
+          return
+        }
+        let res = this._seekId(this.items, this.checkedOne)[0][this.radioMsg.twoTitle]
+        let chioseRes = this._seekId(res, this.checkedTwo)[0]
+        this.$emit('secondRadioOK', chioseRes, this.radioMsg.oneTitle)
+        this.radioMsg = null
+        this.checked = null
+        this.items = []
+        this.secondItems = []
+        this.showCover = false
         this.$apply()
       }
     }
@@ -172,7 +191,7 @@
       transform: translate(-50%, -50%)
       background: $color-white
       width: 265.5px
-      min-height: 40px
+      height: 400px
       border-radius: 4px
 
       .radioBox-head
@@ -184,13 +203,14 @@
         font-size: $font-size-medium-x
 
       .radioBox-body
-        max-height: 360px
+        height: 320px
         display: flex
         background: $color-background
 
         .radioBox-title
           width: 90px
-          max-height: 360px
+          height: 320px
+          overflow-y: auto
 
           .radioBox-title-item
 
@@ -200,8 +220,8 @@
               display: flex
               align-items: center
               position: relative
-              border-bottom: 1px solid $color-row-line
-              border-right: 1px solid $color-row-line
+              border-bottom: 0.5px solid $color-row-line
+              border-right: 0.5px solid $color-row-line
 
               .radioBox-title-item-before
                 width: 2px
@@ -250,11 +270,12 @@
           background: $color-white
           padding: 0 10px
           width: 175.5px
-          max-height: 360px
+          overflow-y: auto
+          height: 320px
 
         .radioBox-list-item
           line-height: 39px
-          border-bottom: 1px solid $color-row-line
+          border-bottom: 0.5px solid $color-row-line
           font-size: $font-size-small
 
           .radioLabel
@@ -269,22 +290,21 @@
               right: 0
               top: 11px
 
-          .radioLabel.active
-            color: $color-assist-f
-
-      .radioBox-closeBtn
-        width: 34px
-        height: 34px
+      .foot-btnBox
+        height: 40px
         display: flex
-        justify-content: center
-        align-items: center
-        position: absolute
-        left: 50%
-        transform: translate(-50%, 0)
-        bottom: -50px
+        border-box: box-sizing
+        background: $color-white
 
-        .radioBox-closeX
-          width: 24px
-          height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
+
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
 </style>

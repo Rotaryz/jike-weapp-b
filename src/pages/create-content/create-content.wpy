@@ -10,8 +10,8 @@
       <view>更换封面</view>
     </image>
     <view class="add">
-      <image
-        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"
+      <image wx:if="{{imageUri}}"
+        src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
         @tap="showMore(-1)"></image>
       <view class="options" wx:if="{{showAdd}}">
         <image wx:for="{{contentType}}"
@@ -22,31 +22,31 @@
     <view class="content-all">
       <view class="content-page" wx:for="{{contentList}}" wx:key="{{index}}">
         <view class="con-item-fa con-item-video" wx:if="{{item.type === 2}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+          <image wx:if="{{imageUri}}"
+            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
             class="con-close"
             @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
                    src="{{item.detail[0].url +'?second=1&width=259&height=60'}}"></image>
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-video@2x.png"
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-video@2x.png'}}"
               class="video-ico"
               @tap="upVideo({{index}})"></image>
           </view>
           <view class="up-down">
             <image class="up"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
-                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
+                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
-                   wx:if="{{index < contentList.length - 1}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
+                   wx:if="{{imageUri && index < contentList.length - 1}}"
                    @tap="down({{index}})">
             </image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -57,8 +57,8 @@
           </view>
         </view>
         <view class="con-item-fa con-item-text" wx:if="{{item.type === 1}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+          <image wx:if="{{imageUri}}"
+            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
             class="con-close"
             @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="setText({{index}})">
@@ -70,17 +70,17 @@
           </view>
           <view class="up-down">
             <image class="up"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
-                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
+                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
-                   wx:if="{{index < contentList.length - 1}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
+                   wx:if="{{imageUri && index < contentList.length - 1}}"
                    @tap="down({{index}})">
             </image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -91,8 +91,8 @@
           </view>
         </view>
         <view class="con-item-fa con-item-image" wx:if="{{item.type === 0}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+          <image wx:if="{{imageUri}}"
+            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
             class="con-close"
             @tap="delItem({{index}})"></image>
           <view class="con-item">
@@ -101,17 +101,17 @@
           </view>
           <view class="up-down">
             <image class="up"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
-                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
+                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
-                   wx:if="{{index < contentList.length - 1}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
+                   wx:if="{{imageUri && index < contentList.length - 1}}"
                    @tap="down({{index}})">
             </image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -122,8 +122,8 @@
           </view>
         </view>
         <view class="con-item-fa con-item-coupon" wx:if="{{item.type === 3}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
+          <image wx:if="{{imageUri}}"
+            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
             class="con-close"
             @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="addCoupon({{index}})">
@@ -137,17 +137,17 @@
           </view>
           <view class="up-down">
             <image class="up"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-up@2x.png"
-                   wx:if="{{index > 0}}" @tap="up({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
+                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down@2x.png"
-                   wx:if="{{index < contentList.length - 1}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
+                   wx:if="{{imageUri && index < contentList.length - 1}}"
                    @tap="down({{index}})">
             </image>
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-nr_add@2x.png"></image>
+            <image wx:if="{{imageUri}}"
+              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -176,6 +176,8 @@
   import content from 'api/content'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+
   export default class createContent extends wepy.page {
     mixins = [base]
 
@@ -195,22 +197,23 @@
     }
 
     data = {
+      imageUri: URIS.image,
       textLength: 0,
       imgSrc: '',
       showAdd: false,
       contentList: [],
       contentType: [{
         type: 1,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_text@2x.png'
+        image: URIS.image + '/defaults/b-image/page/icon-add_text@2x.png'
       }, {
         type: 2,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_video@2x.png'
+        image: URIS.image + '/defaults/b-image/page/icon-add_video@2x.png'
       }, {
         type: 0,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_img@2x.png'
+        image: URIS.image + '/defaults/b-image/page/icon-add_img@2x.png'
       }, {
         type: 3,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-add_ticket@2x.png'
+        image: URIS.image + '/defaults/b-image/page/icon-add_ticket@2x.png'
       }],
       changeList: [],
       delete_ids: [],

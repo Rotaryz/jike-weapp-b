@@ -1,21 +1,16 @@
 <template>
   <view class="marketing-wrapper">
     <view class="container">
-      <view class="marketing-item" wx:for="{{list}}" wx:key="{{item}}"
-            @tap="showDetail({{item.url}})">
+      <view class="marketing-item" wx:for="{{list}}" wx:key="{{item}}" @tap="showDetail({{item.url}})">
         <view class="item-left">
           <image src="{{item.img}}" class="item-left-img"></image>
           <view class="item-left-txt">{{item.name}}</view>
         </view>
         <view class="item-right" @tap.stop="showNull({{index}})">
-          <view class="switchbox {{item.checked?'':'checked'}}"
-                wx:if="{{index!==4}}"
-                @tap="switchChange({{index}}, {{item.checked}})">
+          <view class="switchbox {{item.checked?'':'checked'}}" wx:if="{{index!==4}}" @tap="switchChange({{index}}, {{item.checked}})">
             <view class="switch-circle {{item.checked?'':'checked'}}"></view>
           </view>
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"
-            class="item-right-arrow" wx:if="{{index===4}}"></image>
+          <image src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="item-right-arrow" wx:if="{{index===4 && imageUrlHead}}"></image>
         </view>
       </view>
     </view>
@@ -29,14 +24,10 @@
   import Tips from '@/common/js/tips'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
     config = {
       navigationBarTitleText: '营销',
       navigationBarBackgroundColor: '#363547',
@@ -49,32 +40,13 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       list: [
-        {
-          name: '大转盘',
-          img: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-turntable@2x.png',
-          url: '/pages/wheel-controller/wheel-controller'
-        },
-        {
-          name: '签到红包',
-          img: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-sign@2x.png',
-          url: '/pages/registration/registration'
-        },
-        {
-          name: '分享有礼',
-          img: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png',
-          url: '/pages/share-prize/share-prize'
-        },
-        {
-          name: '直播优惠',
-          img: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-livetv@2x.png',
-          url: '/pages/live/live'
-        },
-        {
-          name: '奖品池',
-          img: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-prizepool@2x.png',
-          url: '/pages/prize-pool/prize-pool'
-        }
+        {name: '大转盘', img: URIS.image + '/defaults/b-image/page/icon-turntable@2x.png', url: '/pages/wheel-controller/wheel-controller'},
+        {name: '签到红包', img: URIS.image + '/defaults/b-image/page/icon-sign@2x.png', url: '/pages/registration/registration'},
+        {name: '分享有礼', img: URIS.image + '/defaults/b-image/page/icon-share@2x.png', url: '/pages/share-prize/share-prize'},
+        {name: '直播优惠', img: URIS.image + '/defaults/b-image/page/icon-livetv@2x.png', url: '/pages/live/live'},
+        {name: '奖品池', img: URIS.image + '/defaults/b-image/page/icon-prizepool@2x.png', url: '/pages/prize-pool/prize-pool'}
       ]
     }
 
@@ -100,7 +72,7 @@
             type = 'share'
             break
           case 3:
-            type = 'vedio_live'
+            type = 'video_live'
             break
         }
         let data = {
@@ -123,7 +95,6 @@
     async onLoad() {
       this.load()
     }
-
     async load() {
       let res = await Activity.getAllActivity()
       this.list.map((item) => {

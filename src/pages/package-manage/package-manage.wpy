@@ -3,43 +3,43 @@
     <view class="tab-wrapper">
       <repeat for="{{tabs}}" index="index" key="index" item="item">
         <view class="tab" @tap="changeTab({{index}})">
-          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}
-          </text>
+          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}</text>
         </view>
       </repeat>
-      <view class="line-wrapper"
-            style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
+      <view class="line-wrapper" style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
         <view class="line"></view>
       </view>
     </view>
-    <Blank></Blank>
     <view class="container" wx:if="{{tabIndex === 0}}">
+      <view class="empty-wrapper" wx:if="{{willOnLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
+        </view>
+        <view class="desc">还没有礼包, 马上建礼包</view>
+      </view>
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image"
-                       src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}
-                  <view class="split"></view>
-                  ID:{{item.id}}
-                </view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">未上线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">未上线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">剩余时间：{{item.time_remaining[0] + '天' + item.time_remaining[1] + '时'}}</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="left-btn" wx:if="{{isLeader === 1}}" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn" wx:if="{{isLeader === 1}}" @tap="edit({{item.id}})">编辑</view>
+                <view class="apply-btn" @tap="apply({{item.id}})">报名</view>
               </view>
             </view>
           </view>
@@ -47,32 +47,32 @@
       </repeat>
     </view>
     <view class="container" wx:if="{{tabIndex === 1}}">
+      <view class="empty-wrapper" wx:if="{{onLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
+        </view>
+        <view class="desc">还没有礼包, 马上建礼包</view>
+      </view>
       <repeat for="{{onLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image"
-                       src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}
-                  <view class="split"></view>
-                  ID:{{item.id}}
-                </view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">已上线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">已上线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">报名结束</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -81,32 +81,32 @@
       </repeat>
     </view>
     <view class="container" wx:if="{{tabIndex === 2}}">
+      <view class="empty-wrapper" wx:if="{{offLines.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
+        </view>
+        <view class="desc">还没有礼包, 马上建礼包</view>
+      </view>
       <repeat for="{{offLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image"
-                       src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}
-                  <view class="split"></view>
-                  ID:{{item.id}}
-                </view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">已下线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">已下线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">报名结束</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -115,32 +115,33 @@
       </repeat>
     </view>
     <view class="container" wx:if="{{tabIndex === 3}}">
+      <view class="empty-wrapper" wx:if="{{willApplys.length === 0}}">
+        <view class="image-wrapper">
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
+        </view>
+        <view class="desc">还没有礼包, 马上建礼包</view>
+      </view>
       <repeat for="{{willApplys}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image"
-                       src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}
-                  <view class="split"></view>
-                  ID:{{item.id}}
-                </view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">有<span class="count">{{item.wait_check_count}}个</span>需要审核
-              </view>
+              <view class="status" wx:if="{{isLeader === 1}}">有<span class="count">{{item.wait_check_count > 0 ? item.wait_check_count : 0}}个</span>需要审核</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">剩余时间：{{item.time_remaining[0] + '天' + item.time_remaining[1] + '时'}}</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <!--<view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>-->
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -149,9 +150,7 @@
       </repeat>
     </view>
     <view class="create-service border-top-1px">
-      <navigator url="/pages/package-controller/package-controller" class="btn">
-        新建礼包
-      </navigator>
+      <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
     </view>
     <confirm @confirm.user="delete"></confirm>
   </view>
@@ -162,25 +161,32 @@
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
   import base from 'common/mixins/base'
-  import Blank from '@/base/blank/blank'
+  import URIS from 'common/js/config'
 
   const TABS = ['待上线', '已上线', '已下线', '待审核']
+  const IS_LEADER = wepy.getStorageSync('is_leader')
 
   export default class PackageManage extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
     data = {
+      imageUri: URIS.image,
+      isLeader: IS_LEADER,
       tabs: TABS,
       tabIndex: 0,
       tabTranslateX: 0,
       willOnLines: [],
       onLines: [],
       offLines: [],
-      willApplys: []
+      willApplys: [],
+      hasWillO: false,
+      hasOn: false,
+      hasOff: false,
+      hasWillA: false,
+      willOPage: 1,
+      onPage: 1,
+      offPage: 1,
+      willAPage: 1
     }
 
     async onLoad() {
@@ -191,36 +197,69 @@
       await this._getPackageLists()
     }
 
-    _showBlank(res) {
-      console.log(res)
-      if (res.length === 0) {
-        this.$invoke('Blank',
-          'show',
-          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_package@2x.png', '还没有礼包', '15.2')
-      } else {
-        this.$invoke('Blank', 'hide')
-      }
+    _init() {
+      this.tabIndex = 0
+      this.tabTranslateX = 0
+      this.willOnLines = []
+      this.onLines = []
+      this.offLines = []
+      this.willApplys = []
+      this.hasWillO = false
+      this.hasOn = false
+      this.hasOff = false
+      this.hasWillA = false
+      this.willOPage = 1
+      this.onPage = 1
+      this.offPage = 1
+      this.willAPage = 1
     }
 
-    async _getPackageLists() {
-      const res = await Packages.getPackageLists({status: this.tabIndex})
+    async onReachBottom() {
+      if ((this.tabIndex === 0 && !this.hasWillO) || (this.tabIndex === 1 && !this.hasOn) || (this.tabIndex === 2 && !this.hasOff) || (this.tabIndex === 3 && !this.hasWillA)) {
+        return
+      }
       switch (this.tabIndex) {
         case 0:
-          this.willOnLines = res
+          this.willOPage += 1
           break
         case 1:
-          this.onLines = res
+          this.onPage += 1
           break
         case 2:
-          this.offLines = res
+          this.offPage += 1
           break
         case 3:
-          this.willApplys = res
+          this.willAPage += 1
           break
         default:
           break
       }
-      this._showBlank(res)
+      await this._getPackageLists()
+    }
+
+    async _getPackageLists() {
+      const page = this.tabIndex === 0 ? this.willOPage : this.tabIndex === 1 ? this.onPage : this.tabIndex === 2 ? this.offPage : this.willAPage
+      const res = await Packages.getPackageLists({status: this.tabIndex, page})
+      switch (this.tabIndex) {
+        case 0:
+          this.willOnLines = res
+          this.hasWillO = res.length >= 10
+          break
+        case 1:
+          this.onLines = res
+          this.hasOn = res.length >= 10
+          break
+        case 2:
+          this.offLines = res
+          this.hasOff = res.length >= 10
+          break
+        case 3:
+          this.willApplys = res
+          this.hasWillA = res.length >= 10
+          break
+        default:
+          break
+      }
       this.$apply()
       this.loaded()
     }
@@ -234,19 +273,6 @@
           (this.tabIndex === 2 && this.offLines.length === 0) ||
           (this.tabIndex === 3 && this.willApplys.length === 0)) {
           await this._getPackageLists()
-        }
-        if (this.willOnLines.length > 0 && this.tabIndex === 0) {
-          this._showBlank(this.willOnLines)
-          return false
-        } else if (this.onLines.length > 0 && this.tabIndex === 1) {
-          this._showBlank(this.onLines)
-          return false
-        } else if (this.offLines.length > 0 && this.tabIndex === 2) {
-          this._showBlank(this.offLines)
-          return false
-        } else if (this.willApplys.length > 0 && this.tabIndex === 3) {
-          this._showBlank(this.willApplys)
-          return false
         }
       },
       showConfirm(id) {
@@ -263,13 +289,15 @@
         this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
       },
       check(id) {
-        this.$navigate(`/pa`)
+        this.$navigate(`/pages/package-detail/package-detail?id=${id}`)
+      },
+      apply(id) {
+        this.$navigate(`/pages/package-detail/package-detail?id=${id}&type=apply`)
       }
     }
 
     components = {
-      'confirm': Confirm,
-      Blank: Blank
+      'confirm': Confirm
     }
 
     config = {
@@ -385,11 +413,12 @@
             .btn-group
               display: flex
               align-items: center
-              .left-btn, .right-btn
+              .left-btn, .right-btn, .apply-btn
                 width: 60px
                 height: 24px
                 margin-left: 5px
                 line-height: 24px
+                border-radius: 4px
                 border-1px($color-text-d, 4px)
                 text-align: center
                 font-size: $font-size-small-s
@@ -397,6 +426,10 @@
               .right-btn
                 border-1px($color-assist-f, 4px)
                 color: $color-assist-f
+              .apply-btn
+                border-1px($color-assist-f, 4px)
+                color: $color-white
+                background-color: $color-assist-f
     .create-service
       position: fixed
       bottom: 0

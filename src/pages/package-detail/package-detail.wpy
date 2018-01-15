@@ -1,23 +1,140 @@
 <template>
   <view class="package-detail">
-    礼包详情
+    <view class="package-wrapper">
+      <gift-bag hideBuy="1" :giftbag.sync="giftbag"></gift-bag>
+    </view>
+    <view class="activity">
+      <view class="block-title border-bottom-1px">活动计划</view>
+      <view class="container">
+        {{giftbag.activity_project}}
+      </view>
+    </view>
+    <view class="apply-know">
+      <view class="header" @tap="toggleApplyKnow">
+        <view class="block-title">报名须知</view>
+        <view class="arrow {{!showApplyKnow ? 'up' : ''}}">
+          <image wx:if="{{imageUri}}" class="full-image" src="{{imageUri + '/defaults/b-image/page/arrow-down.png'}}"></image>
+        </view>
+      </view>
+      <view class="container {{!showApplyKnow ? 'hide' : ''}}">
+        <view class="title">使用商圈：</view>
+        <view class="content">{{giftbag.business_circles_name}}</view>
+        <view class="title">活动时间：</view>
+        <view class="content">{{giftbag.sell_start_at}} 至 {{giftbag.sell_end_at}}</view>
+        <view class="title">报名截止时间：</view>
+        <view class="content">即日起 至 {{giftbag.sell_start_at}}止</view>
+        <view class="title">活动规则：</view>
+        <view class="content">大礼包会上架到活动联盟商家的优惠劵列表</view>
+        <view class="content">各个商家优惠劵的数量会平均分配</view>
+        <view class="content">各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。</view>
+        <view class="title">活动入选条件：</view>
+        <view class="content">服务品类限{{industries}}</view>
+        <!--<view class="content">单个单数不能多于100</view>-->
+      </view>
+    </view>
+    <view class="apply-list" wx:if="{{((type !== 'apply' && isLeader === 1) || isJoined) && giftbag.gift_bag_details.length}}">
+      <view class="block-title">{{(isLeader === 1 && type !== 'apply') ? '报名列表' : '审核结果'}}</view>
+      <repeat for="{{giftbag.gift_bag_details}}" index="index" key="index">
+        <view class="coupon-wrapper">
+          <coupon :coupon.sync="item" :type="'logo'"></coupon>
+          <view class="status-wrapper">
+            <view class="status-content" wx:if="{{isLeader === 1}}">
+              <view class="status">{{item.is_checked === 0 ? '审核中' : item.is_checked === 1 ? '已通过' : '未通过'}}</view>
+              <view class="btn-wrapper" wx:if="{{item.is_checked === 0}}">
+                <view class="reject" @tap="rejectApply({{item.id}})">拒绝</view>
+                <view class="pass" @tap="passApply({{item.id}})">通过</view>
+              </view>
+              <view class="rejected" wx:if="{{item.is_checked === 2}}">已拒绝</view>
+            </view>
+            <view class="merchant-status {{item.is_checked === 2 ? 'reject' : ''}}" wx:if="{{isLeader !== 1}}">{{item.is_checked === 0 ? '审核中' : item.is_checked === 1 ? '已通过' : '未通过'}}</view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="apply-btn-wrapper" wx:if="{{type === 'apply' && !isJoined}}">
+      <view class="apply-btn" @tap="apply">报名</view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import base from 'common/mixins/base'
+  import Packages from 'api/packages'
+  import Coupon from '@/base/coupon/coupon'
+  import Giftbag from '@/base/giftbag/giftbag'
+  import URIS from 'common/js/config'
+
+  const IS_LEADER = wepy.getStorageSync('is_leader')
+
   export default class PackageDetail extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
-      this.ShareAppMessage()
+    data = {
+      imageUri: URIS.image,
+      isLeader: IS_LEADER,
+      type: '',
+      packageId: '',
+      isJoined: true,
+      giftbag: {},
+      industries: '',
+      showApplyKnow: true
     }
 
-    data = {}
+    async onLoad(option) {
+      this.packageId = option.id
+      this.type = option.type ? option.type : ''
+      await this.load()
+    }
 
-    onLoad(option) {
-      console.log(option)
+    async load() {
+      await this._getPackageDetail()
+    }
+
+    async _getPackageDetail() {
+      let res
+      if (this.isLeader === 1) {
+        res = await Packages.getPackage(this.packageId)
+      } else {
+        res = await Packages.getMerchantPackage(this.packageId)
+      }
+      this.isJoined = res.is_joined
+      this.giftbag = res
+      this.navigationBarTitle = res.title
+      this.industries = res.industries.join('、')
+      wepy.setNavigationBarTitle({title: this.navigationBarTitle})
+      this.$apply()
+      this.loaded()
+    }
+
+    methods = {
+      toggleApplyKnow() {
+        this.showApplyKnow = !this.showApplyKnow
+      },
+      async rejectApply(id) {
+        const res = await Packages.applyCheckPackage(id, {is_checked: 2})
+        if (res.error === 0) {
+          this._getPackageDetail()
+        } else {
+          this.loaded()
+        }
+      },
+      async passApply(id) {
+        const res = await Packages.applyCheckPackage(id, {is_checked: 1})
+        if (res.error === 0) {
+          this._getPackageDetail()
+        } else {
+          this.loaded()
+        }
+      },
+      async apply() {
+        this.$navigate(`/pages/apply/apply?id=${this.packageId}`)
+      }
+    }
+
+    components = {
+      'coupon': Coupon,
+      'gift-bag': Giftbag
     }
   }
 </script>
@@ -25,4 +142,128 @@
 <style lang="stylus">
   @import '../../common/stylus/variable.styl'
   @import "../../common/stylus/mixin.styl"
+
+  .package-detail
+    .package-wrapper
+      padding-bottom: 5px
+      padding-top: 10px
+      background-color: $color-white
+    .activity
+      margin-bottom: 10px
+      padding-left: 12px
+      background-color: $color-white
+      .block-title
+        background-color: $color-white
+      .container
+        padding-top: 11px
+        padding-right: 12px
+        padding-bottom: 20px
+        line-height: 21px
+        font-size: $font-size-small
+    .apply-know
+      padding-left: 12px
+      background-color: $color-white
+      .header
+        display: flex
+        padding-right: 12px
+        align-items: center
+        justify-content: space-between
+        .block-title
+          background-color: $color-white
+        .arrow
+          width: 10px
+          height: 10px
+          transition: all .5s
+          &.up
+            transform: rotate(180deg)
+      .container
+        height: 310.5px
+        padding-top: 10px
+        padding-right: 12px
+        padding-bottom: 15px
+        transition: all .5s
+        &.hide
+          height: 0
+          padding: 0
+          opacity: 0
+        .title
+          margin-bottom: 2.5px
+          line-height: 21px
+          font-size: $font-size-medium
+        .content
+          display: flex
+          line-height: 21px
+          font-size: $font-size-small
+          &:before
+            position: relative
+            content: ''
+            width: 5px
+            height: 5px
+            margin-top: 7px
+            margin-right: 5px
+            border-radius: 50%
+            border: 1px solid $color-assist-f
+            background-color: $color-assist-tw
+    .apply-list
+      .block-title
+        padding-left: 12px
+      .coupon-wrapper
+        margin-bottom: 10px
+        .status-wrapper
+          padding: 0 12px
+          .status-content
+            display: flex
+            align-items: center
+            justify-content: space-between
+            height: 32px
+            padding-left: 14px
+            padding-right: 10px
+            border-1px($color-split-line, 0)
+            background-color: $color-white
+            .status
+              font-size: $font-size-small
+            .btn-wrapper
+              display: flex
+              align-items: center
+              .reject, .pass
+                width: 60px
+                height: 24px
+                text-align: center
+                line-height: 24px
+                border-radius: 4px
+                font-size: $font-size-small-s
+                border-1px($color-text-d, 4px)
+              .pass
+                margin-left: 5px
+                border-1px($color-assist-f, 4px)
+                color: $color-assist-f
+            .rejected
+              width: 60px
+              height: 24px
+              text-align: center
+              line-height: 24px
+              font-size: $font-size-small-s
+              color: $color-text-d
+              border-1px($color-text-d, 4px)
+          .merchant-status
+            height: 32px
+            border-1px($color-split-line, 0)
+            line-height: 32px
+            text-align: center
+            font-size: $font-size-medium
+            color: $color-assist-f
+            background-color: $color-white
+            &.reject
+              color: $color-text-d
+    .apply-btn-wrapper
+      height: 68px
+      padding: 12px
+      box-sizing: border-box
+      .apply-btn
+        height: 44px
+        line-height: 44px
+        text-align: center
+        font-size: $font-size-medium
+        color: $color-white
+        background-color: $color-theme
 </style>

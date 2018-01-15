@@ -47,7 +47,12 @@
             </view>
           </view>
         </view>
+        <view class="prize-pool-nothing" wx:if="{{prizeNothing}}">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/common/pic-empty_prize@2x.png'}}" class="nothingImg"></image>
+          <view class="nothingTxt">还没有奖品，马上创建奖品</view>
+        </view>
       </view>
+
       <!--<view class="prizeItem-bottom">-->
       <!--<view class="prizeItem-bottom-btn" wx:if="{{item.promotion_type==='exchange'}}">删除</view>-->
       <!--<view class="prizeItem-bottom-btn">查看</view>-->
@@ -59,6 +64,10 @@
     </view>
 
     <view class="pastDue-body" wx:if="{{!menuTab}}">
+      <view class="prize-pool-nothing" wx:if="{{prizeDueNothing}}">
+        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/common/pic-empty_prize@2x.png'}}" class="nothingImg"></image>
+        <view class="nothingTxt">还没有奖品，马上创建奖品</view>
+      </view>
       <view class="prizeItem" wx:for="{{pastDuePrizeList}}" wx:key="{{item}}">
         <view class="prizeItem-top">
           <view class="prizeItem-top-left">
@@ -115,6 +124,8 @@
   import PrizePool from '@/api/prizePool'
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class PrizePoolPage extends wepy.page {
     mixins = [base]
@@ -136,10 +147,13 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       menuTab: 1,
       useablePrizeList: null,
       pastDuePrizeList: null,
-      EXchangeId: null
+      EXchangeId: null,
+      prizeNothing: false,
+      prizeDueNothing: false
     }
 
     methods = {
@@ -179,13 +193,25 @@
       this.load()
     }
 
+    // 加载可使用列表
     async load() {
       this.useablePrizeList = await PrizePool.getPrizelist() || []
+      if (this.useablePrizeList.length === 0) {
+        this.prizeNothing = true
+      } else {
+        this.prizeNothing = false
+      }
       this.loaded()
     }
 
+    // 加载已过期列表
     async loadPastDue() {
       this.pastDuePrizeList = await PrizePool.getPrizelist(0) || []
+      if (this.pastDuePrizeList.length === 0) {
+        this.prizeDueNothing = true
+      } else {
+        this.prizeDueNothing = false
+      }
       this.loaded()
     }
 
@@ -194,8 +220,10 @@
         let res = await PrizePool.delexchange(this.EXchangeId)
         this.loaded()
         if (res.error === 0) {
-          this.$invoke('Toast', 'show', '删除成功')
-          this.loadPastDue()
+          Tips.success('删除成功')
+          setTimeout(() => {
+            this.loadPastDue()
+          }, 500)
         }
         this.$apply()
       }
@@ -209,6 +237,22 @@
   .prize-pool
     height: 100vh
     background: $color-background
+
+    .prize-pool-nothing
+      height: 40vh
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+
+      .nothingImg
+        width: 120px
+        height: 96px
+        margin-bottom: 15px
+
+      .nothingTxt
+        font-size: $font-size-small
+        color: $color-text-d
 
     .prize-pool-tab
       height: 7vh
@@ -243,7 +287,7 @@
 
         .prizeItem
           margin-top: 10px
-          border: 1px solid $color-col-line
+          border: 0.5px solid $color-col-line
           border-radius: 2px
           background: $color-white
           position: relative
@@ -259,7 +303,7 @@
               display: flex
               align-items: center
               justify-content: center
-              background: $color-assist-f
+              border: .5px solid $color-col-line
               border-radius: 2px
 
               .prizeItem-top-left-img
@@ -269,12 +313,12 @@
               .prizeItem-top-left-Msg
                 text-align: center
                 font-size: $font-size-small
-                color: $color-white
+                color: $color-assist-f
                 font-family: PingFangSC-Medium
 
                 .prizeItem-top-left-Msg-txt
                   font-size: 8px
-                  color: $color-white
+                  color: $color-assist-f
 
             .prizeItem-top-right
               display: flex
@@ -346,7 +390,7 @@
 
       .prizeItem
         margin-top: 10px
-        border: 1px solid $color-col-line
+        border: 0.5px solid $color-col-line
         border-radius: 2px
         background: $color-white
         position: relative
@@ -427,7 +471,7 @@
           justify-content: flex-end
           align-items: center
           height: 39px
-          border-top: 1px dashed $color-col-line
+          border-top: 0.5px dashed $color-col-line
 
           .prizeItem-bottom-btn
             width: 60px

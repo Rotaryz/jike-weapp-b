@@ -2,18 +2,18 @@
   <view class="shop">
     <view class="shop-header">
       <navigator url="/pages/qrCode/qrCode">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-inputcode@2x.png"></image>
+        <image wx:if="{{imageUri}}"
+          src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
         <view>输码核销</view>
       </navigator>
       <view @tap="scanCodes">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-scancode@2x.png"></image>
+        <image wx:if="{{imageUri}}"
+          src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
         <view>扫码核销</view>
       </view>
       <navigator url="/pages/cancel-record/cancel-record">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-record@2x.png"></image>
+        <image wx:if="{{imageUri}}"
+          src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
         <view>核销记录</view>
       </navigator>
     </view>
@@ -62,10 +62,12 @@
   import http from 'common/js/http'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
   const BUS = {
     text: '商圈',
-    image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-tradingarea@2x.png',
+    image: URIS.image + '/defaults/b-image/page/icon-tradingarea@2x.png',
     src: '/pages/business/business'
   }
   export default class Shop extends wepy.page {
@@ -84,6 +86,7 @@
       Toast: Toast
     }
     data = {
+      imageUri: URIS.image,
       showTime: 0,
       times: [{
         title: '昨天',
@@ -94,27 +97,27 @@
       }],
       navList: [{
         text: '服务',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-service@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-service@2x.png',
         src: '/pages/service-manage/service-manage'
       }, {
         text: '客户',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-customer@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-customer@2x.png',
         src: '/pages/client/client'
       }, {
         text: '礼包',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-package@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-package@2x.png',
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '评价',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-evaluate@2x.png',
         src: '/pages/evaluate/evaluate'
       }, {
         text: '订单',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-asset@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-asset@2x.png',
         src: '/pages/order/order'
       }, {
         text: '内容',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-content@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-content@2x.png',
         src: '/pages/content/content'
       }, {
         text: '',

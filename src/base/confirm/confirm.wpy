@@ -5,7 +5,7 @@
         <view class="content-wrapper">
           <view class="content">
             <view class="danger-wrapper">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-danger@2x.png" class="full-image"></image>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
             </view>
             <view class="font">确定要删除？</view>
           </view>
@@ -15,18 +15,17 @@
           <view class="btn-right" @tap.stop="confirm">确定</view>
         </view>
       </view>
-      <view class="close-wrapper" @tap.stop="close">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>
-      </view>
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import URIS from 'common/js/config'
 
   export default class Confirm extends wepy.component {
     data = {
+      imageUrlHead: URIS.image,
       show: false
     }
 
@@ -99,14 +98,4 @@
             font-size: $font-size-medium
           .btn-left
             color: $color-text-d
-      .close-wrapper
-        position: absolute
-        left: 50%
-        bottom: -77.5px
-        width: 23px
-        height: 23px
-        transform: translateX(-50%)
-        image
-          width: 23px
-          height: 23px
 </style>
