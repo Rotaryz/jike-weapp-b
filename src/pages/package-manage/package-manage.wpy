@@ -25,19 +25,21 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">未上线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">未上线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">剩余时间：{{item.time_remaining[0] + '天' + item.time_remaining[1] + '时'}}</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="left-btn" wx:if="{{isLeader === 1}}" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn" wx:if="{{isLeader === 1}}" @tap="edit({{item.id}})">编辑</view>
+                <view class="apply-btn" @tap="apply({{item.id}})">报名</view>
               </view>
             </view>
           </view>
@@ -59,19 +61,18 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">已上线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">已上线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">报名结束</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -94,19 +95,18 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">已下线</view>
+              <view class="status" wx:if="{{isLeader === 1}}">已下线</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">报名结束</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="left-btn" @tap="edit({{item.id}})">编辑</view>
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -129,18 +129,19 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url}}"></image>
+                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量：{{item.collected}}<view class="split"></view>ID：{{item.id}}</view>
               </view>
             </view>
             <view class="ctrl-wrapper">
-              <view class="status">有<span class="count">{{item.wait_check_count}}个</span>需要审核</view>
+              <view class="status" wx:if="{{isLeader === 1}}">有<span class="count">{{item.wait_check_count > 0 ? item.wait_check_count : 0}}个</span>需要审核</view>
+              <view class="status" wx:if="{{isLeader !== 1}}">剩余时间：{{item.time_remaining[0] + '天' + item.time_remaining[1] + '时'}}</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
+                <!--<view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>-->
                 <view class="right-btn" @tap="check({{item.id}})">查看</view>
               </view>
             </view>
@@ -162,11 +163,13 @@
   import base from 'common/mixins/base'
 
   const TABS = ['待上线', '已上线', '已下线', '待审核']
+  const IS_LEADER = wepy.getStorageSync('is_leader')
 
   export default class PackageManage extends wepy.page {
     mixins = [base]
 
     data = {
+      isLeader: IS_LEADER,
       tabs: TABS,
       tabIndex: 0,
       tabTranslateX: 0,
@@ -231,7 +234,10 @@
         this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
       },
       check(id) {
-        this.$navigate(`/pa`)
+        this.$navigate(`/pages/package-detail/package-detail?id=${id}`)
+      },
+      apply(id) {
+        this.$navigate(`/pages/package-detail/package-detail?id=${id}&type=apply`)
       }
     }
 
@@ -352,11 +358,12 @@
             .btn-group
               display: flex
               align-items: center
-              .left-btn, .right-btn
+              .left-btn, .right-btn, .apply-btn
                 width: 60px
                 height: 24px
                 margin-left: 5px
                 line-height: 24px
+                border-radius: 4px
                 border-1px($color-text-d, 4px)
                 text-align: center
                 font-size: $font-size-small-s
@@ -364,6 +371,10 @@
               .right-btn
                 border-1px($color-assist-f, 4px)
                 color: $color-assist-f
+              .apply-btn
+                border-1px($color-assist-f, 4px)
+                color: $color-white
+                background-color: $color-assist-f
     .create-service
       position: fixed
       bottom: 0
