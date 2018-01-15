@@ -1,5 +1,5 @@
 <template>
-  <view class="share-prize {{showCover?'fasten':''}}">
+  <view class="share-prize">
     <view class="share-item-box">
       <view class="share-item">
         <view class="share-item-title">
@@ -7,16 +7,16 @@
           <view class="title-txt">分享有礼</view>
         </view>
         <view class="share-item-body">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_11@2x.png" class="share-main-item-body-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_11@2x.png'}}" class="share-main-item-body-img"></image>
           <view class="share-main-item-body-center">
             <view class="share-main-item-body-txt">分享</view>
             <view class="share-main-item-body-txt">成功后</view>
             <view class="share-main-item-body-dotBog">
               <view class="dot" wx:for="12345678" wx:key="{{item}}"></view>
-              <image class="share-main-item-body-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-whitearrow@2x.png"></image>
+              <image class="share-main-item-body-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-whitearrow@2x.png'}}"></image>
             </view>
           </view>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_12@2x.png" class="share-main-item-body-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_12@2x.png'}}" class="share-main-item-body-img"></image>
         </view>
       </view>
     </view>
@@ -37,7 +37,7 @@
             <picker mode="date" value="{{shareEndTime}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
               <view class="picker-txt">
                 <view>当天<text class="activityMsg-txt-right-gray">至</text>{{shareEndTime}}</view>
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
+                <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="activityMsg-txt-right-arrow"></image>
               </view>
             </picker>
           </view>
@@ -46,7 +46,7 @@
           <view class="activityMsg-txt-left">参与次数</view>
           <view class="activityMsg-txt-right">
             <view class="activityMsg-txt-right-leftTxt">
-              <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              <image class="activityMsg-txt-right-checked" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
               一天一次
             </view>
           </view>
@@ -59,17 +59,17 @@
       </view>
 
       <view class="prizeList">
-        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
+        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.type !== 'delete'}}">
           <view class="prizeList-item-left">
             <view class="prizeList-item-name">{{item.promotion_title}}</view>
             <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
           </view>
           <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-close20@2x.png'}}" class="prizeList-item-right-del"></image>
           </view>
         </view>
         <view class="prizeList-addItem" @tap="showAddPrize">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-add24@2x.png'}}" class="prizeList-addItem-plus"></image>
           添加奖品
         </view>
       </view>
@@ -93,6 +93,7 @@
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -111,14 +112,14 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       shareMsg: null,
       nowDate: '',
       shareEndTime: '',
       isCompile: false,
       prizeListArr: [],
       prizePollList: [],
-      delPrizeItem: null,
-      showCover: false
+      delPrizeItem: null
     }
 
     methods = {
@@ -159,7 +160,6 @@
         this.$apply()
       },
       showAddPrize() {
-        this.showCover = true
         this.$invoke('AddPrize', 'init', this.prizePollList)
       },
       delectPrize(item) {
@@ -176,8 +176,8 @@
     async load() {
       this.nowDate = new Date().toLocaleDateString()
       let res = await Activity.getShareList()
-      this.prizePollList = await PrizePool.getPrizelist()
-      if (res.error === 1 && res.status === 200) {
+      this.prizePollList = await PrizePool.getPrizeRedlist()
+      if (res.error === 1 && res.status_code === 200) {
         res = {}
         this.isCompile = false
       } else {
@@ -194,7 +194,9 @@
         let data = this._checkId(this.prizeListArr, res.promotion_id, res.promotion_type)
         if (data) {
           data.promotion_stock = data.promotion_stock * 1 + res.promotion_stock * 1
+          data.type = 'add'
         } else {
+          res = Object.assign(res, {type: 'add'})
           this.prizeListArr.push(Object.assign(res))
         }
         let prizePollData = this._checkId(this.prizePollList, res.promotion_id, res.promotion_type)
@@ -203,6 +205,11 @@
       },
       confirm() {
         let data = this._checkId(this.prizeListArr, this.delPrizeItem.promotion_id, this.delPrizeItem.promotion_type)
+        data.type = 'delete'
+        if (data.promotion_stock * 1 === 0) {
+          this.$apply()
+          return
+        }
         let prizePollData = this._checkId(this.prizePollList, data.promotion_id, data.promotion_type)
         if (prizePollData) {
           prizePollData.promotion_stock = prizePollData.promotion_stock * 1 + data.promotion_stock * 1
@@ -304,7 +311,7 @@
 
         .activityMsg-title
           height: 40px
-          border-bottom: 1px solid $color-col-line
+          border-bottom: 0.5 solid $color-col-line
           display: flex
           align-items: center
           padding-left: 12px
@@ -331,7 +338,7 @@
 
         .activityMsg-txt
           height: 40px
-          border-bottom: 1px solid $color-col-line
+          border-bottom: 0.5 solid $color-col-line
           display: flex
           align-items: center
           font-size: $font-size-medium
@@ -388,7 +395,7 @@
             display: flex
             margin: 8px 12px
             height: 10vw
-            border: 1px solid $color-col-line
+            border: 0.5px solid $color-col-line
             border-radius: 2px
             align-items: center
             justify-content: space-between
@@ -451,6 +458,4 @@
           font-size: $font-size-medium
           color: $color-white
 
-    .fasten
-      overflow-y: hidden
 </style>

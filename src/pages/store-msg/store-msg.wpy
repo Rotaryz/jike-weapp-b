@@ -20,15 +20,15 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeTel" class="store-msg-txt-left-title">联系电话</label>
-          <input type="number" id="storeTel" value="{{tel}}" maxlength="11" class="store-msg-txt-left-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="placeholderTxt" bindblur="txtChange" />
+          <input type="number" id="storeTel" value="{{tel}}" maxlength="11" class="store-msg-txt-left-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
         </view>
       </view>
 
-      <view class="store-msg-picker" @tap="industryChiose">
+      <view class="store-msg-picker">
         <view class="store-msg-picker-title">行业类型</view>
-        <view class="store-msg-picker-right">
+        <view class="store-msg-picker-right" @tap="industryChiose">
           <view class="store-msg-picker-txt">{{industryName}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
     </view>
@@ -39,17 +39,20 @@
         <picker mode="region" bindchange="bindRegionChange" value="{{region}}" class="sitebox">
           <view class="store-msg-picker-right">
             <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
-            <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
 
-      <view class="store-msg-picker" @tap="areaChiose">
+      <view class="store-msg-picker">
+        <view class="areaCover" @tap.stop="testRegion" wx:if="{{!region[2]}}"></view>
         <view class="store-msg-picker-title">商圈</view>
-        <view class="store-msg-picker-right">
-          <view class="store-msg-picker-txt">{{area}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
-        </view>
+        <picker bindchange="areaChange" value="{{index}}" range="{{areaArr}}" range-key="name">
+          <view class="store-msg-picker-right">
+            <view class="store-msg-picker-txt">{{area}}</view>
+            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+          </view>
+        </picker>
       </view>
 
       <view class="store-msg-txt">
@@ -77,19 +80,40 @@
     </view>
 
     <view class="store-msg-foot">
-      <view class="store-msg-picker" @tap="showRadio">
+      <view class="store-msg-picker">
         <view class="store-msg-picker-title">营业状态</view>
-        <view class="store-msg-picker-right">
+        <view class="store-msg-picker-right" @tap="showRadio">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
-      <view class="store-msg-picker" @tap="showTimeCover">
-        <view class="store-msg-picker-title">营业时间</view>
-        <view class="store-msg-picker-right">
-          <view class="store-msg-picker-txt">{{hourBegin?hourBegin + '-' + hourEnd:''}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+      <view class="time-picker">
+        <view class="prize-picker-title">每日营业时间</view>
+        <view class="prize-picker-right">
+          <view class="prize-picker-txt">
+            <view class="prize-picker-txt-time">
+              <picker mode="time" value="{{hourBegin}}" start="00:00" end="{{hourEnd}}" bindchange="hourBeginChange">
+                <view class="prize-picker-txt-time-title">{{hourBegin?hourBegin:'开始时间'}}</view>
+              </picker>
+              <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            </view>
+            <view class="prize-picker-txt-middle">至</view>
+            <view class="prize-picker-txt-time">
+              <picker mode="time" value="{{hourEnd}}" start="{{hourBegin}}" end="23:59" bindchange="hourEndChange">
+                <view class="prize-picker-txt-time-title">{{hourEnd?hourEnd:'结束时间'}}</view>
+              </picker>
+              <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="time-picker">
+        <view class="prize-picker-title">每周营业时间</view>
+        <view class="prize-picker-right-dotted" @tap="showTimeCover">
+          <view class="prize-picker-txt">{{weekShowTxt}}</view>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
@@ -98,12 +122,12 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl}}"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl && imageUrlHead}}"></image>
               <image src="{{logoUrl}}" class="store-msg-logo-imgupdate" wx:if="{{logoUrl}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{logoUrl}}" @tap="dellogo"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" class="store-msg-logo-cancle" wx:if="{{logoUrl && imageUrlHead}}" @tap="dellogo"></image>
             </view>
           </view>
-          <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
+          <view class="store-msg-logo-txt">建议上传宽200px,高200px,200k以下的图片</view>
         </view>
       </view>
 
@@ -112,13 +136,13 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox" wx:for="{{storeImgs}}" wx:key="{{item}}">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" wx:if="{{!item.image_url}}" @tap="uploadStoreImg({{index}})"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="store-msg-logo-img" wx:if="{{!item.image_url && imageUrlHead}}" @tap="uploadStoreImg({{index}})"></image>
               <image src="{{item.image_url}}" class="store-msg-logo-imgupdate" wx:if="{{item.image_url}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{item.image_url}}" @tap="delStoreImg({{index}})"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" class="store-msg-logo-cancle" wx:if="{{item.image_url && imageUrlHead}}" @tap="delStoreImg({{index}})"></image>
             </view>
           </view>
 
-          <view class="store-msg-logo-txt">建议上传宽200px,高200px,20k以下的图片</view>
+          <view class="store-msg-logo-txt">建议上传宽720px,高240px,200k以下的图片</view>
         </view>
       </view>
     </view>
@@ -127,87 +151,27 @@
 
     <view class="store-timeCover" wx:if="{{timeCover}}">
       <view class="store-time-center">
-        <view class="store-time-title">营业时间</view>
+        <view class="store-time-title">每周营业时间</view>
         <view class="store-time-box">
-          <view class="store-time-item">
-            <view class="store-time-itemTxt">每日营业时间</view>
-            <view class="store-time-itemRes {{hourBegin?'':'gary'}}" @tap.stop="hourChiose">
-              {{hourBegin?hourBegin + '-' + hourEnd:'请选择'}}
-              <image src="{{hourIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}" class="store-time-item-arrow"></image>
-            </view>
-          </view>
-          <view class="store-time-hourList" wx:if="{{hourIn}}">
-            <view class="store-time-hourList-btnBox">
-              <view class="hourbtn" @tap.stop="hourCancle">取消</view>
-              <view class="hourbtn" @tap.stop="hourSubmit">确定</view>
-            </view>
-            <picker-view indicator-style="height: 50px;" style="width: 100%; height: 200px;" value="{{hourChioseArr}}" bindchange="hourChange">
-              <picker-view-column>
-                <view wx:for="{{hours}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
-              </picker-view-column>
-              <picker-view-column>
-                <view wx:for="{{minutes}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
-              </picker-view-column>
-              <view class="pickerLine">至</view>
-              <picker-view-column>
-                <view wx:for="{{hours}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
-              </picker-view-column>
-              <picker-view-column>
-                <view wx:for="{{minutes}}" wx:key="unique" style="line-height: 50px">{{item}}</view>
-              </picker-view-column>
-            </picker-view>
-          </view>
-        </view>
-        <view class="store-time-box">
-          <view class="store-time-item">
-            <view class="store-time-itemTxt">每周营业时间</view>
-            <view class="store-time-itemRes {{weekday[0]?'':'gary'}}" @tap.stop="weekChiose">
-              {{weekChecked[0]?'已选':'请选择'}}
-              <image src="{{weekIn?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-shrink20@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-lower20@2x.png'}}" class="store-time-item-arrow"></image>
-            </view>
-          </view>
-          <view class="store-week-list" wx:if="{{weekIn}}">
+          <view class="store-week-list">
             <checkbox-group @change="weekChange">
               <view class="radioBox-list-item" wx:for="{{weekValue}}" wx:key="{{item}}">
                 <label class="radioLabel {{item.checked?'active':''}}">
                   <checkbox value="{{item.value}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
-                  <image class="radio-Icon" src="{{item.checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+                  <image wx:if="{{imageUrlHead}}" class="radio-Icon" src="{{imageUrlHead + (item.checked?'/defaults/b-image/page/icon-select@2x.png':'/defaults/b-image/page/icon-checkbox@2x.png')}}"></image>
                 </label>
               </view>
             </checkbox-group>
           </view>
         </view>
-        <view class="radioBox-closeBtn" @tap="closeTimeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
+        <view class="foot-btnBox border-top-1px">
+          <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
+          <view class="prizeItem-saveBtn" @tap="saveMsg">确定</view>
         </view>
       </view>
     </view>
 
-    <view class="twoColumnRadioBox" wx:if="{{twocolumnboxShow}}" @tap.stop="showNull">
-      <view class="radioBox-Msg">
-        <view class="radioBox-head">商圈</view>
-        <view class="radioBox-body">
-          <view class="radioBox-title">
-            <view class="radioBox-title-item">
-              <view class="radioBox-title-item-box active}}">
-                <view class="radioBox-title-item-before"></view>
-                {{region[2]}}
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rightred20@2x.png" class="radioBox-title-item-arrow"></image>
-              </view>
-            </view>
-          </view>
-          <view class="radioBox-list">
-            <view class="radioBox-list-item" wx:for="{{areaArr}}" wx:key="{{item}}" @tap="areaRadioChiose({{item}})">
-              <view class="radioLabel {{item.id==areaId?'active':''}}">{{item.name}}</view>
-              <image class="radio-Icon" src="{{item.id==areaId?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}"></image>
-            </view>
-          </view>
-        </view>
-        <view class="radioBox-closeBtn" catchtap="areacloseCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="radioBox-closeX"></image>
-        </view>
-      </view>
-    </view>
+    <Toast1></Toast1>
 
     <view wx:if="{{radioboxShow}}">
       <RadioBox></RadioBox>
@@ -227,9 +191,11 @@
   import QQMapWX from '@/common/libs/qqmap-wx-jssdk'
   import Store from '@/api/store'
   import Toast from '@/base/cover-toast/cover-toast'
+  import Toast1 from '@/base/toast/toast'
   import users from '@/common/mixins/users'
   import Upload from '@/api/uploads'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class StoreMsg extends wepy.page {
     mixins = [base, users]
@@ -244,15 +210,14 @@
     components = {
       RadioBox,
       TwoRadioBox,
-      Toast
+      Toast,
+      Toast1
     }
 
     data = {
-      hours: [],
-      minutes: ['00', '30'],
+      imageUrlHead: URIS.image,
       Induring: '',
       showMap: true,
-      telTest: true,
       name: '',
       description: '',
       industryName: '',
@@ -273,20 +238,17 @@
       timeCover: false,
       hourBegin: '',
       hourEnd: '',
-      hourChioseArr: [7, 0, 21, 0],
-      temporaryHour: [7, 0, 21, 0],
-      hourIn: true,
-      weekIn: false,
       weekValue: [
-        {value: '0', txt: '星期一', checked: false},
-        {value: '1', txt: '星期二', checked: false},
-        {value: '2', txt: '星期三', checked: false},
-        {value: '3', txt: '星期四', checked: false},
-        {value: '4', txt: '星期五', checked: false},
-        {value: '5', txt: '星期六', checked: false},
-        {value: '6', txt: '星期日', checked: false}
+        {value: '0', txt: '周一', checked: false},
+        {value: '1', txt: '周二', checked: false},
+        {value: '2', txt: '周三', checked: false},
+        {value: '3', txt: '周四', checked: false},
+        {value: '4', txt: '周五', checked: false},
+        {value: '5', txt: '周六', checked: false},
+        {value: '6', txt: '周日', checked: false}
       ],
       weekChecked: [],
+      temporaryWeekChecked: [],
       radioboxShow: false,
       twoRadioboxShow: false,
       twocolumnboxShow: false,
@@ -300,11 +262,9 @@
     }
 
     async load() {
-      for (let i = 0; i <= 23; i++) {
-        this.hours.push(i)
-      }
       this.qqmapsdk = new QQMapWX({
         key: 'WPABZ-ZVD6P-RJJD5-VSCIN-BBADV-FMFJX'
+
       })
       let res = await Store.getMsgList()
       this.Induring = res
@@ -333,14 +293,10 @@
       this.storeStatusTxt = arr[this.storeStatus]
       this.areaArr = res.business_circle ? await Store.getArea(res.business_circle.district) : []
       this.weekChecked = res.week_day || []
+      this.temporaryWeekChecked = this.weekChecked
       this._choiseChecked(this.weekValue)
       this.hourBegin = res.open_time ? res.open_time : ''
       this.hourEnd = res.close_time ? res.close_time : ''
-      this.hourChioseArr[0] = res.open_time ? res.open_time.split(':')[0] : ''
-      this.hourChioseArr[1] = res.open_time ? (res.open_time.split(':')[1] === '00' ? '0' : '1') : ''
-      this.hourChioseArr[2] = res.close_time ? res.close_time.split(':')[0] : ''
-      this.hourChioseArr[3] = res.close_time ? (res.close_time.split(':')[1] === '00' ? '0' : '1') : ''
-      this.temporaryHour = this.hourChioseArr.slice()
       this._mapAuto(this.site)
       this.$apply()
       this.loaded()
@@ -353,6 +309,9 @@
     methods = {
       showNull() {
 
+      },
+      testRegion() {
+        this.$invoke('Toast', 'show', '请先选择地区')
       },
       industryChiose() {
         this.twoRadioboxShow = true
@@ -369,32 +328,28 @@
             one: 1
           }
         }
+        let listArr
+        if (this.industry) {
+          listArr = this.Induring.industries.filter((item) => {
+            return item.id === this.industry.parent_id
+          })
+        } else {
+          listArr = this.Induring.industries
+        }
         let listMsg = {
           headTxt: '行业类型',
           radioChecked,
           oneTitle: 'industries',
           twoTitle: 'industry',
-          industries: this.Induring.industries
+          industries: listArr
         }
         this.$invoke('TwoRadioBox', 'init', listMsg)
       },
-      areaChiose() {
-        this.showMap = false
-        if (this.region[2]) {
-          this.twocolumnboxShow = true
-        } else {
-          this.$invoke('Toast', 'show', '请选择地区')
-        }
-        this.$apply()
-      },
-      areaRadioChiose(item) {
+      areaChange(e) {
+        let item = this.areaArr[e.detail.value]
         this.areaId = item.id
         this.area = item.name
         this.$apply()
-      },
-      areacloseCover() {
-        this.showMap = true
-        this.twocolumnboxShow = false
       },
       showRadio() {
         this.radioboxShow = true
@@ -414,8 +369,6 @@
         let eventId = e.target.id
         switch (eventId) {
           case 'storeTel':
-            let reg = /^1[3|4|5|7|8][0-9]{9}$/
-            this.telTest = reg.test(e.detail.value)
             this.tel = e.detail.value
             break
           case 'storeName':
@@ -457,35 +410,33 @@
           }
         })
       },
-      hourChiose() {
-        this.hourIn = !this.hourIn
-        this.weekIn = !this.hourIn
-      },
-      weekChiose() {
-        this.weekIn = !this.weekIn
-        this.hourIn = !this.weekIn
-      },
-      hourChange(e) {
-        this.hourChioseArr = e.detail.value
+      hourBeginChange(e) {
+        this.hourBegin = e.detail.value
         this.$apply()
       },
-      hourCancle() {
-        this.hourIn = false
-        this.weekIn = true
-        this.hourChioseArr = this.temporaryHour.slice()
+      hourEndChange(e) {
+        this.hourEnd = e.detail.value
         this.$apply()
       },
-      hourSubmit() {
-        this.hourIn = false
-        this.weekIn = true
-        this.temporaryHour = this.hourChioseArr.slice()
-        let beginMinute = this.hourChioseArr[1] === 0 ? '00' : '30'
-        let endMinute = this.hourChioseArr[3] === 0 ? '00' : '30'
-        this.hourBegin = this.hourChioseArr[0] + ':' + beginMinute
-        this.hourEnd = this.hourChioseArr[2] + ':' + endMinute
+      cancleMsg() {
+        this.temporaryWeekChecked = this.weekChecked
+        this._choiseChecked(this.weekValue)
+        this.timeCover = false
+        this.showMap = true
+        this.$apply()
+      },
+      saveMsg() {
+        if (this.temporaryWeekChecked.length === 0) {
+          this.$invoke('Toast1', 'show', '请至少选择一天营业时间')
+          return
+        }
+        this.weekChecked = this.temporaryWeekChecked
+        this.timeCover = false
+        this.showMap = true
+        this.$apply()
       },
       weekChange(e) {
-        this.weekChecked = e.detail.value
+        this.temporaryWeekChecked = e.detail.value
         this._choiseChecked(this.weekValue)
         this.$apply()
       },
@@ -500,9 +451,24 @@
         this.$apply()
       },
       async storeMsgSubmit() {
-        let res = this._testPropety(this.name, this.description, this.tel, this.telTest, this.industry.id, this.areaId, this.site, this.storeStatus, this.hourBegin, this.hourEnd, this.weekChecked.length, this.longitude, this.latitude, this.logoUrl)
-        let res2 = this._testImages()
-        if (res && res2) {
+        let testArr = [
+          {value: this.name, txt: '请输入门店名称'},
+          {value: this.description, txt: '请输入门店描述'},
+          {value: this.telTest, txt: '请输入正确手机号'},
+          {value: this.telLengthTest, txt: '手机号不足11位'},
+          {value: this.industry.id, txt: '请选择行业'},
+          {value: this.region[2], txt: '请选择地区'},
+          {value: this.areaId, txt: '请选择商圈'},
+          {value: this.site, txt: '请输入门店地址'},
+          {value: this.storeStatusTxt, txt: '请选择营业状态'},
+          {value: this.hourBegin, txt: '请设置每日营业时间'},
+          {value: this.hourEnd, txt: '请设置每日营业时间'},
+          {value: this.weekChecked.length, txt: '请设置每周营业时间'},
+          {value: this.logoUrl, txt: '请上传门店logo'},
+          {value: this.storeImgTest, txt: '请上传门店图片'}
+        ]
+        let res = this._testPropety(testArr)
+        if (res) {
           let data = {
             shop_name: this.name,
             describe: this.description,
@@ -531,7 +497,7 @@
         }
       },
       async uploadlogo() {
-        let res = await wepy.chooseImage()
+        let res = await wepy.chooseImage({sizeType: ['compressed']})
         if (!res) {
           return
         }
@@ -547,7 +513,7 @@
         this.$apply()
       },
       async uploadStoreImg(idx) {
-        let res = await wepy.chooseImage()
+        let res = await wepy.chooseImage({sizeType: ['compressed']})
         if (!res) {
           return
         }
@@ -582,6 +548,10 @@
         this.twoRadioboxShow = false
         this.showMap = true
         this.$apply()
+      },
+      nothingChiose() {
+        this.showMap = true
+        this.$apply()
       }
     }
 
@@ -602,7 +572,7 @@
 
     _choiseChecked(arr) {
       arr.forEach((item) => {
-        if (this.weekChecked.indexOf(item.value) !== -1) {
+        if (this.temporaryWeekChecked.indexOf(item.value) !== -1) {
           item.checked = true
         } else {
           item.checked = false
@@ -610,25 +580,59 @@
       })
     }
 
-    _testPropety() {
-      let arr = Array.prototype.slice.call(arguments, 0)
-      let res = arr.every((item) => {
-        return item
-      })
-      if (!res) {
-        this.$invoke('Toast', 'show', '资料填写不完整')
+    _testPropety(arr) {
+      for (let i = 0, j = arr.length; i < j; i++) {
+        if (!arr[i].value) {
+          this.$invoke('Toast', 'show', arr[i].txt)
+          return false
+        }
+        if (i === j - 1 && arr[i].value) {
+          return true
+        }
       }
-      return res
     }
 
-    _testImages() {
-      let res = this.storeImgs.some((item) => {
-        return item.image_url
-      })
-      if (!res) {
-        this.$invoke('Toast', 'show', '请上传门店图片')
+    computed = {
+      weekShowTxt() {
+        let week = {
+          0: '周一',
+          1: '周二',
+          2: '周三',
+          3: '周四',
+          4: '周五',
+          5: '周六',
+          6: '周日'
+        }
+        let weekMsg = ''
+        let arr = this.weekChecked.sort((a, b) => {
+          return a - b
+        })
+        arr.forEach((item) => {
+          weekMsg = weekMsg + week[item] + '，'
+        })
+        if (weekMsg) {
+          return weekMsg.slice(0, -1)
+        } else {
+          return ''
+        }
+      },
+      telTest() {
+        let reg = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.tel.length === 11) {
+          return reg.test(this.tel)
+        } else {
+          return true
+        }
+      },
+      telLengthTest() {
+        return this.tel.length === 11
+      },
+      storeImgTest() {
+        let res = this.storeImgs.filter((item) => {
+          return item.image_url
+        })
+        return res.length
       }
-      return res
     }
   }
 </script>
@@ -673,7 +677,7 @@
       padding-right: 12px
       display: flex
       height: 39px
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       justify-content: space-between
       align-items: center
 
@@ -711,10 +715,19 @@
     .store-msg-picker
       display: flex
       height: 39px
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       justify-content: space-between
       align-items: center
       padding-right: 12px
+      position: relative
+
+      .areaCover
+        position: absolute
+        z-index: 100
+        left: 0
+        right: 0
+        top: 0
+        bottom: 0
 
       .sitebox
         width: 50vw
@@ -741,6 +754,64 @@
         .store-msg-picker-txt
           font-size: $font-size-medium
           margin-right: 10px
+
+    .time-picker
+      display: flex
+      height: 40px
+      align-items: center
+      padding-right: 12px
+      border-bottom: 0.5px solid $color-col-line
+
+      .prize-picker-title
+        flex: 2
+        font-size: $font-size-medium
+        color: $color-text-title
+
+      .prize-picker-right
+        flex: 5
+        display: flex
+        align-items: center
+        height: 40px
+
+        .prize-picker-txt
+          display: flex
+          align-items: center
+          margin-left: 8vw
+
+          .prize-picker-txt-time
+            display: flex
+            align-items: center
+            .prize-picker-txt-time-title
+              font-size: $font-size-medium
+              color: $color-text-title
+            .prize-picker-arrow
+              width: 10px
+              height: 10px
+              margin-left: 3px
+
+          .prize-picker-txt-middle
+            font-size: $font-size-medium
+            color: $color-text-d
+            padding: 0 10px
+
+      .prize-picker-right-dotted
+        flex: 5
+        display: flex
+        justify-content: flex-end
+        align-items: center
+
+        .prize-picker-txt
+          width: 60vw
+          overflow: hidden
+          white-space: nowrap
+          text-overflow: ellipsis
+          text-align: end
+          font-size: $font-size-medium
+          color: $color-text
+
+        .store-msg-picker-arrow
+          width: 10px
+          height: 10px
 
     .storeMap
       border-bottom: 0 none
@@ -785,7 +856,7 @@
 
     .store-timeCover
       position: fixed
-      z-index: 1000
+      z-index: 200
       left: 0
       top: 0
       height: 100vh
@@ -799,7 +870,7 @@
         transform: translate(-50%, -50%)
         background: $color-white
         width: 265px
-        max-height: 410px
+        height: 400px
         border-radius: 4px
 
         .store-time-title
@@ -811,63 +882,16 @@
           font-size: $font-size-medium-x
 
         .store-time-box
-          max-height: 360px
+          height: 320px
           overflow: hidden
           overflow-y: auto
-
-          .store-time-item
-            padding: 0 12px
-            display: flex
-            justify-content: space-between
-            align-items: center
-            height: 40px
-            border-bottom: 1px solid $color-col-line
-            background: $color-background
-
-            .store-time-itemTxt
-              font-size: $font-size-small
-
-            .store-time-itemRes
-              height: 40px
-              display: flex
-              align-items: center
-              font-size: $font-size-small
-
-              .store-time-item-arrow
-                width: 10px
-                height: 10px
-                margin-left: 5px
-
-            .store-time-itemRes.gary
-              color: $color-text-d
-
-          .store-time-hourList
-            font-size: $font-size-medium
-
-            .pickerLine
-              line-height: 200px
-
-            picker-view-column
-              text-align: center
-
-            .store-time-hourList-btnBox
-              height: 50px
-              display: flex
-              justify-content: space-between
-
-              .hourbtn
-                width: 60px
-                line-height: 50px
-                text-align: center
-                font-size: $font-size-small
-                color: $color-assist-f
 
           .store-week-list
             padding: 0 12px
 
             .radioBox-list-item
               line-height: 39px
-              border-bottom: 1px solid $color-row-line
+              border-bottom: 0.5px solid $color-row-line
               font-size: $font-size-small
 
               .radioLabel
@@ -885,28 +909,27 @@
               .radioLabel.active
                 color: $color-assist-f
 
-      .radioBox-closeBtn
-        width: 34px
-        height: 34px
+      .foot-btnBox
+        height: 40px
         display: flex
-        justify-content: center
-        align-items: center
-        position: absolute
-        left: 50%
-        transform: translate(-50%, 0)
-        bottom: -50px
-        z-index: 9999
+        border-box: box-sizing
+        background: $color-white
 
-        .radioBox-closeX
-          width: 24px
-          height: 24px
+        .prizeItem-saveBtn
+          flex: 1
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          font-size: $font-size-medium
 
-
+        .prizeItem-saveBtn.firstBtn
+          color: $color-text-d
 
     .store-msg-logo
       padding-right: 12px
       display: flex
-      border-bottom: 1px solid $color-col-line
+      border-bottom: 0.5px solid $color-col-line
       align-items: center
 
       .store-msg-logo-title
@@ -961,105 +984,4 @@
           color: $color-text-d
           padding-bottom: 10px
 
-    .twoColumnRadioBox
-      position: fixed
-      z-index: 1000
-      left: 0
-      top: 0
-      height: 100vh
-      width: 100vw
-      background: rgba(54, 53, 71, .5)
-
-      .radioBox-Msg
-        position: absolute
-        left: 50%
-        top: 50%
-        transform: translate(-50%, -50%)
-        background: $color-white
-        width: 265.5px
-        min-height: 40px
-        border-radius: 4px
-
-        .radioBox-head
-          height: 40px
-          background: $color-theme
-          line-height: 40px
-          text-align: center
-          color: $color-white
-          font-size: $font-size-medium-x
-
-        .radioBox-body
-          max-height: 360px
-          display: flex
-          background: $color-background
-
-          .radioBox-title
-            width: 90px
-            max-height: 360px
-
-            .radioBox-title-item
-
-              .radioBox-title-item-box.active
-                background: $color-white
-                line-height: 38px
-                font-size: $font-size-small
-                display: flex
-                align-items: center
-                position: relative
-                border-bottom: 1px solid $color-row-line
-                border-right: 0 none
-                color: $color-assist-f
-
-                .radioBox-title-item-before
-                  width: 2px
-                  height: 38px
-                  background: $color-assist-f
-                  margin-right: 10px
-
-                .radioBox-title-item-arrow
-                  width: 10px
-                  height: 10px
-                  position: absolute
-                  right: 7px
-                  top: 15px
-
-          .radioBox-list
-            background: $color-white
-            padding: 0 10px
-            width: 175.5px
-            overflow-y: auto
-            max-height: 360px
-
-          .radioBox-list-item
-            line-height: 39px
-            height: 39px
-            border-bottom: 1px solid $color-row-line
-            display: flex
-            align-items: center
-            justify-content: space-between
-
-            .radioLabel
-              font-size: $font-size-small
-
-            .radio-Icon
-              width: 16px
-              height: 16px
-
-            .radioLabel.active
-              color: $color-assist-f
-
-        .radioBox-closeBtn
-          width: 34px
-          height: 34px
-          display: flex
-          justify-content: center
-          align-items: center
-          position: absolute
-          left: 50%
-          transform: translate(-50%, 0)
-          bottom: -50px
-
-          .radioBox-closeX
-            width: 24px
-            height: 24px
 </style>

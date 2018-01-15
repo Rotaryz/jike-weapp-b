@@ -15,9 +15,6 @@
           <view class="btn-right" @tap.stop="confirm">确定</view>
         </view>
       </view>
-      <view class="close-wrapper" @tap.stop="close">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>
-      </view>
     </view>
   </view>
 </template>
@@ -99,14 +96,4 @@
             font-size: $font-size-medium
           .btn-left
             color: $color-text-d
-      .close-wrapper
-        position: absolute
-        left: 50%
-        bottom: -77.5px
-        width: 23px
-        height: 23px
-        transform: translateX(-50%)
-        image
-          width: 23px
-          height: 23px
 </style>

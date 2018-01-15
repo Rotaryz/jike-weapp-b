@@ -1,31 +1,49 @@
 <template>
   <view class="code">
     <view class="qr-input">
-      <view class="code-input" @tap="isInput">
-        <text wx:if="{{showInput}}">{{code}}</text>
+      <view class="code-input">
+        <view class="code-input-item" wx:for="0123456789" wx:key="{{item}}">{{code[item]}}</view>
       </view>
-      <view>请输入10位优惠券验证码</view>
+      <view class="qr-input-txt">请输入10位券码</view>
     </view>
     <view class="qR-num">
       <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}"
             @touchstart="oncap({{index}},{{item.text}})"
-            @touchend="endTap({{item.code}})">
+            @touchend="endTap">
         <view class="nums">
           <text>{{item.text}}</text>
           <image src="{{item.image}}"></image>
         </view>
       </view>
-
+      <view class="num-item" @tap="submitCode">
+        <view class="nums">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
+        </view>
+      </view>
+      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap">
+        <view class="nums">
+          <image src="{{delectImg}}" class="delect-btn"></image>
+        </view>
+      </view>
     </view>
     <Toast></Toast>
   </view>
 </template>
 
 <script>
+  /* eslint-disable no-undef */
   import wepy from 'wepy'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
+
+  const IMG1 = URIS.image + '/defaults/b-image/page/pic-button1@2x.png'
+  const IMG2 = URIS.image + '/defaults/b-image/page/pic-button2@2x.png'
+  const DELIMG1 = URIS.image + '/defaults/b-image/page/icon-shop_delete@2x.png'
+  const DELIMG2 = URIS.image + '/defaults/b-image/page/icon-shop_delete2@2x.png'
+
   export default class Square extends wepy.page {
     mixins = [base]
 
@@ -42,110 +60,121 @@
       Toast: Toast
     }
     data = {
+      imageUrlHead: URIS.image,
       codeNum: [{
         text: 1,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 2,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 3,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 4,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 5,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 6,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 7,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 8,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 9,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
+        image: IMG1
       }, {
         text: 0,
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
-      }, {
-        text: '',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
+        image: IMG1
       }],
-      showInput: true,
       code: '',
-      sureCode: 0
-    }
-
-    async _verification(data) {
-      return await shop.verification(data)
-    }
-
-    async show(code) {
-      let res = await this._verification(code)
-      console.log(res)
-      this.loaded()
-      if (res.error !== 1) {
-//                成功时
-        this.$invoke('Toast', 'show', '核销成功')
-        this.code = ''
-      } else {
-        this.$invoke('Toast', 'show', res.message)
-//                失败时
-        this.$apply()
-      }
+      delectImg: DELIMG1,
+      loadIng: false,
+      timer: null
     }
 
     methods = {
       oncap(index, num) {
-        if (this.sureCode.length < 10 || this.sureCode === 0) {
-          this.code += num
-          this.code = this.code.replace(/(\d{4})/g, '$1 ')
+        if (this.loadIng) {
+          this.$invoke('Toast', 'show', '核销中...')
+          return
         }
-        if (num !== '') {
-          this.codeNum.map(async (item, idx) => {
-            if (idx !== this.codeNum.length - 1) {
-              if (idx === index) {
-                item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button2@2x.png'
+        if (index * 1 === 11) {
+          if (this.code.length > 0) {
+            wx.vibrateShort()
+            this.code = this.code.slice(0, -1)
+            this.timer = setInterval(() => {
+              this.code = this.code.slice(0, -1)
+              this.$apply()
+              if (this.code.length === 0) {
+                clearInterval(this.timer)
               }
-            }
-            return item
-          })
-          this.sureCode = this.code.replace(/ /g, '')
-          if (this.sureCode.length === 10) {
-            this.codeNum[10].image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validatered@2x.png'
+            }, 200)
+            this.delectImg = DELIMG2
+            this.$apply()
           }
-        } else {
-          if (this.sureCode.length === 10) {
-            this.show(this.sureCode)
-          } else {
-            this.$invoke('Toast', 'show', '请输入10核销码')
-          }
+          return
         }
+        if (this.code.length > 9) {
+          return
+        }
+        wx.vibrateShort()
+        this.codeNum = this.codeNum.map((item, idx) => {
+          if (idx * 1 === index * 1) {
+            return {
+              text: num,
+              image: IMG2
+            }
+          } else {
+            return item
+          }
+        })
+        this.code += num
+        this.$apply()
       },
       endTap() {
+        clearInterval(this.timer)
         setTimeout(() => {
-          this.codeNum.map((item, idx) => {
-            if (idx !== this.codeNum.length - 1) {
-              item.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-button1@2x.png'
-            }
+          this.codeNum.map((item) => {
+            item.image = IMG1
             return item
           })
+          this.delectImg = DELIMG1
           this.$apply()
         }, 100)
       },
-      isInput() {
-        this.showInput = true
+      async submitCode() {
+        if (!this.testCode) {
+          return
+        }
+        wx.vibrateShort()
+        this.loadIng = true
+        let res = await shop.verification(this.code)
+        this.loaded()
+        if (res.error === 0) {
+          Tips.success('核销成功')
+          this.code = ''
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+        this.loadIng = false
+        this.$apply()
       }
     }
 
     onLoad() {
       this.code = ''
-      this.codeNum[10].image = 'http://jike-file.jerryf.cn/defaults/b-image/page/pic-validate@2x.png'
+    }
+
+    computed = {
+      testCode() {
+        return this.code.length === 10
+      }
     }
   }
 </script>
@@ -161,32 +190,30 @@
     box-sizing: border-box
 
   .qr-input
-    height: 17.32%
     background-color: $color-theme
     padding: 21px $padding 0
     .code-input
-      height: 48.07%
-      background: $color-white
-      border-radius: 2px
-      text
-        margin: 1% 0 0 19px
-        display: inline-block
-        height: 78%
+      display: flex
+      .code-input-item
+        width: 8.1333vw
+        height: 13.3333vw
+        margin-right: 5px
+        border-radius: 2px
+        background: $color-white
+        display: flex
+        align-items: center
+        justify-content: center
         font-size: $font-size-large-bxx
-        line-height: 1.2
-        position: relative
-        &::before
-          content: ''
-          position: absolute
-          right: 0
-          width: 1px
-          height: 100%
-          background: #555
-    view:last-child
-      font-size: $font-size-small
+        font-family: PingFangSC-Medium
+
+      view:last-child
+        margin-right: 0
+
+    .qr-input-txt
+      line-height: 34px
       text-align: center
+      font-size: $font-size-small
       color: $color-text-d
-      margin-top: 5%
 
   .qR-num
     height: 82.68%
@@ -219,9 +246,10 @@
           z-index: 100
           font-family: $font-family-meddle
           font-size: $font-size-large-bxx
-      &:last-child
-        width: 66.66%
-        .nums
-          height: 89px
-          width: 194px
+
+        .delect-btn
+          width: 50px
+          height: 50px
+          padding-right: 10px
+
 </style>
