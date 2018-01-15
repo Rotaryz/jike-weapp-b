@@ -109,10 +109,11 @@
     methods = {
       async nvaContent(id) {
         await wepy.navigateTo({
-          url: '../create-content/create-content?status=2&id=' + id
+          url: `../create-content/create-content?status=${this.navNum}&id=${id}`
         })
       },
       async showMsg(num) {
+        this.nothing = false
         this.navNum = num
         this.contentList = []
         this.load(num)
@@ -171,12 +172,11 @@
 
     async onLoad(options) {
       this.contentList = []
-      if (options.show === '1') {
-        this.navNum = 0
-      } else {
-        this.navNum = 1
+      if (options.show) {
+        this.navNum = options.show * 1
       }
       await this.load(this.navNum)
+      this.$apply()
     }
   }
 </script>
