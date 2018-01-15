@@ -123,11 +123,16 @@
         this.$apply()
       },
       saveMsg() {
+        let count = Number(this.prizeCount)
         if (!this.prizeCheckedId) {
           this.$invoke('Toast', 'show', '请先选择奖品')
           return
         }
-        let res = Object.assign({}, this.prizeCheckedItem, {promotion_stock: Number(this.prizeCount)})
+        if (!count) {
+          this.$invoke('Toast', 'show', '您还没有添加数量哦')
+          return
+        }
+        let res = Object.assign({}, this.prizeCheckedItem, {promotion_stock: count})
         this.$emit('addPrizeOK', res)
         this.coverShow = false
         this.prizeCount = 0

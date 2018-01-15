@@ -59,7 +59,7 @@
       </view>
 
       <view class="prizeList">
-        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.promotion_stock}}">
+        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}">
           <view class="prizeList-item-left">
             <view class="prizeList-item-name">{{item.promotion_title}}</view>
             <view class="prizeList-item-count">{{item.promotion_stock}}个</view>

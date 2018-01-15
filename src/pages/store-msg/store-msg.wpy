@@ -262,6 +262,7 @@
     async load() {
       this.qqmapsdk = new QQMapWX({
         key: 'WPABZ-ZVD6P-RJJD5-VSCIN-BBADV-FMFJX'
+
       })
       let res = await Store.getMsgList()
       this.Induring = res
@@ -325,12 +326,20 @@
             one: 1
           }
         }
+        let listArr
+        if (this.industry) {
+          listArr = this.Induring.industries.filter((item) => {
+            return item.id === this.industry.parent_id
+          })
+        } else {
+          listArr = this.Induring.industries
+        }
         let listMsg = {
           headTxt: '行业类型',
           radioChecked,
           oneTitle: 'industries',
           twoTitle: 'industry',
-          industries: this.Induring.industries
+          industries: listArr
         }
         this.$invoke('TwoRadioBox', 'init', listMsg)
       },

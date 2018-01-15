@@ -93,6 +93,7 @@
   import PrizePool from '@/api/prizePool'
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
+  import Tips from '@/common/js/tips'
 
   export default class PrizePoolPage extends wepy.page {
     mixins = [base]
@@ -155,6 +156,7 @@
       this.load()
     }
 
+    // 加载可使用列表
     async load() {
       this.useablePrizeList = await PrizePool.getPrizelist() || []
       if (this.useablePrizeList.length === 0) {
@@ -165,6 +167,7 @@
       this.loaded()
     }
 
+    // 加载已过期列表
     async loadPastDue() {
       this.pastDuePrizeList = await PrizePool.getPrizelist(0) || []
       if (this.pastDuePrizeList.length === 0) {
@@ -180,8 +183,10 @@
         let res = await PrizePool.delexchange(this.EXchangeId)
         this.loaded()
         if (res.error === 0) {
-          this.$invoke('Toast', 'show', '删除成功')
-          this.loadPastDue()
+          Tips.success('删除成功')
+          setTimeout(() => {
+            this.loadPastDue()
+          }, 500)
         }
         this.$apply()
       }
