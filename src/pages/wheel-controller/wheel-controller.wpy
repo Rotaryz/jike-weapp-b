@@ -17,12 +17,12 @@
       <view class="content-wrapper">
         <view class="wheel">
           <view class="wheel-pointer">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-pointer@2x.png" class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}" class="full-image"></image>
           </view>
           <view class="wheel-content" ref="wheel">
             <view class="wheel-relative">
               <view class="wheel-image">
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-zp@2x.png" class="full-image"></image>
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}" class="full-image"></image>
               </view>
               <view class="wheel-prize-wrapper">
                 <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
@@ -36,7 +36,7 @@
                 <view class="prize prize-5">
                   <view class="name">谢谢惠顾</view>
                   <view class="img-wrapper">
-                    <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-face@2x.png" mode="aspectFit"></image>
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}" mode="aspectFit"></image>
                   </view>
                 </view>
               </view>
@@ -70,7 +70,7 @@
               <view class="date">
                 <view>{{fromDate === '' ? '开始时间' : fromDate}}</view>
                 <view class="arrow-right">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                          class="full-image"></image>
                 </view>
               </view>
@@ -80,7 +80,7 @@
               <view class="date">
                 <view>{{toDate === '' ? '结束时间' : toDate}}</view>
                 <view class="arrow-right">
-                  <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-arrow-right@2x.png"
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                          class="full-image"></image>
                 </view>
               </view>
@@ -92,13 +92,13 @@
           <view class="select-wrapper">
             <view class="select-box" @tap="selectJoinTime(1)">
               <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
+                <image wx:if="{{joinTimes === 1 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一天一次</view>
             </view>
             <view class="select-box" @tap="selectJoinTime(0)">
               <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>
+                <image wx:if="{{joinTimes === 0 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一人一次</view>
             </view>
@@ -109,7 +109,7 @@
           <!--<view class="select-wrapper">-->
             <!--<view class="select-box">-->
               <!--<view class="select unselect">-->
-                <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png" class="full-image"></image>-->
+                <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
               <!--</view>-->
               <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
             <!--</view>-->
@@ -138,20 +138,21 @@
                    maxlength="3"
                    @input="handleInput('percentage')"/>
           </view>
+          %
         </view>
         <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
           <view class="item-wrapper">
             <view class="name">{{item.promotion_title}}</view>
             <view class="quantity">{{item.promotion_stock}}个</view>
             <view class="del" @tap="delectPrize({{index}}, {{item}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_delete@2x.png"></image>
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_delete@2x.png'}}"></image>
             </view>
           </view>
         </repeat>
         <view class="add-wrapper">
           <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
             <view class="add-image">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-yx_add@2x.png" class="full-image"></image>
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}" class="full-image"></image>
             </view>
             添加奖品
           </view>
@@ -164,7 +165,7 @@
                 <view class="stock">剩余{{item.promotion_stock}}个</view>
                 <view class="check-box-wrapper">
                   <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                    <image wx:if="{{selectPromotion.promotion_id === item.promotion_id}}" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+                    <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
                            class="full-image"></image>
                   </view>
                 </view>
@@ -206,6 +207,7 @@
   import Tips from 'common/js/tips'
   import base from 'common/mixins/base'
   import Textarea from '@/base/textarea/textarea'
+  import URIS from 'common/js/config'
 
   const ADD_TYPE = 0
   const UPDATE_TYPE = 1
@@ -214,6 +216,7 @@
     mixins = [base]
 
     data = {
+      imageUri: URIS.image,
       type: ADD_TYPE,
       id: 0,
       name: '',
@@ -402,6 +405,7 @@
           activity_promotions: [...this.activityPromotions, ...this.deletePromtions]
         }
         const res = this.type === ADD_TYPE ? await Activitys.addLucky(data) : await Activitys.updateLucky(this.id, data)
+        this.loaded()
         if (res.error === 0) {
           Tips.success('保存成功')
           this.deletePromtions = []
@@ -410,7 +414,6 @@
         } else {
           this._toast(res.message)
         }
-        this.loaded()
       },
       showActivityTimeModal() {
         this.$invoke('activity-time-modal', 'show')

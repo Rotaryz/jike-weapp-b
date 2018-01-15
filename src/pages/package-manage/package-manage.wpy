@@ -13,14 +13,14 @@
     <view class="container" wx:if="{{tabIndex === 0}}">
       <view class="empty-wrapper" wx:if="{{willOnLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">还没有礼包, 马上建礼包</view>
       </view>
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
@@ -49,14 +49,14 @@
     <view class="container" wx:if="{{tabIndex === 1}}">
       <view class="empty-wrapper" wx:if="{{onLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">还没有礼包, 马上建礼包</view>
       </view>
       <repeat for="{{onLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
@@ -83,14 +83,14 @@
     <view class="container" wx:if="{{tabIndex === 2}}">
       <view class="empty-wrapper" wx:if="{{offLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">还没有礼包, 马上建礼包</view>
       </view>
       <repeat for="{{offLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
@@ -117,14 +117,14 @@
     <view class="container" wx:if="{{tabIndex === 3}}">
       <view class="empty-wrapper" wx:if="{{willApplys.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">还没有礼包, 马上建礼包</view>
       </view>
       <repeat for="{{willApplys}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="coupon-image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
@@ -161,6 +161,7 @@
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
 
   const TABS = ['待上线', '已上线', '已下线', '待审核']
   const IS_LEADER = wepy.getStorageSync('is_leader')
@@ -169,6 +170,7 @@
     mixins = [base]
 
     data = {
+      imageUri: URIS.image,
       isLeader: IS_LEADER,
       tabs: TABS,
       tabIndex: 0,
@@ -176,7 +178,15 @@
       willOnLines: [],
       onLines: [],
       offLines: [],
-      willApplys: []
+      willApplys: [],
+      hasWillO: false,
+      hasOn: false,
+      hasOff: false,
+      hasWillA: false,
+      willOPage: 1,
+      onPage: 1,
+      offPage: 1,
+      willAPage: 1
     }
 
     async onLoad() {
@@ -187,20 +197,64 @@
       await this._getPackageLists()
     }
 
+    _init() {
+      this.tabIndex = 0
+      this.tabTranslateX = 0
+      this.willOnLines = []
+      this.onLines = []
+      this.offLines = []
+      this.willApplys = []
+      this.hasWillO = false
+      this.hasOn = false
+      this.hasOff = false
+      this.hasWillA = false
+      this.willOPage = 1
+      this.onPage = 1
+      this.offPage = 1
+      this.willAPage = 1
+    }
+
+    async onReachBottom() {
+      if ((this.tabIndex === 0 && !this.hasWillO) || (this.tabIndex === 1 && !this.hasOn) || (this.tabIndex === 2 && !this.hasOff) || (this.tabIndex === 3 && !this.hasWillA) ) {
+        return
+      }
+      switch (this.tabIndex) {
+        case 0:
+          this.willOPage += 1
+          break
+        case 1:
+          this.onPage += 1
+          break
+        case 2:
+          this.offPage += 1
+          break
+        case 3:
+          this.willAPage += 1
+        default:
+          break
+      }
+      await this._getPackageLists()
+    }
+
     async _getPackageLists() {
-      const res = await Packages.getPackageLists({status: this.tabIndex})
+      const page = this.tabIndex === 0 ? this.willOPage : this.tabIndex === 1 ? this.onPage : this.tabIndex === 2 ? this.offPage : this.willAPage
+      const res = await Packages.getPackageLists({status: this.tabIndex, page})
       switch (this.tabIndex) {
         case 0:
           this.willOnLines = res
+          this.hasWillO = res.length >= 10
           break
         case 1:
           this.onLines = res
+          this.hasOn = res.length >= 10
           break
         case 2:
           this.offLines = res
+          this.hasOff = res.length >= 10
           break
         case 3:
           this.willApplys = res
+          this.hasWillA = res.length >= 10
           break
         default:
           break

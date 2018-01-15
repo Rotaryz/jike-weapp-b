@@ -13,26 +13,32 @@
     <view class="container" wx:if="{{tabIndex === 0}}">
       <view class="empty-wrapper" wx:if="{{willOnLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">暂无数据</view>
       </view>
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text><text class="number">{{item.platform_price}}</text>
+                  <text class="yuan">¥</text>
+                  <text class="number">{{item.platform_price}}</text>
                 </view>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -49,26 +55,32 @@
     <view class="container" wx:if="{{tabIndex === 1}}">
       <view class="empty-wrapper" wx:if="{{onLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">暂无数据</view>
       </view>
       <repeat for="{{onLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text><text class="number">{{item.platform_price}}</text>
+                  <text class="yuan">¥</text>
+                  <text class="number">{{item.platform_price}}</text>
                 </view>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -85,26 +97,32 @@
     <view class="container" wx:if="{{tabIndex === 2}}">
       <view class="empty-wrapper" wx:if="{{offLines.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">暂无数据</view>
       </view>
       <repeat for="{{offLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
-            <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
+            <image class="full-image" wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/pic-couponbg@2x.png'}}"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text><text class="number">{{item.platform_price}}</text>
+                  <text class="yuan">¥</text>
+                  <text class="number">{{item.platform_price}}</text>
                 </view>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
                 <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
-                <view class="sell-wrapper">销量:{{item.collected}}<view class="split"></view>ID:{{item.id}}</view>
+                <view class="sell-wrapper">销量:{{item.collected}}
+                  <view class="split"></view>
+                  ID:{{item.id}}
+                </view>
               </view>
             </view>
             <view class="ctrl-wrapper">
@@ -130,6 +148,7 @@
   import Coupons from 'api/coupons'
   import Confirm from '@/base/confirm/confirm'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
 
   const TABS = ['待上线', '已上线', '已下线']
 
@@ -137,45 +156,79 @@
     mixins = [base]
 
     data = {
+      imageUri: URIS.image,
       tabs: TABS,
       tabIndex: 1,
       tabTranslateX: '100%',
       willOnLines: [],
+      hasWill: false,
+      willPage: 1,
       onLines: [],
-      offLines: []
+      hasOn: false,
+      onPage: 1,
+      offLines: [],
+      hasOff: false,
+      offPage: 1
     }
 
-    async onLoad() {
-      await this.load()
-    }
-
-    onShow() {
+    async onShow() {
       this._init()
+      await this.load()
     }
 
     _init() {
       this.tabIndex = 1
       this.tabTranslateX = '100%'
       this.willOnLines = []
+      this.hasWill = false
+      this.willPage = 1
       this.onLines = []
+      this.hasOn = false
+      this.onPage = 1
       this.offLines = []
+      this.hasOff = false
+      this.offPage = 1
     }
 
     async load() {
-      await this.getCouponList(0)
+      await this.getCouponList()
+    }
+
+    async onReachBottom() {
+      if ((this.tabIndex === 0 && !this.hasWill) || (this.tabIndex === 1 && !this.hasOn) || (this.tabIndex === 2 && !this.hasOff)) {
+        return
+      }
+      switch (this.tabIndex) {
+        case 0:
+          this.willPage += 1
+          break
+        case 1:
+          this.onPage += 1
+          break
+        case 2:
+          this.offPage += 1
+          break
+        default:
+          break
+      }
+      await this.getCouponList()
     }
 
     async getCouponList() {
-      const res = await Coupons.getCouponList({status: this.tabIndex})
+      const page = this.tabIndex === 0 ? this.willPage : this.tabIndex === 1 ? this.onPage : this.offPage
+      const res = await Coupons.getCouponList({status: this.tabIndex, page})
       switch (this.tabIndex) {
         case 0:
           this.willOnLines = res
+          this.hasWill = res.length >= 10
           break
         case 1:
           this.onLines = res
+          this.hasOn = res.length >= 10
           break
         case 2:
           this.offLines = res
+          this.hasOff = res.length >= 10
           break
         default:
           break

@@ -32,7 +32,7 @@
         <!--<view class="content">单个单数不能多于100</view>-->
       </view>
     </view>
-    <view class="apply-list" wx:if="{{(type !== 'apply' && isLeader === 1) || isJoined}}">
+    <view class="apply-list" wx:if="{{((type !== 'apply' && isLeader === 1) || isJoined) && giftbag.gift_bag_details.length}}">
       <view class="block-title">{{(isLeader === 1 && type !== 'apply') ? '报名列表' : '审核结果'}}</view>
       <repeat for="{{giftbag.gift_bag_details}}" index="index" key="index">
         <view class="coupon-wrapper">
@@ -82,7 +82,6 @@
     }
 
     async onLoad(option) {
-      console.log(this.imageUri)
       this.packageId = option.id
       this.type = option.type ? option.type : ''
       await this.load()
