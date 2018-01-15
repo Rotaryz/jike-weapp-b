@@ -35,11 +35,14 @@
       font-size: $font-size-medium
       flex: 1
       line-height: 26px
-    .choice
       text
         display: inline-block
         margin: 0 auto
         width: 71.2%
+        white-space :nowrap
+        border-bottom: 2px solid $color-theme
+    .choice
+      text
         color: $color-assist-f
         border-bottom: 2px solid $color-assist-f
 </style>

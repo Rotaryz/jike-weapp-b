@@ -1,14 +1,15 @@
 <template>
-  <view class="lives" scroll-y="true"
-        enable-back-to-top="true">
+  <view class="lives" enable-back-to-top="true">
     <view class="live" id="lis">
       <scroll-view class="live_conpon" scroll-y>
         <view class="con-item" wx:for="{{activityPromotion}}"
               wx:key="index"
               @tap="conponDetail({{item.promotion_id}},{{index}})">
-          <image class="con_bk" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg.png"
+          <image class="con_bk"
+                 src="http://jike-file.jerryf.cn/defaults/c-image/live/pic-r_couponbg1@2x.png"
                  wx:if="{{showBk !== index}}"></image>
-          <image class="con_bk" src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg1.png"
+          <image class="con_bk"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg1.png"
                  wx:if="{{showBk === index}}"></image>
           <view class="con-title">
             <view></view>
@@ -18,23 +19,26 @@
         </view>
       </scroll-view>
       <view class="live_video video-bk" wx:if="{{!showVideo}}">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livenone@2x.png"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livenone@2x.png"></image>
       </view>
-      <video class="live_video"
-             src="{{videoSrc}}"
-             poster="{{videoImage}}"
-             wx:if="{{showVideo}}">
+      <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
       </video>
     </view>
     <view>
       <view class="upVideo">
         <view class="eva-title">视频</view>
         <view class="upload">
-          <image class="video-box {{!showVideo ? '' : 'no-border'}}"
+          <image class="video-box"
                  @tap="upVideo" src="{{videoImage}}">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livebg@2x.png"
-                   wx:if="{{!showVideo}}"></image>
+            <image
+              src="./pic-upload_video@2x.png"></image>
+            <view></view>
           </image>
+          <!--<video class="video-box no-border" src="{{videoSrc}}"-->
+          <!--wx:if="{{showVideo}}" controls="false" muted="false">-->
+          <!--<cover-view class="video-gen" @tap="upVideo"></cover-view>-->
+          <!--</video>-->
           <view class="tip">上传十分钟视频</view>
         </view>
       </view>
@@ -45,11 +49,13 @@
                 wx:key="{{index}}">
             {{item.promotion_title}}
             <view class="close-box" @tap="delCou({{index}})">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/close.png"></image>
+              <image
+                src="http://jike-file.jerryf.cn/defaults/b-image/page/close.png"></image>
             </view>
           </view>
           <view class="add-cou" @tap="choice">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"></image>
+            <image
+              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"></image>
             添加服务
           </view>
         </view>
@@ -61,6 +67,7 @@
       </view>
     </view>
   </view>
+  <Toast></Toast>
 </template>
 
 <script>
@@ -68,8 +75,17 @@
   import Uploads from 'api/uploads'
   import live from 'api/live'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
   export default class Live extends wepy.page {
     mixins = [base]
+    components = {
+      Toast: Toast
+    }
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '直播优惠',
       navigationBarBackgroundColor: '#363547',
@@ -86,19 +102,19 @@
       scrollTops: 0,
       id: 0
     }
+
     methods = {
       async upVideo() {
         const res = await wepy.chooseVideo({sourceType: ['album']})
 //      需要限制大小，待确定！
         let file = res.tempFilePath
         const videoId = await Uploads.uploadVideo(file)
-        let imageId = await Uploads.uploadImages(res.thumbTempFilePath)
-        if (videoId && imageId) {
+        console.log(videoId)
+        if (videoId) {
           this.videoSrc = res.tempFilePath
-          this.videoImage = res.thumbTempFilePath
+          this.videoImage = videoId.url + '?second=1&height=80&width=80'
           this.showVideo = true
           this.fileId = videoId.id
-          this.imageId = imageId.id
           this.$apply()
         }
       },
@@ -127,16 +143,14 @@
           res = await live.createlive(this.allMsg)
           await this.load()
         }
-
+        this.loaded()
         if (res.error === 0) {
-          wepy.showToast({
-            title: '保存成功',
-            icon: 'success',
-            duration: 1000
-          })
-          wepy.pageScrollTo({
-            scrollTop: 0
-          })
+          this.$invoke('Toast', 'show', '保存成功')
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }
@@ -156,7 +170,7 @@
         this.id = res.id
         this.videoSrc = res.file_url
         this.showVideo = true
-        this.videoImage = res.image_url
+        this.videoImage = res.file_url + '?second=1&height=80&width=80'
         this.fileId = res.file_id
         this.imageId = res.file_id
         this.activityPromotion = res.activity_promotion
@@ -174,8 +188,24 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
-  /*.lives*/
-  /*height: 100vh*/
+  .submit
+    position: fixed
+    bottom: 0px
+    width: 100%
+    height: 30px
+    background: #fff
+    z-index: 9999
+    video
+      height: 60px
+    cover-view
+      width: 100%
+      height: 20px
+      position: absolute
+      z-index: 1000
+      top: 0
+
+  .lives
+    padding-bottom: 20px
 
   view
     box-sizing: border-box
@@ -207,15 +237,25 @@
       bottom: 16px
       left: 126px
       color: $color-text-d
+    .wx-video-cover
+      display: none
     .video-box
       height: 80px
       width: 80px
       border: 0.5px dashed $color-text-d
       border-radius: 4px
       position: relative
+      view
+        height: 100%
+        width: 100%
+        border-radius: 4px
+        position: absolute
+        top: 0px
+        bottom: 0
+        background: rgba(0, 0, 0, .4)
       image
-        width: 32px
-        height: 22px
+        width: 24px
+        height: 24px
         z-index: 100
         all-center()
     .no-border
@@ -227,7 +267,7 @@
     display: flex
     flex-direction: column
     align-items: center
-    margin-bottom: 70px
+    margin-bottom: 40px
     .de-item
       width: 100%
       height: 40px
@@ -268,26 +308,6 @@
         width: 10px
         col-center()
 
-  .con-submit
-    position: fixed
-    width: 100%
-    bottom: 0px
-    height: 14.93vw
-    background: $color-background
-    z-index: 200
-    view
-      position: absolute
-      bottom: 12px
-      left: 12px
-      width: 93.6%
-      height: 11.73vw
-      line-height: 11.73vw
-      background: $color-theme
-      color: $color-white
-      text-align: center
-      font-size: $font-size-medium
-      border-radius: 4px
-
   /*::-webkit-scrollbar*/
   /*width: 0*/
   /*height: 0*/
@@ -304,8 +324,8 @@
     .video-bk
       background: #292937
       image
-        width: 51px
-        height: 32px
+        width: 24px
+        height: 24px
         all-center()
     .live_video
       flex: 7.46
@@ -521,4 +541,24 @@
             display: inline-block
             vertical-align: middle
             font-size: $font-size-small
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    z-index: 200
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
 </style>

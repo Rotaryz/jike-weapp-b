@@ -7,38 +7,42 @@
         <text>{{item.text}}</text>
       </view>
     </NavHeader>
-    <view class="content-coupon">
-      <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
-        <image
-          src="{{item.image_url !== '' ? item.image_url : 'http://jike-file.jerryf.cn/defaults/b-image/page/bk.jpg'}}"></image>
-        <view>
-          <view class="con-cou-item-ri">
-            <view>
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
-              {{item.favorite_count}}
+    <Blank></Blank>
+    <scroll-view scroll-y bindscrolltolower="showMore">
+      <view class="content-coupon">
+        <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
+          <image
+            src="{{item.image_url !== '' ? item.image_url : 'http://jike-file.jerryf.cn/defaults/b-image/page/bk.jpg'}}"></image>
+          <view>
+            <view class="con-cou-item-ri">
+              <view>
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
+                {{item.favorite_count}}
+              </view>
+              <view>
+                <image
+                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
+                {{item.share_count}}
+              </view>
             </view>
-            <view>
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
-              {{item.share_count}}
-            </view>
-          </view>
-          <view class="con-cou-item-le">
-            <view @tap="nvaContent({{item.id}})">编辑</view>
-            <view @tap="delCon({{item.id}},{{index}})">删除</view>
-            <view @tap="access({{item.id}},{{index}})">{{
-              textType[navNum].text}}
+            <view class="con-cou-item-le">
+              <view @tap="nvaContent({{item.id}})">编辑</view>
+              <view @tap="delCon({{item.id}},{{index}})">删除</view>
+              <view @tap="access({{item.id}},{{index}})">{{
+                textType[navNum].text}}
+              </view>
             </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
     <view class="con-submit" @tap="create">
       <view>
         创建内容
       </view>
     </view>
+    <Confirm></Confirm>
   </view>
 </template>
 
@@ -47,15 +51,24 @@
   import NavHeader from '@/base/nav-header/nav-header'
   import content from 'api/content'
   import base from 'common/mixins/base'
+  import Blank from '@/base/blank/blank'
+  import Confirm from '@/base/confirm/confirm'
   export default class Content extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '内容管理',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }
     components = {
-      NavHeader: NavHeader
+      NavHeader: NavHeader,
+      Blank: Blank,
+      Confirm: Confirm
     }
     data = {
       navNum: 1,
@@ -73,7 +86,21 @@
         text: '下线',
         type: 1
       }],
-      contentList: []
+      contentList: [],
+      nothing: false,
+      page: 1,
+      id: '',
+      index: ''
+    }
+
+    _showBlank(res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_content@2x.png', '暂无内容, 马上发布内容', '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
     }
 
     methods = {
@@ -84,6 +111,7 @@
       },
       async showMsg(num) {
         this.navNum = num
+        this.contentList = []
         this.load(num)
         this.$apply()
       },
@@ -95,31 +123,57 @@
           this.$apply()
         }
       },
-      async delCon(id, index) {
-        let res = await content.delContent(id)
-        this.loaded()
-        if (res.error === 0) {
-          this.contentList.splice(index, 1)
-          this.$apply()
-        }
+      delCon(id, index) {
+        this.$invoke('Confirm', 'show')
+        this.id = id
+        this.index = index
       },
       async create() {
         await wepy.navigateTo({
           url: '../create-content/create-content'
         })
+      },
+      async showMore() {
+        if (!this.nothing) {
+          this.page++
+          if (this.page > 1) {
+            let res = await this.load(this.navNum, this.page)
+            if (res.length === 0 && res) {
+              this.nothing = true
+            }
+          }
+        }
+      }
+    }
+    events = {
+      'confirm': async () => {
+        let res = await content.delContent(this.id)
+        this.loaded()
+        if (res.error === 0) {
+          this.contentList.splice(this.index, 1)
+          this.$apply()
+        }
       }
     }
 
-    async load(num) {
-      let data = {status: num}
+    async load(num, page = 1) {
+      let data = {status: num, page: page}
       let res = await content.contentList(data)
-      this.contentList = res
+      this.contentList = this.contentList.concat(res)
+      this._showBlank(this.contentList)
       this.loaded()
       this.$apply()
+      return res
     }
 
-    async onLoad() {
-      await this.load(1)
+    async onLoad(options) {
+      this.contentList = []
+      if (options.show === '1') {
+        this.navNum = 0
+      } else {
+        this.navNum = 1
+      }
+      await this.load(this.navNum)
     }
   }
 </script>
@@ -127,13 +181,23 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
+  scroll-view
+    height: 94vh
+
+  .content
+    height: 100vh
+    overflow-y: hidden
+
   .content-coupon
-    padding: 0 3.2vw
+    padding: 0 3.2vw 70px
+    padding: 0 3.2vw 70px
     display: flex
-    padding-bottom: 70px
+    width: 100vw
+    box-sizing: border-box
     flex-direction: column
     .con-cou-item
       margin-top: 10px
+      height: 37.34vw
       image
         width: 100%
         height: 26.67vw

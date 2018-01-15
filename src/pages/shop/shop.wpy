@@ -63,9 +63,18 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
-
+  const BUS = {
+    text: '商圈',
+    image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-tradingarea@2x.png',
+    src: '/pages/business/business'
+  }
   export default class Shop extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '商家助手',
       navigationBarBackgroundColor: '#363547',
@@ -96,10 +105,6 @@
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-package@2x.png',
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
-        text: '商圈',
-        image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-tradingarea@2x.png',
-        src: '/pages/business/business'
-      }, {
         text: '评价',
         image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate@2x.png',
         src: '/pages/evaluate/evaluate'
@@ -117,6 +122,9 @@
       }, {
         text: '',
         image: ''
+      }, {
+        text: '',
+        image: ''
       }],
       dataList: [],
       leader: 0
@@ -125,19 +133,17 @@
     async load(time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-      await http.isLogin(res.message)
+      let status = await http.isLogin(res.message)
       this.dataList = res.detail
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
-      if (this.leader === 0) {
-        this.navList.forEach((item, idx) => {
-          if (item.text === '商圈') {
-            this.navList.splice(idx, 1)
-            this.navList.push({text: '', image: ''})
-          }
-        })
+      if (status === 0 && this.leader === 1 && this.navList[3].text !== '商圈') {
+        this.navList.pop()
+        this.navList.splice(3, 0, BUS)
       }
-      this.loaded()
+      if (status === 0) {
+        this.loaded()
+      }
       this.$apply()
     }
 
@@ -154,6 +160,7 @@
         this.$invoke('Toast', 'show', '核销成功')
       } else {
         if (data.error !== 1) {
+          console.log(data)
           this.$invoke('Toast', 'show', '核销成功')
         } else {
           this.$invoke('Toast', 'show', '核销失败')
@@ -168,7 +175,7 @@
       }
     }
 
-    async onShow() {
+    async onLoad() {
       await this.load()
     }
   }

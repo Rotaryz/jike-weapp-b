@@ -99,6 +99,9 @@ export default class http {
       await wepy.navigateTo({
         url: '../logIn/logIn'
       })
+      return 1
+    } else {
+      return 0
     }
   }
 

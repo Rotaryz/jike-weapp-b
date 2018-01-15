@@ -5,93 +5,79 @@
     <image class="guidance" src="icon-login-logo@2x.png"
            wx:if="{{guidance}}"></image>
     <view class="lg-from">
-      <view class="lg-ch {{loginType.register ? 'phone' : ''}}">
+      <view class="mistake {{showLogo ? 'right-tip':''}}"
+            wx:if="{{showMistake}}">
+        <image
+          src="{{showLogo ? './icon-login_right@2x.png' :'./icon-login_prompt@2x.png'}}"></image>
+        {{mistakeTip}}
+      </view>
+      <view
+        class="lg-ch {{register ? 'phone' : ''}} {{phoneStatus ? '' : 'error-fa'}}">
         <view>
-          <image class="icon" src="{{loginType.phoneError.image}}"></image>
-          <input class="{{loginType.phoneError.status ? '' : 'error'}}"
+          <image src="{{phoneImage}}" class="icon"></image>
+          <input id="phones" class="phone {{phoneStatus ? '' : 'error'}}"
                  type="number" placeholder="请输入手机号码"
                  placeholder-class="placeholder" value="{{phoneNum}}"
-                 bindinput="putPhone"
-                 maxlength="11"/>
-          <view class="eye" @tap.stop="clearPhone" >
+                 focus="{{phoneFocus}}"
+                 bindinput="putPhone" maxlength="11"/>
+          <view class="eye" @tap.stop="clearPhone">
             <image class="close"
                    src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
-                   wx:if="{{loginType.showClose}}"></image>
+                   wx:if="{{showClose}}"></image>
           </view>
 
         </view>
-        <text wx:if="{{loginType.register}}" @tap="setCode">{{loginType.time}}
+        <text class="?{{isSet ? 'set-code' : ''}}" wx:if="{{register}}"
+              @tap="setCode">{{
+          time}}
         </text>
       </view>
-      <view class="lg-ch" wx:if="{{loginType.register || loginType.forget}}">
+      <view class="lg-ch" wx:if="{{register || forget}}">
         <image class="icon"
                src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-code@2x.png"></image>
-        <input type="text" placeholder="请输入验证码"
+        <input type="number" placeholder="请输入6位验证码"
                placeholder-class="placeholder" value="{{code}}"
                bindinput="getCode"/>
       </view>
       <view class="password lg-ch">
-        <view class="ciphertext" wx:if="{{!loginType.ciphertext}}">
-          <image class="icon" src="{{loginType.passError}}"></image>
-          <input type="password" placeholder="{{passtext}}"
+        <view class="ciphertext">
+          <image class="icon" src="{{passError}}"></image>
+          <input type="{{ciphertext ? 'text' : 'password'}}"
+                 placeholder="{{passtext}}"
                  placeholder-class="placeholder" bindinput="putPassword"
-                 maxlength="18" value="{{password}}"/>
-          <view class="eye"  @tap="showCiphertext('fi')">
-            <image class="close"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"></image>
-          </view>
-
-        </view>
-        <view class="proclaimed" wx:if="{{loginType.ciphertext}}">
-          <image class="icon"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
-          <input type="text" placeholder="{{passtext}}"
-                 placeholder-class="placeholder" value="{{password}}"
-                 maxlength="18"/>
-          <class class="eye"  @tap="showCiphertext('fi')">
-            <image class="close"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
-                  ></image>
-          </class>
-
-        </view>
-      </view>
-      <view class="password lg-ch" wx:if="{{loginType.forget}}">
-        <view class="ciphertext" wx:if="{{!loginType.anCiphertext}}">
-          <image class="icon" src="{{loginType.anPassError.image}}"></image>
-          <input class="{{loginType.anPassError.status ? '' : 'error'}}"
-                 type="password" placeholder="再次输入新密码"
-                 placeholder-class="placeholder" maxlength="18"
-                 bindinput="anginPassword" bindblur="burlPass"/>
+                 maxlength="18" value="{{password}}" focus="{{isfocus}}"/>
           <view class="eye" @tap="showCiphertext('fi')">
             <image class="close"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png"
-                   ></image>
+                   src="{{ciphertext ? 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png' :'http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png'}}"></image>
           </view>
+
         </view>
-        <view class="proclaimed" wx:if="{{loginType.anCiphertext}}">
-          <image class="icon"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png"></image>
-          <input type="text" placeholder="再次输入新密码"
+      </view>
+      <view class="password lg-ch" wx:if="{{forget}}">
+        <view class="ciphertext">
+          <image class="icon" src="{{anPassImage}}"></image>
+          <input class="{{anPassStatus ? '' : 'error'}}"
+                 type="{{anCiphertext ? 'text' : 'password'}}"
+                 placeholder="再次输入新密码"
                  placeholder-class="placeholder" maxlength="18"
-                 value="{{anPassword}}"/>
+                 bindinput="anginPassword" value="{{anPassword}}"
+                 focus="{{isagfocus}}"/>
           <view class="eye" @tap="showCiphertext('tw')">
             <image class="close"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png"
-                   ></image>
+                   src="{{anCiphertext ? 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png' :'http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png'}}"></image>
           </view>
         </view>
       </view>
-      <button class="{{loginType.submit ? '' : 'disable'}}"
+      <button class="{{submit ? '' : 'disable'}}"
               @tap="submit({{submitType}})">{{submitText}}
       </button>
-      <view class="tip" wx:if="{{loginType.login}}">
+      <view class="tip" wx:if="{{login}}">
         <text @tap="showOther('forget')">忘记密码</text>
         <text @tap="showOther('register')">立即注册</text>
       </view>
     </view>
 
-
+    <Toast></Toast>
   </view>
 </template>
 
@@ -100,10 +86,14 @@
   import users from 'common/mixins/users'
   import logIn from 'api/logIn'
   import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
   export default class Square extends wepy.page {
     mixins = [users, base]
     config = {
       navigationBarTitleText: '集客商家助手'
+    }
+    components = {
+      Toast: Toast
     }
     data = {
       guidance: false,
@@ -113,148 +103,309 @@
       password: '',
       submitType: 1,
       anPassword: '',
-      passtext: '请输入密码',
-      submitText: '登陆',
+      passtext: '密码(6-16位数字或字母)',
+      submitText: '登录',
       code: '',
-      loginType: {
-        login: true,
-        register: false,
-        submit: false,
-        forget: false,
-        time: '请获取验证码',
-        ciphertext: false,
-        anCiphertext: false,
-        phoneError: {
-          status: true,
-          image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png'
-        },
-        passError: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
-        anPassError: {
-          status: true,
-          image: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
-        },
-        codeError: true,
-        showClose: false
+      forget: false,
+      login: true,
+      register: false,
+      submit: false,
+      time: '获取验证码',
+      ciphertext: false,
+      anCiphertext: false,
+      phoneStatus: true,
+      phoneImage: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png',
+      passError: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
+      anPassStatus: true,
+      anPassImage: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
+      codeError: true,
+      showClose: false,
+      isfocus: false,
+      isagfocus: false,
+      tapCode: true,
+      showMistake: false,
+      mistakeTip: '',
+      showLogo: false,
+      isSet: false,
+      phoneFocus: false
+    }
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
+//      判断是否可登陆
+    checkAngin() {
+      let regPass = /^[a-zA-Z0-9]{6,18}$/
+      let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
+      if (this.login) {
+        if (regPhone.test(this.phoneNum) && regPass.test(this.password)) {
+          this.submit = true
+        } else {
+          this.submit = false
+        }
+      } else if (this.register && !this.forget) {
+        if (regPhone.test(this.phoneNum) && regPass.test(this.password) &&
+          this.code.length === 6) {
+          this.submit = true
+        } else {
+          this.submit = false
+        }
+      } else if (this.forget) {
+        if (regPhone.test(this.phoneNum) && regPass.test(this.password) && this.code.length === 6 && this.anPassword === this.password) {
+          this.submit = true
+        } else {
+          this.submit = false
+          this.$apply()
+        }
       }
+      if (regPhone.test(this.phoneNum)) {
+        this.isSet = true
+      } else {
+        this.isSet = false
+      }
+      this.checkTip()
+    }
+
+    showTip(status, title) {
+      this.showMistake = status
+      this.mistakeTip = title
+      this.showLogo = false
+      return false
+    }
+
+    rightTip(content, showLogo = true) {
+      this.mistakeTip = content
+      this.showLogo = showLogo
+      console.log(content)
+      this.showMistake = true
+      setTimeout(() => {
+        this.showMistake = false
+        this.$apply()
+      }, 2000)
+      this.$apply()
+    }
+
+    checkTip() {
+      let regPass = /^[a-zA-Z0-9]{6,18}$/
+      let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
+      let phoneStatus = regPhone.test(this.phoneNum)
+      let passStatus = regPass.test(this.password)
+      if (this.login) {
+        if ((this.phoneNum.length < 11 && this.password.length < 6) ||
+          (phoneStatus && passStatus) || (passStatus && this.password.length >= 6 && phoneStatus) ||
+          (!passStatus && this.password.length < 6 && phoneStatus)) {
+          this.showTip(false, '')
+        } else if (!phoneStatus && this.phoneNum.length === 11) {
+          this.showTip(true, '请输入正确的手机号码')
+        } else if (!passStatus && this.password.length >= 6) {
+          this.showTip(true, '请输入6-18位数字或字母的密码')
+        }
+      } else if (this.register && !this.forget) {
+        if ((this.phoneNum.length < 11 && this.password.length < 6) || (phoneStatus && passStatus) || (passStatus && this.password.length >= 6 && phoneStatus) || (!passStatus && this.password.length < 6 && phoneStatus)) {
+          this.showTip(false, '')
+        } else if (!phoneStatus && this.phoneNum.length === 11) {
+          this.showTip(true, '请输入正确的手机号码')
+        } else if (!passStatus && this.password.length >= 6) {
+          this.showTip(true, '请输入6-18位数字或字母的密码')
+        }
+      } else if (this.forget) {
+        console.log(passStatus && this.password.length <=
+          this.anPassword.length && this.password !== this.anPassword)
+        if ((this.phoneNum.length < 11 && this.password.length < 6) ||
+          (phoneStatus && passStatus && this.password === this.anPassword) || (passStatus && this.password.length >= 6 && this.password === this.anPassword) || (!passStatus &&
+          this.password.length < 6 && phoneStatus)) {
+          this.showTip(false, '')
+        } else if (!phoneStatus && this.phoneNum.length === 11) {
+          this.showTip(true, '请输入正确的手机号码')
+        } else if (!passStatus && this.password.length >= 6) {
+          this.showTip(true, '请输入6-18位数字或字母的密码')
+        } else if (passStatus && this.password !== this.anPassword &&
+          this.anPassword.length > 0) {
+          this.showTip(true, '两次输入密码不一致')
+        }
+      }
+      this.$apply()
+    }
+
+    info() {
+      this.submitText = '登录'      // 文字
+      this.register = false        // 取消注册状态
+      this.forget = false          // 取消忘记密码状态
+      this.login = true            // 开启注册状态
+      this.phoneNum = ''           // 手机号码清空
+      this.password = ''           // 密码清空
+      this.anPassword = ''         // 重复密码清空
+      this.submitType = 1          // 提交方式的修改
+      this.submit = false          // 登录按钮禁用
+      this.showClose = false       // 消除手机框的删除按钮
+      this.ciphertext = false      // 消除可视化状态
+      this.anCiphertext = false    // 消除可视化状态
+      this.code = ''               // 验证码清空
+      this.phoneStatus = true
+      this.anPassStatus = true
+      this.codeError = true
+      this.showMistake = false
+      this.passtext = '密码(6-16位数字或字母)'
+      this.$apply()
+    }
+
+    onShow() {
+      this.info()
     }
 
     methods = {
       putPhone(e) {
         this.phoneNum = e.detail.value
         if (e.detail.value.length > 0) {
-          this.loginType.showClose = true
+          this.showClose = true
         } else {
-          this.loginType.showClose = false
+          this.showClose = false
         }
-        let reg = /^1[3|4|5|7|8][0-9]{9}$/
-        if (reg.test(e.detail.value) && e.detail.value.length === 11) {
-          this.submitDisabled = true
-          this.phoneSusses = e.detail.value
-        } else {
-          this.submitDisabled = false
-        }
-        if (!this.submitDisabled && e.detail.value.length === 11) {
-          this.loginType.phoneError.status = false
-          this.loginType.phoneError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-cw_phone copy@2x.png'
-        } else {
-          this.loginType.phoneError.status = true
-          this.loginType.phoneError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png'
-        }
+        this.checkAngin()
       },
       clearPhone() {
         this.phoneNum = ''
-        this.loginType.showClose = false
+        this.phoneSusses = ''
+        this.phoneFocus = false
+        setTimeout(() => {
+          this.phoneFocus = true
+          this.$apply()
+        }, 30)
+
+        this.showClose = false
+        this.showMistake = false
+        this.checkAngin()
       },
       showCiphertext(type) {
         if (type === 'fi') {
-          this.loginType.ciphertext = !this.loginType.ciphertext
+          this.ciphertext = !this.ciphertext
+          setTimeout(() => {
+            this.isfocus = true
+            this.$apply()
+          }, 30)
+          setTimeout(() => {
+            this.isfocus = false
+            this.$apply()
+          }, 20)
         } else if (type === 'tw') {
-          this.loginType.anCiphertext = !this.loginType.anCiphertext
+          this.anCiphertext = !this.anCiphertext
+          setTimeout(() => {
+            this.isagfocus = true
+            this.$apply()
+          }, 30)
+          setTimeout(() => {
+            this.isagfocus = false
+            this.$apply()
+          }, 20)
         }
       },
 //      注册
       showOther(type) {
         if (type === 'register') {
+          this.passtext = '密码(6-16位数字或字母)'
           this.submitText = '注册'
-          this.loginType.register = true
-          this.loginType.login = false
+          this.register = true
+          this.login = false
           this.submitType = 2
         } else if (type === 'forget') {
+          this.passtext = '新密码(6-16位数字或字母)'
           this.submitText = '确定'
-          this.loginType.register = true
-          this.loginType.forget = true
-          this.loginType.login = false
+          this.register = true
+          this.forget = true
+          this.login = false
           this.submitType = 3
         }
+        this.showClose = false
+        this.ciphertext = false
+        this.anCiphertext = false
         this.password = ''
+        this.anPassword = ''
         this.phoneNum = ''
         this.code = ''
-        this.loginType.showClose = false
+        this.showClose = false
+        this.phoneStatus = true
+        this.anPassStatus = true
+        this.codeError = true
+        this.showMistake = false
+        this.$apply()
       },
+//      点击获取验证码
       async setCode() {
-        await logIn.messageBind({mobile: this.phoneSusses})
-        this.loaded()
-        let time = 60
-        this.phoneCodeTime = time + 's'
-        let timer = setInterval(() => {
-          time--
-          this.loginType.time = time + 's'
-          this.$apply()
-          if (time <= 0) {
-            this.loginType.time = '获取验证码'
-            this.$apply()
-            clearInterval(timer)
+        let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.phoneNum === '') {
+          this.showTip(true, '请输入手机号码')
+//          this.$invoke('Toast', 'show', '请输入手机号码')
+          return false
+        } else if (!regPhone.test(this.phoneNum)) {
+          this.showTip(true, '请输入正确的手机号码')
+//          this.$invoke('Toast', 'show', '请输入正确的手机号码')
+          return false
+        }
+        let data = {}
+        if (this.forget) {
+          data = {mobile: this.phoneNum}
+        } else {
+          data = {mobile: this.phoneNum, register: 1}
+        }
+        if (this.tapCode) {
+          let codeData = await logIn.messageBind(data)
+          this.time = '发送中…'
+//          this.$invoke('Toast', 'show', codeData.message)
+          this.loaded()
+          if (codeData.error === 1) {
+            this.time = '获取验证码'
+            this.rightTip(codeData.message, false)
+          } else {
+            this.isSet = false
+            this.rightTip(codeData.message)
+            let time = 60
+            this.time = time + 's'
+            let timer = setInterval(() => {
+              this.tapCode = false
+              time--
+              this.time = time + 's'
+              this.$apply()
+              if (time <= 0) {
+                this.time = '获取验证码'
+                this.tapCode = true
+                this.$apply()
+                clearInterval(timer)
+              }
+            }, 1000)
           }
-        }, 1000)
+        } else {
+          return false
+        }
       },
       putPassword(e) {
-//         e.detail.value
-        let reg = /^[a-zA-Z0-9]{6,18}$/
-        if (reg.test(e.detail.value)) {
-          this.password = e.detail.value
-        }
-        if (this.submitType !== 3) {
-          if ((this.phoneSusses !== '' && this.password !== '') ||
-            (this.phoneSusses !== '' && this.password !== '' && this.code !== '')) {
-            this.loginType.submit = true
-          } else {
-            this.loginType.submit = false
-          }
-        }
-//        console.log(reg.test(e.detail.value))
+        this.password = e.detail.value
+        this.password = this.password.replace(/[\u2E80-\u9FFF]/gi, '')
+        this.$apply()
+        this.checkAngin()
+        return this.password
       },
       anginPassword(e) {
-        this.loginType.anPassError.status = true
-        this.loginType.anPassError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
-        let reg = /^[a-zA-Z0-9]{6,18}$/
-        if (reg.test(e.detail.value)) {
-          this.anPassword = e.detail.value
-        }
-        if (this.phoneSusses !== '' && this.password !== '' && this.code !==
-          '' && this.anPassword === this.password) {
-          this.loginType.submit = true
-        } else {
-          this.loginType.submit = false
-        }
-      },
-      burlPass() {
-        if (this.anPassword !== this.password) {
-          this.loginType.anPassError.status = false
-          this.loginType.anPassError.image = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-cw_password@2x.png'
-        }
+        this.anPassStatus = true
+        this.anPassImage = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
+        this.anPassword = e.detail.value
+        this.checkAngin()
       },
       getCode(e) {
         this.code = e.detail.value
+        this.checkAngin()
       },
       async submit(subType) {
-        if (this.loginType.submit) {
+        if (this.submit) {
           let res
           if (subType === 2) {
+//            注册
             res = await logIn.register({
-              mobile: this.phoneSusses,
+              mobile: this.phoneNum,
               password: this.password,
               code: this.code
             })
+            this.loaded()
             if (res.error !== 1) {
               wepy.setStorageSync('token', res.access_token)
               if (res.merchant_info.merchant_data) {
@@ -265,13 +416,18 @@
               await wepy.switchTab({
                 url: '/pages/shop/shop'
               })
+            } else {
+              this.rightTip(res.message, false)
+//              this.$invoke('Toast', 'show', res.message)
             }
 //            注册成功后跳转到个人中心
           } else if (subType === 1) {
+//            登陆
             res = await logIn.login({
-              mobile: this.phoneSusses,
+              mobile: this.phoneNum,
               password: this.password
             })
+            this.loaded()
             if (res.error !== 1) {
               wepy.setStorageSync('token', res.access_token)
               if (res.merchant_info.merchant_data) {
@@ -282,29 +438,34 @@
               await wepy.switchTab({
                 url: '/pages/shop/shop'
               })
+            } else {
+//              this.$invoke('Toast', 'show', res.message)
+              this.rightTip(res.message, false)
             }
 //            登陆成功的跳转
           } else if (subType === 3) {
+//            找回密码
             res = await logIn.resetPassword({
-              'mobile': this.phoneSusses,
+              'mobile': this.phoneNum,
               'password': this.password,
               'password_confirmation': this.anPassword,
               'code': this.code
             })
+            this.loaded()
+            console.log(res)
             if (res.error === 0) {
-              this.submitText = '登陆'
-              this.loginType.register = false
-              this.loginType.forget = false
-              this.loginType.login = true
-              this.phoneNum = ''
-              this.password = ''
-              this.submitType = 1
-              this.loginType.submit = false
-              this.$apply()
+              this.rightTip(res.message)
+//              this.$invoke('Toast', 'show', '成功找回密码,请登录')
+              setTimeout(() => {
+                this.info()
+                this.$apply()
+              }, 1700)
+            } else {
+              this.rightTip(res.message, false)
+//              this.$invoke('Toast', 'show', res.message)
             }
           }
         }
-        this.loaded()
       }
     }
   }
@@ -333,6 +494,21 @@
     height: 40px
 
   .lg-from
+    position: relative
+    .mistake
+      position: absolute
+      row-center()
+      top: -12px
+      color: $color-assist-tr
+      font-size: $font-size-small
+      text-align: center
+      width: 100%
+      image
+        height: 12px
+        width: 12px
+        transform: translateY(2px)
+    .right-tip
+      color: $color-theme
     .lg-ch
       position: relative
       border-bottom: 0.5px solid $color-split-line
@@ -349,22 +525,32 @@
         width: 18%
         right: 0
         top: 0
+        z-index: 150
         .close
           right: 10px
       input
         text-align: left
         height: 64px
         padding-left: 29.5px
-        font-size: $font-size-medium-x
+        font-size: ($font-size-medium - 1)
         color: #363547
         width: 70%
+      wx-input
+        width: 72%
+        overflow: visible
+      .phone
+        width: 75%
       .error
         color: $color-assist-f
       .placeholder
         color: $color-text-gray
+    .error-fa
+      border-bottom: 0.5px solid $color-assist-f
     .phone
       display: flex
       align-items: center
+      #phones
+        width: 66%
       view
         position: relative
         flex: 7.5
@@ -375,6 +561,8 @@
         font-size: $font-size-medium
         color: $color-text-gray
         line-height: 24px
+      .set-code
+        color: $color-theme
     button
       margin-top: 20px
       background: $color-theme
@@ -389,6 +577,7 @@
     .tip
       font-size: $font-size-small
       color: #333
+      height: 30px
       display: flex
       justify-content: space-between
       margin-top: 17px

@@ -21,12 +21,21 @@
       <view class="complaint-center">
         <view class="complaint-center-head">投诉</view>
         <view class="complaint-center-body">
-          <view class="complaint-center-body-title">投诉对象： {{saleMsg.user_name}}</view>
-          <textarea placeholder="请输入投诉内容" placeholder-class="complaint-placeholder" class="complaint-input" bindblur="complaintChange"></textarea>
-          <view class="complaint-btn {{complaintInTxt.length>0?'':'disab'}}" @tap="submitComplaint">提交</view>
+          <view class="complaint-center-body-title">
+            投诉对象： {{saleMsg.user_name}}
+          </view>
+          <textarea placeholder="请输入投诉内容"
+                    placeholder-class="complaint-placeholder"
+                    class="complaint-input"
+                    bindblur="complaintChange"></textarea>
+          <view class="complaint-btn {{complaintInTxt.length>0?'':'disab'}}"
+                @tap="submitComplaint">提交
+          </view>
         </view>
         <view class="complaint-closeBtn" @tap="closeCover">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="complaint-closeX"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
+            class="complaint-closeX"></image>
         </view>
       </view>
     </view>
@@ -43,6 +52,10 @@
 
   export default class ContactSales extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '联系销售',

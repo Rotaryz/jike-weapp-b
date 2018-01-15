@@ -6,9 +6,9 @@
         <view class="stars">
           <image
             src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-evaluate_red@2x.png"
-            wx:for="{{item.star_level+1}}" wx:key="{{index}}"></image>
+            wx:for="{{item.star_level}}" wx:key="{{index}}"></image>
         </view>
-        <view>{{item.star_level + 1}}星</view>
+        <view>{{item.star_level}}星</view>
         <progress stroke-width="4" activeColor="#e6e6e6" activeColor="#EF705D"
                   percent="{{item.percentage}}" active="true"></progress>
         <view>{{item.count}}单</view>
@@ -17,6 +17,12 @@
   </view>
   <view class="impression">
     <view class="eva-title">印象</view>
+    <view class="blank" wx:if="{{comBlank}}">
+      <view>
+        <image src="{{comSrc}}"></image>
+        <view class="blank-tip" style="color:#9b9b9b">{{comTip}}</view>
+      </view>
+    </view>
     <view class="tag" wx:for="{{impression}}" wx:key="{{idnex}}">{{
       item.impression}}
       {{item.count}}
@@ -24,9 +30,15 @@
   </view>
   <view class="appraise">
     <view class="eva-title">评价</view>
+    <view class="blank" wx:if="{{impBlank}}">
+      <view>
+        <image src="{{impSrc}}"></image>
+        <view class="blank-tip" style="color:#9b9b9b">{{impTip}}</view>
+      </view>
+    </view>
     <view class="ap-list" wx:for="{{commentList}}" wx:key="{{index}}">
       <view>{{item.detail}}</view>
-      <view>匿名评价</view>
+      <view>{{item.customer ? item.customer.nickname : '匿名评价'}}</view>
     </view>
   </view>
 </template>
@@ -37,6 +49,11 @@
   import base from 'common/mixins/base'
   export default class Square extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '服务评价',
       navigationBarBackgroundColor: '#363547',
@@ -44,14 +61,22 @@
     }
 
     data = {
-      starList: [{
+      starList: [],
+      impression: [],
+      commentList: [],
+      impBlank: false,
+      comBlank: false,
+      comSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_impression@2x.png',
+      impSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_evaluate@2x.png',
+      comTip: '暂无印象',
+      impTip: '暂无评价'
+    }
+
+    async load() {
+      let arr = [{
         count: 0,
         percentage: 0,
-        star_level: 4
-      }, {
-        count: 0,
-        percentage: 0,
-        star_level: 3
+        star_level: 1
       }, {
         count: 0,
         percentage: 0,
@@ -59,29 +84,53 @@
       }, {
         count: 0,
         percentage: 0,
-        star_level: 1
+        star_level: 3
       }, {
         count: 0,
         percentage: 0,
-        star_level: 0
-      }],
-      impression: [],
-      commentList: []
-    }
-
-    async load() {
+        star_level: 4
+      }, {
+        count: 0,
+        percentage: 0,
+        star_level: 5
+      }]
+      this.commentList = []
 //    星级评定
       let res = await shop.getStar()
-      let data = await shop.getComment()
       this.loaded()
       if (res.satr.length > 0) {
         res.satr.forEach((item) => {
-          this.starList[item.star_level - 4] = item
+          arr[item.star_level - 1] = item
         })
       }
+      this.starList = arr.reverse()
       this.impression = res.impression
+      if (this.impression.length === 0) {
+        this.comBlank = true
+      } else {
+        this.comBlank = false
+      }
 //    评论内容
-      this.commentList = data
+      this._showComment()
+      this.$apply()
+    }
+
+    async _showComment(page = 1) {
+      let data = {page: page}
+      let res = await shop.getComment(data)
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].detail === '') {
+          res.splice(i, 1)
+          i = i - 1
+        }
+      }
+      this.loaded()
+      this.commentList = this.commentList.concat(res)
+      if (this.commentList.length === 0) {
+        this.impBlank = true
+      } else {
+        this.impBlank = false
+      }
       this.$apply()
     }
 
@@ -104,6 +153,7 @@
       padding-bottom: 7px
     .star-item
       display: flex
+      justify-content: center
       font-size: $font-size-small
       margin-bottom: 9.5px
       image
@@ -111,7 +161,7 @@
         height: 16px
       .stars
         text-align: right
-        width: 36%
+        width: 80px
         margin-right: 5.4px
         transform: translateY(-3px)
       progress
@@ -124,20 +174,21 @@
     font-size: $font-size-medium
     position: relative
     color: $color-text-d
-    padding-left: 20px
+    padding-left: 12px
     line-height: 43px
     &::before
       content: ''
       col-center()
       height: 12px
       width: 4px
-      left: 12px
+      left: 0px
       background: $color-assist-f
 
   .impression, .appraise
     background: $color-white
     margin-top: 10px
     padding-left: 12px
+    min-height: 130px
     .tag
       display: inline-block
       font-size: $font-size-small
@@ -159,5 +210,14 @@
           flex: 2
           text-align: center
           color: $color-text-d
+
+  .blank
+    text-align: center
+    font-size: $font-size-small
+    line-height: 16.5px
+    image
+      width: 26vw
+      height: 21vw
+      margin-bottom: 11.5px
 
 </style>

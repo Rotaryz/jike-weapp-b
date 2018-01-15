@@ -17,22 +17,26 @@
         <view>{{item.count}}</view>
         <view>较前天
           <text>{{item.percentage}}%</text>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-                 wx:if="{{item.trend === 'up'}}"></image>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-                 wx:if="{{item.trend === 'down'}}"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
+            wx:if="{{item.trend === 'up'}}"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
+            wx:if="{{item.trend === 'down'}}"></image>
         </view>
       </view>
     </view>
     <view class="gen-title">
       <view>{{typeList[showType].title}}</view>
       <view>{{typeList[showType].count}}</view>
-      <view>较前天
+      <view>较{{nacList[showNac].day}}
         <text>{{typeList[showType].percentage}}%</text>
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-               wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-               wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
+          wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+        <image
+          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
+          wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
       </view>
     </view>
     <AeraChart></AeraChart>
@@ -46,6 +50,11 @@
   import base from 'common/mixins/base'
   export default class Data extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '数据流量'
     }
@@ -57,13 +66,16 @@
       showType: 'hit',
       nacList: [{
         title: '昨天',
-        type: 'yeaterday'
+        type: 'yeaterday',
+        day: '昨天'
       }, {
         title: '最近7天',
-        type: 'week'
+        type: 'week',
+        day: '前7天'
       }, {
         title: '最近30天',
-        type: 'month'
+        type: 'month',
+        day: '前30天'
       }],
       typeList: [],
       dataList: [],
@@ -103,6 +115,8 @@
   @import "../../common/stylus/mixin"
   page
     background: $color-white
+    max-height: 100%
+    overflow: hidden
 
   view
     box-sizing: border-box
@@ -170,18 +184,18 @@
     border-bottom: 5px solid $color-assist-f
 
   .gen-title
-    margin-top: 26.5px
+    margin-top: 6vw
     display: flex
     flex-direction: column
     view
       text-align: center
       &:nth-child(1)
         font-size: $font-size-medium
-        line-height: 20px
+        line-height: 20 pxx
       &:nth-child(2)
         font-family: 'Impact'
         font-size: $font-size-large-xx
-        line-height: 29px
+        line-height: 7.7vw
         margin: 7.5px 0 4.5px
       &:nth-child(3)
         font-size: $font-size-small
@@ -189,7 +203,7 @@
         position: relative
         display: inline-block
         line-height: 16.5px
-        padding-bottom: 34.5px
+        padding-bottom: 7.4
         text
           color: $color-assist-f
         image

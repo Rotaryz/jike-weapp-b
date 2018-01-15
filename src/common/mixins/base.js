@@ -8,6 +8,21 @@ export default class base extends wepy.mixin {
     Tips.loaded()
   }
 
+  // 分享
+  ShareAppMessage() {
+    return {
+      title: '集客商家助手',
+      path: `/pages/logIn/logIn`,
+      success: async () => {
+        // 转发成功
+      },
+      fail: (res) => {
+        // 转发失败
+        console.log(res)
+      }
+    }
+  }
+
   // 卸载清理
   onUnload() {
     Object.assign(this, this.def)

@@ -3,12 +3,19 @@
     <view class="createAccount-head">
       <view class="createAccount-txt">
         <view class="createAccount-txt-title">手机</view>
-        <input type="number" class="createAccount-txt-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11" bindblur="phoneChange"/>
+        <input type="number"
+               class="createAccount-txt-input {{telTest?'':'error'}}"
+               placeholder="请输入"
+               placeholder-class="createAccount-txt-placeholder" maxlength="11"
+               bindblur="phoneChange"/>
       </view>
 
       <view class="createAccount-txt last">
         <view class="createAccount-txt-title">密码</view>
-        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母组合)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
+        <input type="text" class="createAccount-txt-input" password
+               placeholder="密码(6-16位数字和字母组合)" maxlength="16"
+               placeholder-class="createAccount-txt-placeholder"
+               bindblur="passwordChange"/>
       </view>
 
     </view>
@@ -18,7 +25,8 @@
         <view class="store-msg-picker-title">门店</view>
         <view class="store-msg-picker-right" @tap="showRadioBox">
           <view class="store-msg-picker-txt">{{checkedStore}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow"
+                 src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
         </view>
       </view>
 
@@ -48,6 +56,10 @@
 
   export default class CreateAccount extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '新建账号',

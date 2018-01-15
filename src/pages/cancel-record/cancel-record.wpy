@@ -1,10 +1,10 @@
 <template>
-  <view class="cancle" bindscrolltolower="showMore" scroll-y="true">
+  <view class="cancle">
     <view class="reHeard">
       <view wx:for="{{navList}}" wx:key="{{index}}">{{item.name}}</view>
     </view>
-
-    <scroll-view class="reCon">
+    <Blank></Blank>
+    <scroll-view class="reCon" bindscrolltolower="showMore" scroll-y="true">
       <view wx:for="{{verification}}" wx:key="{{index}}"
             class="re-items {{index % 2 === 0 ? 're-white' :''}}">
         <view class="re-title">{{item.promotion_name}}</view>
@@ -23,8 +23,17 @@
   import wepy from 'wepy'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
+  import Blank from '@/base/blank/blank'
   export default class record extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
+    components = {
+      Blank: Blank
+    }
     config = {
       navigationBarTitleText: '核销记录',
       navigationBarBackgroundColor: '#363547',
@@ -46,9 +55,20 @@
       times: 0
     }
 
+    _showBlank(res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_enroll@2x.png', '还没有核销记录', '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
+    }
+
     async load(page = 1) {
       let data = {page: page}
       let res = await shop.verificationLog(data)
+      this._showBlank(res)
       this.verification = this.verification.concat(res)
       this.$apply()
       this.loaded()
@@ -64,6 +84,7 @@
         if (!this.nothing) {
           this.page++
           let res = await this.load(this.page)
+          this.verification = this.verification.concat(res)
           if (res.length === 0) {
             this.nothing = true
           }
@@ -80,7 +101,7 @@
     box-sizing: border-box
 
   scroll-view
-    max-height: 100vh
+    max-height: 93vh
 
   .reHeard
     height: 39.5px
@@ -90,15 +111,25 @@
     z-index: 1000
     background: $color-theme
     display: flex
+    padding: 0 12px
     view
-      flex: 1
-      text-indent: 12px
       color: $color-white
       font-family: $font-family-light
       font-size: $font-size-medium
       line-height: 39.5px
       &:first-child
         flex: 1.5
+        padding-right: 10px
+      &:nth-child(2)
+        flex: 1
+        padding: 0 12px
+        text-align: center
+      &:nth-child(3)
+        flex: 1
+        padding: 0 12px
+        text-align: center
+      &:last-child
+        width: 61.16px
 
   .reCon
     margin-top: 39.5px
@@ -107,24 +138,40 @@
       font-size: $font-size-small
       text-overflow: ellipsis
       overflow: hidden
-      padding: 0px 12px
+      padding: 0 12px
       .re-title
         no-wrap()
-      view
-        width: 22.22%
+      > view
         height: 45px
         padding-top: 9px
         white-space: nowrap
+        line-height: 16.5px
         &:first-child
-          width: 33.33%
+          flex: 1.5
+          padding-right: 10px
+          no-wrap()
+        &:nth-child(2)
+          flex: 1
+          text-align: center
+          padding: 9px 12px
+          no-wrap()
+        &:nth-child(3)
+          flex: 1
+          text-align: center
+          padding: 9px 12px
+          no-wrap()
         &:last-child
           display: flex
+          width: 61.16px
           flex-direction: column
           text-align: right
           view
-            width: 100%
+            width: 61.16px
+            text-overflow: visiblel
+            overflow: visiblel
             padding-top: 0px
-            line-height: 1
+            padding-right: 0px
+            line-height: 16.5px
           .times
             transform: translateY(-4.5px)
     .re-white

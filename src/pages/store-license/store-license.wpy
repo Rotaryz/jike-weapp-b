@@ -11,14 +11,19 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
-          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}"/>
+          <input type="text" placeholder="输入姓名" bindblur="nameChange"
+                 placeholder-class="store-license-txt-holder"
+                 class="store-license-txt-input" value="{{userName}}"/>
         </view>
       </view>
 
       <view class="store-license-txt">
         <view class="store-license-txt-title">证件号码</view>
         <view class="store-license-txt-right">
-          <input type="idcard" placeholder="输入身份证" bindblur="idChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" maxlength="20" value="{{credentialNumber}}"/>
+          <input type="idcard" placeholder="输入身份证" bindblur="idChange"
+                 placeholder-class="store-license-txt-holder"
+                 class="store-license-txt-input" maxlength="20"
+                 value="{{credentialNumber}}"/>
         </view>
       </view>
     </view>
@@ -30,14 +35,20 @@
       </view>
       <view class="store-license-body-imgBox">
         <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-id_fm@2x.png" class="store-license-imgBC-img"></image>
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-id_fm@2x.png"
+            class="store-license-imgBC-img"></image>
           <image src="{{item.image_url}}" class="store-license-upImg"></image>
-          <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
+          <view class="store-license-imgBtn" @tap="uploadImg({{index}})">
+            {{item.title}}
+          </view>
         </view>
       </view>
     </view>
 
-    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">保存</view>
+    <view class="store-licenseBtn {{images.length?'':'disab'}}"
+          @tap="submitMsg">保存
+    </view>
 
     <Toast></Toast>
   </view>
@@ -53,6 +64,10 @@
 
   export default class StoreLicense extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
 
     config = {
       navigationBarTitleText: '门店证照',
@@ -261,5 +276,5 @@
       border-radius: 2px
 
     .store-licenseBtn.disab
-      background:  $color-btn-dis
+      background: $color-btn-dis
 </style>

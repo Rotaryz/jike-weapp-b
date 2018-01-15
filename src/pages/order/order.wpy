@@ -1,5 +1,5 @@
 <template>
-  <view scroll-y="true" bindscrolltolower="loadMore">
+  <view class="order-box">
     <view class="or-header" wx:if="{{!showInput}}">
       <view>
         <text>服务订单</text>
@@ -26,6 +26,7 @@
       <image
         src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
       <input type="number" placeholder="手机号搜索" bindinput="sreaching"
+             focus="{{showInput}}"
              value="{{searchValue}}" bindblur="bindblurs"/>
     </view>
     <NavHeader>
@@ -34,24 +35,28 @@
         <text>{{item.title}}</text>
       </view>
     </NavHeader>
-    <scroll-view class="order-conpon" style="padding-top:{{paddingTop}}vw">
-      <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
-        <view class="order-top">
-          <view>
-            <view class="order-title">服务名称: {{item.title}}</view>
-            <view class="order-title">手机号码: {{item.customer_phone}}</view>
+    <Blank></Blank>
+    <scroll-view scroll-y="true"
+                 bindscrolltolower="loadMore">
+      <view class="order-conpon">
+        <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
+          <image
+            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
+          <view class="order-top">
+            <view>
+              <view class="order-title">服务名称: {{item.title}}</view>
+              <view class="order-title">手机号码: {{item.customer_phone}}</view>
+            </view>
+            <text>
+              {{navList[navNum].title}}
+            </text>
           </view>
-          <text>
-            {{navList[navNum].title}}
-          </text>
-        </view>
-        <view class="order-bottom">
-          <view>订单号: {{item.order_sn}}</view>
-          <text @tap="showDetail({{item.id}})">
-            查看详情
-          </text>
+          <view class="order-bottom">
+            <view>订单号: {{item.order_sn}}</view>
+            <text @tap="showDetail({{item.id}})">
+              查看详情
+            </text>
+          </view>
         </view>
       </view>
     </scroll-view>
@@ -65,10 +70,8 @@
         <view>总价：
           <text>￥{{datail.total}}</text>
         </view>
+        <view @tap="hideDetail">确定</view>
       </view>
-      <image
-        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png"
-        @tap="hideDetail"></image>
     </view>
   </view>
 </template>
@@ -78,15 +81,22 @@
   import shop from 'api/shop'
   import NavHeader from '@/base/nav-header/nav-header'
   import base from 'common/mixins/base'
+  import Blank from '@/base/blank/blank'
   export default class order extends wepy.page {
     mixins = [base]
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
     config = {
       navigationBarTitleText: '订单管理',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }
     components = {
-      NavHeader: NavHeader
+      NavHeader: NavHeader,
+      Blank: Blank
     }
     data = {
       showDay: false,
@@ -112,6 +122,9 @@
       }, {
         title: '30天',
         type: 'month'
+      }, {
+        title: '全部',
+        type: 'all'
       }],
       showInput: false,
       couponList: [],
@@ -119,8 +132,19 @@
       searchValue: '',
       datail: {},
       page: 1,
-      paddingTop: 0
+      nothing: false
     }
+
+    _showBlank(res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
+    }
+
     methods = {
       hideDetail() {
         this.isDetail = false
@@ -141,8 +165,9 @@
         this.load(this.navNum, this.dayType, '', this.page)
       },
       showMsg(index) {
+        this.nothing = false
         this.navNum = index
-        this.page = 0
+        this.page = 1
         this.load(this.navNum, this.dayType, '', this.page)
       },
       isInput() {
@@ -150,6 +175,9 @@
       },
       sreaching(e) {
         this.searchValue = e.detail.value
+        this.page = 1
+        this.dayType = 'all'
+        this.dayPage = 4
         setTimeout(() => {
           this.load(this.navNum, this.dayType, this.searchValue, this.page)
         }, 1000)
@@ -178,13 +206,10 @@
       } else {
         this.couponList = res
       }
-      if (res.length === 0) {
-        this.paddingTop = 20
-      } else {
-        this.paddingTop = 0
-      }
+      this._showBlank(this.couponList)
       this.loaded()
       this.$apply()
+      return res
     }
 
     async onLoad() {
@@ -196,8 +221,14 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
+  .order-box
+    height: 100vh
+    overflow: hidden
+
   scroll-view
-    max-height: 100vh
+    height: 92vh
+    width: 100%
+    box-sizing: border-box
 
   view
     box-sizing: border-box
@@ -217,17 +248,16 @@
       line-height: 24px
       padding: 0 11px
       border: 1px solid $color-text-d
-      border-radius: 50px
+      border-radius: 4px
       height: 24px
       position: relative
+      color: $color-white
       image
         height: 12px
         width: 12px
         transform: translate(3px, 2px)
       &:first-child
-        color: $color-white
-        background: $color-assist-f
-        border: none
+        color: $color-text-d
       &:last-child
         image
           transform: translate(-3px, 2px)
@@ -267,11 +297,11 @@
       width: 10px
       top: 55%
     input
-      height: 36px
+      height: 32px
       font-size: $font-size-small
       color: $color-white
       padding-left: 26px
-      border-radius: 50px
+      border-radius: 4px
       border: 0.5px solid $color-white
 
   #nav-order
@@ -280,7 +310,7 @@
 
   .order-conpon
     box-sizing: border-box
-    padding: 0 $padding
+    padding: 0 $padding 60px
     .order-item
       margin-top: 10px
       position: relative
@@ -330,8 +360,7 @@
     height: 100vh
     .order-box
       border-radius: 2px
-      max-height: 360px
-      min-height: 200px
+      height: 400px
       width: 265px
       all-center()
       background: $color-white
@@ -349,6 +378,13 @@
           border-top-left-radius: 2px
           background-color: $color-theme
           border-bottom: none
+        &:last-child
+          text-align: center
+          position: absolute
+          border-bottom: none
+          border-top: 0.5px solid $color-split-line
+          bottom: 0
+          width: 100%
     image
       height: 20px
       width: 20px
