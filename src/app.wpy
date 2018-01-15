@@ -6,6 +6,7 @@
   import wepy from 'wepy'
   import 'wepy-async-function'
   import wxUtils from 'common/js/wxUtils'
+  import URIS from 'common/js/config'
 
   export default class extends wepy.app {
     constructor() {
@@ -85,7 +86,8 @@
         'pages/share-prize/share-prize',
         'pages/prize-pool/prize-pool',
         'pages/create-prize/create-prize',
-        'pages/exchange-editor/exchange-editor'
+        'pages/exchange-editor/exchange-editor',
+        'pages/apply/apply'
       ],
       window: {
         backgroundColor: '#363547',
@@ -129,8 +131,8 @@
     }
 
     globalData = {
-      baseUrl: 'http://dev.jike-backend-api.jerryf.cn',
-      baseLogin: 'http://dev.jike-jwt.jerryf.cn',
+      baseUrl: URIS.api,
+      baseLogin: URIS.login,
       isAuthorise: false,
       user: null,
       orderInfo: {}
