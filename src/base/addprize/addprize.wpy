@@ -17,7 +17,7 @@
           <view class="prizeItem-addBox-container">
             <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
             <view class="countBox">
-              <input type="number" class="countBox-input" bindblur="countChange" value="{{prizeCount}}" />
+              <input type="number" class="countBox-input" bindinput="countChange" value="{{prizeCount}}" />
             </view>
             <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
           </view>
@@ -47,7 +47,6 @@
       coverShow: false,
       prizeCount: 0,
       maxNum: 0,
-      NumInput: false,
       prizeList: [],
       prizeCheckedId: null,
       prizeCheckedType: null,
@@ -67,7 +66,6 @@
 
       },
       countChange(e) {
-        this.NumInput = false
         if (e.detail.value > this.maxNum) {
           this.prizeCount = this.maxNum
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
@@ -75,6 +73,7 @@
           this.prizeCount = e.detail.value
         }
         this.$apply()
+        return this.prizeCount
       },
       cancleMsg() {
         this.coverShow = false
@@ -233,7 +232,7 @@
             width: 50px
             height: 18px
             border: 1px solid $color-col-line
-            margin: 0 3px
+            margin: 0 5px
             font-size: $font-size-medium
             display: flex
             align-items: center

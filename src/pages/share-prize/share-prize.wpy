@@ -59,7 +59,7 @@
       </view>
 
       <view class="prizeList">
-        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}">
+        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.type !== 'delete'}}">
           <view class="prizeList-item-left">
             <view class="prizeList-item-name">{{item.promotion_title}}</view>
             <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
@@ -192,7 +192,9 @@
         let data = this._checkId(this.prizeListArr, res.promotion_id, res.promotion_type)
         if (data) {
           data.promotion_stock = data.promotion_stock * 1 + res.promotion_stock * 1
+          data.type = 'add'
         } else {
+          res = Object.assign(res, {type: 'add'})
           this.prizeListArr.push(Object.assign(res))
         }
         let prizePollData = this._checkId(this.prizePollList, res.promotion_id, res.promotion_type)
@@ -201,6 +203,11 @@
       },
       confirm() {
         let data = this._checkId(this.prizeListArr, this.delPrizeItem.promotion_id, this.delPrizeItem.promotion_type)
+        data.type = 'delete'
+        if (data.promotion_stock * 1 === 0) {
+          this.$apply()
+          return
+        }
         let prizePollData = this._checkId(this.prizePollList, data.promotion_id, data.promotion_type)
         if (prizePollData) {
           prizePollData.promotion_stock = prizePollData.promotion_stock * 1 + data.promotion_stock * 1
@@ -208,7 +215,6 @@
           this.prizePollList.push(Object.assign({}, data))
         }
         data.promotion_stock = 0
-        data.type = 'delete'
         this.$apply()
       }
     }
