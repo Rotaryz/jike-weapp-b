@@ -341,13 +341,13 @@
       },
       async setText(index) {
         await wepy.navigateTo({
-          url: '../compile/compile?index=' + index
+          url: '/pages/compile/compile?index=' + index
         })
         this.$parent.globalData.fontText = this.contentList[index].text
       },
       async addCoupon(num) {
         await wepy.navigateTo({
-          url: '../choice-coupon/choice-coupon?index=' + num
+          url: '/pages/choice-coupon/choice-coupon?index=' + num
         })
       },
       delItem(num) {
@@ -363,7 +363,7 @@
         } else {
           let res = null
 
-          if (this.addType === '2') {
+          if (this.addType) {
             Object.assign(this.allMsg, {title: this.title},
               {'content_details': this.changeList, delete_ids: this.delete_ids})
             res = await content.merchantDetail(this.conId, this.allMsg)
@@ -373,8 +373,8 @@
           }
           this.loaded()
           if (res.error === 0) {
-            await wepy.navigateTo({
-              url: '/pages/content/content?show=1'
+            await wepy.redirectTo({
+              url: '/pages/content/content?show=' + this.addType
             })
           } else {
             this.$invoke('Toast', 'show', '发布失败，请重试')
@@ -404,7 +404,6 @@
     }
 
     onShow() {
-//      console.log(this.$parent.globalData.fontText)
       const DATA = {
         'id': 0,
         'type': 1,
@@ -424,7 +423,8 @@
         } else {
           this.contentList[index - 1].showAdds = false
         }
-        this.contentList[index].text = this.$parent.globalData.fontText
+        this.contentList[index].text = this.$parent.globalData.fontText ===
+        ' ' ? '' : this.$parent.globalData.fontText
         this.$parent.globalData.fontText = null
         this.upDateList(this.contentList[index])
       } else if (this.$parent.globalData.coupon &&
@@ -449,7 +449,7 @@
     async onLoad(options) {
       this.addType = options.status
       this.conId = options.id
-      if (options.status === '2') {
+      if (options.status) {
 //       编辑
         let res = await content.contentDetail(options.id)
         this.imgSrc = res['image_url']

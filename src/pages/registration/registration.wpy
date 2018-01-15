@@ -304,7 +304,7 @@
         if (value > number) {
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
           this.addNum = number
-          this.$apply()
+//          return this.addNum
         } else {
           this.addNum = value
         }
@@ -393,7 +393,6 @@
       },
 //      选择红包
       selRed(index) {
-        console.log(this.paizrList)
         this.redPack[this.numTimes]['promotion_stock'] =
           this.redPack[this.numTimes]['promotion_stock'] + this.paizrList[this.record]['addNum']
         this.oldNum = this.numTimes
@@ -411,7 +410,9 @@
           this.numTimes = index
           if (index === this.paizrList[this.record]['record']) {
             this.addNum = this.paizrList[this.record]['addNum']
+            this.paizrList[this.record]['addNum'] = 0
           } else {
+            this.paizrList[this.record]['addNum'] = 0
             this.addNum = 0
           }
         }
@@ -420,7 +421,6 @@
       addReds() {
         let number = this.redPack[this.numTimes]['promotion_stock'] +
           this.addNum
-        console.log(number)
         if (this.addNum < number) {
           this.addNum++
           this.redPack[this.numTimes]['promotion_stock'] = this.redPack[this.numTimes]['promotion_stock'] - 1
@@ -501,7 +501,6 @@
               seventh_redpacket: this.redPack[this.paizrList[2].record]
             })
           let res = null
-          console.log(this.id)
           if (this.id !== -1) {
             res = await regist.putData(this.id, allMsg)
           } else {
@@ -541,18 +540,12 @@
         this.redPack.forEach((item, idx) => {
           if (item.promotion_id === res.first_redpacket.promotion_id) {
             res.first_redpacket.index = idx
-            item.promotion_stock = item.promotion_stock -
-              res.first_redpacket.promotion_stock * 1
           }
           if (item.promotion_id === res.third_redpacket.promotion_id) {
             res.third_redpacket.index = idx
-            item.promotion_stock = item.promotion_stock -
-              res.third_redpacket.promotion_stock * 1
           }
           if (item.promotion_id === res.seventh_redpacket.promotion_id) {
             res.seventh_redpacket.index = idx
-            item.promotion_stock = item.promotion_stock -
-              res.seventh_redpacket.promotion_stock * 1
           }
         })
         this.paizrList[0] = {
@@ -640,7 +633,7 @@
             height: 100%
             width: 100%
             top: 0
-            z-index: 120
+            z-index: 10
             bottom: 0
           cover-view
             width: 100%

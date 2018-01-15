@@ -54,10 +54,10 @@
 
     config = {
       pages: [
-        'pages/create-content/create-content',
-        'pages/content/content',
-        'pages/live/live',
         'pages/registration/registration',
+        'pages/live/live',
+        'pages/content/content',
+        'pages/create-content/create-content',
         'pages/shop/shop',
         'pages/business/business',
         'pages/data/data',
