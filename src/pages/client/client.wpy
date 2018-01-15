@@ -32,13 +32,21 @@
       <AeraChart></AeraChart>
     </view>
     <view class="client-list" wx:if="{{navNum === 1}}">
-      <view class="client-item" wx:for="{{customerList}}" wx:key="{{index}}">
+      <view class="blank" wx:if="{{comBlank}}">
         <view>
-          <image src="{{item.avatar_url}}"></image>
-          <text>{{item.nickname}}</text>
+          <image src="{{comSrc}}"></image>
+          <view class="blank-tip" style="color:#9b9b9b">{{comTip}}</view>
         </view>
-        <view>{{item.created_at}}</view>
       </view>
+      <scroll-view scroll-y bindscrolltolower="showMore">
+        <view class="client-item" wx:for="{{customerList}}" wx:key="{{index}}">
+          <view>
+            <image src="{{item.avatar_url}}"></image>
+            <text>{{item.nickname}}</text>
+          </view>
+          <view>{{item.created_at}}</view>
+        </view>
+      </scroll-view>
     </view>
     <view class="client-picture" wx:if="{{navNum === 2}}">
       <view class="client-pia">
@@ -64,7 +72,13 @@
         <view class="picture-title">城市分布
           <text>TOP10</text>
         </view>
-        <view class="city-item city-title">
+        <view class="blank" wx:if="{{impBlank}}">
+          <view>
+            <image src="{{impSrc}}"></image>
+            <view class="blank-tip" style="color:#9b9b9b">{{impTip}}</view>
+          </view>
+        </view>
+        <view class="city-item city-title" wx:if="{{!impBlank}}">
           <view>排名</view>
           <view>城市</view>
           <view>用户数</view>
@@ -110,6 +124,12 @@
     data = {
       navNum: 0,
       showTime: 0,
+      impBlank: false,
+      comBlank: false,
+      comSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_customer@2x.png',
+      impSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_city@2x.png',
+      comTip: '暂无客户',
+      impTip: '暂无数据',
       dayList: [{
         title: '昨天',
         time: 'yesterday'
@@ -131,12 +151,28 @@
       customerTrend: [],
       customerList: [],
       customerCity: [],
-      customerSex: [],
-      cityIcon: ['http://jike-file.jerryf.cn/defaults/b-image/page/icon-first@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-second@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-third@2x.png']
+      customerSex: [{
+        name: '男',
+        data: 0,
+        percentage: 0
+      }, {
+        name: '女',
+        data: 0,
+        percentage: 0
+      }, {
+        name: '未知',
+        data: 0,
+        percentage: 0
+      }],
+      nothing: false,
+      page: 1,
+      cityIcon: ['http://jike-file.jerryf.cn/defaults/b-image/page/icon-first.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-second@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-no3@2x.png']
     }
 
     async _showMsg(num, time = 'yesterday') {
       this.navNum = num
+      this.nothing = false
+      this.page = 1
       if (num === 0) {
         let data = {time: time}
         let res = await shop.customerTrend(data)
@@ -145,11 +181,17 @@
       } else if (num === 1) {
         let res = await shop.customerList()
         this.customerList = res
+        if (this.customerList.length === 0) {
+          this.comBlank = true
+        }
       } else if (num === 2) {
         let res = await shop.customerSex()
         this.customerSex = res
         let city = await shop.customerCity()
         this.customerCity = city
+        if (this.customerCity.length === 0) {
+          this.impBlank = true
+        }
         this.$com.Pie.$wxpage.infoPie(res)
       }
       this.loaded()
@@ -163,8 +205,20 @@
       },
       showMsg(num) {
         this._showMsg(num)
+      },
+      async showMore() {
+        if (!this.nothing) {
+          this.page++
+          if (this.page > 1) {
+            let res = await shop.customerList({page: this.page})
+            this.loaded()
+            this.customerList = this.customerList.concat(res)
+            if (res.length === 0) {
+              this.nothing = true
+            }
+          }
+        }
       }
-
     }
 
     async onLoad() {
@@ -182,151 +236,166 @@
     width: 100%
     overflow-x: hidden
 
+  scroll-view
+    height: 93vh
+
   view
     box-sizing: border-box
 
-  .general
-    text-align: center
-    background: $color-white
-    padding-bottom: 34.5px
-    .choice-time
-      display: flex
-      justify-content: center
-      padding: 20px 0 31.5px
-      view
-        font-size: $font-size-small-s
-        height: 27px
-        padding: 6.5px 4.5px
-        border: 0.5px solid $color-theme
-        &:first-child
-          padding: 6.5px 12.5px
-          border-top-left-radius: 2px
-          border-bottom-left-radius: 2px
-          border-right: none
-        &:last-child
-          border-top-right-radius: 2px
-          border-bottom-right-radius: 2px
-          border-left: none
-      .active
-        background: $color-theme
-        color: $color-white
-    .gen-title
-      view
-        &:nth-child(1)
-          font-size: $font-size-medium
-          line-height: 20px
-        &:nth-child(2)
-          font-family: 'Impact'
-          font-size: $font-size-large-xx
-          line-height: 29px
-          margin: 7.5px 0 4.5px
-        &:nth-child(3)
-          font-size: $font-size-small
-          font-family: $font-family-regular
-          position: relative
-          display: inline-block
-          line-height: 16.5px
-          padding-bottom: 34.5px
-          text
-            color: $color-assist-f
-          image
-            position: absolute
-            right: -12px
-            top: 4px
-            height: 10px
-            width: 10px
-
-  .client-list
-    .client-item
-      display: flex
-      justify-content: space-between
-      height: 43px
-      align-items: center
+    .general
+      text-align: center
       background: $color-white
-      font-size: $font-size-small
-      padding: 0 12px
-      border-bottom: 0.5px solid $color-split-line
-      view
-        &:first-child
-          position: relative
-          text
-            margin-left: 33px
-          image
-            width: 24px
-            height: 24px
-            border-radius: 50%
-            left: 0
-            col-center()
-
-  .picture-title
-    font-size: $font-size-medium
-    height: 43.5px
-    line-height: 43.5px
-    border-bottom: 0.5px solid $color-split-line
-    position: relative
-    text-indent: 5px
-    &::before
-      content: ''
-      col-center()
-      height: 14px
-      width: 5px
-      left: -3.5px
-      background-color: $color-assist-f
-
-  .client-picture
-    color: $color-text
-    text
-      color: $color-text-d
-      margin-left: 9px
-      font-size: $font-size-small
-    > view
+      padding-bottom: 34.5px
+      height: 145vw
+      overflow-y: hidden
       background: $color-white
-      padding: 0 0 0 $padding
-      .pic-pie
+      .choice-time
         display: flex
-        .pie-con
-          transform: translateX(-40px)
-          flex: 2
-          font-size: $font-size-small
-          padding-top: 36px
-          .pie-title
-            padding-bottom: 10.5px
-            view
-              color: $color-text-d
-          .pie-item
-            margin-bottom: 8.5px
+        justify-content: center
+        padding: 20px 0 31.5px
+        view
+          font-size: $font-size-small-s
+          height: 27px
+          padding: 6.5px 4.5px
+          border: 0.5px solid $color-theme
+          &:first-child
+            padding: 6.5px 12.5px
+            border-top-left-radius: 2px
+            border-bottom-left-radius: 2px
+            border-right: none
+          &:last-child
+            border-top-right-radius: 2px
+            border-bottom-right-radius: 2px
+            border-left: none
+        .active
+          background: $color-theme
+          color: $color-white
+      .gen-title
+        view
+          &:nth-child(1)
+            font-size: $font-size-medium
+            line-height: 20px
+          &:nth-child(2)
+            font-family: 'Impact'
+            font-size: $font-size-large-xx
+            line-height: 29px
+            margin: 7.5px 0 4.5px
+          &:nth-child(3)
+            font-size: $font-size-small
+            font-family: $font-family-regular
             position: relative
-            color: $color-text
-            .pie-ico
-              width: 6px
-              height 6px
-              border-radius: 2px
-              col-center()
-              left: 0
-          > view
-            display: flex
-            view
-              flex: 1
-              text-align: center
+            display: inline-block
+            line-height: 16.5px
+            padding-bottom: 34.5px
+            text
+              color: $color-assist-f
+            image
+              position: absolute
+              right: -12px
+              top: 4px
+              height: 10px
+              width: 10px
 
-    .client-city
-      margin-top: 10px
-      .city-item
+    .client-list
+      .client-item
         display: flex
-        font-size: $font-size-small
-        height: 39px
+        justify-content: space-between
+        height: 43px
         align-items: center
+        background: $color-white
+        font-size: $font-size-small
+        padding: 0 12px
         border-bottom: 0.5px solid $color-split-line
-        padding-left: 4px
-        image
-          width: 14.5px
-          height: 24px
         view
-          flex: 1
-      .city-title
-        view
-          color: $color-text-d
-          padding-left: 0px
+          &:first-child
+            position: relative
+            text
+              margin-left: 33px
+            image
+              width: 24px
+              height: 24px
+              border-radius: 50%
+              left: 0
+              col-center()
 
+    .picture-title
+      font-size: $font-size-medium
+      height: 43.5px
+      line-height: 43.5px
+      border-bottom: 0.5px solid $color-split-line
+      position: relative
+      text-indent: 5px
+      &::before
+        content: ''
+        col-center()
+        height: 14px
+        width: 5px
+        left: -3.5px
+        background-color: $color-assist-f
+
+    .client-picture
+      color: $color-text
+      text
+        color: $color-text-d
+        margin-left: 9px
+        font-size: $font-size-small
+      > view
+        background: $color-white
+        padding: 0 0 0 $padding
+        .pic-pie
+          display: flex
+          .pie-con
+            transform: translateX(-40px)
+            flex: 2
+            font-size: $font-size-small
+            padding-top: 36px
+            .pie-title
+              padding-bottom: 10.5px
+              view
+                color: $color-text-d
+            .pie-item
+              margin-bottom: 8.5px
+              position: relative
+              color: $color-text
+              .pie-ico
+                width: 6px
+                height 6px
+                border-radius: 2px
+                col-center()
+                left: -6px
+            > view
+              display: flex
+              view
+                flex: 1
+                text-align: center
+
+      .client-city
+        margin-top: 10px
+        .city-item
+          display: flex
+          font-size: $font-size-small
+          height: 39px
+          align-items: center
+          border-bottom: 0.5px solid $color-split-line
+          padding-left: 4px
+          image
+            width: 20px
+            height: 20px
+          view
+            flex: 1
+        .city-title
+          view
+            color: $color-text-d
+            padding-left: 0px
+
+    .blank
+      text-align: center
+      font-size: $font-size-small
+      line-height: 16.5px
+      margin-top: 57.5px
+      image
+        width: 26vw
+        height: 21vw
+        margin-bottom: 11.5px
 
 </style>

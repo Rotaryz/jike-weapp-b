@@ -12,6 +12,7 @@
         <view class="line"></view>
       </view>
     </view>
+    <Blank></Blank>
     <view class="container" wx:if="{{tabIndex === 0}}">
       <repeat for="{{willOnLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
@@ -51,7 +52,8 @@
       <repeat for="{{onLines}}" index="index" key="index" item="item">
         <view class="coupon-item">
           <view class="image-wrapper">
-            <image class="full-image" src="./pic-couponbg@2x.png"></image>
+            <image class="full-image"
+                   src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-couponbg@2x.png"></image>
           </view>
           <view class="content-wrapper">
             <view class="desc-wrapper">
@@ -116,7 +118,9 @@
       </repeat>
     </view>
     <view class="create-service border-top-1px">
-      <navigator url="/pages/service-controller/service-controller" class="btn">
+      <navigator
+        url="http://jike-file.jerryf.cn/defaults/b-image/page/service-controller"
+        class="btn">
         新建服务
       </navigator>
     </view>
@@ -129,7 +133,7 @@
   import Coupons from 'api/coupons'
   import Confirm from '@/base/confirm/confirm'
   import base from 'common/mixins/base'
-
+  import Blank from '@/base/blank/blank'
   const TABS = ['待上线', '已上线', '已下线']
 
   export default class ServiceManage extends wepy.page {
@@ -156,6 +160,16 @@
       await this.getCouponList(0)
     }
 
+    _showBlank(res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_package@2x.png', '暂无数据', '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
+    }
+
     async getCouponList() {
       const res = await Coupons.getCouponList({status: this.tabIndex})
       switch (this.tabIndex) {
@@ -171,6 +185,7 @@
         default:
           break
       }
+      this._showBlank(res)
       this.$apply()
       this.loaded()
     }
@@ -182,6 +197,16 @@
         if ((this.tabIndex === 0 && this.willOnLines.length === 0) || (this.tabIndex === 1 && this.onLines.length === 0) || (this.tabIndex === 2 && this.offLines.length === 0)) {
           this.getCouponList()
         }
+        if (this.willOnLines.length > 0 && this.tabIndex === 0) {
+          this._showBlank(this.willOnLines)
+          return false
+        } else if (this.onLines.length > 0 && this.tabIndex === 1) {
+          this._showBlank(this.onLines)
+          return false
+        } else if (this.offLines.length > 0 && this.tabIndex === 2) {
+          this._showBlank(this.offLines)
+          return false
+        }
       },
       showConfirm(id) {
         this.deleteId = id
@@ -189,7 +214,6 @@
       },
       async delete() {
         const res = await Coupons.deleteCoupon(this.deleteId)
-        console.log(res)
         this.getCouponList()
       },
       edit(id) {
@@ -198,7 +222,8 @@
     }
 
     components = {
-      'confirm': Confirm
+      'confirm': Confirm,
+      Blank: Blank
     }
 
     config = {

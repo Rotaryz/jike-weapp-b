@@ -77,9 +77,9 @@ export default class shop extends base {
    * 客户列表
    * @returns {Promise.<*>}
    */
-  static async customerList() {
+  static async customerList(data) {
     const url = `${this.baseUrl}/api/merchants/customer-list`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**

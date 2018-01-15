@@ -91,7 +91,7 @@
       pageTitle: '',
       allNum: 0,
       page: 1,
-      nothing: false,
+      nothing: false
     }
 
     async _checkBusiness(data) {
@@ -232,6 +232,15 @@
     }
 
     async onLoad(options) {
+      this.conList = [{
+        'shop_name': '全部',
+        'merchant_id': '',
+        'start_showed_at': ''
+      }]
+      this.navList = [{
+        name: '全部',
+        id: ''
+      }]
       let data = await this._checkBusiness({})
       let res = await shop.industries()
       this.loaded()
@@ -276,7 +285,7 @@
       font-family: $font-family-light
       color: $color-white
       font-size: $font-size-medium
-      padding: 0 8px
+      min-width: 44px
       text-align: center
       line-height: 26px
       text
@@ -326,7 +335,7 @@
         width: 24px
         border-radius: 50%
         margin-bottom: 0
-        border :0.5px solid $color-split-line
+        border: 0.5px solid $color-split-line
         transform: translateY(6px)
       view
         no-wrap()

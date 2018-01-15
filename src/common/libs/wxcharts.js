@@ -20,7 +20,7 @@ var config = {
   columePadding: 3,
   fontSize: 10,
   dataPointShape: ['circle', 'diamond', 'triangle', 'rect'],
-  colors: ['rgba(255,78,0,.2)', '#00C4E2', '#FF4E00', '#363547', '#f15c80', '#8085e9'],
+  colors: ['rgba(255,78,0,.2)', '#00C4E2', '#FF4E00', '#363547', '#F3F3F3', '#f15c80', '#8085e9'],
   pieChartLinePadding: 25,
   pieChartTextPadding: 15,
   xAxisTextPadding: 3,
@@ -581,6 +581,10 @@ function getPieDataPoints(series) {
     item.data = item.data === null ? 0 : item.data;
     count += item.data;
   });
+  if (series.length === 1) {
+    series[0].color = '#F3F3F3'
+  }
+  // console.log(series)
   series.forEach(function (item) {
     item.data = item.data === null ? 0 : item.data;
     item._proportion_ = item.data / count * process;
@@ -1932,7 +1936,6 @@ Event.prototype.trigger = function () {
       try {
         listener.apply(null, params);
       } catch (e) {
-        console.error(e);
       }
     });
   }

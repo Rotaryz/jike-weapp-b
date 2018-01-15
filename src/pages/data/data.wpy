@@ -29,7 +29,7 @@
     <view class="gen-title">
       <view>{{typeList[showType].title}}</view>
       <view>{{typeList[showType].count}}</view>
-      <view>较前天
+      <view>较{{nacList[showNac].day}}
         <text>{{typeList[showType].percentage}}%</text>
         <image
           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
@@ -66,13 +66,16 @@
       showType: 'hit',
       nacList: [{
         title: '昨天',
-        type: 'yeaterday'
+        type: 'yeaterday',
+        day: '昨天'
       }, {
         title: '最近7天',
-        type: 'week'
+        type: 'week',
+        day: '前7天'
       }, {
         title: '最近30天',
-        type: 'month'
+        type: 'month',
+        day: '前30天'
       }],
       typeList: [],
       dataList: [],

@@ -2,7 +2,7 @@
   <view class="compile">
       <textarea name="compile" id="" auto-height auto-focus
                 placeholder="请输入" bindconfirm="confirm"
-                value="{{vaule}}"></textarea>
+                value="{{vaule}}" textarea="1000"></textarea>
   </view>
 </template>
 
@@ -34,14 +34,35 @@
       this.index = options.index * 1
       this.$apply()
     }
+
+    onShow() {
+
+//      console.log(this.$parent.globalData.fontText)
+      this.$apply()
+    }
+
+    computed = {
+      values(){
+        this.value = this.$parent.globalData.fontText !== null ? this.$parent.globalData.fontText : ''
+        return this.value
+      }
+
+    }
   }
 </script>
 
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+  page
+    background: $color-white
+
+  .compile
+    width: 100vw
+    overflow-x: hidden
+
   textarea
-    width: 100%
+    width: 100vw
     font-size: $font-size-small
     padding: $padding 0 0 $padding
     min-height: 100px

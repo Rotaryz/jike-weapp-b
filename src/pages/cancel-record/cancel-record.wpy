@@ -3,7 +3,7 @@
     <view class="reHeard">
       <view wx:for="{{navList}}" wx:key="{{index}}">{{item.name}}</view>
     </view>
-
+    <Blank></Blank>
     <scroll-view class="reCon" bindscrolltolower="showMore" scroll-y="true">
       <view wx:for="{{verification}}" wx:key="{{index}}"
             class="re-items {{index % 2 === 0 ? 're-white' :''}}">
@@ -23,6 +23,7 @@
   import wepy from 'wepy'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
+  import Blank from '@/base/blank/blank'
   export default class record extends wepy.page {
     mixins = [base]
 
@@ -30,6 +31,9 @@
       this.ShareAppMessage()
     }
 
+    components = {
+      Blank: Blank
+    }
     config = {
       navigationBarTitleText: '核销记录',
       navigationBarBackgroundColor: '#363547',
@@ -51,9 +55,20 @@
       times: 0
     }
 
+    _showBlank(res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_enroll@2x.png', '还没有核销记录', '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
+    }
+
     async load(page = 1) {
       let data = {page: page}
       let res = await shop.verificationLog(data)
+      this._showBlank(res)
       this.verification = this.verification.concat(res)
       this.$apply()
       this.loaded()
@@ -69,6 +84,7 @@
         if (!this.nothing) {
           this.page++
           let res = await this.load(this.page)
+          this.verification = this.verification.concat(res)
           if (res.length === 0) {
             this.nothing = true
           }
@@ -125,7 +141,7 @@
       padding: 0 12px
       .re-title
         no-wrap()
-      >view
+      > view
         height: 45px
         padding-top: 9px
         white-space: nowrap
@@ -152,7 +168,7 @@
           view
             width: 61.16px
             text-overflow: visiblel
-            overflow :visiblel
+            overflow: visiblel
             padding-top: 0px
             padding-right: 0px
             line-height: 16.5px
