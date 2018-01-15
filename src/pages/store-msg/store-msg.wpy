@@ -28,7 +28,7 @@
         <view class="store-msg-picker-title">行业类型</view>
         <view class="store-msg-picker-right" @tap="industryChiose">
           <view class="store-msg-picker-txt">{{industryName}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
     </view>
@@ -39,7 +39,7 @@
         <picker mode="region" bindchange="bindRegionChange" value="{{region}}" class="sitebox">
           <view class="store-msg-picker-right">
             <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
-            <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -50,7 +50,7 @@
         <picker bindchange="areaChange" value="{{index}}" range="{{areaArr}}" range-key="name">
           <view class="store-msg-picker-right">
             <view class="store-msg-picker-txt">{{area}}</view>
-            <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -84,7 +84,7 @@
         <view class="store-msg-picker-title">营业状态</view>
         <view class="store-msg-picker-right" @tap="showRadio">
           <view class="store-msg-picker-txt">{{storeStatusTxt}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
@@ -96,14 +96,14 @@
               <picker mode="time" value="{{hourBegin}}" start="00:00" end="{{hourEnd}}" bindchange="hourBeginChange">
                 <view class="prize-picker-txt-time-title">{{hourBegin?hourBegin:'开始时间'}}</view>
               </picker>
-              <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+              <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
             </view>
             <view class="prize-picker-txt-middle">至</view>
             <view class="prize-picker-txt-time">
               <picker mode="time" value="{{hourEnd}}" start="{{hourBegin}}" end="23:59" bindchange="hourEndChange">
                 <view class="prize-picker-txt-time-title">{{hourEnd?hourEnd:'结束时间'}}</view>
               </picker>
-              <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+              <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
             </view>
           </view>
         </view>
@@ -113,7 +113,7 @@
         <view class="prize-picker-title">每周营业时间</view>
         <view class="prize-picker-right-dotted" @tap="showTimeCover">
           <view class="prize-picker-txt">{{weekShowTxt}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
@@ -122,9 +122,9 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl}}"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="store-msg-logo-img" @tap="uploadlogo" wx:if="{{!logoUrl && imageUrlHead}}"></image>
               <image src="{{logoUrl}}" class="store-msg-logo-imgupdate" wx:if="{{logoUrl}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{logoUrl}}" @tap="dellogo"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" class="store-msg-logo-cancle" wx:if="{{logoUrl && imageUrlHead}}" @tap="dellogo"></image>
             </view>
           </view>
           <view class="store-msg-logo-txt">建议上传宽200px,高200px,200k以下的图片</view>
@@ -136,9 +136,9 @@
         <view class="store-msg-logo-right">
           <view class="store-msg-logo-box">
             <view class="store-msg-logo-imgBox" wx:for="{{storeImgs}}" wx:key="{{item}}">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="store-msg-logo-img" wx:if="{{!item.image_url}}" @tap="uploadStoreImg({{index}})"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="store-msg-logo-img" wx:if="{{!item.image_url && imageUrlHead}}" @tap="uploadStoreImg({{index}})"></image>
               <image src="{{item.image_url}}" class="store-msg-logo-imgupdate" wx:if="{{item.image_url}}"></image>
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" class="store-msg-logo-cancle" wx:if="{{item.image_url}}" @tap="delStoreImg({{index}})"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" class="store-msg-logo-cancle" wx:if="{{item.image_url && imageUrlHead}}" @tap="delStoreImg({{index}})"></image>
             </view>
           </view>
 
@@ -158,7 +158,7 @@
               <view class="radioBox-list-item" wx:for="{{weekValue}}" wx:key="{{item}}">
                 <label class="radioLabel {{item.checked?'active':''}}">
                   <checkbox value="{{item.value}}" checked="{{item.checked}}" hidden="true" />{{item.txt}}
-                  <image class="radio-Icon" src="{{item.checked?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+                  <image wx:if="{{imageUrlHead}}" class="radio-Icon" src="{{imageUrlHead + (item.checked?'/defaults/b-image/page/icon-select@2x.png':'/defaults/b-image/page/icon-checkbox@2x.png')}}"></image>
                 </label>
               </view>
             </checkbox-group>
@@ -195,6 +195,7 @@
   import users from '@/common/mixins/users'
   import Upload from '@/api/uploads'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class StoreMsg extends wepy.page {
     mixins = [base, users]
@@ -214,6 +215,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       Induring: '',
       showMap: true,
       name: '',
@@ -495,7 +497,7 @@
         }
       },
       async uploadlogo() {
-        let res = await wepy.chooseImage()
+        let res = await wepy.chooseImage({sizeType: ['compressed']})
         if (!res) {
           return
         }
@@ -511,7 +513,7 @@
         this.$apply()
       },
       async uploadStoreImg(idx) {
-        let res = await wepy.chooseImage()
+        let res = await wepy.chooseImage({sizeType: ['compressed']})
         if (!res) {
           return
         }

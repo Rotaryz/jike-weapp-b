@@ -18,7 +18,7 @@
         <view class="store-msg-picker-title">门店</view>
         <view class="store-msg-picker-right" @tap="showRadioBox">
           <view class="store-msg-picker-txt">{{checkedStore}}</view>
-          <image class="store-msg-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+          <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
@@ -45,6 +45,7 @@
   import CheckBox from '@/base/checkbox/checkbox'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
 
   export default class CreateAccount extends wepy.page {
     mixins = [base]
@@ -62,6 +63,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       storeList: [],
       checkedStore: '',
       checkedStoreId: '',

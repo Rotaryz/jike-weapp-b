@@ -1,7 +1,7 @@
 <template>
   <view class="coupon">
     <view class="couponList-item-head-container" @tap="handleClick({{coupon.id ? coupon.id : coupon.promotion.id}})">
-      <image class="coupon-bc" src="http://jike-file.jerryf.cn/defaults/c-image/mine/pic-couponbg@2x.png"></image>
+      <image class="coupon-bc" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/pic-couponbg@2x.png'}}"></image>
       <view class="couponList-item-head-left">
         <view class="border-line" wx:if="{{border!=='no'}}"></view>
         <view class="couponList-itemPay">
@@ -17,8 +17,8 @@
       <view class="couponList-item-head-right">
         <view class="checked-wrapper" wx:if="{{type === 'checked'}}">
           <view class="radio {{!coupon.checked ? 'unselected' : ''}}">
-            <image wx:if="{{coupon.checked}}"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"
+            <image wx:if="{{coupon.checked && imageUrlHead}}"
+                   src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"
                    class="full-image"></image>
           </view>
         </view>
@@ -34,6 +34,7 @@
 
 <script>
   import wepy from 'wepy'
+  import URIS from 'common/js/config'
 
   export default class Coupon extends wepy.component {
     props = {
@@ -50,6 +51,10 @@
         type: String,
         default: 'no'
       }
+    }
+
+    data = {
+      imageUrlHead: URIS.image
     }
 
     methods = {

@@ -30,7 +30,7 @@
       </view>
       <view class="store-license-body-imgBox">
         <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-id_fm@2x.png" class="store-license-imgBC-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-id_fm@2x.png'}}" class="store-license-imgBC-img"></image>
           <image src="{{item.image_url}}" class="store-license-upImg"></image>
           <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
         </view>
@@ -50,6 +50,7 @@
   import Upload from '@/api/uploads'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class StoreLicense extends wepy.page {
     mixins = [base]
@@ -66,6 +67,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       storeMsg: null,
       credentialType: '身份证',
       credentialNumber: '',

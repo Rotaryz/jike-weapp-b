@@ -9,17 +9,17 @@
               <view class="prizeItem-name">{{item.promotion_title}}</view>
               <view class="prizeItem-count">剩余{{item.promotion_stock}}个</view>
             </view>
-            <image @tap="checkedPrize({{item}}, {{index}})" src="{{index===prizeCheckedIdx?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeItem-checkImg"></image>
+            <image @tap="checkedPrize({{item}}, {{index}})" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (index===prizeCheckedIdx?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="prizeItem-checkImg"></image>
           </view>
         </view>
         <view class="prizeItem-addBox border-top-1px">
           <view class="prizeItem-addBox-gray">添加数量</view>
           <view class="prizeItem-addBox-container">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="subCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-reduce@2x.png'}}" class="subBtn" @tap="subCount"></image>
             <view class="countBox">
               <input type="number" class="countBox-input" bindinput="countChange" value="{{prizeCount}}" />
             </view>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="addCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-plus@2x.png'}}" class="addBtn" @tap="addCount"></image>
           </view>
         </view>
       </view>
@@ -38,11 +38,13 @@
   import wepy from 'wepy'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
 
   export default class AddPrize extends wepy.component {
     mixins = [base]
 
     data = {
+      imageUrlHead: URIS.image,
       NumShow: false,
       coverShow: false,
       prizeCount: 0,

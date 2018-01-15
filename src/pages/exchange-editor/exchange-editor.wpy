@@ -10,7 +10,7 @@
               <view class="prizeType-list-item-msg">商家将优惠的服务和商品</view>
               <view class="prizeType-list-item-msg">免费做奖品给客户</view>
             </view>
-            <image src="{{temporaryPrizeType===1?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/radio@2x.png'}}" class="prizeType-list-item-check"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (temporaryPrizeType===1?'/defaults/b-image/page/icon-selected@2x.png':'/defaults/b-image/page/radio@2x.png')}}" class="prizeType-list-item-check"></image>
           </view>
         </view>
 
@@ -26,7 +26,7 @@
         <view class="prize-picker-title">奖品类型</view>
         <view class="prize-picker-right" @tap="showTypeCover">
           <view class="prize-picker-txt">{{prizeTypeTxt}}</view>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="prize-picker-arrow"></image>
+          <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
 
@@ -48,14 +48,14 @@
                 <picker mode="date" value="{{beginTime}}" start="{{nowDate}}" end="{{endTime}}" bindchange="beginTimeChange">
                   <view class="prize-picker-txt-time-title">{{beginTime?beginTime:'开始时间'}}</view>
                 </picker>
-                <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+                <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
               <view class="prize-picker-txt-middle">至</view>
               <view class="prize-picker-txt-time">
                 <picker mode="date" value="{{endTime}}" start="{{beginTime}}" end="2025-09-01" bindchange="endTimeChange">
                   <view class="prize-picker-txt-time-title">{{endTime?endTime:'结束时间'}}</view>
                 </picker>
-                <image class="prize-picker-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png"></image>
+                <image class="prize-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
             </view>
           </view>
@@ -65,9 +65,9 @@
           <view class="prize-picker-title">奖品图片</view>
           <view class="exBox-imgBox-right">
             <view class="exBox-imgBox-right-imgOuter">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add.png" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl}}"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl && imageUrlHead}}"></image>
               <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
-              <image class="exBox-img-delBtn" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-del24@2x.png" wx:if="{{EXimgUrl}}" @tap="delEXimg"></image>
+              <image class="exBox-img-delBtn" src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" wx:if="{{EXimgUrl && imageUrlHead}}" @tap="delEXimg"></image>
             </view>
             <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小20k以下）</view>
           </view>
@@ -76,11 +76,11 @@
         <view class="exBox-prize-countBox">
           <view class="prize-picker-title">奖品数量</view>
           <view class="exBox-prizecount-right">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-reduce@2x.png" class="subBtn" @tap="exSubCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-reduce@2x.png'}}" class="subBtn" @tap="exSubCount"></image>
             <view class="countBox">
               <input type="number" class="countBox-input {{prizeCountTest?'':'error'}}" bindinput="countChange" value="{{prizeCount}}"/>
             </view>
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-plus@2x.png" class="addBtn" @tap="exAddCount"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-plus@2x.png'}}" class="addBtn" @tap="exAddCount"></image>
           </view>
         </view>
 
@@ -114,6 +114,7 @@
   import Upload from '@/api/uploads'
   import users from '@/common/mixins/users'
   import Textarea from '@/base/textarea/textarea'
+  import URIS from 'common/js/config'
 
   export default class ExchangeEditor extends wepy.page {
     mixins = [base, users]
@@ -132,6 +133,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       prizeType: 1,
       temporaryPrizeType: 1,
       prizeTypeTxt: '兑换券',

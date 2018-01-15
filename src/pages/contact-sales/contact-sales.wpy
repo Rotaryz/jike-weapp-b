@@ -3,7 +3,7 @@
     <view class="salesMsg">
       <view class="salesMsg-left">
         <view class="avatarBox">
-          <image src="{{saleMsg.user_image?saleMsg.user_image:'http://jike-file.jerryf.cn/defaults/b-image/page/pic-default_portrait@2x.png'}}" class="avatarImg"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (saleMsg.user_image?saleMsg.user_image:'/defaults/b-image/page/pic-default_portrait@2x.png')}}" class="avatarImg"></image>
         </view>
         <view class="sales-name">{{saleMsg.user_name?saleMsg.user_name:'集客商家助手'}}</view>
       </view>
@@ -41,6 +41,7 @@
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class ContactSales extends wepy.page {
     mixins = [base]
@@ -57,6 +58,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       complaintIn: false,
       saleMsg: null,
       complaintInTxt: '',

@@ -7,16 +7,16 @@
           <view class="title-txt">分享有礼</view>
         </view>
         <view class="share-item-body">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_11@2x.png" class="share-main-item-body-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_11@2x.png'}}" class="share-main-item-body-img"></image>
           <view class="share-main-item-body-center">
             <view class="share-main-item-body-txt">分享</view>
             <view class="share-main-item-body-txt">成功后</view>
             <view class="share-main-item-body-dotBog">
               <view class="dot" wx:for="12345678" wx:key="{{item}}"></view>
-              <image class="share-main-item-body-arrow" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-whitearrow@2x.png"></image>
+              <image class="share-main-item-body-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-whitearrow@2x.png'}}"></image>
             </view>
           </view>
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-r_12@2x.png" class="share-main-item-body-img"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_12@2x.png'}}" class="share-main-item-body-img"></image>
         </view>
       </view>
     </view>
@@ -37,7 +37,7 @@
             <picker mode="date" value="{{shareEndTime}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
               <view class="picker-txt">
                 <view>当天<text class="activityMsg-txt-right-gray">至</text>{{shareEndTime}}</view>
-                <image src="http://jike-file.jerryf.cn/defaults/b-image/page/Rectangle @2x.png" class="activityMsg-txt-right-arrow"></image>
+                <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="activityMsg-txt-right-arrow"></image>
               </view>
             </picker>
           </view>
@@ -46,7 +46,7 @@
           <view class="activityMsg-txt-left">参与次数</view>
           <view class="activityMsg-txt-right">
             <view class="activityMsg-txt-right-leftTxt">
-              <image class="activityMsg-txt-right-checked" src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-selected@2x.png"></image>
+              <image class="activityMsg-txt-right-checked" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
               一天一次
             </view>
           </view>
@@ -65,11 +65,11 @@
             <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
           </view>
           <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-            <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close20@2x.png" class="prizeList-item-right-del"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-close20@2x.png'}}" class="prizeList-item-right-del"></image>
           </view>
         </view>
         <view class="prizeList-addItem" @tap="showAddPrize">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add24@2x.png" class="prizeList-addItem-plus"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-add24@2x.png'}}" class="prizeList-addItem-plus"></image>
           添加奖品
         </view>
       </view>
@@ -93,6 +93,7 @@
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -111,6 +112,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       shareMsg: null,
       nowDate: '',
       shareEndTime: '',
@@ -174,7 +176,7 @@
     async load() {
       this.nowDate = new Date().toLocaleDateString()
       let res = await Activity.getShareList()
-      this.prizePollList = await PrizePool.getPrizelist()
+      this.prizePollList = await PrizePool.getPrizeRedlist()
       if (res.error === 1 && res.status_code === 200) {
         res = {}
         this.isCompile = false

@@ -34,7 +34,7 @@
           </view>
         </view>
         <view class="prize-pool-nothing" wx:if="{{prizeNothing}}">
-          <image src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_prize@2x.png" class="nothingImg"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/common/pic-empty_prize@2x.png'}}" class="nothingImg"></image>
           <view class="nothingTxt">还没有奖品，马上创建奖品</view>
         </view>
       </view>
@@ -51,7 +51,7 @@
 
     <view class="pastDue-body" wx:if="{{!menuTab}}">
       <view class="prize-pool-nothing" wx:if="{{prizeDueNothing}}">
-        <image src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_prize@2x.png" class="nothingImg"></image>
+        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/common/pic-empty_prize@2x.png'}}" class="nothingImg"></image>
         <view class="nothingTxt">还没有奖品，马上创建奖品</view>
       </view>
       <view class="prizeItem" wx:for="{{pastDuePrizeList}}" wx:key="{{item}}">
@@ -94,6 +94,7 @@
   import Confirm from '@/base/confirm/confirm'
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
+  import URIS from 'common/js/config'
 
   export default class PrizePoolPage extends wepy.page {
     mixins = [base]
@@ -111,6 +112,7 @@
     }
 
     data = {
+      imageUrlHead: URIS.image,
       menuTab: 1,
       useablePrizeList: null,
       pastDuePrizeList: null,
