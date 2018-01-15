@@ -22,11 +22,11 @@
         <view>较前天
           <text>{{customerTrend.detial.customer_percentage}}%</text>
           <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-            wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+            src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
+            wx:if="{{imageUri && customerTrend.detial.customer_trend === 'up'}}"></image>
           <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-            wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
+            src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}"
+            wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
         </view>
       </view>
       <AeraChart></AeraChart>
@@ -104,6 +104,8 @@
   import NavHeader from '@/base/nav-header/nav-header'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+
   export default class client extends wepy.page {
     mixins = [base]
 
@@ -122,12 +124,13 @@
       AeraChart: AeraChart
     }
     data = {
+      imageUri: URIS.image,
       navNum: 0,
       showTime: 0,
       impBlank: false,
       comBlank: false,
-      comSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_customer@2x.png',
-      impSrc: 'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_city@2x.png',
+      comSrc: URIS.image + '/defaults/b-image/common/pic-empty_customer@2x.png',
+      impSrc: URIS.image + '/defaults/b-image/common/pic-empty_city@2x.png',
       comTip: '暂无客户',
       impTip: '暂无数据',
       dayList: [{
@@ -166,7 +169,7 @@
       }],
       nothing: false,
       page: 1,
-      cityIcon: ['http://jike-file.jerryf.cn/defaults/b-image/page/icon-first.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-second@2x.png', 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-no3@2x.png']
+      cityIcon: [URIS.image + '/defaults/b-image/page/icon-first.png', URIS.image + '/defaults/b-image/page/icon-second@2x.png', URIS.image + '/defaults/b-image/page/icon-no3@2x.png']
     }
 
     async _showMsg(num, time = 'yesterday') {

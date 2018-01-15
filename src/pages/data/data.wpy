@@ -18,11 +18,11 @@
         <view>较前天
           <text>{{item.percentage}}%</text>
           <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-            wx:if="{{item.trend === 'up'}}"></image>
+            src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
+            wx:if="{{imageUri && item.trend === 'up'}}"></image>
           <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-            wx:if="{{item.trend === 'down'}}"></image>
+            src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}"
+            wx:if="{{imageUri && item.trend === 'down'}}"></image>
         </view>
       </view>
     </view>
@@ -32,11 +32,11 @@
       <view>较{{nacList[showNac].day}}
         <text>{{typeList[showType].percentage}}%</text>
         <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-rise@2x.png"
-          wx:if="{{customerTrend.detial.customer_trend === 'up'}}"></image>
+          src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
+          wx:if="{{imageUri && customerTrend.detial.customer_trend === 'up'}}"></image>
         <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-decline@2x.png"
-          wx:if="{{customerTrend.detial.customer_trend === 'down'}}"></image>
+          src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}"
+          wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
       </view>
     </view>
     <AeraChart></AeraChart>
@@ -48,6 +48,8 @@
   import shop from 'api/shop'
   import AeraChart from '@/base/areaChart/areaChart'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+
   export default class Data extends wepy.page {
     mixins = [base]
 
@@ -62,6 +64,7 @@
       AeraChart: AeraChart
     }
     data = {
+      imageUri: URIS.image,
       showNac: 0,
       showType: 'hit',
       nacList: [{

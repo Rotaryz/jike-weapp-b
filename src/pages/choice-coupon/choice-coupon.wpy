@@ -12,8 +12,8 @@
               <checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"
                         hidden="true"/>
               {{item.txt}}
-              <image class="radio-Icon"
-                     src="{{item.is_showed?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+              <image class="radio-Icon" wx:if="{{imageUri}}"
+                     src="{{item.is_showed? imageUri + '/defaults/b-image/page/icon-select@2x.png': imageUri + '/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
             </label>
           </checkbox-group>
         </Coupon>
@@ -33,6 +33,8 @@
   import content from 'api/content'
   import live from 'api/live'
   import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+
   export default class choiceCoupon extends wepy.page {
     mixins = [base]
 
@@ -49,6 +51,7 @@
       Coupon: Coupon
     }
     data = {
+      imageUri: URIS.image,
       couponList: [],
       num: -1,
       index: -1,

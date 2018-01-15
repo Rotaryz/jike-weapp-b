@@ -6,7 +6,7 @@
     <view class="coupons-wrapper">
       <view class="empty-wrapper" wx:if="{{couponList.length === 0}}">
         <view class="image-wrapper">
-          <image class="full-image" src="http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_coupon@2x.png"></image>
+          <image class="full-image" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_coupon@2x.png'}}"></image>
         </view>
         <view class="desc">无可用优惠券</view>
       </view>
@@ -30,11 +30,13 @@
   import Coupon from '@/base/coupon/coupon'
   import Packages from 'api/packages'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
 
   export default class Apply extends wepy.page {
     mixins = [base]
 
     data = {
+      imageUri: URIS.image,
       id: '',
       checkedId: '',
       couponList: [],

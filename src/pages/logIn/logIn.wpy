@@ -1,7 +1,7 @@
 <template>
   <view class="logn">
-    <image class="lg-header"
-           src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-default-logo@2x.png"></image>
+    <image class="lg-header" wx:if="{{imageUri}}"
+           src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
     <image class="guidance" src="icon-login-logo@2x.png"
            wx:if="{{guidance}}"></image>
     <view class="lg-from">
@@ -22,8 +22,8 @@
                  bindinput="putPhone" maxlength="11"/>
           <view class="eye" @tap.stop="clearPhone">
             <image class="close"
-                   src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-dels@2x.png"
-                   wx:if="{{showClose}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                   wx:if="{{imageUri && showClose}}"></image>
           </view>
 
         </view>
@@ -33,8 +33,8 @@
         </text>
       </view>
       <view class="lg-ch" wx:if="{{register || forget}}">
-        <image class="icon"
-               src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-code@2x.png"></image>
+        <image class="icon" wx:if="{{imageUri}}"
+               src="{{imageUri + '/defaults/b-image/page/icon-code@2x.png'}}"></image>
         <input type="number" placeholder="请输入6位验证码"
                placeholder-class="placeholder" value="{{code}}"
                bindinput="getCode"/>
@@ -47,8 +47,8 @@
                  placeholder-class="placeholder" bindinput="putPassword"
                  maxlength="18" value="{{password}}" focus="{{isfocus}}"/>
           <view class="eye" @tap="showCiphertext('fi')">
-            <image class="close"
-                   src="{{ciphertext ? 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png' :'http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png'}}"></image>
+            <image class="close" wx:if="{{imageUri}}"
+                   src="{{ciphertext ? imageUri + '/defaults/b-image/page/icon-display@2x.png' : imageUri + '/defaults/b-image/page/icon-hide@2x.png'}}"></image>
           </view>
 
         </view>
@@ -63,8 +63,8 @@
                  bindinput="anginPassword" value="{{anPassword}}"
                  focus="{{isagfocus}}"/>
           <view class="eye" @tap="showCiphertext('tw')">
-            <image class="close"
-                   src="{{anCiphertext ? 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-display@2x.png' :'http://jike-file.jerryf.cn/defaults/b-image/page/icon-hide@2x.png'}}"></image>
+            <image class="close" wx:if="{{imageUri}}"
+                   src="{{anCiphertext ? imageUri + '/defaults/b-image/page/icon-display@2x.png' : imageUri + '/defaults/b-image/page/icon-hide@2x.png'}}"></image>
           </view>
         </view>
       </view>
@@ -87,6 +87,8 @@
   import logIn from 'api/logIn'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+
   export default class Square extends wepy.page {
     mixins = [users, base]
     config = {
@@ -96,6 +98,7 @@
       Toast: Toast
     }
     data = {
+      imageUri: URIS.image,
       guidance: false,
       submitDisabled: false,
       phoneNum: '',
@@ -114,10 +117,10 @@
       ciphertext: false,
       anCiphertext: false,
       phoneStatus: true,
-      phoneImage: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-phone@2x.png',
-      passError: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
+      phoneImage: URIS.image + '/defaults/b-image/page/icon-phone@2x.png',
+      passError: URIS.image + '/defaults/b-image/page/icon-password@2x.png',
       anPassStatus: true,
-      anPassImage: 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png',
+      anPassImage: URIS.image + '/defaults/b-image/page/icon-password@2x.png',
       codeError: true,
       showClose: false,
       isfocus: false,
@@ -387,7 +390,7 @@
       },
       anginPassword(e) {
         this.anPassStatus = true
-        this.anPassImage = 'http://jike-file.jerryf.cn/defaults/b-image/page/icon-password@2x.png'
+        this.anPassImage = URIS.image + '/defaults/b-image/page/icon-password@2x.png'
         this.anPassword = e.detail.value
         this.checkAngin()
       },

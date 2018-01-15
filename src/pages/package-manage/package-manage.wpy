@@ -215,7 +215,7 @@
     }
 
     async onReachBottom() {
-      if ((this.tabIndex === 0 && !this.hasWillO) || (this.tabIndex === 1 && !this.hasOn) || (this.tabIndex === 2 && !this.hasOff) || (this.tabIndex === 3 && !this.hasWillA) ) {
+      if ((this.tabIndex === 0 && !this.hasWillO) || (this.tabIndex === 1 && !this.hasOn) || (this.tabIndex === 2 && !this.hasOff) || (this.tabIndex === 3 && !this.hasWillA)) {
         return
       }
       switch (this.tabIndex) {
@@ -230,6 +230,7 @@
           break
         case 3:
           this.willAPage += 1
+          break
         default:
           break
       }

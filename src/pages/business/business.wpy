@@ -25,8 +25,8 @@
             <checkbox value="{{item.shop_name}}" checked="{{item.is_check}}"
                       hidden="true"/>
             {{item.txt}}
-            <image class="radio-Icon"
-                   src="{{item.is_check?'http://jike-file.jerryf.cn/defaults/b-image/page/icon-select@2x.png':'http://jike-file.jerryf.cn/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+            <image class="radio-Icon" wx:if="{{imageUri}}"
+                   src="{{item.is_check ? imageUri + '/defaults/b-image/page/icon-select@2x.png' : imageUri + '/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
           </label>
         </checkbox-group>
       </view>
@@ -47,6 +47,8 @@
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+
   export default class business extends wepy.page {
     mixins = [base]
 
@@ -66,6 +68,7 @@
       Toast: Toast
     }
     data = {
+      imageUri: URIS.image,
       industryParentId: '',
       navNum: 0,
       navList: [{

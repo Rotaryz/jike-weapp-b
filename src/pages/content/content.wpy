@@ -11,18 +11,18 @@
     <scroll-view scroll-y bindscrolltolower="showMore">
       <view class="content-coupon">
         <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
-          <image
-            src="{{item.image_url !== '' ? item.image_url : 'http://jike-file.jerryf.cn/defaults/b-image/page/bk.jpg'}}"></image>
+          <image wx:if="{{imageUri}}"
+            src="{{item.image_url !== '' ? item.image_url : imageUri + '/defaults/b-image/page/bk.jpg'}}"></image>
           <view>
             <view class="con-cou-item-ri">
               <view>
-                <image
-                  src="http://jike-file.jerryf.cn/defaults/b-image/page/star@2x.png"></image>
+                <image wx:if="{{imageUri}}"
+                  src="{{imageUri + '/defaults/b-image/page/star@2x.png'}}"></image>
                 {{item.favorite_count}}
               </view>
               <view>
-                <image
-                  src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-share@2x.png"></image>
+                <image wx:if="{{imageUri}}"
+                  src="{{imageUri + '/defaults/b-image/page/icon-share@2x.png'}}"></image>
                 {{item.share_count}}
               </view>
             </view>
@@ -53,6 +53,8 @@
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
   import Confirm from '@/base/confirm/confirm'
+  import URIS from 'common/js/config'
+
   export default class Content extends wepy.page {
     mixins = [base]
 
@@ -71,6 +73,7 @@
       Confirm: Confirm
     }
     data = {
+      imageUri: URIS.image,
       navNum: 1,
       navList: [{
         text: '已上线',
@@ -97,7 +100,7 @@
       if (res.length === 0) {
         this.$invoke('Blank',
           'show',
-          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_content@2x.png', '暂无内容, 马上发布内容', '15.2')
+          this.imageUri + '/defaults/b-image/common/pic-empty_content@2x.png', '暂无内容, 马上发布内容', '15.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
