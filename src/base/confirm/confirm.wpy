@@ -5,7 +5,7 @@
         <view class="content-wrapper">
           <view class="content">
             <view class="danger-wrapper">
-              <image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-danger@2x.png" class="full-image"></image>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
             </view>
             <view class="font">确定要删除？</view>
           </view>
@@ -21,9 +21,11 @@
 
 <script>
   import wepy from 'wepy'
+  import URIS from 'common/js/config'
 
   export default class Confirm extends wepy.component {
     data = {
+      imageUrlHead: URIS.image,
       show: false
     }
 
