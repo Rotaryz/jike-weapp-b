@@ -6,8 +6,8 @@
       </view>
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-down24@2x.png"></image>
+        <image wx:if="{{imageUrlHead}}"
+          src="{{imageUrlHead+'defaults/b-image/page/icon-down24@2x.png'}}"></image>
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
@@ -17,14 +17,12 @@
         </view>
       </view>
       <view @tap="isInput">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
+        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead+'defaults/b-image/page/icon-search24@2x.png'}}"></image>
         <text>搜索</text>
       </view>
     </view>
     <view class="inputs" wx:if="{{showInput}}">
-      <image
-        src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-search24@2x.png"></image>
+      <image src="{{imageUrlHead+'defaults/b-image/page/icon-search24@2x.png'}}"></image>
       <input type="number" placeholder="手机号搜索" bindinput="sreaching"
              focus="{{showInput}}"
              value="{{searchValue}}" bindblur="bindblurs"/>
@@ -40,8 +38,8 @@
                  bindscrolltolower="loadMore">
       <view class="order-conpon">
         <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-          <image
-            src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-orderbg@2x.png"></image>
+          <image wx:if="{{imageUrlHead}}"
+            src="{{imageUrlHead+'defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
           <view class="order-top">
             <view>
               <view class="order-title">服务名称: {{item.title}}</view>
@@ -82,10 +80,11 @@
   import NavHeader from '@/base/nav-header/nav-header'
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
+  import URIS from 'common/js/config'
   export default class order extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -99,6 +98,7 @@
       Blank: Blank
     }
     data = {
+      imageUrlHead: URIS.image,
       showDay: false,
       dayPage: 0,
       isDetail: false,
@@ -135,11 +135,10 @@
       nothing: false
     }
 
-    _showBlank(res) {
+    _showBlank (res) {
       if (res.length === 0) {
         this.$invoke('Blank',
-          'show',
-          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
+          'show', this.imageUrlHead + 'defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
@@ -198,7 +197,7 @@
       }
     }
 
-    async load(status = 0, date = 'today', mobile = '', page = 1, type) {
+    async load (status = 0, date = 'today', mobile = '', page = 1, type) {
       let data = {status, mobile, date, page}
       let res = await shop.wechatOrders(data)
       if (type === 2) {
@@ -212,7 +211,7 @@
       return res
     }
 
-    async onLoad() {
+    async onLoad () {
       await this.load()
     }
   }

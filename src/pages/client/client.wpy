@@ -109,7 +109,7 @@
   export default class client extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -172,7 +172,7 @@
       cityIcon: [URIS.image + '/defaults/b-image/page/icon-first.png', URIS.image + '/defaults/b-image/page/icon-second@2x.png', URIS.image + '/defaults/b-image/page/icon-no3@2x.png']
     }
 
-    async _showMsg(num, time = 'yesterday') {
+    async _showMsg (num, time = 'yesterday') {
       this.navNum = num
       this.nothing = false
       this.page = 1
@@ -224,7 +224,7 @@
       }
     }
 
-    async onLoad() {
+    async onLoad () {
       console.log()
       await this._showMsg(0)
     }
@@ -241,6 +241,7 @@
 
   scroll-view
     height: 93vh
+    margin-top: 6px
 
   view
     box-sizing: border-box
@@ -298,7 +299,6 @@
               top: 4px
               height: 10px
               width: 10px
-
     .client-list
       .client-item
         display: flex
@@ -311,7 +311,7 @@
         border-bottom: 0.5px solid $color-split-line
         view
           &:first-child
-            position: relative
+          //            /*position: relative*/
             text
               margin-left: 33px
             image

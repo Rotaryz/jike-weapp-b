@@ -1,8 +1,17 @@
 <template>
+
   <view class="textarea-box" @tap="showTextarea" style="height:{{height}}px">
-    <textarea maxlength="{{maxLength}}" style="transform:translateX({{translateX}})" class="prize-picker-textarea-input" placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}" value="{{value}}" placeholder-class="prize-picker-textarea-placeholder" bindblur="blurFn" bindinput="inputFn"></textarea>
-    <view class="textarea-length" wx:if="{{maxLength !== '-1'}}">{{value.length}}/{{maxLength}}</view>
-    <view class="textarea-view {{value?'':'gary'}}">{{value?value:placeHolder}}</view>
+    <textarea maxlength="{{maxLength}}"
+              style="transform:translateX({{translateX}})"
+              class="prize-picker-textarea-input"
+              placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}"
+              value="{{value}}"
+              placeholder-class="prize-picker-textarea-placeholder"
+              bindblur="blurFn" bindinput="inputFn"></textarea>
+    <view class="textarea-length" wx:if="{{maxLength !== '-1'}}">{{textLength}}/{{maxLength}}</view>
+    <view class="textarea-view {{value?'':'gary'}}">
+      {{value ? value : placeHolder}}
+    </view>
   </view>
 </template>
 
@@ -56,6 +65,12 @@
         this.translateX = 0
         this.textareaFocus = true
         this.$apply()
+      }
+    }
+
+    computed = {
+      textLength() {
+        return this.value.length
       }
     }
   }

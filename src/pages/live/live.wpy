@@ -5,12 +5,9 @@
         <view class="con-item" wx:for="{{activityPromotion}}"
               wx:key="index"
               @tap="conponDetail({{item.promotion_id}},{{index}})">
-          <image class="con_bk"
-                 src="http://jike-file.jerryf.cn/defaults/c-image/live/pic-r_couponbg1@2x.png"
-                 wx:if="{{showBk !== index}}"></image>
-          <image class="con_bk"
-                 src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-play_couponbg1.png"
-                 wx:if="{{showBk === index}}"></image>
+          <image class="con_bk" src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}" wx:if="{{showBk !== index && imageUrlHead}}"></image>
+          <image class="con_bk" src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
+                 wx:if="{{showBk  === index && imageUrlHead}}"></image>
           <view class="con-title">
             <view></view>
             <view>{{item.promotion_title}}</view>
@@ -19,8 +16,8 @@
         </view>
       </scroll-view>
       <view class="live_video video-bk" wx:if="{{!showVideo}}">
-        <image
-          src="http://jike-file.jerryf.cn/defaults/b-image/page/pic-livenone@2x.png"></image>
+        <image wx:if="{{imageUrlHead}}"
+          src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
       </view>
       <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
       </video>
@@ -31,8 +28,7 @@
         <view class="upload">
           <image class="video-box {{showError?'no-border':''}}"
                  @tap="upVideo" src="{{videoImage}}" binderror="binderror">
-            <image
-              src="./icon-add28@2x.png"></image>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
             <view></view>
           </image>
           <!--<video class="video-box no-border" src="{{videoSrc}}"-->
@@ -49,13 +45,13 @@
                 wx:key="{{index}}">
             {{item.promotion_title}}
             <view class="close-box" @tap="delCou({{index}})">
-              <image
-                src="http://jike-file.jerryf.cn/defaults/b-image/page/close.png"></image>
+              <image wx:if="{{imageUrlHead}}"
+                src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
             </view>
           </view>
           <view class="add-cou" @tap="choice">
-            <image
-              src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-add20@2x.png"></image>
+            <image wx:if="{{imageUrlHead}}"
+              src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
             添加服务
           </view>
         </view>
@@ -76,13 +72,14 @@
   import live from 'api/live'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
   export default class Live extends wepy.page {
     mixins = [base]
     components = {
       Toast: Toast
     }
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -101,7 +98,8 @@
       allMsg: {},
       scrollTops: 0,
       id: 0,
-      showError: false
+      showError: false,
+      imageUrlHead: URIS.image
     }
 
     methods = {
@@ -163,7 +161,7 @@
       }
     }
 
-    onShow() {
+    onShow () {
       if (this.$parent.globalData.coupon &&
         this.$parent.globalData.coupon !== '') {
         this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
@@ -172,7 +170,7 @@
       }
     }
 
-    async load() {
+    async load () {
       let res = await live.watchlive()
       if (res.error !== 1) {
         this.id = res.id
@@ -187,7 +185,7 @@
       this.$apply()
     }
 
-    async onLoad() {
+    async onLoad () {
       await this.load()
     }
   }
