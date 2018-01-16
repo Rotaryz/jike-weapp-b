@@ -297,7 +297,6 @@
       this._choiseChecked(this.weekValue)
       this.hourBegin = res.open_time ? res.open_time : ''
       this.hourEnd = res.close_time ? res.close_time : ''
-      this._mapAuto(this.site)
       this.$apply()
       this.loaded()
     }
@@ -407,6 +406,9 @@
                 self.mapAddress = resData.result.address
               }
             })
+            self.longitude = res.longitude
+            self.latitude = res.latitude
+            this.$apply()
           }
         })
       },
