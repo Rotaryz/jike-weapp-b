@@ -409,7 +409,7 @@
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
               <text-area height="50"
-                         :value="tempKnowRemark"
+                         :value.sync="tempKnowRemark"
                          maxLength="20"
                          @input.user="handleTextarea"
                          placeHolder="备注：请输入"></text-area>

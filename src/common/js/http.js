@@ -3,8 +3,7 @@ import Tips from './tips'
 
 // HTTP工具类
 export default class http {
-  static async request (method, url, data, loading = true) {
-    console.log()
+  static async request(method, url, data, loading = true) {
     const param = {
       url: url,
       method: method,
@@ -21,12 +20,17 @@ export default class http {
     if (this.isSuccess(res)) {
       const result = res.data.data ? res.data.data : res.data
       return result
+    } else if (this.isLoseEfficacy(res)) {
+      wepy.navigateTo({
+        url: '/pages/logIn/logIn'
+      })
+      throw res.data
     } else {
       throw this.requestException(res)
     }
   }
 
-  static async upload (url, data, name = 'file', loading = true) {
+  static async upload(url, data, name = 'file', loading = true) {
     const param = {
       url: url,
       filePath: data,
@@ -48,13 +52,36 @@ export default class http {
   }
 
   /**
+   * 判断是否登录
+   * @param msg
+   * @returns {Promise.<void>}
+   */
+  static async isLogin(msg) {
+    if (msg === '凭证已失效') {
+      await wepy.navigateTo({
+        url: '../logIn/logIn'
+      })
+    }
+  }
+
+  /**
    * 判断请求是否成功
    */
-  static isSuccess (res) {
+  static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
     if (wxCode === 200 || wxCode === 422) {
-      return true
+      const wxData = res.data
+      return wxData && wxData.error === 0
+    }
+    return false
+  }
+
+  static isLoseEfficacy(res) {
+    const wxCode = res.statusCode
+    if (wxCode === 200) {
+      const json = res.data
+      return json.status_code === 500 && json.error === 1 && json.message === '凭证已失效'
     }
     return false
   }
@@ -62,36 +89,38 @@ export default class http {
   /**
    * 异常
    */
-  static requestException (res) {
+  static requestException(res) {
     const error = {}
     error.statusCode = res.statusCode
     const wxData = res.data
-    const serverData = wxData.data
-    if (serverData) {
-      error.serverCode = wxData.code
-      error.message = serverData.message
-      error.serverData = serverData
+    if (wxData) {
+      error.error = wxData.error
+      error.message = wxData.message
+      error.serverData = wxData
+      Tips.error(wxData.message)
+    } else {
+      Tips.loaded()
     }
     return error
   }
 
-  static get (url, data, loading = true) {
+  static get(url, data, loading = true) {
     return this.request('GET', url, data, loading)
   }
 
-  static put (url, data, loading = true) {
+  static put(url, data, loading = true) {
     return this.request('PUT', url, data, loading)
   }
 
-  static post (url, data, loading = true) {
+  static post(url, data, loading = true) {
     return this.request('POST', url, data, loading)
   }
 
-  static patch (url, data, loading = true) {
+  static patch(url, data, loading = true) {
     return this.request('PATCH', url, data, loading)
   }
 
-  static delete (url, data, loading = true) {
+  static delete(url, data, loading = true) {
     return this.request('DELETE', url, data, loading)
   }
 }
