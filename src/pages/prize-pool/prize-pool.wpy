@@ -363,6 +363,9 @@
               top: 5px
               right: 5px
 
+        >view:last-child
+          margin-bottom: 10px
+
       .prize-pool-body-foot
         height: 13vh
         padding: 0 12px

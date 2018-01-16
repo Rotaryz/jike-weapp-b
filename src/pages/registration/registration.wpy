@@ -98,7 +98,7 @@
           <!--bindinput="textinp" wx:if="{{showText}}">-->
           <!--<text class="num">{{textarinp}}/30</text>-->
           <repeat>
-            <Textarea :height.sync="height" :maxLength.sync="30"
+            <Textarea :height.sync="75" :maxLength.sync="30"
                       :value.sync="textares"></Textarea>
           </repeat>
         </view>
@@ -572,12 +572,12 @@
           addNum: res.seventh_redpacket.promotion_stock * 1,
           record: res.seventh_redpacket.index
         }
-        this.$apply()
         if (res.scope !== null) {
           this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
         } else {
           this.value = ''
         }
+        this.$apply()
       }
     }
 
@@ -591,6 +591,13 @@
       this.redPack = data
       await this.load()
       this.$apply()
+    }
+
+    events = {
+      input(value) {
+        this.textares = value
+        this.$apply()
+      }
     }
   }
 </script>
