@@ -311,14 +311,14 @@
         border-bottom: 0.5px solid $color-split-line
         view
           &:first-child
-          //            /*position: relative*/
+            position: relative
             text
               margin-left: 33px
             image
               width: 24px
               height: 24px
               border-radius: 50%
-              left: 0
+              left:0
               col-center()
 
     .picture-title

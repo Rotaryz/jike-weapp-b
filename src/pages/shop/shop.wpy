@@ -178,7 +178,7 @@
       }
     }
 
-    async onLoad() {
+    async onShow() {
       await this.load()
     }
   }
