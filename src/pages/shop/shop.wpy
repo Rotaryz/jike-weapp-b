@@ -59,7 +59,6 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
-  import http from 'common/js/http'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
@@ -136,17 +135,14 @@
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-
       this.dataList = res.detail
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
-      if (status === 0 && this.leader === 1 && this.navList[3].text !== '商圈') {
+      if (this.leader === 1 && this.navList[3].text !== '商圈') {
         this.navList.pop()
         this.navList.splice(3, 0, BUS)
       }
-
       this.loaded()
-
       this.$apply()
     }
 
