@@ -66,15 +66,16 @@
         <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
           <view class="label">活动时间</view>
           <view class="content">
-            <picker mode="date" class="sell-date" @change="setFromDate">
-              <view class="date">
-                <view>{{fromDate === '' ? '开始时间' : fromDate}}</view>
-                <view class="arrow-right">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-              </view>
-            </picker>
+            <!--<picker mode="date" class="sell-date" @change="setFromDate">-->
+              <!--<view class="date">-->
+                <!--<view>{{fromDate === '' ? '开始时间' : fromDate}}</view>-->
+                <!--<view class="arrow-right">-->
+                  <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+                         <!--class="full-image"></image>-->
+                <!--</view>-->
+              <!--</view>-->
+            <!--</picker>-->
+            <view class="start">当日</view>
             <view class="to">至</view>
             <picker mode="date" class="sell-date"  @change="setToDate">
               <view class="date">
@@ -255,7 +256,7 @@
         this.type = UPDATE_TYPE
         this.name = res.name
         this.nameLength = this.name.length
-        this.fromDate = res.from_date
+//        this.fromDate = res.from_date
         this.toDate = res.to_date
         this.joinTimes = res.join_times
         this.activityDesc = res.activity_desc
@@ -396,7 +397,7 @@
         }
         const data = {
           name: this.name,
-          from_date: this.fromDate,
+//          from_date: this.fromDate,
           to_date: this.toDate,
           join_times: this.joinTimes,
           activity_desc: this.activityDesc,
@@ -630,8 +631,8 @@
             display: flex
             align-items: center
             height: 100%
-            .start, .end
-              flex: 1
+            .start
+              flex: .5
               text-align: center
             .to
               color: $color-text-d

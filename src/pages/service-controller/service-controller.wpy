@@ -573,8 +573,6 @@
     _validForm() {
       const validPicture = this.pictures.findIndex((item) => item.image_url)
       const validServices = this.services.findIndex((item) => item.servie && item.number && item.price)
-      console.log(validPicture)
-      console.log(validServices)
       if (!this.categoryId) {
         this._toast('请选择类型')
         return false
