@@ -70,7 +70,7 @@
       </view>
 
       <view class="store-msg-map" wx:if="{{showMap}}">
-          <map id="myMap" wx:if="{{showMap}}" bindregionchange="mapTap" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
+          <map id="myMap" wx:if="{{showMap}}" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
             <Toast></Toast>
             <cover-view class="mapIcon">
               <cover-image src="./icon-site-msg.png" class="mapIcon-img"></cover-image>
@@ -222,6 +222,7 @@
       description: '',
       industryName: '',
       industry: '',
+      hasIndustry: '',
       industryId: '',
       tel: '',
       site: '',
@@ -230,6 +231,8 @@
       storeStatusTxt: '',
       longitude: 0,
       latitude: 0,
+      movelongitude: 0,
+      movelatitude: 0,
       area: '',
       areaId: '',
       areaArr: [],
@@ -270,6 +273,7 @@
       this.Induring = res
       this.name = res.shop_name ? res.shop_name : ''
       this.industry = res.industry ? res.industry : ''
+      this.hasIndustry = res.industry ? res.industry : ''
       this.industryId = res.industry_id ? res.industry_id : ''
       this.industryName = res.industry ? res.industry.name : ''
       this.description = res.describe ? res.describe : ''
@@ -279,6 +283,8 @@
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
       this.longitude = res.longitude ? res.longitude : 113.324520
       this.latitude = res.latitude ? res.latitude : 23.099994
+      this.movelongitude = this.longitude
+      this.movelatitude = this.latitude
       this.area = res.business_circle ? res.business_circle.name : ''
       this.areaId = res.business_circle_id ? res.business_circle_id : ''
       this.storeStatus = res.open_status ? res.open_status : ''
@@ -328,7 +334,7 @@
           }
         }
         let listArr
-        if (this.industry) {
+        if (this.hasIndustry) {
           listArr = this.Induring.industries.filter((item) => {
             return item.id === this.industry.parent_id
           })
@@ -404,11 +410,13 @@
               },
               success: (resData) => {
                 self.mapAddress = resData.result.address
+                if (res.longitude !== self.longitude || self.latitude !== res.latitude) {
+                  self.movelongitude = res.longitude
+                  self.movelatitude = res.latitude
+                }
+                self.$apply()
               }
             })
-            self.longitude = res.longitude
-            self.latitude = res.latitude
-            this.$apply()
           }
         })
       },
@@ -453,6 +461,8 @@
         this.$apply()
       },
       async storeMsgSubmit() {
+        this.longitude = this.movelongitude
+        this.latitude = this.movelatitude
         let testArr = [
           {value: this.name, txt: '请输入门店名称'},
           {value: this.description, txt: '请输入门店描述'},
