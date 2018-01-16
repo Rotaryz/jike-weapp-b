@@ -54,7 +54,7 @@
             <view class="txt">
               当天
               <text class="zhi">至</text>
-              <view>
+              <view class="time">
                 <picker mode="date" value="{{etime}}"
                         start="{{btime}}"
                         bindchange="endDateChange">
@@ -741,11 +741,13 @@
         margin-left: 39px
       .txt
         no-wrap()
-        width: 95%
         line-height: 39.5px
         margin-left: 39px
+        display: flex
+        align-items: center
         view
           display: inline-block
+        .time
           margin-left: 2px
         .zhi
           width: 23px
