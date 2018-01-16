@@ -41,15 +41,11 @@
     async onShow () {
       this.show()
       let res = await shop.verificationLog('', false)
-      setTimeout(async () => {
+      setTimeout(() => {
         if (res.message === '凭证已失效') {
-          await wepy.reLaunch({
-            url: '/pages/logIn/logIn'
-          })
+          this.$redirect('/pages/logIn/logIn')
         } else {
-          await wepy.reLaunch({
-            url: '/pages/shop/shop'
-          })
+          this.$switchTab('/pages/shop/shop')
         }
       }, 1500)
     }
