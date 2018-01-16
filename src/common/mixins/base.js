@@ -12,7 +12,7 @@ export default class base extends wepy.mixin {
   ShareAppMessage() {
     return {
       title: '集客商家助手',
-      path: `/pages/logIn/logIn`,
+      path: `/pages/loading/loading`,
       success: async () => {
         // 转发成功
       },

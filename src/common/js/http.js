@@ -3,7 +3,8 @@ import Tips from './tips'
 
 // HTTP工具类
 export default class http {
-  static async request(method, url, data, loading = true) {
+  static async request (method, url, data, loading = true) {
+    console.log()
     const param = {
       url: url,
       method: method,
@@ -25,7 +26,7 @@ export default class http {
     }
   }
 
-  static async upload(url, data, name = 'file', loading = true) {
+  static async upload (url, data, name = 'file', loading = true) {
     const param = {
       url: url,
       filePath: data,
@@ -47,22 +48,9 @@ export default class http {
   }
 
   /**
-   * 判断是否登录
-   * @param msg
-   * @returns {Promise.<void>}
-   */
-  static async isLogin(msg) {
-    if (msg === '凭证已失效') {
-      await wepy.navigateTo({
-        url: '../logIn/logIn'
-      })
-    }
-  }
-
-  /**
    * 判断请求是否成功
    */
-  static isSuccess(res) {
+  static isSuccess (res) {
     const wxCode = res.statusCode
     // 微信请求错误
     if (wxCode === 200 || wxCode === 422) {
@@ -74,7 +62,7 @@ export default class http {
   /**
    * 异常
    */
-  static requestException(res) {
+  static requestException (res) {
     const error = {}
     error.statusCode = res.statusCode
     const wxData = res.data
@@ -87,39 +75,23 @@ export default class http {
     return error
   }
 
-  /**
-   * 判断凭证
-   * @param msg
-   * @returns {Promise.<void>}
-   */
-  static async isLogin(msg) {
-    if (msg === '凭证已失效') {
-      await wepy.navigateTo({
-        url: '../logIn/logIn'
-      })
-      return 1
-    } else {
-      return 0
-    }
-  }
-
-  static get(url, data, loading = true) {
+  static get (url, data, loading = true) {
     return this.request('GET', url, data, loading)
   }
 
-  static put(url, data, loading = true) {
+  static put (url, data, loading = true) {
     return this.request('PUT', url, data, loading)
   }
 
-  static post(url, data, loading = true) {
+  static post (url, data, loading = true) {
     return this.request('POST', url, data, loading)
   }
 
-  static patch(url, data, loading = true) {
+  static patch (url, data, loading = true) {
     return this.request('PATCH', url, data, loading)
   }
 
-  static delete(url, data, loading = true) {
+  static delete (url, data, loading = true) {
     return this.request('DELETE', url, data, loading)
   }
 }

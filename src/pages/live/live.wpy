@@ -243,8 +243,6 @@
       bottom: 16px
       left: 126px
       color: $color-text-d
-    .wx-video-cover
-      display: none
     .video-box
       height: 80px
       width: 80px
