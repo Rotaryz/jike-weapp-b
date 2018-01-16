@@ -55,6 +55,7 @@
 
     config = {
       pages: [
+        'pages/shop/shop',
         'pages/registration/registration',
         'pages/live/live',
         'pages/client/client',
@@ -63,7 +64,6 @@
         'pages/create-content/create-content',
         'pages/package-manage/package-manage',
         'pages/service-controller/service-controller',
-        'pages/shop/shop',
         'pages/qrCode/qrCode',
         'pages/logIn/logIn',
         'pages/order/order',
