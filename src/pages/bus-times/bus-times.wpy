@@ -3,7 +3,7 @@
     <view class="bus-item">
       <view>开启周期</view>
       <view class="times">
-        <image src="./icon-pressed.png"></image>
+        <image wx:if="{{mageUrlHead}}" src="{{mageUrlHead+'/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{begTime}}" start="{{startTime}}"
                 end="{{endTime === '结束时间' ? '' : endTime}}"
                 bindchange="startDateChange">
@@ -12,7 +12,8 @@
       </view>
       <view>至</view>
       <view class="times">
-        <image src="./icon-pressed.png"></image>
+        <image wx:if="{{mageUrlHead}}"
+               src="{{mageUrlHead + '/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{endTime}}"
                 start="{{begTime === '开始时间' ? startTime : begTime}}"
                 bindchange="endDateChange">
@@ -43,6 +44,7 @@
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
   export default class busTimes extends wepy.page {
     mixins = [base]
     data = {
@@ -54,7 +56,8 @@
       days: 0,
       merchantId: [],
       isClaer: false,
-      subText: '提交'
+      subText: '提交',
+      mageUrlHead: URIS.image
     }
     components = {
       Toast: Toast
@@ -125,7 +128,7 @@
       }
     }
 
-    sum() {
+    sum () {
       if (this.begTime !== '开始时间' && this.endTime !== '结束时间') {
         let begin = new Date(this.begTime)
         let end = new Date(this.endTime)
@@ -134,12 +137,12 @@
       }
     }
 
-    info() {
+    info () {
       let now = new Date()
       this.startTime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
     }
 
-    async onLoad(options) {
+    async onLoad (options) {
       this.info()
       this.merchantId = this.$parent.globalData.merchantId
       this.allNums = options.allNum
