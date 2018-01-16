@@ -189,7 +189,8 @@
       willAPage: 1
     }
 
-    async onLoad() {
+    async onShow() {
+      this._init()
       await this.load()
     }
 

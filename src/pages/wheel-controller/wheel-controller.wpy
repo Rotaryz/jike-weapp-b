@@ -378,7 +378,9 @@
       },
       delectPrize(index, prize) {
         const prizeIndex = this.prizePool.findIndex((item) => item.promotion_id === prize.promotion_id)
-        this.prizePool[prizeIndex].promotion_stock = Math.floor(this.prizePool[prizeIndex].promotion_stock) + Math.floor(prize.promotion_stock)
+        if (prizeIndex >= 0) {
+          this.prizePool[prizeIndex].promotion_stock = Math.floor(this.prizePool[prizeIndex].promotion_stock) + Math.floor(prize.promotion_stock)
+        }
         this.activityPromotions.splice(index, 1)
         if (prize.activity_promotion_id) {
           let delPrize = Object.assign({}, prize)
@@ -388,7 +390,7 @@
         }
       },
       async submitForm() {
-        if (Math.floor(this.percentage) > 100 || !this.percentage) {
+        if (Math.floor(this.percentage) > 100 || this.percentage === '') {
           this._toast('请输入正确的概率')
           return
         } else if (this.activityPromotions.length < 5) {
