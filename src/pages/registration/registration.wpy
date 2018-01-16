@@ -4,25 +4,26 @@
       <view class="map">
         <view class="map-title">
           <image wx:if="{{imageUri}}"
-            src="{{imageUri + '/defaults/b-image/page/Group9.png'}}"></image>
+                 src="{{imageUri + '/defaults/b-image/page/Group9.png'}}"></image>
           {{shop.address}}
         </view>
         <map name="address" latitude="{{shop.latitude}}"
              longitude="{{shop.longitude}}"
              markers="{{markers}}">
           <cover-view class="map-box">
-            <cover-image
-              src="./pic-map_shade@2x.png"
-              class="bk">
+            <cover-image wx:if="{{imageUri}}"
+                         src="{{imageUri + '/defaults/b-image/page/pic-map_shade@2x.png'}}"
+                         class="bk">
             </cover-image>
             <cover-view class="tip-box">
               <cover-view>本店周边{{value}}内可签到</cover-view>
-              <cover-image src="./pic-range_bg@2x.png"
+              <cover-image wx:if="{{imageUri}}"
+                           src="{{imageUri +'/defaults/b-image/page/pic-range_bg@2x.png'}}"
                            class="tip"></cover-image>
             </cover-view>
             <cover-image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
-              class="peo"></cover-image>
+                         src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
+                         class="peo"></cover-image>
           </cover-view>
         </map>
         <view class="reg_red">
@@ -63,18 +64,14 @@
               </view>
             </view>
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
           </view>
           <view class="acti-item" @tap="isChioce(way)">
             签到范围
             <text>{{value}}</text>
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
           </view>
-          <!--<view class="acti-item">-->
-          <!--增加次数-->
-          <!--<input type="text" value="{{degree}}" maxlength="2"/>-->
-          <!--</view>-->
         </view>
       </view>
       <view class="rules">
@@ -141,12 +138,12 @@
             <view class="add-weight ways">
               <view>添加数量</view>
               <image wx:if="{{imageUri}}"
-                src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
-                @tap="subtract"></image>
+                     src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
+                     @tap="subtract"></image>
               <input value="{{addNum}}" type="number" bindblur="setNum"/>
               <image wx:if="{{imageUri}}"
-                src="{{imageUri + '/defaults/b-image/page/add.png'}}"
-                @tap="addReds"></image>
+                     src="{{imageUri + '/defaults/b-image/page/add.png'}}"
+                     @tap="addReds"></image>
             </view>
           </scroll-view>
           <view class="ways">
@@ -177,7 +174,7 @@
   export default class Registration extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -528,7 +525,7 @@
       }
     }
 
-    async load() {
+    async load () {
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
       let res = await regist.seeRegist()
@@ -581,7 +578,7 @@
       }
     }
 
-    async onLoad() {
+    async onLoad () {
       let data = await regist.Redpack()
       let shop = await regist.getData()
       this.markers[0].latitude = shop.latitude

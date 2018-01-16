@@ -9,31 +9,31 @@
   import URIS from 'common/js/config'
 
   export default class extends wepy.app {
-    constructor() {
+    constructor () {
       super()
       this.use('requestfix')
       this.use('promisify')
     }
 
-    onLaunch() {
+    onLaunch () {
       // 校验SDK
       wxUtils.checkSDK()
     }
 
-    isObject(item) {
+    isObject (item) {
       return typeof item === 'object' && !this.isArray(item)
     }
 
-    isArray(item) {
+    isArray (item) {
       return Object.prototype.toString.apply(item) === '[object Array]'
     }
 
-    isUndefined(item) {
+    isUndefined (item) {
       return typeof item === 'undefined'
     }
 
     // 向下暴露一个更换globalData的方法
-    updateGlobalData(name, obj) {
+    updateGlobalData (name, obj) {
       // 校验: globalData
       if (!this.globalData) return
       // 校验: 操作字段
@@ -55,24 +55,24 @@
 
     config = {
       pages: [
-        'pages/shop/shop',
         'pages/registration/registration',
-        'pages/qrCode/qrCode',
+        'pages/live/live',
+        'pages/client/client',
+        'pages/content/content',
+        'pages/choice-coupon/choice-coupon',
         'pages/create-content/create-content',
+        'pages/package-manage/package-manage',
         'pages/service-controller/service-controller',
+        'pages/shop/shop',
+        'pages/qrCode/qrCode',
         'pages/logIn/logIn',
         'pages/order/order',
-        'pages/content/content',
         'pages/evaluate/evaluate',
-        'pages/live/live',
         'pages/business/business',
-        'pages/choice-coupon/choice-coupon',
         'pages/compile/compile',
         'pages/data/data',
         'pages/cancel-record/cancel-record',
-        'pages/client/client',
         'pages/wheel-controller/wheel-controller',
-        'pages/package-manage/package-manage',
         'pages/service-manage/service-manage',
         'pages/package-detail/package-detail',
         'pages/package-controller/package-controller',

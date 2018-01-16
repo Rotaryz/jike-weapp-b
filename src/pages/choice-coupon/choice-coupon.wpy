@@ -4,19 +4,9 @@
     <scroll-view class="cou-all" scroll-y>
       <repeat for="{{couponList}}" key="index" index="index"
               item="item">
-        <Coupon :coupon.sync="item">
-          <checkbox-group
-            @change="checkboxChange({{index}},{{item.id}})"
-            id="checkboxs">
-            <label class="radioLabel {{item.checked?'active':''}}">
-              <checkbox value="{{item.shop_name}}" checked="{{item.is_showed}}"
-                        hidden="true"/>
-              {{item.txt}}
-              <image class="radio-Icon" wx:if="{{imageUri}}"
-                     src="{{item.is_showed? imageUri + '/defaults/b-image/page/icon-select@2x.png': imageUri + '/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
-            </label>
-          </checkbox-group>
-        </Coupon>
+        <view class="coupon-box">
+          <Coupon :coupon.sync="item" :type.sync="'checked'"></Coupon>
+        </view>
       </repeat>
     </scroll-view>
     <view class="con-submit" @tap="submitOk">
@@ -38,7 +28,7 @@
   export default class choiceCoupon extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -58,28 +48,13 @@
       moreList: []
     }
     methods = {
-      checkboxChange(index, id) {
-        if (this.index !== -1) {
-          this.couponList.map((item, idx) => {
-            if (idx === index) {
-              item.is_showed = !item.is_showed
-            } else {
-              item.is_showed = false
-            }
-            return item
-          })
-        } else {
-          this.couponList[index].is_showed = !this.couponList[index].is_showed
-        }
-        this.num = index
-      },
       async submitOk() {
         if (this.index !== -1) {
           this.$parent.globalData.coupon = this.couponList[this.num]
           this.$parent.globalData.couIndex = this.index
         } else {
           this.couponList.forEach((item, idx) => {
-            if (item['is_showed']) {
+            if (item['checked']) {
               this.moreList.push(item)
             }
           })
@@ -90,14 +65,36 @@
         })
       }
     }
+    events = {
+      handleClick(id) {
+        this.id = id
+        if (this.index !== -1) {
+          this.couponList.forEach((item, idx) => {
+            if (item.id === id) {
+              item.checked = !item.checked
+              if (item.checked) {
+                this.num = idx
+              }
+            } else {
+              item.checked = false
+            }
+          })
+        } else {
+          this.couponList.forEach((item, idx) => {
+            if (item.promotion_id === id) {
+              item.checked = !item.checked
+            }
+          })
+        }
+      }
+    }
 
-    async load() {
+    async load () {
       let res = []
       if (this.index !== -1) {
         let data = {status: 1}
         res = await content.coupon(data)
       } else {
-        console.log(content)
         let data = {use_status: 1, use_type: 0}
         res = await live.prizePool(data)
       }
@@ -106,7 +103,7 @@
       this.$apply()
     }
 
-    async onLoad(options) {
+    async onLoad (options) {
       if (options.index) {
         this.index = options.index * 1
       }
@@ -119,6 +116,9 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+  .coupon-box
+    margin-bottom: 12px
+
   .choiceCoupon
     padding: 0 $padding
 
@@ -160,21 +160,16 @@
       font-size: $font-size-medium
       border-radius: 4px
 
-  .coupon
+  .coupon .couponList-item-head-container .couponList-item-head-left .couponList-itemPay view
+    display: flex
+    align-items: center
     position: relative
-    #checkboxs
+    transform: translateY(-25%)
+    .couponList-bigMoney
+      display: inline
+    .couponList-midMoney
       position: absolute
-      col-center()
-      right: 30px
-      display: flex
-      justify-content: center
-      align-items: center
-    .radio-Icon
-      position: relative
-      z-index: 10000
-      width: 16px
-      height: 16px
+      bottom: 2px
+      left: -5px
 
-    .radioLabel.active
-      color: $color-assist-f
 </style>

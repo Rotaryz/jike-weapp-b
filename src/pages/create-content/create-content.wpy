@@ -11,8 +11,8 @@
     </image>
     <view class="add">
       <image wx:if="{{imageUri}}"
-        src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
-        @tap="showMore(-1)"></image>
+             src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
+             @tap="showMore(-1)"></image>
       <view class="options" wx:if="{{showAdd}}">
         <image wx:for="{{contentType}}"
                wx:key="{{index}}" src="{{item.image}}"
@@ -23,21 +23,22 @@
       <view class="content-page" wx:for="{{contentList}}" wx:key="{{index}}">
         <view class="con-item-fa con-item-video" wx:if="{{item.type === 2}}">
           <image wx:if="{{imageUri}}"
-            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
-            class="con-close"
-            @tap="delItem({{index}})"></image>
+                 src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                 class="con-close"
+                 @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
                    src="{{item.detail[0].url +'?second=1&width=259&height=60'}}"></image>
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-video@2x.png'}}"
-              class="video-ico"
-              @tap="upVideo({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-video@2x.png'}}"
+                   class="video-ico"
+                   @tap="upVideo({{index}})"></image>
           </view>
           <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
-                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
+                   wx:if="{{imageUri && index > 0}}"
+                   @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -46,7 +47,7 @@
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -58,9 +59,9 @@
         </view>
         <view class="con-item-fa con-item-text" wx:if="{{item.type === 1}}">
           <image wx:if="{{imageUri}}"
-            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
-            class="con-close"
-            @tap="delItem({{index}})"></image>
+                 src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                 class="con-close"
+                 @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="setText({{index}})">
             <view class="text-detail">
               <view>
@@ -71,7 +72,8 @@
           <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
-                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
+                   wx:if="{{imageUri && index > 0}}"
+                   @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -80,7 +82,7 @@
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -92,9 +94,9 @@
         </view>
         <view class="con-item-fa con-item-image" wx:if="{{item.type === 0}}">
           <image wx:if="{{imageUri}}"
-            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
-            class="con-close"
-            @tap="delItem({{index}})"></image>
+                 src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                 class="con-close"
+                 @tap="delItem({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upImage({{index}})"
                    src="{{item.detail[0].url}}"></image>
@@ -102,7 +104,8 @@
           <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
-                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
+                   wx:if="{{imageUri && index > 0}}"
+                   @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -111,7 +114,7 @@
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -123,22 +126,23 @@
         </view>
         <view class="con-item-fa con-item-coupon" wx:if="{{item.type === 3}}">
           <image wx:if="{{imageUri}}"
-            src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
-            class="con-close"
-            @tap="delItem({{index}})"></image>
+                 src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                 class="con-close"
+                 @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="addCoupon({{index}})">
             <repeat for="{{item.detail.length === 1 ? item.detail : 1}}"
                     key="index"
                     index="index"
                     item="item">
-              <Coupon :coupon.sync="item"></Coupon>
+              <Coupon :coupon.sync="item" :border.sync="'yes'"></Coupon>
             </repeat>
 
           </view>
           <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
-                   wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
+                   wx:if="{{imageUri && index > 0}}"
+                   @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -147,7 +151,7 @@
           </view>
           <view class="add" @tap.catch="showMore({{index}})">
             <image wx:if="{{imageUri}}"
-              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -181,7 +185,7 @@
   export default class createContent extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -224,7 +228,7 @@
       conId: -1
     }
 
-    async _upImage(num, status, type) {
+    async _upImage (num, status, type) {
       const DATA = {
         'id': 0,
         'type': 0,
@@ -271,7 +275,7 @@
       }
     }
 
-    async _upVideo(num, status, type) {
+    async _upVideo (num, status, type) {
       const res = await wepy.chooseVideo({sourceType: ['album']})
       let file = res.tempFilePath
       const videoId = await Uploads.uploadVideo(file)
@@ -400,13 +404,13 @@
       }
     }
 
-    upDateList(data) {
+    upDateList (data) {
       if (this.addType === '2') {
         this.changeList.push(data)
       }
     }
 
-    onShow() {
+    onShow () {
       const DATA = {
         'id': 0,
         'type': 1,
@@ -449,7 +453,7 @@
       this.$apply()
     }
 
-    async onLoad(options) {
+    async onLoad (options) {
       this.addType = options.status
       this.conId = options.id
       if (options.status) {
@@ -475,6 +479,7 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+
   .create-content
     width: 100vw
     overflow-x: hidden
@@ -604,8 +609,18 @@
           overflow: hidden
 
     .coupon
-      margin-bottom: 0px
-      padding-top: 20vw
+      margin: 0
+    .coupon .couponList-item-head-container .couponList-item-head-left .couponList-itemPay view
+      display: flex
+      align-items: center
+      position: relative
+      transform :translateY(-25%)
+      .couponList-bigMoney
+        display: inline
+      .couponList-midMoney
+        position: absolute
+        bottom: 2px
+        left: -5px
 
   .con-submit
     position: fixed
