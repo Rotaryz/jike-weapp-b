@@ -328,6 +328,7 @@
       },
       chioseTypeCancel() {
         this.prizeTypeCover = false
+        this.temporaryPrizeType = this.prizeType
         this.$apply()
       },
       showTypeCover() {
