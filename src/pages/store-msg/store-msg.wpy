@@ -399,26 +399,26 @@
         this.showMap = true
         this.$apply()
       },
-      getCenter() {
-        let self = this
-        this.mapCtx.getCenterLocation({
-          success: (res) => {
-            self.qqmapsdk.reverseGeocoder({
-              location: {
-                latitude: res.latitude,
-                longitude: res.longitude
-              },
-              success: (resData) => {
-                self.mapAddress = resData.result.address
-                if (res.longitude !== self.longitude || self.latitude !== res.latitude) {
+      getCenter(e) {
+        if (e.type === 'end') {
+          let self = this
+          this.mapCtx.getCenterLocation({
+            success: (res) => {
+              self.qqmapsdk.reverseGeocoder({
+                location: {
+                  latitude: res.latitude,
+                  longitude: res.longitude
+                },
+                success: (resData) => {
+                  self.mapAddress = resData.result.address
                   self.movelongitude = res.longitude
                   self.movelatitude = res.latitude
+                  self.$apply()
                 }
-                self.$apply()
-              }
-            })
-          }
-        })
+              })
+            }
+          })
+        }
       },
       hourBeginChange(e) {
         this.hourBegin = e.detail.value
