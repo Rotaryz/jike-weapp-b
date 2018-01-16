@@ -2,7 +2,7 @@
   <view class="account-management">
     <view class="account-store-list" wx:for="{{accountList}}" wx:key="{{item}}">
       <view class="account-store-title" @tap="showList({{index}})">
-        <view class="account-store-title-txt">{{item.shop_name}}</view>
+        <view class="account-store-title-txt">{{item.shop_name?item.shop_name:'请先补充门店信息'}}</view>
         <image class="account-store-title-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (item.opened?'/defaults/b-image/page/icon-lower20@2x.png':'/defaults/b-image/page/icon-pressed@2x.png')}}"></image>
       </view>
       <view class="store-account-list" wx:if="{{item.opened}}">

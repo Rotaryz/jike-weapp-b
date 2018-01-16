@@ -287,7 +287,7 @@
       this.movelatitude = this.latitude
       this.area = res.business_circle ? res.business_circle.name : ''
       this.areaId = res.business_circle_id ? res.business_circle_id : ''
-      this.storeStatus = res.open_status ? res.open_status : ''
+      this.storeStatus = res.open_status ? res.open_status : 1
       this.logoUrl = res.logo_image || ''
       this.logoId = res.logo_image_id || 0
       this.storeImgs = res.shop_image_data && res.shop_image_data.length > 0 ? res.shop_image_data.slice() : [
@@ -298,11 +298,11 @@
       let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
       this.storeStatusTxt = arr[this.storeStatus]
       this.areaArr = res.business_circle ? await Store.getArea(res.business_circle.district) : []
-      this.weekChecked = res.week_day || []
+      this.weekChecked = res.week_day || ['0', '1', '2', '3', '4', '5']
       this.temporaryWeekChecked = this.weekChecked
       this._choiseChecked(this.weekValue)
-      this.hourBegin = res.open_time ? res.open_time : ''
-      this.hourEnd = res.close_time ? res.close_time : ''
+      this.hourBegin = res.open_time ? res.open_time : '9:00'
+      this.hourEnd = res.close_time ? res.close_time : '21:00'
       this.$apply()
       this.loaded()
     }
