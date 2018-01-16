@@ -55,15 +55,15 @@
 
     config = {
       pages: [
-        'pages/loading/loading',
         'pages/content/content',
+        'pages/loading/loading',
         'pages/shop/shop',
+        'pages/create-content/create-content',
         'pages/bus-times/bus-times',
         'pages/registration/registration',
         'pages/live/live',
         'pages/client/client',
         'pages/choice-coupon/choice-coupon',
-        'pages/create-content/create-content',
         'pages/package-manage/package-manage',
         'pages/service-controller/service-controller',
         'pages/qrCode/qrCode',

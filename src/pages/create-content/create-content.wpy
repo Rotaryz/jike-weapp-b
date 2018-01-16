@@ -227,7 +227,7 @@
       addType: '',
       conId: -1
     }
-
+//  选择图片
     async _upImage (num, status, type) {
       const DATA = {
         'id': 0,
@@ -275,6 +275,7 @@
       }
     }
 
+//  选择视频
     async _upVideo (num, status, type) {
       const res = await wepy.chooseVideo({sourceType: ['album']})
       let file = res.tempFilePath
@@ -301,14 +302,16 @@
             this.contentList.splice(num + 1, 0, DATA)
             this.contentList[num].showAdds = !this.contentList[num].showAdds
           }
+          this.upDateList(this.contentList[num + 1])
         } else {
           if (videoId) {
             this.contentList[num].detail[0] = {url: videoId.url}
             this.contentList[num]['detail_id'] = videoId.id
+            this.upDateList(this.contentList[num])
+            console.log(this.contentList[num])
             this.$apply()
           }
         }
-        this.upDateList(this.contentList[num])
       } else {
         this.$invoke('Toast', 'show', '视频不能超过50m')
       }
@@ -358,7 +361,7 @@
         })
       },
       delItem(num) {
-        if (this.addType === '2') {
+        if (this.addType !== '') {
           this.delete_ids.push(this.contentList[num].id)
         }
         this.contentList.splice(num, 1)
@@ -370,7 +373,7 @@
         } else {
           let res = null
 
-          if (this.addType) {
+          if (this.addType !== '') {
             Object.assign(this.allMsg, {title: this.title},
               {'content_details': this.changeList, delete_ids: this.delete_ids})
             res = await content.merchantDetail(this.conId, this.allMsg)
@@ -405,7 +408,7 @@
     }
 
     upDateList (data) {
-      if (this.addType === '2') {
+      if (this.addType !== '') {
         this.changeList.push(data)
       }
     }
@@ -614,7 +617,7 @@
       display: flex
       align-items: center
       position: relative
-      transform :translateY(-25%)
+      transform: translateY(-25%)
       .couponList-bigMoney
         display: inline
       .couponList-midMoney
