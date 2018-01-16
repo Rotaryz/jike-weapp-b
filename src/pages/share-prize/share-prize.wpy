@@ -175,6 +175,7 @@
 
     async load() {
       this.nowDate = new Date().toLocaleDateString()
+      this.nowDate = this.nowDate.replace(/\//g, '-')
       let res = await Activity.getShareList()
       this.prizePollList = await PrizePool.getPrizeRedlist()
       if (res.error === 1 && res.status_code === 200) {
@@ -187,6 +188,8 @@
       this.shareEndTime = res.to_date || ''
       this.prizeListArr = res.activity_promotion || []
       this.loaded()
+      console.log(this.nowDate)
+      this.$apply()
     }
 
     events = {
@@ -386,8 +389,6 @@
                   height: 10px
 
         .prizeList
-          max-height: 300px
-          overflow-y: auto
           background: $color-white
           padding-bottom: 60px
 

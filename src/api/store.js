@@ -40,5 +40,15 @@ export default class Store extends base {
     const url = `${this.baseUrl}/api/merchants/set-data`
     return await this.post(url, data)
   }
+  /**
+   * 注销登录
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async logoutAccount() {
+    const url = `${this.baseLogin}/api/merchants/logout`
+    return await this.post(url)
+  }
+
 
 }

@@ -128,12 +128,15 @@
           } else {
             this.$invoke('Toast', 'show', '创建失败')
           }
-        } else if (this.telTest || this.phoneNum.length !== 11) {
+        } else if (!this.telTest || this.phoneNum.length !== 11) {
           this.$invoke('Toast', 'show', '手机填写错误')
-        } else if (this.passTest) {
+          return false
+        } else if (!this.passTest) {
           this.$invoke('Toast', 'show', '密码格式错误')
-        } else if (this.checkedStore || this.checkedStoreId) {
+          return false
+        } else if (!this.checkedStore || !this.checkedStoreId) {
           this.$invoke('Toast', 'show', '请选择对应门店')
+          return false
         }
       }
     }
