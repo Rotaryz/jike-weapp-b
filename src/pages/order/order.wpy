@@ -7,7 +7,7 @@
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
         <image wx:if="{{imageUrlHead}}"
-          src="{{imageUrlHead+'defaults/b-image/page/icon-down24@2x.png'}}"></image>
+          src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
@@ -17,12 +17,14 @@
         </view>
       </view>
       <view @tap="isInput">
-        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead+'defaults/b-image/page/icon-search24@2x.png'}}"></image>
+        <image wx:if="{{imageUrlHead}}"
+               src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
         <text>搜索</text>
       </view>
     </view>
     <view class="inputs" wx:if="{{showInput}}">
-      <image src="{{imageUrlHead+'defaults/b-image/page/icon-search24@2x.png'}}"></image>
+      <image
+        src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
       <input type="number" placeholder="手机号搜索" bindinput="sreaching"
              focus="{{showInput}}"
              value="{{searchValue}}" bindblur="bindblurs"/>
@@ -39,7 +41,7 @@
       <view class="order-conpon">
         <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
           <image wx:if="{{imageUrlHead}}"
-            src="{{imageUrlHead+'defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
+            src="{{imageUrlHead+'/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
           <view class="order-top">
             <view>
               <view class="order-title">服务名称: {{item.title}}</view>
@@ -138,7 +140,8 @@
     _showBlank (res) {
       if (res.length === 0) {
         this.$invoke('Blank',
-          'show', this.imageUrlHead + 'defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
+          'show', this.imageUrlHead +
+          '/defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
