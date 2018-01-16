@@ -412,7 +412,7 @@
             if (res.error !== 1) {
               wepy.setStorageSync('token', res.access_token)
               if (res.merchant_info.merchant_data) {
-                wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
+
               } else {
                 wepy.setStorageSync('is_leader', 0)
               }
