@@ -253,10 +253,6 @@
       this.$apply()
     }
 
-    onShow () {
-      this.info()
-    }
-
     methods = {
       putPhone(e) {
         this.phoneNum = e.detail.value
@@ -488,7 +484,7 @@
   /*正常*/
   .lg-header, .guidance
     width: 64px
-    height: 53.9px
+    height: 64px
     margin-bottom: 25px
 
   /*引导*/
