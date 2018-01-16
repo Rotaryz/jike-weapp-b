@@ -7,7 +7,7 @@
       <view class="couponList-item-head-left">
         <view class="border-line" wx:if="{{border!=='no'}}"></view>
         <view class="couponList-itemPay">
-          <view>
+          <view class="couponList-desc">
             <text class="couponList-midMoney">￥</text>
             <text class="couponList-bigMoney">
               {{coupon.platform_price ? coupon.platform_price : coupon.promotion_platform_price ? coupon.promotion_platform_price : coupon.promotion.platform_price}}
@@ -129,6 +129,11 @@
           align-items: center
           justify-content: center
 
+          .couponList-desc
+            display: flex
+            align-items: flex-end
+            justify-content: center
+
           .couponList-midMoney
             font-size: $font-size-small-s
             font-family: PingFangSC-Semibold
@@ -205,6 +210,7 @@
 
           .shopName
             width: 100%
+            text-align: center
             no-wrap()
             font-size: $font-size-small
             color: $color-text

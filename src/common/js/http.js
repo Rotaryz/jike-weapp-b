@@ -10,8 +10,9 @@ export default class http {
       data: data
     }
     const Authorization = wepy.getStorageSync('token')
+    param.header = Object.assign({}, {'X-Requested-With': 'XMLHttpRequest'})
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
+      param.header = Object.assign({}, {Authorization})
     }
     if (loading) {
       Tips.loading()

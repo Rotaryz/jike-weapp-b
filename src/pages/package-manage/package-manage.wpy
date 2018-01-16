@@ -240,7 +240,7 @@
 
     async _getPackageLists() {
       const page = this.tabIndex === 0 ? this.willOPage : this.tabIndex === 1 ? this.onPage : this.tabIndex === 2 ? this.offPage : this.willAPage
-      const res = await Packages.getPackageLists({status: this.tabIndex, page})
+      const res = this.isLeader ? await Packages.getPackageLists({status: this.tabIndex, page}) : await Packages.getMerchantPackageLists({status: this.tabIndex, page})
       switch (this.tabIndex) {
         case 0:
           this.willOnLines = res

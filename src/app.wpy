@@ -55,9 +55,9 @@
 
     config = {
       pages: [
-        'pages/content/content',
         'pages/loading/loading',
         'pages/shop/shop',
+        'pages/content/content',
         'pages/create-content/create-content',
         'pages/bus-times/bus-times',
         'pages/registration/registration',
