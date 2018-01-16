@@ -188,7 +188,6 @@
       this.shareEndTime = res.to_date || ''
       this.prizeListArr = res.activity_promotion || []
       this.loaded()
-      console.log(this.nowDate)
       this.$apply()
     }
 
