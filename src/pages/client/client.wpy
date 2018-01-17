@@ -105,7 +105,7 @@
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
-
+  import { ERR_OK } from 'api/base'
   export default class client extends wepy.page {
     mixins = [base]
 
@@ -172,25 +172,33 @@
       cityIcon: [URIS.image + '/defaults/b-image/page/icon-first.png', URIS.image + '/defaults/b-image/page/icon-second@2x.png', URIS.image + '/defaults/b-image/page/icon-no3@2x.png']
     }
 
+    infoRes (res) {
+      if (res.error === ERR_OK) {
+        return res.data
+      }
+    }
+
     async _showMsg (num, time = 'yesterday') {
       this.navNum = num
       this.nothing = false
       this.page = 1
       if (num === 0) {
         let data = {time: time}
-        let res = await shop.customerTrend(data)
+        let res = this.infoRes(await shop.customerTrend(data))
         this.customerTrend = res
         this.$com.AeraChart.$wxpage.infoArea(this.customerTrend)
       } else if (num === 1) {
-        let res = await shop.customerList()
+        let res = this.infoRes(await shop.customerList())
         this.customerList = res
         if (this.customerList.length === 0) {
           this.comBlank = true
         }
       } else if (num === 2) {
-        let res = await shop.customerSex()
-        this.customerSex = res
-        let city = await shop.customerCity()
+        let res = this.infoRes(await shop.customerSex())
+        if (res.length > 0) {
+          this.customerSex = res
+        }
+        let city = this.infoRes(await shop.customerCity())
         this.customerCity = city
         if (this.customerCity.length === 0) {
           this.impBlank = true
@@ -318,7 +326,7 @@
               width: 24px
               height: 24px
               border-radius: 50%
-              left:0
+              left: 0
               col-center()
 
     .picture-title

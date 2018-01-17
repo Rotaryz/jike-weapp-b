@@ -4,8 +4,8 @@
            src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
     <view class="shopText">赞播商家助手</view>
     <view class="load">
-      <text class="{{showLoad >= 1 ? '' : 'white'}}"></text>
-      <text class="{{showLoad >= 2 ? '' : 'white'}}"></text>
+      <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
+      <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
       <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
     </view>
   </view>

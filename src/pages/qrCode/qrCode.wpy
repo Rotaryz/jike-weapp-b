@@ -2,7 +2,9 @@
   <view class="code">
     <view class="qr-input">
       <view class="code-input">
-        <view class="code-input-item" wx:for="0123456789" wx:key="{{item}}">{{code[item]}}</view>
+        <view class="code-input-item" wx:for="0123456789" wx:key="{{item}}">
+          {{code[item]}}
+        </view>
       </view>
       <view class="qr-input-txt">请输入10位券码</view>
     </view>
@@ -17,10 +19,12 @@
       </view>
       <view class="num-item" @tap="submitCode">
         <view class="nums">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
+          <image wx:if="{{imageUrlHead}}"
+                 src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
         </view>
       </view>
-      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap" wx:if="{{code.length>0}}">
+      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap"
+            wx:if="{{code.length>0}}">
         <view class="nums">
           <image src="{{delectImg}}" class="delect-btn"></image>
         </view>
@@ -38,6 +42,7 @@
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
 
   const IMG1 = URIS.image + '/defaults/b-image/page/pic-button1@2x.png'
   const IMG2 = URIS.image + '/defaults/b-image/page/pic-button2@2x.png'
@@ -47,7 +52,7 @@
   export default class Square extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -155,8 +160,9 @@
         wx.vibrateShort()
         this.loadIng = true
         let res = await shop.verification(this.code)
+
         this.loaded()
-        if (res.error === 0) {
+        if (res.error === ERR_OK) {
           Tips.success('核销成功')
           this.code = ''
         } else {
@@ -167,7 +173,7 @@
       }
     }
 
-    onLoad() {
+    onLoad () {
       this.code = ''
     }
 

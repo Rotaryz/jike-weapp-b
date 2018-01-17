@@ -44,8 +44,10 @@
           </view>
         </view>
       </view>
-      <view class="shop-extend border-top-1px">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
+      <view class="shop-extend border-bottom-1px border-right-1px">
+        <navigator class="border-top-1px border-left-1px" wx:for="{{navList}}"
+                   wx:key="{{index}}"
+                   url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -296,17 +298,14 @@
       height: 73.9%
       display: flex
       flex-wrap: wrap
-      justify-content: space-between
       text-align: center
       margin-top: 5px
+      box-sizing: border-box
       font-size: $font-size-small
-      border: 0.5px solid $color-split-line
-      border-top:none
       > navigator
-        width: 33.19%
-        height: 33.19%
+        width: 33.33%
+        height: 33.33%
         background: $color-white
-        margin-top: 0.5px
         position: relative
         view, image
           position: absolute
