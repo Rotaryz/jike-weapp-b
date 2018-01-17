@@ -136,4 +136,14 @@ export default class shop extends base {
     const url = `${this.baseUrl}/api/orders/wechat-orders/${id}`
     return await this.get(url)
   }
+
+  /**
+   * 收集form-id
+   * @param data
+   * @returns {Promise.<*>}
+   */
+  static async form (data) {
+    const url = `${this.baseUrl}/api/merchants/collect-formid`
+    return await this.post(url, data, false)
+  }
 }

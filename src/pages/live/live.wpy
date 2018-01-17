@@ -5,8 +5,11 @@
         <view class="con-item" wx:for="{{activityPromotion}}"
               wx:key="index"
               @tap="conponDetail({{item.promotion_id}},{{index}})">
-          <image class="con_bk" src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}" wx:if="{{showBk !== index && imageUrlHead}}"></image>
-          <image class="con_bk" src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
+          <image class="con_bk"
+                 src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}"
+                 wx:if="{{showBk !== index && imageUrlHead}}"></image>
+          <image class="con_bk"
+                 src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
                  wx:if="{{showBk  === index && imageUrlHead}}"></image>
           <view class="con-title">
             <view></view>
@@ -17,7 +20,7 @@
       </scroll-view>
       <view class="live_video video-bk" wx:if="{{!showVideo}}">
         <image wx:if="{{imageUrlHead}}"
-          src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
+               src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
       </view>
       <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
       </video>
@@ -28,7 +31,8 @@
         <view class="upload">
           <image class="video-box {{showError?'no-border':''}}"
                  @tap="upVideo" src="{{videoImage}}" binderror="binderror">
-            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
+            <image wx:if="{{imageUrlHead}}"
+                   src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
             <view></view>
           </image>
           <!--<video class="video-box no-border" src="{{videoSrc}}"-->
@@ -46,12 +50,12 @@
             {{item.promotion_title}}
             <view class="close-box" @tap="delCou({{index}})">
               <image wx:if="{{imageUrlHead}}"
-                src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
+                     src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
             </view>
           </view>
           <view class="add-cou" @tap="choice">
             <image wx:if="{{imageUrlHead}}"
-              src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
+                   src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
             添加服务
           </view>
         </view>
@@ -85,9 +89,7 @@
     }
 
     config = {
-      navigationBarTitleText: '直播优惠',
-      navigationBarBackgroundColor: '#363547',
-      navigationBarTextStyle: 'white'
+      navigationBarTitleText: '直播优惠'
     }
     data = {
       videoImage: '',
