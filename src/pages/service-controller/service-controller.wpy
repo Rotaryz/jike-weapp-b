@@ -505,10 +505,11 @@
     }
 
     async _getCouponDetail() {
-      const res = await Coupons.getCouponDetail(this.promotionId)
-      if (res.error !== ERR_OK) {
+      const json = await Coupons.getCouponDetail(this.promotionId)
+      if (json.error !== ERR_OK) {
         return
       }
+      const res = json.data
       this.category = res.promotion_category.name
       this.categoryId = res.promotion_category.id
       this.pictures = res.promotion_image_data
@@ -539,14 +540,22 @@
     }
 
     async _getMerchantData() {
-      const res = await Merchants.getMerchantData()
+      const json = await Merchants.getMerchantData()
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.industry = res.industry ? res.industry.name : ''
       this.industryId = res.industry ? res.industry.id : 0
       this.$apply()
     }
 
     async _getCouponCategories() {
-      const res = await Coupons.getCouponsCategories()
+      const json = await Coupons.getCouponsCategories()
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.categories = res
       this.category = res[0].name
       this.categoryId = res[0].id

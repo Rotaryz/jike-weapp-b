@@ -157,7 +157,7 @@
             </view>
           </picker>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date"  @change="setSellEndDate">
+          <picker mode="date" class="sell-date" @change="setSellEndDate">
             <view class="date">
               <view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>
               <view class="arrow-right">
@@ -168,22 +168,22 @@
           </picker>
         </view>
         <!--<sell-time-modal title="售卖时间">-->
-          <!--<view class="sell-time-modal" slot="content">-->
-            <!--<view class="header">-->
-              <!--<view class="start" @tap.stop="changeSellPickerType('start')">-->
-                <!--{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}-->
-              <!--</view>-->
-              <!--<view class="to">至</view>-->
-              <!--<view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>-->
-              <!--<view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">-->
-                <!--<view class="line"></view>-->
-              <!--</view>-->
-            <!--</view>-->
-            <!--<view class="picker-time-wrapper">-->
-              <!--<sell-time-picker @cancel.user="cancelSellTimePicker"-->
-                                <!--@confirm.user="confirmSellTimePicker"></sell-time-picker>-->
-            <!--</view>-->
-          <!--</view>-->
+        <!--<view class="sell-time-modal" slot="content">-->
+        <!--<view class="header">-->
+        <!--<view class="start" @tap.stop="changeSellPickerType('start')">-->
+        <!--{{sellStartTime === '' ? '自上线之日起' : sellStartTime}}-->
+        <!--</view>-->
+        <!--<view class="to">至</view>-->
+        <!--<view class="end" @tap.stop="changeSellPickerType('end')">{{sellEndTime}}</view>-->
+        <!--<view class="line-wrapper {{sellTimePickerType === 'end' ? 'end' : ''}}">-->
+        <!--<view class="line"></view>-->
+        <!--</view>-->
+        <!--</view>-->
+        <!--<view class="picker-time-wrapper">-->
+        <!--<sell-time-picker @cancel.user="cancelSellTimePicker"-->
+        <!--@confirm.user="confirmSellTimePicker"></sell-time-picker>-->
+        <!--</view>-->
+        <!--</view>-->
         <!--</sell-time-modal>-->
       </view>
       <view class="stock input-wrapper">
@@ -232,6 +232,7 @@
   import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
   import Textarea from '@/base/textarea/textarea'
+  import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Uploads from 'api/uploads'
   import Tips from 'common/js/tips'
@@ -291,7 +292,11 @@
     }
 
     async _getPackageDetail() {
-      const res = await Packages.getPackage(this.packageId)
+      const json = await Packages.getPackage(this.packageId)
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.business = res.business_circles_name
       this.selectCategoryIds = res.industry_ids
       this.selectStoreIds = res.merchant_ids
@@ -328,7 +333,11 @@
     }
 
     async _getIndustries() {
-      const res = await Packages.getIndustries()
+      const json = await Packages.getIndustries()
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.categories = res
       this.tempCategories = res.map((item) => Object.assign({}, item))
       this.$apply()
@@ -336,7 +345,11 @@
 
     async _getMerchantStores() {
       const params = {industry_ids: this.selectCategoryIds}
-      const res = await Packages.getMerchantStores(params)
+      const json = await Packages.getMerchantStores(params)
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.stores = res
       if (this.selectStoreIds.length > 0) {
         if (this.selectStoreIds.length === this.stores.length) {
@@ -441,6 +454,11 @@
         })
         this.selectCategoryContent = selectContents.join('、')
         this.selectCategoryIds = selectIds
+        this.realSelectAllStores = false
+        this.tempSelectAllStores = false
+        this.stores = []
+        this.tempStores = []
+        this.selectStoreIds = []
         this.$apply()
         this._getMerchantStores()
       },

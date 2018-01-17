@@ -55,8 +55,8 @@
 
     config = {
       pages: [
-        'pages/logIn/logIn',
         'pages/loading/loading',
+        'pages/logIn/logIn',
         'pages/forget/forget',
         'pages/register/register',
         'pages/shop/shop',

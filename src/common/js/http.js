@@ -58,7 +58,7 @@ export default class http {
   static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
-    if (wxCode === 200 || wxCode === 422) {
+    if ((wxCode === 200 && res.data.code === 0) || wxCode === 422) {
       return true
     }
     return false

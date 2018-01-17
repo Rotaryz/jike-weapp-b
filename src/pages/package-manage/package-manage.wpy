@@ -158,6 +158,7 @@
 
 <script>
   import wepy from 'wepy'
+  import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
   import base from 'common/mixins/base'
@@ -240,7 +241,11 @@
 
     async _getPackageLists() {
       const page = this.tabIndex === 0 ? this.willOPage : this.tabIndex === 1 ? this.onPage : this.tabIndex === 2 ? this.offPage : this.willAPage
-      const res = this.isLeader ? await Packages.getPackageLists({status: this.tabIndex, page}) : await Packages.getMerchantPackageLists({status: this.tabIndex, page})
+      const json = this.isLeader ? await Packages.getPackageLists({status: this.tabIndex, page}) : await Packages.getMerchantPackageLists({status: this.tabIndex, page})
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       switch (this.tabIndex) {
         case 0:
           this.willOnLines = res

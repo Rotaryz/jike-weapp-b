@@ -3,26 +3,28 @@
     <view class="wheel-wrapper">
       <view class="header-wrapper">
         <!--<view class="switch-wrapper">-->
-          <!--<view class="switch">-->
-            <!--<view class="switch-ball"></view>-->
-          <!--</view>-->
-          <!--<view class="text">-->
-            <!--开启活动-->
-          <!--</view>-->
+        <!--<view class="switch">-->
+        <!--<view class="switch-ball"></view>-->
+        <!--</view>-->
+        <!--<view class="text">-->
+        <!--开启活动-->
+        <!--</view>-->
         <!--</view>-->
         <!--<view class="edit-wrapper">-->
-          <!--<view class="btn">编辑</view>-->
+        <!--<view class="btn">编辑</view>-->
         <!--</view>-->
       </view>
       <view class="content-wrapper">
         <view class="wheel">
           <view class="wheel-pointer">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}" class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}"
+                   class="full-image"></image>
           </view>
           <view class="wheel-content" ref="wheel">
             <view class="wheel-relative">
               <view class="wheel-image">
-                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}"
+                       class="full-image"></image>
               </view>
               <view class="wheel-prize-wrapper">
                 <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
@@ -36,7 +38,8 @@
                 <view class="prize prize-5">
                   <view class="name">谢谢惠顾</view>
                   <view class="img-wrapper">
-                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}" mode="aspectFit"></image>
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}"
+                           mode="aspectFit"></image>
                   </view>
                 </view>
               </view>
@@ -67,17 +70,17 @@
           <view class="label">活动时间</view>
           <view class="content">
             <!--<picker mode="date" class="sell-date" @change="setFromDate">-->
-              <!--<view class="date">-->
-                <!--<view>{{fromDate === '' ? '开始时间' : fromDate}}</view>-->
-                <!--<view class="arrow-right">-->
-                  <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
-                         <!--class="full-image"></image>-->
-                <!--</view>-->
-              <!--</view>-->
+            <!--<view class="date">-->
+            <!--<view>{{fromDate === '' ? '开始时间' : fromDate}}</view>-->
+            <!--<view class="arrow-right">-->
+            <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+            <!--class="full-image"></image>-->
+            <!--</view>-->
+            <!--</view>-->
             <!--</picker>-->
             <view class="start">当日</view>
             <view class="to">至</view>
-            <picker mode="date" class="sell-date"  @change="setToDate">
+            <picker mode="date" class="sell-date" @change="setToDate">
               <view class="date">
                 <view>{{toDate === '' ? '结束时间' : toDate}}</view>
                 <view class="arrow-right">
@@ -93,28 +96,30 @@
           <view class="select-wrapper">
             <view class="select-box" @tap="selectJoinTime(1)">
               <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{joinTimes === 1 && imageUri}}"
+                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一天一次</view>
             </view>
             <view class="select-box" @tap="selectJoinTime(0)">
               <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0 && imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{joinTimes === 0 && imageUri}}"
+                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
               </view>
               <view class="text">一人一次</view>
             </view>
           </view>
         </view>
         <!--<view class="add input-wrapper border-bottom-1px">-->
-          <!--<view class="label">增加次数</view>-->
-          <!--<view class="select-wrapper">-->
-            <!--<view class="select-box">-->
-              <!--<view class="select unselect">-->
-                <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
-              <!--</view>-->
-              <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
-            <!--</view>-->
-          <!--</view>-->
+        <!--<view class="label">增加次数</view>-->
+        <!--<view class="select-wrapper">-->
+        <!--<view class="select-box">-->
+        <!--<view class="select unselect">-->
+        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
+        <!--</view>-->
+        <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
+        <!--</view>-->
+        <!--</view>-->
         <!--</view>-->
         <view class="explain">
           <view class="title">活动说明</view>
@@ -153,7 +158,8 @@
         <view class="add-wrapper">
           <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
             <view class="add-image">
-              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}" class="full-image"></image>
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}"
+                     class="full-image"></image>
             </view>
             添加奖品
           </view>
@@ -166,7 +172,8 @@
                 <view class="stock">剩余{{item.promotion_stock}}个</view>
                 <view class="check-box-wrapper">
                   <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                    <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                    <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}"
+                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
                            class="full-image"></image>
                   </view>
                 </view>
@@ -179,12 +186,12 @@
                 <input type="number"
                        maxlength="10"
                        value="{{selectStock}}"
-                       @input="inputSelectStock" />
+                       @input="inputSelectStock"/>
               </view>
               <view class="add" @tap.stop="addSelectStock">+</view>
             </view>
             <!--<view class="save-wrapper">-->
-              <!--<view class="btn" @tap.stop="saveSelectPrize()">保存</view>-->
+            <!--<view class="btn" @tap.stop="saveSelectPrize()">保存</view>-->
             <!--</view>-->
           </view>
         </prize-pool-modal>
@@ -204,6 +211,7 @@
   import BaseModal from '@/base/base-modal/base-modal'
   import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
+  import {ERR_OK} from 'api/base'
   import Activitys from 'api/activitys'
   import Tips from 'common/js/tips'
   import base from 'common/mixins/base'
@@ -250,8 +258,9 @@
     }
 
     async _getLucky(loading) {
-      const res = await Activitys.getLucky(loading)
-      if (res.id) {
+      const json = await Activitys.getLucky(loading)
+      if (json.error === ERR_OK) {
+        const res = json.data
         this.id = res.id
         this.type = UPDATE_TYPE
         this.name = res.name
@@ -271,7 +280,11 @@
     }
 
     async _getPrizePool() {
-      const res = await Activitys.getPrizePool()
+      const json = await Activitys.getPrizePool()
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.prizePool = res
       this.$apply()
     }
