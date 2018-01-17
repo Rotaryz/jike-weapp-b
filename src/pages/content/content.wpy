@@ -12,17 +12,17 @@
       <view class="content-coupon">
         <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
           <image wx:if="{{imageUri}}"
-            src="{{item.image_url !== '' ? item.image_url : imageUri + '/defaults/b-image/page/bk.jpg'}}"></image>
+                 src="{{item.image_url !== '' ? item.image_url : imageUri + '/defaults/b-image/page/bk.jpg'}}"></image>
           <view>
             <view class="con-cou-item-ri">
               <view>
                 <image wx:if="{{imageUri}}"
-                  src="{{imageUri + '/defaults/b-image/page/star@2x.png'}}"></image>
+                       src="{{imageUri + '/defaults/b-image/page/star@2x.png'}}"></image>
                 {{item.favorite_count}}
               </view>
               <view>
                 <image wx:if="{{imageUri}}"
-                  src="{{imageUri + '/defaults/b-image/page/icon-share@2x.png'}}"></image>
+                       src="{{imageUri + '/defaults/b-image/page/icon-share@2x.png'}}"></image>
                 {{item.share_count}}
               </view>
             </view>
@@ -58,7 +58,7 @@
   export default class Content extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -96,7 +96,7 @@
       index: ''
     }
 
-    _showBlank(res) {
+    _showBlank (res) {
       if (res.length === 0) {
         this.$invoke('Blank',
           'show',
@@ -134,7 +134,7 @@
       },
       async create() {
         await wepy.navigateTo({
-          url: '../create-content/create-content'
+          url: '/pages/create-content/create-content'
         })
       },
       async showMore() {
@@ -160,7 +160,7 @@
       }
     }
 
-    async load(num, page = 1) {
+    async load (num, page = 1) {
       let data = {status: num, page: page}
       let res = await content.contentList(data)
       this.contentList = this.contentList.concat(res)
@@ -170,7 +170,7 @@
       return res
     }
 
-    async onLoad(options) {
+    async onLoad (options) {
       this.contentList = []
       if (options.show) {
         this.navNum = options.show * 1
@@ -255,4 +255,9 @@
       text-align: center
       font-size: $font-size-medium
       border-radius: 4px
+
+  .client-head
+    view
+      text
+        width: 50%
 </style>

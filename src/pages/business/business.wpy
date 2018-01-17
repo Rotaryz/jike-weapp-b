@@ -52,7 +52,7 @@
   export default class business extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -97,7 +97,7 @@
       nothing: false
     }
 
-    async _checkBusiness(data) {
+    async _checkBusiness (data) {
       let res = await shop.checkBusiness(data)
       for (let i = 0; i < res.length; i++) {
         if (res[i].current_merchant) {
@@ -110,17 +110,19 @@
       return res
     }
 
-    async _setMapShowed(data) {
+    async _setMapShowed (data) {
       let res = await shop.setMapShowed(data)
       this.loaded()
       return res
     }
 
-    showBlank(res) {
+    showBlank (res) {
       if (res.length === 0) {
         this.$invoke('Blank',
           'show',
-          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_shop@2x.png', '一大波商家正在路上', '15.2')
+          `${this.imageUri}/defaults/b-image/common/pic-empty_shop@2x.png`,
+          '一大波商家正在路上',
+          '15.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
@@ -234,7 +236,7 @@
       }
     }
 
-    async onLoad(options) {
+    async onLoad (options) {
       this.conList = [{
         'shop_name': '全部',
         'merchant_id': '',

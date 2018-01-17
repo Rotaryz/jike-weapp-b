@@ -45,7 +45,7 @@
         if (res.message === '凭证已失效') {
           this.$redirect('/pages/logIn/logIn')
         } else {
-          this.$switchTab('/pages/shop/shop')
+          this.$switch('/pages/shop/shop')
         }
       }, 1500)
     }

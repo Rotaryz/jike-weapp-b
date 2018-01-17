@@ -12,10 +12,12 @@
         {{mistakeTip}}
       </view>
       <view
-        class="lg-ch {{register ? 'phone' : ''}} {{phoneStatus ? '' : 'error-fa'}}">
+        class="lg-ch phone">
         <view>
-          <image src="{{phoneImage}}" class="icon"></image>
-          <input id="phones" class="phone {{phoneStatus ? '' : 'error'}}"
+          <image wx:if="{{imageUri}}"
+                 src="{{imageUri+'/defaults/b-image/page/icon-phone@2x.png'}}"
+                 class="icon"></image>
+          <input id="phones"
                  type="number" placeholder="请输入手机号码"
                  placeholder-class="placeholder" value="{{phoneNum}}"
                  focus="{{phoneFocus}}"
@@ -27,16 +29,23 @@
           </view>
 
         </view>
-        <text class="?{{isSet ? 'set-code' : ''}}" wx:if="{{register}}"
-              @tap="setCode">{{
+        <text class="{{isSet ? 'set-code' : ''}}" @tap="setCode">{{
           time}}
         </text>
       </view>
+      <view class="lg-ch" wx:if="{{register || forget}}">
+        <image class="icon" wx:if="{{imageUri}}"
+               src="{{imageUri + '/defaults/b-image/page/icon-code@2x.png'}}"></image>
+        <input type="number" placeholder="请输入6位验证码"
+               placeholder-class="placeholder" value="{{code}}"
+               bindinput="getCode"/>
+      </view>
       <view class="password lg-ch">
         <view class="ciphertext">
-          <image class="icon" src="{{passError}}"></image>
+          <image class="icon" wx:if="{{imageUri}}"
+                 src="{{imageUri+'/defaults/b-image/page/icon-password@2x.png'}}"></image>
           <input type="{{ciphertext ? 'text' : 'password'}}"
-                 placeholder="{{passtext}}"
+                 placeholder="密码(6-16位数字或字母)"
                  placeholder-class="placeholder" bindinput="putPassword"
                  maxlength="18" value="{{password}}" focus="{{isfocus}}"/>
           <view class="eye" @tap="showCiphertext">
@@ -46,14 +55,11 @@
 
         </view>
       </view>
-      <button class="{{submit ? '' : 'disable'}}"
-              @tap="submit">登录
+      <button class="{{submit ? '' : 'disable'}}" @tap="submit({{submitType}})">
+        注册
       </button>
-      <view class="tip" wx:if="{{login}}">
-        <text @tap="showOther('forget')">忘记密码</text>
-        <text @tap="showOther('register')">立即注册</text>
-      </view>
     </view>
+
     <Toast></Toast>
   </view>
 </template>
@@ -86,20 +92,13 @@
       password: '',
       submitType: 1,
       anPassword: '',
-      passtext: '密码(6-16位数字或字母)',
-      submitText: '登录',
+      ciphertext: false,
       code: '',
+      forget: false,
       login: true,
+      register: true,
       submit: false,
       time: '获取验证码',
-      ciphertext: false,
-      anCiphertext: false,
-      phoneStatus: true,
-      phoneImage: URIS.image + '/defaults/b-image/page/icon-phone@2x.png',
-      passError: URIS.image + '/defaults/b-image/page/icon-password@2x.png',
-      anPassStatus: true,
-      anPassImage: URIS.image + '/defaults/b-image/page/icon-password@2x.png',
-      codeError: true,
       showClose: false,
       isfocus: false,
       tapCode: true,
@@ -116,17 +115,13 @@
 
 //      判断是否可登陆
     checkAngin () {
-      if (REGPHONE.test(this.phoneNum) && REGPASS.test(this.password)) {
+      if (REGPHONE.test(this.phoneNum) && REGPASS.test(this.password) &&
+        this.code.length === 6) {
         this.submit = true
       } else {
         this.submit = false
       }
 
-      if (REGPHONE.test(this.phoneNum)) {
-        this.isSet = true
-      } else {
-        this.isSet = false
-      }
       this.checkTip()
     }
 
@@ -140,7 +135,6 @@
     rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
-      console.log(content)
       this.showMistake = true
       setTimeout(() => {
         this.showMistake = false
@@ -152,9 +146,7 @@
     checkTip () {
       let phoneStatus = REGPHONE.test(this.phoneNum)
       let passStatus = REGPASS.test(this.password)
-      if ((this.phoneNum.length < 11 && this.password.length < 6) ||
-        (phoneStatus && passStatus) || (passStatus && this.password.length >= 6 && phoneStatus) ||
-        (!passStatus && this.password.length < 6 && phoneStatus)) {
+      if ((this.phoneNum.length < 11 && this.password.length < 6) || (phoneStatus && passStatus) || (passStatus && this.password.length >= 6 && phoneStatus) || (!passStatus && this.password.length < 6 && phoneStatus)) {
         this.showTip(false, '')
       } else if (!phoneStatus && this.phoneNum.length === 11) {
         this.showTip(true, '请输入正确的手机号码')
@@ -192,7 +184,7 @@
         this.showMistake = false
         this.checkAngin()
       },
-      showCiphertext(type) {
+      showCiphertext() {
         this.ciphertext = !this.ciphertext
         setTimeout(() => {
           this.isfocus = true
@@ -203,11 +195,58 @@
           this.$apply()
         }, 20)
       },
-//      注册
-      async showOther(type) {
-        await wepy.navigateTo({
-          url: `/pages/${type}/${type}`
-        })
+//      点击获取验证码
+      async setCode() {
+        let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
+        if (this.phoneNum === '') {
+          this.showTip(true, '请输入手机号码')
+//          this.$invoke('Toast', 'show', '请输入手机号码')
+          return false
+        } else if (!regPhone.test(this.phoneNum)) {
+          this.showTip(true, '请输入正确的手机号码')
+//          this.$invoke('Toast', 'show', '请输入正确的手机号码')
+          return false
+        }
+        let data = {}
+        if (this.forget) {
+          data = {mobile: this.phoneNum}
+        } else {
+          data = {mobile: this.phoneNum, register: 1}
+        }
+        if (this.tapCode) {
+          let codeData = await logIn.messageBind(data)
+          this.time = '发送中…'
+//          this.$invoke('Toast', 'show', codeData.message)
+          this.loaded()
+          if (codeData.error === 1) {
+            this.time = '获取验证码'
+            this.rightTip(codeData.message, false)
+          } else {
+            this.isSet = false
+            this.rightTip(codeData.message)
+            let time = 60
+            this.time = time + 's'
+            let timer = setInterval(() => {
+              this.tapCode = false
+              time--
+              this.time = time + 's'
+              this.$apply()
+              if (time <= 0) {
+                this.time = '获取验证码'
+                this.tapCode = true
+                if (REGPHONE.test(this.phoneNum)) {
+                  this.isSet = true
+                } else {
+                  this.isSet = false
+                }
+                this.$apply()
+                clearInterval(timer)
+              }
+            }, 1000)
+          }
+        } else {
+          return false
+        }
       },
       putPassword(e) {
         this.password = e.detail.value
@@ -216,25 +255,30 @@
         this.checkAngin()
         return this.password
       },
+
+      getCode(e) {
+        this.code = e.detail.value
+        this.checkAngin()
+      },
       async submit() {
         if (this.submit) {
-//            登陆
-          let res = await logIn.login({
+//            注册
+          let res = await logIn.register({
             mobile: this.phoneNum,
-            password: this.password
+            password: this.password,
+            code: this.code
           })
           this.loaded()
           if (res.error !== 1) {
             wepy.setStorageSync('token', res.access_token)
             wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
-            this.rightTip('登录成功')
+            this.rightTip('注册成功')
             setTimeout(async () => {
               await wepy.switchTab({
                 url: '/pages/shop/shop'
               })
             }, 1000)
           } else {
-//              this.$invoke('Toast', 'show', res.message)
             this.rightTip(res.message, false)
           }
         }
