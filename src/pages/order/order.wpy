@@ -7,7 +7,7 @@
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
         <image wx:if="{{imageUrlHead}}"
-          src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
+               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
@@ -41,7 +41,7 @@
       <view class="order-conpon">
         <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
           <image wx:if="{{imageUrlHead}}"
-            src="{{imageUrlHead+'/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
+                 src="{{imageUrlHead+'/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
           <view class="order-top">
             <view>
               <view class="order-title">服务名称: {{item.title}}</view>
@@ -83,6 +83,7 @@
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
   export default class order extends wepy.page {
     mixins = [base]
 
@@ -203,15 +204,17 @@
     async load (status = 0, date = 'today', mobile = '', page = 1, type) {
       let data = {status, mobile, date, page}
       let res = await shop.wechatOrders(data)
-      if (type === 2) {
-        this.couponList = this.couponList.concat(res)
-      } else {
-        this.couponList = res
+      if (res.error === ERR_OK) {
+        if (type === 2) {
+          this.couponList = this.couponList.concat(res.data)
+        } else {
+          this.couponList = res.data
+        }
+        this._showBlank(this.couponList)
+        this.loaded()
+        this.$apply()
+        return res.data
       }
-      this._showBlank(this.couponList)
-      this.loaded()
-      this.$apply()
-      return res
     }
 
     async onLoad () {

@@ -55,11 +55,11 @@
 
     config = {
       pages: [
-        'pages/logIn/logIn',
         'pages/loading/loading',
+        'pages/shop/shop',
         'pages/forget/forget',
         'pages/register/register',
-        'pages/shop/shop',
+        'pages/logIn/logIn',
         'pages/content/content',
         'pages/create-content/create-content',
         'pages/bus-times/bus-times',
