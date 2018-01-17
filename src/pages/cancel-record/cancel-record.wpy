@@ -24,6 +24,8 @@
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
+  import { ERR_OK } from 'api/base'
+  import URIS from 'common/js/config'
   export default class record extends wepy.page {
     mixins = [base]
 
@@ -40,6 +42,7 @@
       navigationBarTextStyle: 'white'
     }
     data = {
+      imageUri: URIS.image,
       navList: [{
         name: '券名'
       }, {
@@ -59,7 +62,7 @@
       if (res.length === 0) {
         this.$invoke('Blank',
           'show',
-          'http://jike-file.jerryf.cn/defaults/b-image/common/pic-empty_enroll@2x.png', '还没有核销记录', '25.2')
+          `${this.imageUri}/defaults/b-image/common/pic-empty_enroll@2x.png`, '还没有核销记录', '25.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
@@ -68,11 +71,13 @@
     async load (page = 1) {
       let data = {page: page}
       let res = await shop.verificationLog(data)
-      this._showBlank(res)
-      this.verification = this.verification.concat(res)
-      this.$apply()
-      this.loaded()
-      return res
+      if (res.error === ERR_OK) {
+        this._showBlank(res.data)
+        this.verification = this.verification.concat(res.data)
+        this.$apply()
+        this.loaded()
+        return res.data
+      }
     }
 
     async onLoad () {

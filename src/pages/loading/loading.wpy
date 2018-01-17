@@ -42,9 +42,7 @@
       this.show()
       let res = await shop.verificationLog('', false)
       setTimeout(() => {
-        if (res.message === '凭证已失效') {
-          this.$redirect('/pages/logIn/logIn')
-        } else {
+        if (res.message !== '凭证已失效') {
           this.$switch('/pages/shop/shop')
         }
       }, 1500)
