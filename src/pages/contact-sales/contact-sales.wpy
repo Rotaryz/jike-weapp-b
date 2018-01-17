@@ -96,10 +96,10 @@
           }
           let res = await Account.complaint(data)
           this.loaded()
-          console.log(res)
           if (res.error === 0) {
             Tips.success('投诉成功')
             this.complaintIn = false
+            this.$apply()
           }
         } else {
           this.$invoke('Toast', 'show', '请填写投诉内容')
@@ -108,7 +108,8 @@
     }
 
     async onLoad(option) {
-      this.load(option.id)
+      let id = option.id * 1
+      this.load(id)
     }
 
     async load(id) {

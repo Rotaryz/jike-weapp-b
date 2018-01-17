@@ -23,8 +23,14 @@
 
   export default class BaseModal extends wepy.component {
     props = {
-      type: String,
-      title: String
+      type: {
+        type: String,
+        default: ''
+      },
+      title: {
+        type: String,
+        default: ''
+      }
     }
 
     data = {

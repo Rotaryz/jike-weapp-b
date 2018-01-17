@@ -428,7 +428,7 @@
 <script>
   import wepy from 'wepy'
   import BaseModal from '@/base/base-modal/base-modal'
-  import DatePicker from '@/base/date-picker/date-picker'
+//  import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
   import Merchants from 'api/merchants'
   import Coupons from 'api/coupons'
@@ -780,9 +780,9 @@
         }
         this.loaded()
       },
-      showCatelogModal() {
-        this.$invoke('catelog-modal', 'show')
-      },
+//      showCatelogModal() {
+//        this.$invoke('catelog-modal', 'show')
+//      },
       showMealModal() {
         this.$invoke('meal-modal', 'show')
       },
@@ -825,13 +825,13 @@
     }
 
     components = {
-      'catelog-modal': BaseModal,
+//      'catelog-modal': BaseModal,
       'meal-modal': BaseModal,
       'service-modal': BaseModal,
-      'sell-time-modal': BaseModal,
-      'sell-time-picker': DatePicker,
-      'valid-date-modal': BaseModal,
-      'valid-date-picker': DatePicker,
+//      'sell-time-modal': BaseModal,
+//      'sell-time-picker': DatePicker,
+//      'valid-date-modal': BaseModal,
+//      'valid-date-picker': DatePicker,
       'not-allow-time-modal': BaseModal,
       'count-modal': BaseModal,
       'know-modal': BaseModal,

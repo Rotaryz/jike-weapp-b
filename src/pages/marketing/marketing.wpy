@@ -92,7 +92,7 @@
       }
     }
 
-    async onLoad() {
+    async onShow() {
       this.load()
     }
     async load() {

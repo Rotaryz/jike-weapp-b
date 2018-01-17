@@ -20,7 +20,7 @@
           <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
         </view>
       </view>
-      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap">
+      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap" wx:if="{{code.length>0}}">
         <view class="nums">
           <image src="{{delectImg}}" class="delect-btn"></image>
         </view>

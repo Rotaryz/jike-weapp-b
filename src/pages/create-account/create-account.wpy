@@ -3,12 +3,12 @@
     <view class="createAccount-head">
       <view class="createAccount-txt">
         <view class="createAccount-txt-title">手机</view>
-        <input type="number" class="createAccount-txt-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11" bindblur="phoneChange"/>
+        <input type="number" class="createAccount-txt-input {{telTest?'':'error'}}" placeholder="请输入" placeholder-class="createAccount-txt-placeholder" maxlength="11" bindinput="phoneChange"/>
       </view>
 
       <view class="createAccount-txt last">
         <view class="createAccount-txt-title">密码</view>
-        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindblur="passwordChange"/>
+        <input type="text" class="createAccount-txt-input" password placeholder="密码(6-16位数字和字母)" maxlength="16" placeholder-class="createAccount-txt-placeholder" bindinput="passwordChange"/>
       </view>
 
     </view>
@@ -128,12 +128,15 @@
           } else {
             this.$invoke('Toast', 'show', '创建失败')
           }
-        } else if (this.telTest || this.phoneNum.length !== 11) {
+        } else if (!this.telTest || this.phoneNum.length !== 11) {
           this.$invoke('Toast', 'show', '手机填写错误')
-        } else if (this.passTest) {
+          return false
+        } else if (!this.passTest) {
           this.$invoke('Toast', 'show', '密码格式错误')
-        } else if (this.checkedStore || this.checkedStoreId) {
+          return false
+        } else if (!this.checkedStore || !this.checkedStoreId) {
           this.$invoke('Toast', 'show', '请选择对应门店')
+          return false
         }
       }
     }
