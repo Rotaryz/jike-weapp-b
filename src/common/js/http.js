@@ -18,14 +18,14 @@ export default class http {
       Tips.loading()
     }
     const res = await wepy.request(param)
-    if (this.isSuccess(res)) {
-      const result = res.data.data ? res.data.data : res.data
-      return result
-    } else if (this.isLoseEfficacy(res)) {
+    if (this.isLoseEfficacy(res)) {
       wepy.redirectTo({
         url: '/pages/logIn/logIn'
       })
       throw res.data
+    } else if (this.isSuccess(res)) {
+      const result = res.data
+      return result
     } else {
       throw this.requestException(res)
     }
@@ -53,27 +53,13 @@ export default class http {
   }
 
   /**
-   * 判断是否登录
-   * @param msg
-   * @returns {Promise.<void>}
-   */
-  static async isLogin(msg) {
-    if (msg === '凭证已失效') {
-      await wepy.navigateTo({
-        url: '../logIn/logIn'
-      })
-    }
-  }
-
-  /**
    * 判断请求是否成功
    */
   static isSuccess(res) {
     const wxCode = res.statusCode
     // 微信请求错误
     if (wxCode === 200 || wxCode === 422) {
-      const wxData = res.data
-      return (wxCode === 200 && wxData.error === 0) || wxCode === 422
+      return true
     }
     return false
   }
@@ -82,7 +68,7 @@ export default class http {
     const wxCode = res.statusCode
     if (wxCode === 200) {
       const json = res.data
-      return json.status_code === 500 && json.error === 1 && json.message === '凭证已失效'
+      return json.code === 10000
     }
     return false
   }
@@ -98,9 +84,6 @@ export default class http {
       error.error = wxData.error
       error.message = wxData.message
       error.serverData = wxData
-      Tips.error(wxData.message)
-    } else {
-      Tips.loaded()
     }
     return error
   }

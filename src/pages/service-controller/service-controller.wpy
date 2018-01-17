@@ -430,6 +430,7 @@
   import BaseModal from '@/base/base-modal/base-modal'
 //  import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
+  import {ERR_OK} from 'api/base'
   import Merchants from 'api/merchants'
   import Coupons from 'api/coupons'
   import Uploads from 'api/uploads'
@@ -505,6 +506,9 @@
 
     async _getCouponDetail() {
       const res = await Coupons.getCouponDetail(this.promotionId)
+      if (res.error !== ERR_OK) {
+        return
+      }
       this.category = res.promotion_category.name
       this.categoryId = res.promotion_category.id
       this.pictures = res.promotion_image_data

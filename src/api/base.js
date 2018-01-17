@@ -10,3 +10,5 @@ export default class base {
   static delete = http.delete.bind(http)
   static upload = http.upload.bind(http)
 }
+
+export const ERR_OK = 0
