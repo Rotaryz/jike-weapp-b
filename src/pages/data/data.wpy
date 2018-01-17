@@ -49,7 +49,7 @@
   import AeraChart from '@/base/areaChart/areaChart'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
-
+  import { ERR_OK } from 'api/base'
   export default class Data extends wepy.page {
     mixins = [base]
 
@@ -91,11 +91,13 @@
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-      this.dataList = res
-      this.typeList = this.dataList.detail
-      this.$com.AeraChart.$wxpage.infoArea(res)
-      this.loaded()
-      this.$apply()
+      if (res.error === ERR_OK) {
+        this.dataList = res.data
+        this.typeList = this.dataList.detail
+        this.$com.AeraChart.$wxpage.infoArea(res.data)
+        this.loaded()
+        this.$apply()
+      }
     }
 
     methods = {

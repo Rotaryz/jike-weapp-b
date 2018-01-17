@@ -73,6 +73,7 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
   export default class Live extends wepy.page {
     mixins = [base]
     components = {
@@ -150,7 +151,7 @@
           await this.load()
         }
         this.loaded()
-        if (res.error === 0) {
+        if (res.error === ERR_OK) {
           this.$invoke('Toast', 'show', '保存成功')
           setTimeout(() => {
             this.$back()
@@ -172,7 +173,8 @@
 
     async load () {
       let res = await live.watchlive()
-      if (res.error !== 1) {
+      if (res.error === ERR_OK) {
+        res = res.data
         this.id = res.id
         this.videoSrc = res.file_url
         this.showVideo = true
