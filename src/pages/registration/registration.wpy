@@ -111,8 +111,8 @@
               <view class="ways" wx:for="{{wayList}}" wx:key="{{index}}">
                 {{item.title}}
                 <view class="sel" @tap="chioceWay({{index}})">
-                  <image
-                    src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/b-image/page/icon-selected.png'}}"></image>
+                  <image wx:if="{{imageUri}}"
+                         src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
                 </view>
               </view>
               <view class="ways" style="border:none">
@@ -134,8 +134,8 @@
               <view>{{item.promotion_title}}</view>
               <text>剩余{{item.promotion_stock}}个</text>
               <view class="sel" @tap="selRed({{index}})">
-                <image
-                  src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png':imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
+                <image wx:if="{{imageUri}}"
+                       src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
               </view>
             </view>
             <view class="add-weight ways">
@@ -200,7 +200,7 @@
         latitude: 0,
         longitude: 0,
         width: 32,
-        height: 28.5
+        height: 34
       }],
       btime: '',
       etime: '结束时间',
@@ -444,6 +444,10 @@
       },
 //      保存红包
       save() {
+        if (this.addNum === 0) {
+          this.$invoke('Toast', 'show', '添加红包数不能为0')
+          return false
+        }
         this.showChioce = false
         this.showText = true
         let title = '添加奖品'
@@ -534,7 +538,6 @@
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
       let res = this.infoRes(await regist.seeRegist())
-      console.log(res)
       this.loaded()
       if (res) {
         this.id = res.id
@@ -597,7 +600,7 @@
       this.markers[0].latitude = shop.latitude
       this.markers[0].longitude = shop.longitude
       this.showMap = true
-//      this.markers[0].iconPath = `./{}.png`
+      this.markers[0].iconPath = `./icon-s_${shop.industry.code_name}@2x.png`
       this.shop = shop
       this.redPack = data
       await this.load()

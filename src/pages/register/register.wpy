@@ -24,7 +24,7 @@
                  bindinput="putPhone" maxlength="11"/>
           <view class="eye" @tap.stop="clearPhone">
             <image class="close"
-                   src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-del34@2x.png'}}"
                    wx:if="{{imageUri && showClose}}"></image>
           </view>
 

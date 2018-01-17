@@ -1,13 +1,16 @@
 <template>
-  <view class="loading">
-    <image wx:if="{{imageUri}}"
-           src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
-    <view class="shopText">赞播商家助手</view>
-    <view class="load">
-      <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
-      <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
-      <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
+  <view class="content">
+    <view class="loading">
+      <image wx:if="{{imageUri}}"
+             src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
+      <view class="shopText">赞播商家助手</view>
+      <view class="load">
+        <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
+        <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
+        <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
+      </view>
     </view>
+    <view class="watermark">Copyright © 2018 赞播 All Rights Reserved.</view>
   </view>
 </template>
 
@@ -15,9 +18,7 @@
   import wepy from 'wepy'
   import URIS from 'common/js/config'
   import shop from 'api/shop'
-  import base from 'common/mixins/base'
   export default class loading extends wepy.page {
-    mixins = [base]
     config = {
       navigationBarTitleText: '',
       navigationBarBackgroundColor: '#fff'
@@ -53,12 +54,13 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
-  page
+  .content
     height: 100vh
     width: 100vw
     overflow-y: hidden
+    box-sizing: border-box
     background: $color-white
-    padding-top: 155px
+    padding-top: 41.33vw
     .loading
       display: flex
       flex-direction: column
@@ -75,10 +77,19 @@
         text
           display: inline-block
           margin: 0 2px
-          height: 5px
-          width: 5px
-          background: $color-text-d
+          height: 5.5px
+          width: 5.5px
+          background: $color-text-td
+          border: 0.5px solid $color-text-td
           border-radius: 50%
         .white
-          background: $color-white
+          background: $color-text-d
+          border: 0.5px solid $color-text-d
+    .watermark
+      position: absolute
+      bottom: 6.67vw
+      font-size: $font-size-small-s
+      color: $color-text-d
+      no-wrap()
+      row-center()
 </style>

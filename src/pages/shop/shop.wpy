@@ -6,11 +6,13 @@
                src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
         <view>输码核销</view>
       </navigator>
-      <view @tap="scanCodes">
-        <image wx:if="{{imageUri}}"
-               src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
-        <view>扫码核销</view>
-      </view>
+      <form bindsubmit="getFormId" report-submit='true'>
+        <button form-type="submit" @tap="scanCodes">
+          <image wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
+          <view>扫码核销</view>
+        </button>
+      </form>
       <navigator url="/pages/cancel-record/cancel-record">
         <image wx:if="{{imageUri}}"
                src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
@@ -151,7 +153,13 @@
       this.$apply()
     }
 
-    async scanCodes () {
+    async getFormId (e) {
+      const formId = e.detail.formId
+      shop.form({form_ids: [formId]})
+      this.loaded()
+    }
+
+    async scanCodes (e) {
       let res = await wepy.scanCode({onlyFromCamera: false})
       let data
       if (res.result[1] === '"') {
@@ -213,11 +221,20 @@
     box-sizing: border-box
     height: 19.1%
     align-items: flex-end
-    navigator, > view
+    navigator, > form
       flex: 1
       height: 100%
       position: relative
       text-align: center
+      button
+        background: $color-theme
+        position: absolute
+        height: 100%
+        width: 100%
+        top: 0
+        left: 0
+        &::after
+          border: none
       view
         font-size: $font-size-medium
         color: $color-white

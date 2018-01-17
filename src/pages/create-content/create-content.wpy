@@ -181,7 +181,7 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
-
+  import { ERR_OK } from 'api/base'
   export default class createContent extends wepy.page {
     mixins = [base]
 
@@ -252,20 +252,27 @@
               this.contentList.unshift(DATA)
               this.showAdd = !this.showAdd
             } else {
-              this.contentList.splice(num + 1, 0, DATA)
               this.contentList[num].showAdds = !this.contentList[num].showAdds
+              this.contentList.splice(num + 1, 0, DATA)
             }
           } else {
             if (imageId) {
               if (num !== -1) {
                 this.contentList[num].detail[0] = {url: imageId.url}
                 this.contentList[num]['detail_id'] = imageId.id
-                this.upDateList(this.contentList[num])
               } else {
                 this.imgSrc = imageId.url
                 let cover = {'image_id': imageId.id}
                 Object.assign(this.allMsg, cover)
+                this.contentList.splice(num, 0, DATA)
               }
+            }
+          }
+          if (status === 'add') {
+            this.upDateList(this.contentList[num + 1])
+          } else {
+            if (this.contentList[num].id !== 0) {
+              this.upDateList(this.contentList[num])
             }
           }
         }
@@ -308,13 +315,13 @@
             this.contentList[num].detail[0] = {url: videoId.url}
             this.contentList[num]['detail_id'] = videoId.id
             this.upDateList(this.contentList[num])
-            console.log(this.contentList[num])
             this.$apply()
           }
         }
       } else {
         this.$invoke('Toast', 'show', '视频不能超过50m')
       }
+
 //      需要限制大小，待确定！
       this.$apply()
     }
@@ -355,6 +362,7 @@
         })
         this.$parent.globalData.fontText = this.contentList[index].text
       },
+//      添加优惠券
       async addCoupon(num) {
         await wepy.navigateTo({
           url: '/pages/choice-coupon/choice-coupon?index=' + num
@@ -375,19 +383,25 @@
 
           if (this.addType !== '') {
             Object.assign(this.allMsg, {title: this.title},
-              {'content_details': this.changeList, delete_ids: this.delete_ids})
+              {
+                'content_details': this.changeList,
+                delete_ids: this.delete_ids
+              })
             res = await content.merchantDetail(this.conId, this.allMsg)
           } else {
             Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
             res = await content.createContent(this.allMsg)
           }
           this.loaded()
-          if (res.error === 0) {
-            await wepy.redirectTo({
-              url: '/pages/content/content?show=' + this.addType
-            })
+          if (res.error === ERR_OK) {
+            this.$invoke('Toast', 'show', '发布成功')
+            setTimeout(async () => {
+              await wepy.redirectTo({
+                url: '/pages/content/content?show=' + this.addType
+              })
+            }, 1000)
           } else {
-            this.$invoke('Toast', 'show', '发布失败，请重试')
+            this.$invoke('Toast', 'show', res.message)
           }
         }
       },
@@ -427,7 +441,12 @@
         this.$parent.globalData.fontText) {
         const index = this.$parent.globalData.index * 1
         DATA.type = 1
-        this.contentList[index] = DATA
+        if (this.contentList[index] === undefined) {
+          this.contentList[index] = DATA
+        } else {
+          this.contentList[index] = Object.assign({}, this.contentList[index],
+            {'detail_id': 0})
+        }
         if (index === 0) {
           this.showAdd = false
         } else {
@@ -441,8 +460,9 @@
         this.$parent.globalData.coupon !== '') {
         DATA.type = 3
         const index = this.$parent.globalData.couIndex
-        this.contentList[index] = DATA
-
+        if (this.contentList[index] === undefined) {
+          this.contentList[index] = DATA
+        }
         if (index === 0) {
           this.showAdd = false
         } else {
@@ -462,6 +482,7 @@
       if (options.status) {
 //       编辑
         let res = await content.contentDetail(options.id)
+        res = res.data
         this.imgSrc = res['image_url']
         res['content_detail_data'].map((item, idx) => {
           let detail = item.detail
