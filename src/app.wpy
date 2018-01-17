@@ -55,6 +55,7 @@
 
     config = {
       pages: [
+        'pages/mine/mine',
         'pages/logIn/logIn',
         'pages/loading/loading',
         'pages/forget/forget',
@@ -81,7 +82,6 @@
         'pages/package-detail/package-detail',
         'pages/package-controller/package-controller',
         'pages/marketing/marketing',
-        'pages/mine/mine',
         'pages/store-msg/store-msg',
         'pages/store-license/store-license',
         'pages/account-management/account-management',
