@@ -12,10 +12,10 @@
         {{mistakeTip}}
       </view>
       <view
-        class="lg-ch {{register ? 'phone' : ''}} {{phoneStatus ? '' : 'error-fa'}}">
+        class="lg-ch phone">
         <view>
           <image src="{{phoneImage}}" class="icon"></image>
-          <input id="phones" class="phone {{phoneStatus ? '' : 'error'}}"
+          <input id="phones" class="phone"
                  type="number" placeholder="请输入手机号码"
                  placeholder-class="placeholder" value="{{phoneNum}}"
                  focus="{{phoneFocus}}"
@@ -27,32 +27,48 @@
           </view>
 
         </view>
-        <text class="?{{isSet ? 'set-code' : ''}}" wx:if="{{register}}"
-              @tap="setCode">{{
-          time}}
+        <text class="?{{isSet ? 'set-code' : ''}}" @tap="setCode">{{time}}
         </text>
+      </view>
+      <view class="lg-ch">
+        <image class="icon" wx:if="{{imageUri}}"
+               src="{{imageUri + '/defaults/b-image/page/icon-code@2x.png'}}"></image>
+        <input type="number" placeholder="请输入6位验证码"
+               placeholder-class="placeholder" value="{{code}}"
+               bindinput="getCode"/>
       </view>
       <view class="password lg-ch">
         <view class="ciphertext">
           <image class="icon" src="{{passError}}"></image>
           <input type="{{ciphertext ? 'text' : 'password'}}"
-                 placeholder="{{passtext}}"
+                 placeholder="新密码(6-16位数字或字母)"
                  placeholder-class="placeholder" bindinput="putPassword"
                  maxlength="18" value="{{password}}" focus="{{isfocus}}"/>
-          <view class="eye" @tap="showCiphertext">
+          <view class="eye" @tap="showCiphertext('fi')">
             <image class="close" wx:if="{{imageUri}}"
                    src="{{ciphertext ? imageUri + '/defaults/b-image/page/icon-display@2x.png' : imageUri + '/defaults/b-image/page/icon-hide@2x.png'}}"></image>
           </view>
 
         </view>
       </view>
-      <button class="{{submit ? '' : 'disable'}}"
-              @tap="submit">登录
-      </button>
-      <view class="tip" wx:if="{{login}}">
-        <text @tap="showOther('forget')">忘记密码</text>
-        <text @tap="showOther('register')">立即注册</text>
+      <view class="password lg-ch">
+        <view class="ciphertext">
+          <image class="icon" src="{{anPassImage}}"></image>
+          <input class="{{anPassStatus ? '' : 'error'}}"
+                 type="{{anCiphertext ? 'text' : 'password'}}"
+                 placeholder="再次输入新密码"
+                 placeholder-class="placeholder" maxlength="18"
+                 bindinput="anginPassword" value="{{anPassword}}"
+                 focus="{{isagfocus}}"/>
+          <view class="eye" @tap="showCiphertext('tw')">
+            <image class="close" wx:if="{{imageUri}}"
+                   src="{{anCiphertext ? imageUri + '/defaults/b-image/page/icon-display@2x.png' : imageUri + '/defaults/b-image/page/icon-hide@2x.png'}}"></image>
+          </view>
+        </view>
       </view>
+      <button class="{{submit ? '' : 'disable'}}"
+              @tap="submit()">确定
+      </button>
     </view>
     <Toast></Toast>
   </view>
@@ -63,7 +79,6 @@
   import users from 'common/mixins/users'
   import logIn from 'api/logIn'
   import base from 'common/mixins/base'
-  import { ERR_OK } from 'api/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
   let REGPASS = /^[a-zA-Z0-9]{6,18}$/
@@ -87,10 +102,10 @@
       password: '',
       submitType: 1,
       anPassword: '',
-      passtext: '密码(6-16位数字或字母)',
-      submitText: '登录',
       code: '',
+      forget: false,
       login: true,
+      register: false,
       submit: false,
       time: '获取验证码',
       ciphertext: false,
@@ -103,6 +118,7 @@
       codeError: true,
       showClose: false,
       isfocus: false,
+      isagfocus: false,
       tapCode: true,
       showMistake: false,
       mistakeTip: '',
@@ -117,16 +133,11 @@
 
 //      判断是否可登陆
     checkAngin () {
-      if (REGPHONE.test(this.phoneNum) && REGPASS.test(this.password)) {
+      if (REGPHONE.test(this.phoneNum) && REGPASS.test(this.password) && this.code.length === 6 && this.anPassword === this.password) {
         this.submit = true
       } else {
         this.submit = false
-      }
-
-      if (REGPHONE.test(this.phoneNum)) {
-        this.isSet = true
-      } else {
-        this.isSet = false
+        this.$apply()
       }
       this.checkTip()
     }
@@ -138,6 +149,7 @@
       return false
     }
 
+//  正确提示（闪现）
     rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
@@ -150,22 +162,28 @@
       this.$apply()
     }
 
+//  报错提示（停留）
     checkTip () {
       let phoneStatus = REGPHONE.test(this.phoneNum)
       let passStatus = REGPASS.test(this.password)
       if ((this.phoneNum.length < 11 && this.password.length < 6) ||
-        (phoneStatus && passStatus) || (passStatus && this.password.length >= 6 && phoneStatus) ||
-        (!passStatus && this.password.length < 6 && phoneStatus)) {
+        (phoneStatus && passStatus && this.password === this.anPassword) || (passStatus && this.password.length >= 6 && this.password === this.anPassword) || (!passStatus &&
+        this.password.length < 6 && phoneStatus)) {
         this.showTip(false, '')
       } else if (!phoneStatus && this.phoneNum.length === 11) {
         this.showTip(true, '请输入正确的手机号码')
       } else if (!passStatus && this.password.length >= 6) {
         this.showTip(true, '请输入6-18位数字或字母的密码')
+      } else if (passStatus && this.password !== this.anPassword &&
+        this.anPassword.length > 0) {
+        this.showTip(true, '两次输入密码不一致')
       }
+
       this.$apply()
     }
 
     methods = {
+//      输入手机号码
       putPhone(e) {
         this.phoneNum = e.detail.value
         if (e.detail.value.length > 0) {
@@ -180,6 +198,7 @@
         }
         this.checkAngin()
       },
+//      清除手机号码
       clearPhone() {
         this.phoneNum = ''
         this.phoneSusses = ''
@@ -193,23 +212,81 @@
         this.showMistake = false
         this.checkAngin()
       },
+//      密码与重输密码的可视化
       showCiphertext(type) {
-        this.ciphertext = !this.ciphertext
-        setTimeout(() => {
-          this.isfocus = true
-          this.$apply()
-        }, 30)
-        setTimeout(() => {
-          this.isfocus = false
-          this.$apply()
-        }, 20)
+        if (type === 'fi') {
+          this.ciphertext = !this.ciphertext
+          setTimeout(() => {
+            this.isfocus = true
+            this.$apply()
+          }, 30)
+          setTimeout(() => {
+            this.isfocus = false
+            this.$apply()
+          }, 20)
+        } else if (type === 'tw') {
+          this.anCiphertext = !this.anCiphertext
+          setTimeout(() => {
+            this.isagfocus = true
+            this.$apply()
+          }, 30)
+          setTimeout(() => {
+            this.isagfocus = false
+            this.$apply()
+          }, 20)
+        }
       },
-//      注册
-      async showOther(type) {
-        await wepy.navigateTo({
-          url: `/pages/${type}/${type}`
-        })
+//      点击获取验证码
+      async setCode() {
+        if (this.phoneNum === '') {
+          this.showTip(true, '请输入手机号码')
+          return false
+        } else if (!REGPHONE.test(this.phoneNum)) {
+          this.showTip(true, '请输入正确的手机号码')
+          return false
+        }
+        let data = {}
+        if (this.forget) {
+          data = {mobile: this.phoneNum}
+        } else {
+          data = {mobile: this.phoneNum, register: 1}
+        }
+        if (this.tapCode) {
+          let codeData = await logIn.messageBind(data)
+          this.time = '发送中…'
+//          this.$invoke('Toast', 'show', codeData.message)
+          this.loaded()
+          if (codeData.error === 1) {
+            this.time = '获取验证码'
+            this.rightTip(codeData.message, false)
+          } else {
+            this.isSet = false
+            this.rightTip(codeData.message)
+            let time = 60
+            this.time = time + 's'
+            let timer = setInterval(() => {
+              this.tapCode = false
+              time--
+              this.time = time + 's'
+              this.$apply()
+              if (time <= 0) {
+                this.time = '获取验证码'
+                this.tapCode = true
+                if (REGPHONE.test(this.phoneNum)) {
+                  this.isSet = true
+                } else {
+                  this.isSet = false
+                }
+                this.$apply()
+                clearInterval(timer)
+              }
+            }, 1000)
+          }
+        } else {
+          return false
+        }
       },
+//      输入密码
       putPassword(e) {
         this.password = e.detail.value
         this.password = this.password.replace(/[\u2E80-\u9FFF]/gi, '')
@@ -217,26 +294,38 @@
         this.checkAngin()
         return this.password
       },
-      async submit() {
+//      再次输入手机号码
+      anginPassword(e) {
+        this.anPassStatus = true
+        this.anPassImage = URIS.image + '/defaults/b-image/page/icon-password@2x.png'
+        this.anPassword = e.detail.value
+        this.checkAngin()
+      },
+//      获取验证码
+      getCode(e) {
+        this.code = e.detail.value
+        this.checkAngin()
+      },
+//      忘记密码的确定
+      async submit(subType) {
         if (this.submit) {
-//            登陆
-          let res = await logIn.login({
-            mobile: this.phoneNum,
-            password: this.password
+//            找回密码
+          let res = await logIn.resetPassword({
+            'mobile': this.phoneNum,
+            'password': this.password,
+            'password_confirmation': this.anPassword,
+            'code': this.code
           })
           this.loaded()
-          if (res.error === ERR_OK) {
-            wepy.setStorageSync('token', res.data.access_token)
-            wepy.setStorageSync('is_leader',
-              res.data.merchant_info.merchant_data.is_leader)
-            this.rightTip('登录成功')
+          console.log(res)
+          if (res.error === 0) {
+            this.rightTip(res.message)
             setTimeout(async () => {
-              await wepy.switchTab({
-                url: '/pages/shop/shop'
+              await wepy.navigateTo({
+                url: '/pages/logIn/logIn'
               })
             }, 1000)
           } else {
-//              this.$invoke('Toast', 'show', res.message)
             this.rightTip(res.message, false)
           }
         }

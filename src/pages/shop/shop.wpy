@@ -236,7 +236,8 @@
       display: flex
       padding-top: 11.5px
       flex-direction: column
-      height: 26.8%
+      height: 23.8%
+      border: 0.5px solid $color-split-line
       .meHea
         font-size: $font-size-medium
         display: flex
@@ -276,7 +277,7 @@
         font-size: $font-size-small-s
         align-items: center
         color: $color-text
-        padding: 16.5px 0 28.5px
+        padding: 16.5px 0 0
         view
           flex: 1
           text-align: center
@@ -289,16 +290,17 @@
               font-family: $font-family-meddle
 
     .shop-extend
-      height: 73.2%
+      height: 73.9%
       display: flex
       flex-wrap: wrap
       justify-content: space-between
       text-align: center
       margin-top: 5px
       font-size: $font-size-small
+      border: 0.5px solid $color-split-line
       > navigator
-        width: 33.2%
-        height: 33.2%
+        width: 33.1%
+        height: 33.1%
         background: $color-white
         margin-top: 1px
         position: relative
