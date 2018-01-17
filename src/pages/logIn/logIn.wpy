@@ -133,12 +133,12 @@
       phoneFocus: false
     }
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
 //      判断是否可登陆
-    checkAngin() {
+    checkAngin () {
       let regPass = /^[a-zA-Z0-9]{6,18}$/
       let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
       if (this.login) {
@@ -170,14 +170,14 @@
       this.checkTip()
     }
 
-    showTip(status, title) {
+    showTip (status, title) {
       this.showMistake = status
       this.mistakeTip = title
       this.showLogo = false
       return false
     }
 
-    rightTip(content, showLogo = true) {
+    rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
       console.log(content)
@@ -189,7 +189,7 @@
       this.$apply()
     }
 
-    checkTip() {
+    checkTip () {
       let regPass = /^[a-zA-Z0-9]{6,18}$/
       let regPhone = /^1[3|4|5|7|8][0-9]{9}$/
       let phoneStatus = regPhone.test(this.phoneNum)
@@ -231,7 +231,7 @@
       this.$apply()
     }
 
-    info() {
+    info () {
       this.submitText = '登录'      // 文字
       this.register = false        // 取消注册状态
       this.forget = false          // 取消忘记密码状态
@@ -251,10 +251,6 @@
       this.showMistake = false
       this.passtext = '密码(6-16位数字或字母)'
       this.$apply()
-    }
-
-    onShow() {
-      this.info()
     }
 
     methods = {
@@ -488,7 +484,7 @@
   /*正常*/
   .lg-header, .guidance
     width: 64px
-    height: 53.9px
+    height: 64px
     margin-bottom: 25px
 
   /*引导*/

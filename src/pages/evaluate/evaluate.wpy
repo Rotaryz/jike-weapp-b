@@ -107,7 +107,7 @@
         })
       }
       this.starList = arr.reverse()
-      this.impression = res.impression
+//      this.impression = res.impression
       if (this.impression.length === 0) {
         this.comBlank = true
       } else {
@@ -191,14 +191,16 @@
     background: $color-white
     margin-top: 10px
     padding-left: 12px
-    min-height: 130px
+    min-height: 148px
     .tag
       display: inline-block
       font-size: $font-size-small
       padding: 8px 10px
       border: 0.5px solid $color-split-line
       margin: 0 12px 12px 0
-
+  .impression
+    .blank
+      transform :translateY(-20px)
   .appraise
     padding-bottom: 28px
     .ap-list

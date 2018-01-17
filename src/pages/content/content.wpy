@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="content-big">
     <NavHeader>
       <view wx:for="{{navList}}"
             class="{{navNum === item.type ? 'choice' : ''}}"
@@ -187,7 +187,7 @@
   scroll-view
     height: 94vh
 
-  .content
+  .content-big
     height: 100vh
     overflow-y: hidden
 

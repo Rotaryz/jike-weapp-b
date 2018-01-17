@@ -10,15 +10,21 @@ export default class http {
       data: data
     }
     const Authorization = wepy.getStorageSync('token')
+    param.header = Object.assign({}, {'X-Requested-With': 'XMLHttpRequest'})
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization}, {'X-Requested-With': 'XMLHttpRequest'})
+      param.header = Object.assign(param.header, {Authorization})
     }
     if (loading) {
       Tips.loading()
     }
     const res = await wepy.request(param)
-    if (this.isSuccess(res)) {
-      const result = res.data.data ? res.data.data : res.data
+    if (this.isLoseEfficacy(res)) {
+      wepy.redirectTo({
+        url: '/pages/logIn/logIn'
+      })
+      throw res.data
+    } else if (this.isSuccess(res)) {
+      const result = res.data
       return result
     } else {
       throw this.requestException(res)
@@ -47,19 +53,6 @@ export default class http {
   }
 
   /**
-   * 判断是否登录
-   * @param msg
-   * @returns {Promise.<void>}
-   */
-  static async isLogin(msg) {
-    if (msg === '凭证已失效') {
-      await wepy.navigateTo({
-        url: '../logIn/logIn'
-      })
-    }
-  }
-
-  /**
    * 判断请求是否成功
    */
   static isSuccess(res) {
@@ -71,6 +64,15 @@ export default class http {
     return false
   }
 
+  static isLoseEfficacy(res) {
+    const wxCode = res.statusCode
+    if (wxCode === 200) {
+      const json = res.data
+      return json.code === 10000
+    }
+    return false
+  }
+
   /**
    * 异常
    */
@@ -78,29 +80,12 @@ export default class http {
     const error = {}
     error.statusCode = res.statusCode
     const wxData = res.data
-    const serverData = wxData.data
-    if (serverData) {
-      error.serverCode = wxData.code
-      error.message = serverData.message
-      error.serverData = serverData
+    if (wxData) {
+      error.error = wxData.error
+      error.message = wxData.message
+      error.serverData = wxData
     }
     return error
-  }
-
-  /**
-   * 判断凭证
-   * @param msg
-   * @returns {Promise.<void>}
-   */
-  static async isLogin(msg) {
-    if (msg === '凭证已失效') {
-      await wepy.navigateTo({
-        url: '../logIn/logIn'
-      })
-      return 1
-    } else {
-      return 0
-    }
   }
 
   static get(url, data, loading = true) {

@@ -3,17 +3,17 @@
     <view class="shop-header">
       <navigator url="/pages/qrCode/qrCode">
         <image wx:if="{{imageUri}}"
-          src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
+               src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
         <view>输码核销</view>
       </navigator>
       <view @tap="scanCodes">
         <image wx:if="{{imageUri}}"
-          src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
+               src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
         <view>扫码核销</view>
       </view>
       <navigator url="/pages/cancel-record/cancel-record">
         <image wx:if="{{imageUri}}"
-          src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
+               src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
         <view>核销记录</view>
       </navigator>
     </view>
@@ -29,7 +29,7 @@
             </text>
           </view>
         </view>
-        <view class="meCon">
+        <view class="meCon" @tap="navData">
           <view>
             <view>{{dataList.hit.count}}</view>
             <view>浏览总量(次)</view>
@@ -59,7 +59,6 @@
 <script>
   import wepy from 'wepy'
   import shop from 'api/shop'
-  import http from 'common/js/http'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
@@ -73,7 +72,7 @@
   export default class Shop extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage() {
+    onShareAppMessage () {
       this.ShareAppMessage()
     }
 
@@ -100,25 +99,25 @@
         image: URIS.image + '/defaults/b-image/page/icon-service@2x.png',
         src: '/pages/service-manage/service-manage'
       }, {
-        text: '客户',
-        image: URIS.image + '/defaults/b-image/page/icon-customer@2x.png',
-        src: '/pages/client/client'
+        text: '内容',
+        image: URIS.image + '/defaults/b-image/page/icon-content@2x.png',
+        src: '/pages/content/content'
       }, {
         text: '礼包',
         image: URIS.image + '/defaults/b-image/page/icon-package@2x.png',
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
-        text: '评价',
-        image: URIS.image + '/defaults/b-image/page/icon-evaluate@2x.png',
-        src: '/pages/evaluate/evaluate'
-      }, {
         text: '订单',
         image: URIS.image + '/defaults/b-image/page/icon-asset@2x.png',
         src: '/pages/order/order'
       }, {
-        text: '内容',
-        image: URIS.image + '/defaults/b-image/page/icon-content@2x.png',
-        src: '/pages/content/content'
+        text: '客户',
+        image: URIS.image + '/defaults/b-image/page/icon-customer@2x.png',
+        src: '/pages/client/client'
+      }, {
+        text: '评价',
+        image: URIS.image + '/defaults/b-image/page/icon-evaluate@2x.png',
+        src: '/pages/evaluate/evaluate'
       }, {
         text: '',
         image: ''
@@ -133,24 +132,21 @@
       leader: 0
     }
 
-    async load(time = 'yesterday', type = 'hit') {
+    async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-      let status = await http.isLogin(res.message)
       this.dataList = res.detail
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
-      if (status === 0 && this.leader === 1 && this.navList[3].text !== '商圈') {
+      if (this.leader === 1 && this.navList[6].text !== '商圈') {
         this.navList.pop()
-        this.navList.splice(3, 0, BUS)
+        this.navList.splice(6, 0, BUS)
       }
-      if (status === 0) {
-        this.loaded()
-      }
+      this.loaded()
       this.$apply()
     }
 
-    async scanCodes() {
+    async scanCodes () {
       let res = await wepy.scanCode({onlyFromCamera: false})
       let data
       if (res.result[1] === '"') {
@@ -175,11 +171,18 @@
       async showData(time, index) {
         this.showTime = index
         await this.load(time)
+      },
+      async navData() {
+        await wepy.switchTab({
+          url: '/pages/data/data'
+        })
       }
     }
 
-    async onShow() {
+    async onLoad () {
+      this.showTime = 0
       await this.load()
+      this.$apply()
     }
   }
 </script>
@@ -305,7 +308,7 @@
           row-center()
         image
           width: 32px
-          height: 26px
+          height: 32px
           top: 25.4%
 
 </style>

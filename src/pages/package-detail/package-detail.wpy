@@ -24,8 +24,8 @@
         <view class="title">报名截止时间：</view>
         <view class="content">即日起 至 {{giftbag.sell_start_at}}止</view>
         <view class="title">活动规则：</view>
-        <view class="content">大礼包会上架到活动联盟商家的优惠劵列表</view>
-        <view class="content">各个商家优惠劵的数量会平均分配</view>
+        <view class="content">大礼包会上架到活动联盟商家的优惠券列表</view>
+        <view class="content">各个商家优惠券的数量会平均分配</view>
         <view class="content">各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。</view>
         <view class="title">活动入选条件：</view>
         <view class="content">服务品类限{{industries}}</view>

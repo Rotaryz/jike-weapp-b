@@ -55,14 +55,15 @@
 
     config = {
       pages: [
+        'pages/loading/loading',
+        'pages/content/content',
         'pages/shop/shop',
+        'pages/create-content/create-content',
         'pages/bus-times/bus-times',
         'pages/registration/registration',
         'pages/live/live',
         'pages/client/client',
-        'pages/content/content',
         'pages/choice-coupon/choice-coupon',
-        'pages/create-content/create-content',
         'pages/package-manage/package-manage',
         'pages/service-controller/service-controller',
         'pages/qrCode/qrCode',
@@ -94,7 +95,7 @@
       window: {
         backgroundColor: '#363547',
         backgroundTextStyle: 'light',
-        navigationBarTitleText: '集客小程序',
+        navigationBarTitleText: '',
         navigationBarBackgroundColor: '#363547',
         navigationBarTextStyle: 'white'
       },

@@ -1,0 +1,86 @@
+<template>
+  <view class="loading">
+    <image wx:if="{{imageUri}}"
+           src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
+    <view class="shopText">赞播商家助手</view>
+    <view class="load">
+      <text class="{{showLoad >= 1 ? '' : 'white'}}"></text>
+      <text class="{{showLoad >= 2 ? '' : 'white'}}"></text>
+      <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+  import shop from 'api/shop'
+  import base from 'common/mixins/base'
+  export default class loading extends wepy.page {
+    mixins = [base]
+    config = {
+      navigationBarTitleText: '',
+      navigationBarBackgroundColor: '#fff'
+    }
+    data = {
+      imageUri: URIS.image,
+      showLoad: 1
+    }
+
+    show () {
+      setInterval(() => {
+        if (this.showLoad < 3) {
+          this.showLoad++
+        } else {
+          this.showLoad = 1
+        }
+        this.$apply()
+      }, 500)
+    }
+
+    async onShow () {
+      this.show()
+      let res = await shop.verificationLog('', false)
+      setTimeout(() => {
+        if (res.message === '凭证已失效') {
+          this.$redirect('/pages/logIn/logIn')
+        } else {
+          this.$switch('/pages/shop/shop')
+        }
+      }, 1500)
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  page
+    height: 100vh
+    width: 100vw
+    overflow-y: hidden
+    background: $color-white
+    padding-top: 155px
+    .loading
+      display: flex
+      flex-direction: column
+      align-items: center
+      image
+        height: 64px
+        width: 64px
+      .shopText
+        font-size: $font-size-medium
+        line-height: 20px
+        margin-top: 6px
+        color: $color-text-td
+      .load
+        text
+          display: inline-block
+          margin: 0 2px
+          height: 5px
+          width: 5px
+          background: $color-text-d
+          border-radius: 50%
+        .white
+          background: $color-white
+</style>

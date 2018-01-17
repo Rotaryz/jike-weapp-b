@@ -409,7 +409,7 @@
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
               <text-area height="50"
-                         :value="tempKnowRemark"
+                         :value.sync="tempKnowRemark"
                          maxLength="20"
                          @input.user="handleTextarea"
                          placeHolder="备注：请输入"></text-area>
@@ -428,8 +428,9 @@
 <script>
   import wepy from 'wepy'
   import BaseModal from '@/base/base-modal/base-modal'
-  import DatePicker from '@/base/date-picker/date-picker'
+//  import DatePicker from '@/base/date-picker/date-picker'
   import Toast from '@/base/toast/toast'
+  import {ERR_OK} from 'api/base'
   import Merchants from 'api/merchants'
   import Coupons from 'api/coupons'
   import Uploads from 'api/uploads'
@@ -505,6 +506,9 @@
 
     async _getCouponDetail() {
       const res = await Coupons.getCouponDetail(this.promotionId)
+      if (res.error !== ERR_OK) {
+        return
+      }
       this.category = res.promotion_category.name
       this.categoryId = res.promotion_category.id
       this.pictures = res.promotion_image_data
@@ -780,9 +784,9 @@
         }
         this.loaded()
       },
-      showCatelogModal() {
-        this.$invoke('catelog-modal', 'show')
-      },
+//      showCatelogModal() {
+//        this.$invoke('catelog-modal', 'show')
+//      },
       showMealModal() {
         this.$invoke('meal-modal', 'show')
       },
@@ -825,13 +829,13 @@
     }
 
     components = {
-      'catelog-modal': BaseModal,
+//      'catelog-modal': BaseModal,
       'meal-modal': BaseModal,
       'service-modal': BaseModal,
-      'sell-time-modal': BaseModal,
-      'sell-time-picker': DatePicker,
-      'valid-date-modal': BaseModal,
-      'valid-date-picker': DatePicker,
+//      'sell-time-modal': BaseModal,
+//      'sell-time-picker': DatePicker,
+//      'valid-date-modal': BaseModal,
+//      'valid-date-picker': DatePicker,
       'not-allow-time-modal': BaseModal,
       'count-modal': BaseModal,
       'know-modal': BaseModal,
