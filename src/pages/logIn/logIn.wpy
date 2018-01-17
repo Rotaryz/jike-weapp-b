@@ -63,6 +63,7 @@
   import users from 'common/mixins/users'
   import logIn from 'api/logIn'
   import base from 'common/mixins/base'
+  import { ERR_OK } from 'api/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
   let REGPASS = /^[a-zA-Z0-9]{6,18}$/
@@ -224,9 +225,10 @@
             password: this.password
           })
           this.loaded()
-          if (res.error !== 1) {
-            wepy.setStorageSync('token', res.access_token)
-            wepy.setStorageSync('is_leader', res.merchant_info.merchant_data.is_leader)
+          if (res.error === ERR_OK) {
+            wepy.setStorageSync('token', res.data.access_token)
+            wepy.setStorageSync('is_leader',
+              res.data.merchant_info.merchant_data.is_leader)
             this.rightTip('登录成功')
             setTimeout(async () => {
               await wepy.switchTab({
