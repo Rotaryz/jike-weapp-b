@@ -58,7 +58,6 @@
         'pages/loading/loading',
         'pages/content/content',
         'pages/shop/shop',
-        'pages/content/content',
         'pages/create-content/create-content',
         'pages/bus-times/bus-times',
         'pages/registration/registration',

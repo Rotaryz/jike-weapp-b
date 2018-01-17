@@ -149,7 +149,7 @@
         </view>
       </repeat>
     </view>
-    <view class="create-service border-top-1px" wx:if="{{isLeader}}">
+    <view class="create-service border-top-1px" wx:if="{{isLeader === 1}}">
       <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
     </view>
     <confirm @confirm.user="delete"></confirm>

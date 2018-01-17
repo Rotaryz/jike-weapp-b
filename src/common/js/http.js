@@ -12,7 +12,7 @@ export default class http {
     const Authorization = wepy.getStorageSync('token')
     param.header = Object.assign({}, {'X-Requested-With': 'XMLHttpRequest'})
     if (Authorization) {
-      param.header = Object.assign({}, {Authorization})
+      param.header = Object.assign(param.header, {Authorization})
     }
     if (loading) {
       Tips.loading()
@@ -22,7 +22,7 @@ export default class http {
       const result = res.data.data ? res.data.data : res.data
       return result
     } else if (this.isLoseEfficacy(res)) {
-      wepy.navigateTo({
+      wepy.redirectTo({
         url: '/pages/logIn/logIn'
       })
       throw res.data
@@ -73,7 +73,7 @@ export default class http {
     // 微信请求错误
     if (wxCode === 200 || wxCode === 422) {
       const wxData = res.data
-      return wxData && wxData.error === 0
+      return (wxCode === 200 && wxData.error === 0) || wxCode === 422
     }
     return false
   }
