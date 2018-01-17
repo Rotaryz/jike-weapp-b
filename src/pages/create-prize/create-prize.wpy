@@ -474,11 +474,13 @@
         this.loaded()
         if (res.error === 0) {
           this.paymentSuccess = true
+          this.paymengMoneyIn = false
           setTimeout(() => {
             this.$back()
           }, 1500)
           this.$apply()
         } else if (res.payInfo) {
+          this.paymengMoneyIn = false
           const {timestamp, nonceStr, signType, paySign} = res.payInfo
           const pay = await wepy.requestPayment({
             timeStamp: timestamp,
