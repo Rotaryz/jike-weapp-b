@@ -91,7 +91,8 @@
         'pages/prize-pool/prize-pool',
         'pages/create-prize/create-prize',
         'pages/exchange-editor/exchange-editor',
-        'pages/apply/apply'
+        'pages/apply/apply',
+        'pages/mine/mine'
       ],
       window: {
         backgroundColor: '#363547',
