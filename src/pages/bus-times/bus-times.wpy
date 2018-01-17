@@ -119,7 +119,7 @@
         let res = await shop.setMapShowed(data)
         this.loaded()
         if (res.error === 0) {
-          await wepy.navigateTo({
+          await wepy.redirectTo({
             url: '/pages/business/business?status=1'
           })
         } else {
