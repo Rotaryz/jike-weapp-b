@@ -25,6 +25,7 @@
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
@@ -81,13 +82,13 @@
         }
         const res = await Activity.switchActivity(data)
         this.loaded()
-        if (res.error === 0) {
+        if (res.error === ERR_OK) {
           let msg = checked ? '开启成功' : '关闭成功'
           this.list = this._checkedChange(idx, checked)
           this.$apply()
           Tips.success(msg)
         } else {
-          this.$invoke('Toast', 'show', '操作失败')
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }
@@ -96,7 +97,11 @@
       this.load()
     }
     async load() {
-      let res = await Activity.getAllActivity()
+      let Json = await Activity.getAllActivity()
+      if (Json.error !== ERR_OK) {
+        return
+      }
+      let res = Json.data
       this.list.map((item) => {
         switch (item.name) {
           case '大转盘':

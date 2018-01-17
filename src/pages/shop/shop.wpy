@@ -44,7 +44,7 @@
           </view>
         </view>
       </view>
-      <view class="shop-extend">
+      <view class="shop-extend border-top-1px">
         <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>

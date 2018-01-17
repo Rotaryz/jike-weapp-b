@@ -47,6 +47,7 @@
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class CreateAccount extends wepy.page {
     mixins = [base]
@@ -120,13 +121,13 @@
           }
           const res = await Account.setSubAccount(data)
           this.loaded()
-          if (res.error === 0) {
+          if (res.error === ERR_OK) {
             Tips.success('新建账号成功')
             setTimeout(() => {
               this.$back(1)
             }, 2000)
           } else {
-            this.$invoke('Toast', 'show', '创建失败')
+            this.$invoke('Toast', 'show', res.message)
           }
         } else if (!this.telTest || this.phoneNum.length !== 11) {
           this.$invoke('Toast', 'show', '手机填写错误')
@@ -162,7 +163,7 @@
 
     async load() {
       let res = await Account.getAnnexList()
-      this.storeList = res || []
+      this.storeList = res.data || []
       this.loaded()
     }
 

@@ -16,6 +16,7 @@
   import URIS from 'common/js/config'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
+
   export default class loading extends wepy.page {
     mixins = [base]
     config = {
@@ -27,7 +28,7 @@
       showLoad: 1
     }
 
-    show () {
+    show() {
       setInterval(() => {
         if (this.showLoad < 3) {
           this.showLoad++
@@ -38,13 +39,11 @@
       }, 500)
     }
 
-    async onShow () {
+    async onShow() {
       this.show()
-      let res = await shop.verificationLog('', false)
+      await shop.verificationLog('', false)
       setTimeout(() => {
-        if (res.message !== '凭证已失效') {
-          this.$switch('/pages/shop/shop')
-        }
+        this.$switch('/pages/shop/shop')
       }, 1500)
     }
   }

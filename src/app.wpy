@@ -81,7 +81,6 @@
         'pages/package-detail/package-detail',
         'pages/package-controller/package-controller',
         'pages/marketing/marketing',
-        'pages/mine/mine',
         'pages/store-msg/store-msg',
         'pages/store-license/store-license',
         'pages/account-management/account-management',

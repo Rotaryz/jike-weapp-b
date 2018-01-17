@@ -126,6 +126,7 @@
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class PrizePoolPage extends wepy.page {
     mixins = [base]
@@ -195,35 +196,47 @@
 
     // 加载可使用列表
     async load() {
-      this.useablePrizeList = await PrizePool.getPrizelist() || []
+      let res = await PrizePool.getPrizelist()
+      this.loaded()
+      if (res.error !== ERR_OK) {
+        return
+      }
+      this.useablePrizeList = res.data || []
       if (this.useablePrizeList.length === 0) {
         this.prizeNothing = true
       } else {
         this.prizeNothing = false
       }
-      this.loaded()
+      this.$apply()
     }
 
     // 加载已过期列表
     async loadPastDue() {
-      this.pastDuePrizeList = await PrizePool.getPrizelist(0) || []
+      let res = await PrizePool.getPrizelist(0)
+      this.loaded()
+      if (res.error !== ERR_OK) {
+        return
+      }
+      this.pastDuePrizeList = res.data || []
       if (this.pastDuePrizeList.length === 0) {
         this.prizeDueNothing = true
       } else {
         this.prizeDueNothing = false
       }
-      this.loaded()
+      this.$apply()
     }
 
     events = {
       async confirm() {
         let res = await PrizePool.delexchange(this.EXchangeId)
         this.loaded()
-        if (res.error === 0) {
+        if (res.error === ERR_OK) {
           Tips.success('删除成功')
           setTimeout(() => {
             this.loadPastDue()
           }, 500)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
         }
         this.$apply()
       }

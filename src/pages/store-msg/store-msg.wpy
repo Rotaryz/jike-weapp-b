@@ -196,6 +196,7 @@
   import Upload from '@/api/uploads'
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class StoreMsg extends wepy.page {
     mixins = [base, users]
@@ -269,7 +270,12 @@
         key: 'WPABZ-ZVD6P-RJJD5-VSCIN-BBADV-FMFJX'
 
       })
-      let res = await Store.getMsgList()
+      let Json = await Store.getMsgList()
+      if (Json.error !== ERR_OK) {
+        this.loaded()
+        return
+      }
+      let res = Json.data
       this.Induring = res
       this.name = res.shop_name ? res.shop_name : ''
       this.industry = res.industry ? res.industry : ''
@@ -297,7 +303,12 @@
       ]
       let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
       this.storeStatusTxt = arr[this.storeStatus]
-      this.areaArr = res.business_circle ? await Store.getArea(res.business_circle.district) : []
+      let Json1 = await Store.getArea(res.business_circle.district)
+      if (Json1.error !== ERR_OK) {
+        this.loaded()
+        return
+      }
+      this.areaArr = res.business_circle ? Json1.data : []
       this.weekChecked = res.week_day || ['0', '1', '2', '3', '4', '5']
       this.temporaryWeekChecked = this.weekChecked
       this._choiseChecked(this.weekValue)
@@ -394,7 +405,13 @@
         this.region = e.detail.value
         this.mapAddress = this.region[0] + this.region[1] + this.region[2]
         this._mapAuto(this.mapAddress)
-        this.areaArr = await Store.getArea(this.region[2])
+        let Json = await Store.getArea(this.region[2])
+        if (Json.error !== ERR_OK) {
+          this.loaded()
+          this.$invoke('Toast', 'show', Json.message)
+          return
+        }
+        this.areaArr = Json.data
         this.loaded()
         this.showMap = true
         this.$apply()
@@ -500,11 +517,13 @@
           }
           let upRes = await Store.setStoreMsg(data)
           this.loaded()
-          if (upRes.error === 0) {
+          if (upRes.error === ERR_OK) {
             Tips.success('保存成功')
             setTimeout(() => {
               this.$back(1)
             }, 1000)
+          } else {
+            this.$invoke('Toast', 'show', upRes.message)
           }
         }
       },
