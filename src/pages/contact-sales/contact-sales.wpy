@@ -12,7 +12,7 @@
     <view class="salesMsg-tel">
       <view class="salesMsg-tel-left">
         <view>联系电话</view>
-        <view class="salesMsg-telNum">{{saleMsg.mobile?saleMsg.mobile:'11111111111'}}</view>
+        <view class="salesMsg-telNum">{{mobile}}</view>
       </view>
       <view class="salesMsg-call" @tap="call">打电话</view>
     </view>
@@ -62,6 +62,7 @@
       imageUrlHead: URIS.image,
       complaintIn: false,
       saleMsg: null,
+      mobile: '11111111111',
       complaintInTxt: '',
       salesmanId: ''
     }
@@ -75,7 +76,7 @@
         }
       },
       call() {
-        let phoneNum = this.saleMsg.mobile || '11111111111'
+        let phoneNum = this.mobile
         wx.makePhoneCall({
           phoneNumber: phoneNum
         })
@@ -119,13 +120,15 @@
       if (id) {
         let res = await Account.getSalesMsg(id)
         this.loaded()
-        this.saleMsg = res.data || ''
-      } else {
-        this.saleMsg = {
-          mobile: '11111111111'
+        if (res.error !== ERR_OK) {
+          this.saleMsg = {}
+          return
         }
+        this.saleMsg = res.data
+        this.mobile = res.data.mobile
+        this.salesmanId = id
+        this.$apply()
       }
-      this.salesmanId = id || ''
     }
   }
 </script>
