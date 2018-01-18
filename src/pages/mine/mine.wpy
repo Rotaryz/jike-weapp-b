@@ -115,7 +115,7 @@
         let res = await Tips.confirm('确定要退出吗？', true)
         if (res) {
           let outRes = await Store.logoutAccount()
-          if (outRes.error === 0) {
+          if (outRes.error === ERR_OK) {
             Tips.success('注销成功')
             wepy.clearStorageSync()
             setTimeout(() => {

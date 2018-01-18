@@ -399,6 +399,7 @@
         .prizeList
           background: $color-white
           padding-bottom: 60px
+          padding-top: 10px
 
           .prizeList-item
             display: flex

@@ -272,7 +272,6 @@
       this.EXimgId = res.promotion_image_data[0].image_id
       this.imgId = res.promotion_image_data[0].id
       this.$apply()
-
     }
 
     computed = {
