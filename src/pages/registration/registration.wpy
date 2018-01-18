@@ -173,6 +173,7 @@
   import Toast from '@/base/toast/toast'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
 
   export default class Registration extends wepy.page {
     mixins = [base]
@@ -532,9 +533,10 @@
     async load () {
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-      let res = await regist.seeRegist()
+      let res = this.infoRes(await regist.seeRegist())
+      console.log(res)
       this.loaded()
-      if (res.error !== 1) {
+      if (res) {
         this.id = res.id
         this.name = res.title
         this.nameLen = this.name.length
@@ -582,9 +584,16 @@
       }
     }
 
+    infoRes (res) {
+      if (res.error === ERR_OK) {
+        return res.data
+      }
+    }
+
     async onLoad () {
-      let data = await regist.Redpack()
-      let shop = await regist.getData()
+      let data = this.infoRes(await regist.Redpack())
+      let shop = this.infoRes(await regist.getData())
+      this.loaded()
       this.markers[0].latitude = shop.latitude
       this.markers[0].longitude = shop.longitude
       this.showMap = true

@@ -54,7 +54,7 @@
   import Blank from '@/base/blank/blank'
   import Confirm from '@/base/confirm/confirm'
   import URIS from 'common/js/config'
-
+  import { ERR_OK } from 'api/base'
   export default class Content extends wepy.page {
     mixins = [base]
 
@@ -163,11 +163,13 @@
     async load (num, page = 1) {
       let data = {status: num, page: page}
       let res = await content.contentList(data)
-      this.contentList = this.contentList.concat(res)
-      this._showBlank(this.contentList)
-      this.loaded()
-      this.$apply()
-      return res
+      if (res.error === ERR_OK) {
+        this.contentList = this.contentList.concat(res.data)
+        this._showBlank(this.contentList)
+        this.loaded()
+        this.$apply()
+        return res.data
+      }
     }
 
     async onLoad (options) {
@@ -259,5 +261,5 @@
   .client-head
     view
       text
-        width: 50%
+        width: 45%
 </style>

@@ -44,8 +44,10 @@
           </view>
         </view>
       </view>
-      <view class="shop-extend">
-        <navigator wx:for="{{navList}}" wx:key="{{index}}" url="{{item.src}}">
+      <view class="shop-extend border-bottom-1px border-right-1px">
+        <navigator class="border-top-1px border-left-1px" wx:for="{{navList}}"
+                   wx:key="{{index}}"
+                   url="{{item.src}}">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
         </navigator>
@@ -62,6 +64,7 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
 
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
   const BUS = {
@@ -135,14 +138,16 @@
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
-      this.dataList = res.detail
+      this.loaded()
+      if (res.error === ERR_OK) {
+        this.dataList = res.data.detail
+      }
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
       if (this.leader === 1 && this.navList[6].text !== '商圈') {
         this.navList.pop()
         this.navList.splice(6, 0, BUS)
       }
-      this.loaded()
       this.$apply()
     }
 
@@ -156,13 +161,12 @@
         this.loaded()
       }
       if (data === undefined) {
-        this.$invoke('Toast', 'show', '核销成功')
+        this.$invoke('Toast', 'show', '核销失败')
       } else {
-        if (data.error !== 1) {
-          console.log(data)
-          this.$invoke('Toast', 'show', '核销成功')
+        if (data.error === ERR_OK) {
+          this.$invoke('Toast', 'show', res.message)
         } else {
-          this.$invoke('Toast', 'show', '核销失败')
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }
@@ -234,7 +238,7 @@
       margin-top: 5px
       background-color: $color-white
       display: flex
-      padding-top: 11.5px
+      padding-top: 3.67vw
       flex-direction: column
       height: 23.8%
       border: 0.5px solid $color-split-line
@@ -276,8 +280,8 @@
         display: flex
         font-size: $font-size-small-s
         align-items: center
+        height: 70%
         color: $color-text
-        padding: 16.5px 0 0
         view
           flex: 1
           text-align: center
@@ -285,24 +289,23 @@
             &:first-child
               color: $color-orange
               font-size: $font-size-large
-              line-height: 25px
-              margin-bottom: 2.5px
+              line-height: 6.677vw
+              margin-bottom: 1.3vw
               font-family: $font-family-meddle
 
     .shop-extend
+      background: $color-split-line
       height: 73.9%
       display: flex
       flex-wrap: wrap
-      justify-content: space-between
       text-align: center
       margin-top: 5px
+      box-sizing: border-box
       font-size: $font-size-small
-      border: 0.5px solid $color-split-line
       > navigator
-        width: 33.1%
-        height: 33.1%
+        width: 33.33%
+        height: 33.33%
         background: $color-white
-        margin-top: 1px
         position: relative
         view, image
           position: absolute

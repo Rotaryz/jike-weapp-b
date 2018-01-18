@@ -2,7 +2,9 @@
  * Created by user on 2017/12/30.
  */
 import base from './base'
-
+/**
+ * 查看奖品池红包列表
+ */
 export default class regist extends base {
   static async seeRegist() {
     const url = `${this.baseUrl}/api/activity/sign`

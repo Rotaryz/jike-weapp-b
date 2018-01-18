@@ -48,6 +48,7 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
 
   export default class business extends wepy.page {
     mixins = [base]
@@ -135,6 +136,7 @@
         this.navNum = index
         this.industryParentId = {industry_parent_id: id}
         let res = await this._checkBusiness(this.industryParentId)
+        res = this.infoRes(res)
         if (res.length === 0) {
           this.conList = []
         } else {
@@ -155,6 +157,7 @@
             let data = {}
             Object.assign(data, this.industryParentId, {page: this.page})
             let res = await this._checkBusiness(data)
+            res = this.infoRes(res)
             this.conList = this.conList.concat(res)
             if (res.length === 0) {
               this.nothing = true
@@ -236,6 +239,12 @@
       }
     }
 
+    infoRes (res) {
+      if (res.error === ERR_OK) {
+        return res.data
+      }
+    }
+
     async onLoad (options) {
       this.conList = [{
         'shop_name': '全部',
@@ -247,7 +256,9 @@
         id: ''
       }]
       let data = await this._checkBusiness({})
+      data = this.infoRes(data)
       let res = await shop.industries()
+      res = this.infoRes(res)
       this.loaded()
       if (data.length === 0) {
         this.conList = []
@@ -308,6 +319,8 @@
   .business
     font-size: $font-size-small
     height: 93vh
+    padding-bottom: 50px
+    box-sizing: border-box
     .wx-checkbox-input
       height: 16px
       width: 16px

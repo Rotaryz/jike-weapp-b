@@ -8,10 +8,10 @@
         <view class="border-line" wx:if="{{border!=='no'}}"></view>
         <view class="couponList-itemPay">
           <view class="couponList-desc">
-            <text class="couponList-midMoney">￥</text>
-            <text class="couponList-bigMoney">
+            <view class="couponList-midMoney">￥</view>
+            <view class="couponList-bigMoney">
               {{coupon.platform_price ? coupon.platform_price : coupon.promotion_platform_price ? coupon.promotion_platform_price : coupon.promotion.platform_price}}
-            </text>
+            </view>
           </view>
         </view>
         <view class="couponList-itemMsg">
