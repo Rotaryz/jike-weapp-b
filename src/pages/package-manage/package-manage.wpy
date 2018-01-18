@@ -165,14 +165,13 @@
   import URIS from 'common/js/config'
 
   const TABS = ['待上线', '已上线', '已下线', '待审核']
-  const IS_LEADER = wepy.getStorageSync('is_leader')
 
   export default class PackageManage extends wepy.page {
     mixins = [base]
 
     data = {
       imageUri: URIS.image,
-      isLeader: IS_LEADER,
+      isLeader: 0,
       tabs: TABS,
       tabIndex: 0,
       tabTranslateX: 0,
@@ -200,6 +199,7 @@
     }
 
     _init() {
+      this.isLeader = wepy.getStorageSync('is_leader')
       this.tabIndex = 0
       this.tabTranslateX = 0
       this.willOnLines = []

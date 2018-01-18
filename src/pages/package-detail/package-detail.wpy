@@ -38,7 +38,7 @@
         <view class="coupon-wrapper">
           <coupon :coupon.sync="item" :type="'logo'"></coupon>
           <view class="status-wrapper">
-            <view class="status-content" wx:if="{{isLeader === 1}}">
+            <view class="status-content" wx:if="{{isLeader === 1 && type !== 'apply'}}">
               <view class="status">{{item.is_checked === 0 ? '审核中' : item.is_checked === 1 ? '已通过' : '未通过'}}</view>
               <view class="btn-wrapper" wx:if="{{item.is_checked === 0}}">
                 <view class="reject" @tap="rejectApply({{item.id}})">拒绝</view>
@@ -46,7 +46,7 @@
               </view>
               <view class="rejected" wx:if="{{item.is_checked === 2}}">已拒绝</view>
             </view>
-            <view class="merchant-status {{item.is_checked === 2 ? 'reject' : ''}}" wx:if="{{isLeader !== 1}}">{{item.is_checked === 0 ? '审核中' : item.is_checked === 1 ? '已通过' : '未通过'}}</view>
+            <view class="merchant-status {{item.is_checked === 2 ? 'reject' : ''}}" wx:if="{{(isLeader === 1 && type === 'apply') || isLeader !== 1}}">{{item.is_checked === 0 ? '审核中' : item.is_checked === 1 ? '已通过' : '未通过'}}</view>
           </view>
         </view>
       </repeat>
@@ -66,14 +66,12 @@
   import Giftbag from '@/base/giftbag/giftbag'
   import URIS from 'common/js/config'
 
-  const IS_LEADER = wepy.getStorageSync('is_leader')
-
   export default class PackageDetail extends wepy.page {
     mixins = [base]
 
     data = {
       imageUri: URIS.image,
-      isLeader: IS_LEADER,
+      isLeader: 0,
       type: '',
       packageId: '',
       isJoined: true,
@@ -85,6 +83,10 @@
     async onLoad(option) {
       this.packageId = option.id
       this.type = option.type ? option.type : ''
+      this.isLeader = wepy.getStorageSync('is_leader')
+    }
+
+    async onShow() {
       await this.load()
     }
 
