@@ -1,14 +1,12 @@
 <template>
-  <view class="content">
-    <view class="loading">
-      <image wx:if="{{imageUri}}"
-             src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
-      <view class="shopText">赞播商家助手</view>
-      <view class="load">
-        <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
-        <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
-        <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
-      </view>
+  <view class="loading">
+    <image wx:if="{{imageUri}}"
+           src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
+    <view class="shopText">赞播商家助手</view>
+    <view class="load">
+      <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
+      <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
+      <text class="{{showLoad === 3 ? '' : 'white'}}"></text>
     </view>
     <view class="watermark">Copyright © 2018 赞播 All Rights Reserved.</view>
   </view>
@@ -18,7 +16,9 @@
   import wepy from 'wepy'
   import URIS from 'common/js/config'
   import shop from 'api/shop'
+  import base from 'common/mixins/base'
   export default class loading extends wepy.page {
+    mixins = [base]
     config = {
       navigationBarTitleText: '',
       navigationBarBackgroundColor: '#fff'
@@ -28,7 +28,7 @@
       showLoad: 1
     }
 
-    show () {
+    show() {
       setInterval(() => {
         if (this.showLoad < 3) {
           this.showLoad++
@@ -39,13 +39,11 @@
       }, 500)
     }
 
-    async onShow () {
+    async onShow() {
       this.show()
-      let res = await shop.verificationLog('', false)
+      await shop.verificationLog('', false)
       setTimeout(() => {
-        if (res.message !== '凭证已失效') {
-          this.$switch('/pages/shop/shop')
-        }
+        this.$switch('/pages/shop/shop')
       }, 1500)
     }
   }

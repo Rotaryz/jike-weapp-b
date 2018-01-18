@@ -25,6 +25,7 @@
 
 <script>
   import wepy from 'wepy'
+  import {ERR_OK} from 'api/base'
   import Coupons from 'api/coupons'
   import base from 'common/mixins/base'
   import Coupon from '@/base/coupon/coupon'
@@ -50,7 +51,11 @@
     }
 
     async _getMerchantPackages() {
-      const res = await Coupons.getCouponList({status: 1, gift_bag_id: this.id})
+      const json = await Coupons.getCouponList({status: 1, gift_bag_id: this.id})
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.couponList = res
       if (res.length === 0) {
         return
@@ -80,7 +85,7 @@
         const res = await Packages.applyJoinPackage(this.id, {promotion_id: this.checkedId})
         this.loaded()
         this._toast(res.message)
-        if (!res.error) {
+        if (res.error === ERR_OK) {
           setTimeout(() => {
             this.$back()
           }, 2000)

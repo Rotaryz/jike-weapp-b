@@ -56,15 +56,15 @@
     config = {
       pages: [
         'pages/loading/loading',
-        'pages/shop/shop',
-        'pages/registration/registration',
-        'pages/live/live',
+        'pages/logIn/logIn',
         'pages/forget/forget',
         'pages/register/register',
-        'pages/logIn/logIn',
+        'pages/shop/shop',
         'pages/content/content',
         'pages/create-content/create-content',
         'pages/bus-times/bus-times',
+        'pages/registration/registration',
+        'pages/live/live',
         'pages/client/client',
         'pages/choice-coupon/choice-coupon',
         'pages/package-manage/package-manage',
@@ -81,7 +81,6 @@
         'pages/package-detail/package-detail',
         'pages/package-controller/package-controller',
         'pages/marketing/marketing',
-        'pages/mine/mine',
         'pages/store-msg/store-msg',
         'pages/store-license/store-license',
         'pages/account-management/account-management',
@@ -92,7 +91,8 @@
         'pages/prize-pool/prize-pool',
         'pages/create-prize/create-prize',
         'pages/exchange-editor/exchange-editor',
-        'pages/apply/apply'
+        'pages/apply/apply',
+        'pages/mine/mine'
       ],
       window: {
         backgroundColor: '#363547',

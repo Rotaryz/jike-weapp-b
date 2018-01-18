@@ -257,6 +257,7 @@
   import users from '@/common/mixins/users'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class CreatePrizePage extends wepy.page {
     mixins = [base, users]
@@ -383,8 +384,10 @@
             console.log(res1)
             if (res1) {
               let data1 = await PrizePool.createEXchange(res1)
-              if (data1.error === 0) {
+              if (data1.error === ERR_OK) {
                 this.$back()
+              } else {
+                this.$invoke('Toast', 'show', data1.message)
               }
             }
             break
@@ -393,7 +396,7 @@
             if (res2) {
               this.paymentMsg = Object.assign({}, res2)
               let payRes = await PrizePool.getStoreBalance()
-              let payResMax = Number(payRes.remaining)
+              let payResMax = Number(payRes.data.remaining)
               if (payResMax >= this.total) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -409,7 +412,7 @@
             if (res3) {
               this.paymentMsg = Object.assign({}, res3)
               let payRes = await PrizePool.getStoreBalance()
-              let payResMax = Number(payRes.remaining)
+              let payResMax = Number(payRes.data.remaining)
               if (payResMax >= this.prizeCount * this.fixedRedpacket) {
                 this.paymentType = 1
                 this.payEnough = true
@@ -472,7 +475,8 @@
         }
         let res = await PrizePool.createRedpack(data)
         this.loaded()
-        if (res.error === 0) {
+        this.paymengMoneyIn = false
+        if (res.error === ERR_OK) {
           this.paymentSuccess = true
           setTimeout(() => {
             this.$back()
@@ -494,6 +498,8 @@
               this.$back()
             }, 1500)
           }
+        } else {
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }

@@ -115,6 +115,7 @@
   import users from '@/common/mixins/users'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class ExchangeEditor extends wepy.page {
     mixins = [base, users]
@@ -216,8 +217,13 @@
             if (res1) {
               let data1 = await PrizePool.changeEXchange(res1, this.id)
               this.loaded()
-              if (data1.error === 0) {
-                this.$back(1)
+              if (data1.error === ERR_OK) {
+                this.$invoke('Toast', 'show', '修改成功')
+                setTimeout(() => {
+                  this.$back(1)
+                }, 1500)
+              } else {
+                this.$invoke('Toast', 'show', data1.message)
               }
             }
             break
@@ -248,7 +254,13 @@
 
     async load(id) {
       this.nowDate = new Date().toLocaleDateString()
-      let res = await PrizePool.exchangeDetail(id)
+      let Json = await PrizePool.exchangeDetail(id)
+      this.loaded()
+      if (Json.error !== ERR_OK) {
+        this.$invoke('Toast', 'show', Json.message)
+        return
+      }
+      let res = Json.data
       this.beginTime = res.start_at
       this.btime = res.start_at
       this.etime = res.end_at
@@ -260,7 +272,6 @@
       this.EXimgId = res.promotion_image_data[0].image_id
       this.imgId = res.promotion_image_data[0].id
       this.$apply()
-      this.loaded()
     }
 
     computed = {

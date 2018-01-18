@@ -23,6 +23,7 @@
   import Account from '@/api/account'
   import base from '@/common/mixins/base'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class AccountManagement extends wepy.page {
     mixins = [base]
@@ -65,7 +66,10 @@
 
     async load() {
       let res = await Account.getSubAccount()
-      this.accountList = res
+      if (res.error !== ERR_OK) {
+        return
+      }
+      this.accountList = res.data
       this.$apply()
       this.loaded()
     }

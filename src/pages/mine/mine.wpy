@@ -37,6 +37,7 @@
       <image class="mine-logo-image" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/pic-logo_zanbo@2x.png'}}"></image>
       <view class="mine-logo-txt">赞播提供技术支持</view>
     </view>
+    <Toast></Toast>
   </view>
 </template>
 
@@ -47,7 +48,9 @@
   import base from '@/common/mixins/base'
   import Account from '@/api/account'
   import URIS from 'common/js/config'
+  import Toast from '@/base/toast/toast'
   import Tips from 'common/js/tips'
+  import {ERR_OK} from '@/api/base'
 
   export default class Mine extends wepy.page {
     mixins = [base]
@@ -57,6 +60,10 @@
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white',
       backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      Toast
     }
 
     data = {
@@ -80,7 +87,11 @@
     }
 
     async load() {
-      let res = await Store.getMsgList()
+      let resData = await Store.getMsgList()
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      let res = resData.data
       this.storeMsg = res
       this.avatarUrl = res.logo_image
       this.loaded()
@@ -112,6 +123,8 @@
                 url: '/pages/logIn/logIn'
               })
             }, 1000)
+          } else {
+            this.$invoke('Toast', 'show', outRes.message)
           }
         }
       }

@@ -94,6 +94,7 @@
   import Toast from '@/base/toast/toast'
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
+  import {ERR_OK} from '@/api/base'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -144,11 +145,13 @@
             sqlRes = await Activity.newActivity(data)
             this.loaded()
           }
-          if (sqlRes.error === 0) {
+          if (sqlRes.error === ERR_OK) {
             Tips.success('保存成功')
             setTimeout(() => {
               this.$switch({url: '/pages/marketing/marketing'})
             }, 1000)
+          } else {
+            this.$invoke('Toast', 'show', sqlRes.message)
           }
         } else if (!this.shareEndTime) {
           this.$invoke('Toast', 'show', '请选择活动时间')
@@ -176,13 +179,19 @@
     async load() {
       this.nowDate = new Date().toLocaleDateString()
       this.nowDate = this.nowDate.replace(/\//g, '-')
-      let res = await Activity.getShareList()
-      this.prizePollList = await PrizePool.getPrizeRedlist()
-      if (res.error === 1 && res.status_code === 200) {
+      let Json = await Activity.getShareList()
+      let Json1 = await PrizePool.getPrizeRedlist()
+      if (Json1.error !== ERR_OK) {
+        this.loaded()
+        return
+      }
+      this.prizePollList = Json1.data
+      let res = Json.data
+      if (Json.error === ERR_OK) {
+        this.isCompile = true
+      } else {
         res = {}
         this.isCompile = false
-      } else {
-        this.isCompile = true
       }
       this.shareMsg = res
       this.shareEndTime = res.to_date || ''

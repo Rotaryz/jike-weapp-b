@@ -60,6 +60,7 @@
 <script>
   import wepy from 'wepy'
   import base from 'common/mixins/base'
+  import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Coupon from '@/base/coupon/coupon'
   import Giftbag from '@/base/giftbag/giftbag'
@@ -92,12 +93,16 @@
     }
 
     async _getPackageDetail() {
-      let res
+      let json
       if (this.isLeader === 1) {
-        res = await Packages.getPackage(this.packageId)
+        json = await Packages.getPackage(this.packageId)
       } else {
-        res = await Packages.getMerchantPackage(this.packageId)
+        json = await Packages.getMerchantPackage(this.packageId)
       }
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
       this.isJoined = res.is_joined
       this.giftbag = res
       this.navigationBarTitle = res.title
@@ -177,6 +182,7 @@
           &.up
             transform: rotate(180deg)
       .container
+        position: relative
         height: 310.5px
         padding-top: 10px
         padding-right: 12px
@@ -256,6 +262,7 @@
             &.reject
               color: $color-text-d
     .apply-btn-wrapper
+      position: relative
       height: 68px
       padding: 12px
       box-sizing: border-box
