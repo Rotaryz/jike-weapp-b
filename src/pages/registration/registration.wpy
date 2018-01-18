@@ -143,7 +143,7 @@
               <image wx:if="{{imageUri}}"
                      src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
                      @tap="subtract"></image>
-              <input value="{{addNum}}" type="number" bindblur="setNum"/>
+              <input value="{{addNum}}" type="number" bindinput="setNum"/>
               <image wx:if="{{imageUri}}"
                      src="{{imageUri + '/defaults/b-image/page/add.png'}}"
                      @tap="addReds"></image>
@@ -309,11 +309,11 @@
         if (value > number) {
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
           this.addNum = number
-//          return this.addNum
         } else {
           this.addNum = value
         }
         this.redPack[this.numTimes]['promotion_stock'] = number - this.addNum
+        return this.addNum
       },
       endDateChange(e) {
         this.etime = e.detail.value
@@ -538,6 +538,7 @@
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
       let res = this.infoRes(await regist.seeRegist())
+      console.log(res.seventh_redpacket.promotion_id)
       this.loaded()
       if (res) {
         this.id = res.id
@@ -547,36 +548,48 @@
         this.textares = res.explain
         this.textarinp = this.textares.length
         this.redPack.forEach((item, idx) => {
-          if (item.promotion_id === res.first_redpacket.promotion_id) {
-            res.first_redpacket.index = idx
+          if (res.first_redpacket) {
+            if (item.promotion_id === res.first_redpacket.promotion_id) {
+              res.first_redpacket.index = idx
+            }
           }
-          if (item.promotion_id === res.third_redpacket.promotion_id) {
-            res.third_redpacket.index = idx
+          if (res.third_redpacket) {
+            if (item.promotion_id === res.third_redpacket.promotion_id) {
+              res.third_redpacket.index = idx
+            }
           }
-          if (item.promotion_id === res.seventh_redpacket.promotion_id) {
-            res.seventh_redpacket.index = idx
+          if (res.seventh_redpacket) {
+            if (item.promotion_id === res.seventh_redpacket.promotion_id) {
+              res.seventh_redpacket.index = idx
+            }
           }
         })
-        this.paizrList[0] = {
-          title: '首次签到奖励红包',
-          promotion_title: res.first_redpacket.promotion_title + ' ' +
-          res.first_redpacket.promotion_stock + '个',
-          addNum: res.first_redpacket.promotion_stock * 1,
-          record: res.first_redpacket.index
+        if (res.first_redpacket) {
+          this.paizrList[0] = {
+            title: '首次签到奖励红包',
+            promotion_title: res.first_redpacket.promotion_title + ' ' +
+            res.first_redpacket.promotion_stock + '个',
+            addNum: res.first_redpacket.promotion_stock * 1,
+            record: res.first_redpacket.index
+          }
         }
-        this.paizrList[1] = {
-          title: '连续签到4天奖励红包',
-          promotion_title: res.third_redpacket.promotion_title + ' ' +
-          res.third_redpacket.promotion_stock + '个',
-          addNum: res.third_redpacket.promotion_stock * 1,
-          record: res.third_redpacket.index
+        if (res.third_redpacket) {
+          this.paizrList[1] = {
+            title: '连续签到4天奖励红包',
+            promotion_title: res.third_redpacket.promotion_title + ' ' +
+            res.third_redpacket.promotion_stock + '个',
+            addNum: res.third_redpacket.promotion_stock * 1,
+            record: res.third_redpacket.index
+          }
         }
-        this.paizrList[2] = {
-          title: '连续签到7天奖励红包',
-          promotion_title: res.seventh_redpacket.promotion_title + ' ' +
-          res.seventh_redpacket.promotion_stock + '个',
-          addNum: res.seventh_redpacket.promotion_stock * 1,
-          record: res.seventh_redpacket.index
+        if (res.seventh_redpacket) {
+          this.paizrList[2] = {
+            title: '连续签到7天奖励红包',
+            promotion_title: res.seventh_redpacket.promotion_title + ' ' +
+            res.seventh_redpacket.promotion_stock + '个',
+            addNum: res.seventh_redpacket.promotion_stock * 1,
+            record: res.seventh_redpacket.index
+          }
         }
         if (res.scope !== null) {
           this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`

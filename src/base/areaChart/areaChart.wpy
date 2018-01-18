@@ -65,7 +65,7 @@
         extra: {
           lineStyle: 'curve'
         },
-        width: width * 0.9375,
+        width: width * 1.02,
         height: 220
       })
     }
