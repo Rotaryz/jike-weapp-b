@@ -169,12 +169,12 @@
         this.loaded()
       }
       if (data === undefined) {
-        this.$invoke('Toast', 'show', '核销失败')
+        this.$invoke('Toast', 'show', '二维码不正确')
       } else {
         if (data.error === ERR_OK) {
-          this.$invoke('Toast', 'show', res.message)
+          this.$invoke('Toast', 'show', data.message)
         } else {
-          this.$invoke('Toast', 'show', res.message)
+          this.$invoke('Toast', 'show', data.message)
         }
       }
     }
