@@ -530,11 +530,19 @@
         return reg.test(this.redpackMin) && this.redpackMin < mean && this.redpackMin >= 0.01
       },
       fixedRedpacketTotal() {
-        return '￥' + this.prizeCount * this.fixedRedpacket
+        if (isNaN(this.prizeCount * this.fixedRedpacket)) {
+          return '金额有误'
+        } else {
+          return '￥' + (this.prizeCount * this.fixedRedpacket).toFixed(2)
+        }
       },
       fixedRpMoneyTest() {
         let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
         return reg.test(this.fixedRedpacket) && this.fixedRedpacket > 0
+      },
+      totalMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        return reg.test(this.total) && this.total > 0
       }
     }
 
@@ -590,7 +598,7 @@
       let errMsg = [
         {value: this.prizeName, txt: '奖品名称未填写'},
         {value: this.prizeCountTest, txt: '奖品数量有误'},
-        {value: this.total, txt: '请填写红包总金额'},
+        {value: this.totalMoneyTest, txt: '红包总金额有误'},
         {value: this.maxMoneyTest, txt: '红包最大值要小于总金额且大于平均值'},
         {value: this.minMoneyTest, txt: '红包最小值要小于平均值且不能小于0.01'}
       ]
@@ -953,6 +961,8 @@
               height: 18px
               text-align: center
               color: $color-text-title
+            .randomRP-prize-total-input.error
+              color: $color-assist-f
 
         .randomRP-prize-max-min
           display: flex
