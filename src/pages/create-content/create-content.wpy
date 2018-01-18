@@ -6,7 +6,7 @@
              bindinput="onInput"/>
       <text>{{textLength}}/20</text>
     </view>
-    <image class="theme" src="{{imgSrc}}" @tap="upImage(-1)">
+    <image class="theme" src="{{imgSrc}}" @tap="imageCover">
       <view>更换封面</view>
     </image>
     <view class="add">
@@ -271,8 +271,10 @@
           if (status === 'add') {
             this.upDateList(this.contentList[num + 1])
           } else {
-            if (this.contentList[num].id !== 0) {
-              this.upDateList(this.contentList[num])
+            if (this.addType !== '') {
+              if (this.contentList[num].id !== 0) {
+                this.upDateList(this.contentList[num])
+              }
             }
           }
         }
@@ -327,6 +329,20 @@
     }
 
     methods = {
+//      封面视频
+      async imageCover() {
+        const res = await wepy.chooseImage()
+        if (2 * 1024 * 1024 >= res.tempFiles[0].size) {
+          const file = res.tempFilePaths[0]
+          const imageId = await Uploads.uploadImages(file)
+          this.imgSrc = imageId.url
+          let cover = {'image_id': imageId.id}
+          Object.assign(this.allMsg, cover)
+          this.$apply()
+        } else {
+          this.$invoke('Toast', 'show', '图片不能超过2m')
+        }
+      },
       showMore(num) {
         this.num = num * 1
         if (this.num === -1) {
@@ -378,9 +394,11 @@
         if (this.title === '') {
           this.$invoke('Toast', 'show', '请输入标题')
           return false
+        } else if (this.imgSrc === '') {
+          this.$invoke('Toast', 'show', '请上传封面图')
+          return false
         } else {
           let res = null
-
           if (this.addType !== '') {
             Object.assign(this.allMsg, {title: this.title},
               {
@@ -395,9 +413,13 @@
           this.loaded()
           if (res.error === ERR_OK) {
             this.$invoke('Toast', 'show', '发布成功')
+            let num = this.addType
+            if (this.addType === '') {
+              num = 0
+            }
             setTimeout(async () => {
               await wepy.redirectTo({
-                url: '/pages/content/content?show=' + this.addType
+                url: '/pages/content/content?show=' + num
               })
             }, 1000)
           } else {
@@ -477,9 +499,9 @@
     }
 
     async onLoad (options) {
-      this.addType = options.status
       this.conId = options.id
       if (options.status) {
+        this.addType = options.status
 //       编辑
         let res = await content.contentDetail(options.id)
         res = res.data

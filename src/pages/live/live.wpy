@@ -3,8 +3,7 @@
     <view class="live" id="lis">
       <scroll-view class="live_conpon" scroll-y>
         <view class="con-item" wx:for="{{activityPromotion}}"
-              wx:key="index"
-              @tap="conponDetail({{item.promotion_id}},{{index}})">
+              wx:key="index">
           <image class="con_bk"
                  src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}"
                  wx:if="{{showBk !== index && imageUrlHead}}"></image>
@@ -14,7 +13,7 @@
           <view class="con-title">
             <view></view>
             <view>{{item.promotion_title}}</view>
-            <view class="monlogo">{{item.promotion_shop_price}}</view>
+            <view class="monlogo">{{item.promotion_platform_price}}</view>
           </view>
         </view>
       </scroll-view>
