@@ -381,7 +381,6 @@
         switch (this.prizeType) {
           case 1:
             let res1 = this._testEXmsg()
-            console.log(res1)
             if (res1) {
               let data1 = await PrizePool.createEXchange(res1)
               if (data1.error === ERR_OK) {
@@ -591,7 +590,7 @@
         title: this.prizeName,
         is_lucky_redpacket: 1,
         num: this.prizeCount,
-        min_price: 0.01,
+        min_price: this.redpackMin,
         max_price: this.redpackMax,
         total_amount: this.total
       }
