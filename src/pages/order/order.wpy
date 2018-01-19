@@ -62,6 +62,7 @@
     </scroll-view>
     <view class="order-detail" wx:if="{{isDetail}}">
       <view class="order-box">
+        <view>订单详情</view>
         <view>订单号：{{datail.order_sn}}</view>
         <view>下单时间：{{datail.created_at}}</view>
         <view>手机号码：{{datail.customer_phone}}</view>
@@ -380,6 +381,8 @@
         &:first-child
           border-top-right-radius: 2px
           border-top-left-radius: 2px
+          color: $color-white
+          text-align: center
           background-color: $color-theme
           border-bottom: none
         &:last-child

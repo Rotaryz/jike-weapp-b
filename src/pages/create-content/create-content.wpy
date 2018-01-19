@@ -656,17 +656,6 @@
 
     .coupon
       margin: 0
-    .coupon .couponList-item-head-container .couponList-item-head-left .couponList-itemPay view
-      display: flex
-      align-items: center
-      position: relative
-      transform: translateY(-25%)
-      .couponList-bigMoney
-        display: inline
-      .couponList-midMoney
-        position: absolute
-        bottom: 2px
-        left: -5px
 
   .con-submit
     position: fixed
