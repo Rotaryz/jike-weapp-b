@@ -500,6 +500,7 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
+        this.$apply()
       }
     }
 
