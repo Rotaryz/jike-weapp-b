@@ -590,7 +590,7 @@
         title: this.prizeName,
         is_lucky_redpacket: 1,
         num: this.prizeCount,
-        min_price: 0.01,
+        min_price: this.redpackMin,
         max_price: this.redpackMax,
         total_amount: this.total
       }
