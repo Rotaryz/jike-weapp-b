@@ -27,7 +27,8 @@
     }
     data = {
       imageUri: URIS.image,
-      showLoad: 1
+      showLoad: 1,
+      time: ''
     }
 
     show () {
@@ -41,7 +42,7 @@
       }, 500)
     }
 
-    async onShow () {
+    async onLoad () {
       this.show()
       await shop.verificationLog('', false)
       setTimeout(() => {

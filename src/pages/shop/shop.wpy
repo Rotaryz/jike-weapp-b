@@ -152,6 +152,7 @@
       }
       this.$apply()
     }
+
 //      父店铺进行收集FormId
     async getFormId (e) {
       let parent = await wepy.getStorage({key: 'is_parent'})
@@ -205,15 +206,12 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
-  page
-    height: 100%
-    overflow: hidden
-
   view
     box-sizing: border-box
 
   .shop
-    height: 100%
+    height: 100vh
+    overflow: hidden
 
   image
     position: absolute
