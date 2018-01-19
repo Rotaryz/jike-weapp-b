@@ -303,12 +303,16 @@
       ]
       let arr = ['暂停营业', '营业中', '筹建中', '已关闭']
       this.storeStatusTxt = arr[this.storeStatus]
-      let Json1 = await Store.getArea(res.business_circle.district)
-      if (Json1.error !== ERR_OK) {
-        this.loaded()
-        return
+      if (res.business_circle) {
+        let Json1 = await Store.getArea(res.business_circle.district)
+        if (Json1.error !== ERR_OK) {
+          this.loaded()
+          return
+        }
+        this.areaArr = res.business_circle ? Json1.data : []
+      } else {
+        this.areaArr = []
       }
-      this.areaArr = res.business_circle ? Json1.data : []
       this.weekChecked = res.week_day || ['0', '1', '2', '3', '4', '5']
       this.temporaryWeekChecked = this.weekChecked
       this._choiseChecked(this.weekValue)
@@ -320,6 +324,7 @@
 
     onReady() {
       this.mapCtx = wx.createMapContext('myMap')
+      this.$apply()
     }
 
     methods = {
