@@ -152,11 +152,14 @@
       }
       this.$apply()
     }
-
+//      父店铺进行收集FormId
     async getFormId (e) {
-      const formId = e.detail.formId
-      shop.form({form_ids: [formId]})
-      this.loaded()
+      let parent = await wepy.getStorage({key: 'is_parent'})
+      if (parent.data === 1) {
+        const formId = e.detail.formId
+        shop.form({form_ids: [formId]})
+        this.loaded()
+      }
     }
 
     async scanCodes (e) {

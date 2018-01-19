@@ -106,6 +106,7 @@
     }
 
     methods = {
+//      触摸时改变按钮状态
       oncap(index, num) {
         if (this.loadIng) {
           this.$invoke('Toast', 'show', '核销中...')
@@ -144,6 +145,7 @@
         this.code += num
         this.$apply()
       },
+//      结束触摸时还原状态
       endTap() {
         clearInterval(this.timer)
         setTimeout(() => {
@@ -155,6 +157,7 @@
           this.$apply()
         }, 100)
       },
+//      提交验证
       async submitCode() {
         if (!this.testCode) {
           return
@@ -172,13 +175,17 @@
         this.loadIng = false
         this.$apply()
       },
+//      父店铺进行收集FormId
       async getFormId (e) {
         if (!this.testCode) {
           return
         }
-        const formId = e.detail.formId
-        shop.form({form_ids: [formId]})
-        this.loaded()
+        let parent = await wepy.getStorage({key: 'is_parent'})
+        if (parent.data === 1) {
+          const formId = e.detail.formId
+          shop.form({form_ids: [formId]})
+          this.loaded()
+        }
       }
     }
 

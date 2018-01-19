@@ -141,7 +141,6 @@
     rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
-      console.log(content)
       this.showMistake = true
       setTimeout(() => {
         this.showMistake = false
@@ -224,13 +223,15 @@
           let res = await logIn.login({
             mobile: this.phoneNum,
             password: this.password,
-            code: data.code
+            wx_code: data.code
           })
           this.loaded()
           if (res.error === ERR_OK) {
             wepy.setStorageSync('token', res.data.access_token)
             wepy.setStorageSync('is_leader',
               res.data.merchant_info.merchant_data.is_leader)
+            wepy.setStorageSync('is_parent',
+              res.data.merchant_info.is_parent)
             this.rightTip('登录成功')
             setTimeout(async () => {
               await wepy.switchTab({
@@ -238,11 +239,15 @@
               })
             }, 1000)
           } else {
-//              this.$invoke('Toast', 'show', res.message)
+//          this.$invoke('Toast', 'show', res.message)
             this.rightTip(res.message, false)
           }
         }
       }
+    }
+
+    onShow () {
+      wepy.clearStorageSync()
     }
   }
 </script>
