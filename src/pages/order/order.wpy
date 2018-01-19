@@ -155,7 +155,7 @@
       async showDetail(id) {
         this.isDetail = true
         let data = await shop.Orders(id)
-        this.datail = data
+        this.datail = data.data
         this.loaded()
         this.$apply()
       },
@@ -249,7 +249,6 @@
     > view
       display: inline-block
       font-size: $font-size-small
-      color: $color-text-d
       line-height: 24px
       padding: 0 11px
       border: 1px solid $color-text-d
