@@ -101,7 +101,8 @@
       scrollTops: 0,
       id: 0,
       showError: false,
-      imageUrlHead: URIS.image
+      imageUrlHead: URIS.image,
+      isPaused: 1
     }
 
     methods = {
@@ -135,9 +136,10 @@
         this.activityPromotion.splice(index, 1)
       },
       async submitOk() {
+        console.log(this.isPaused)
         Object.assign(this.allMsg, {
           name: '直播活动',
-          is_paused: 0,
+          is_paused: this.isPaused,
           file_id: this.fileId,
           image_id: this.imageId,
           activity_promotions: this.activityPromotion
@@ -176,6 +178,7 @@
       let res = await live.watchlive()
       if (res.error === ERR_OK) {
         res = res.data
+        this.isPaused = res.is_paused
         this.id = res.id
         this.videoSrc = res.file_url
         this.showVideo = true
