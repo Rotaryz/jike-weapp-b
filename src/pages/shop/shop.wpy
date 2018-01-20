@@ -6,11 +6,13 @@
                src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
         <view>输码核销</view>
       </navigator>
-      <view @tap="scanCodes">
-        <image wx:if="{{imageUri}}"
-               src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
-        <view>扫码核销</view>
-      </view>
+      <form bindsubmit="getFormId" report-submit='true'>
+        <button form-type="submit" @tap="scanCodes">
+          <image wx:if="{{imageUri}}"
+                 src="{{imageUri + '/defaults/b-image/page/icon-scancode@2x.png'}}"></image>
+          <view>扫码核销</view>
+        </button>
+      </form>
       <navigator url="/pages/cancel-record/cancel-record">
         <image wx:if="{{imageUri}}"
                src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
@@ -151,7 +153,17 @@
       this.$apply()
     }
 
-    async scanCodes () {
+//      父店铺进行收集FormId
+    async getFormId (e) {
+      let parent = await wepy.getStorage({key: 'is_parent'})
+      if (parent.data === 1) {
+        const formId = e.detail.formId
+        shop.form({form_ids: [formId]})
+        this.loaded()
+      }
+    }
+
+    async scanCodes (e) {
       let res = await wepy.scanCode({onlyFromCamera: false})
       let data
       if (res.result[1] === '"') {
@@ -161,12 +173,12 @@
         this.loaded()
       }
       if (data === undefined) {
-        this.$invoke('Toast', 'show', '核销失败')
+        this.$invoke('Toast', 'show', '二维码不正确')
       } else {
         if (data.error === ERR_OK) {
-          this.$invoke('Toast', 'show', res.message)
+          this.$invoke('Toast', 'show', data.message)
         } else {
-          this.$invoke('Toast', 'show', res.message)
+          this.$invoke('Toast', 'show', data.message)
         }
       }
     }
@@ -194,15 +206,12 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
-  page
-    height: 100%
-    overflow: hidden
-
   view
     box-sizing: border-box
 
   .shop
-    height: 100%
+    height: 100vh
+    overflow: hidden
 
   image
     position: absolute
@@ -213,11 +222,20 @@
     box-sizing: border-box
     height: 19.1%
     align-items: flex-end
-    navigator, > view
+    navigator, > form
       flex: 1
       height: 100%
       position: relative
       text-align: center
+      button
+        background: $color-theme
+        position: absolute
+        height: 100%
+        width: 100%
+        top: 0
+        left: 0
+        &::after
+          border: none
       view
         font-size: $font-size-medium
         color: $color-white
@@ -309,7 +327,7 @@
         position: relative
         view, image
           position: absolute
-          bottom: 25.4%
+          bottom: 22.4%
           row-center()
         image
           width: 32px

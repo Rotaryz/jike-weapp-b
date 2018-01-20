@@ -98,7 +98,7 @@
         let data = {use_status: 1, use_type: 0}
         res = await live.prizePool(data)
       }
-      this.couponList = res
+      this.couponList = res.data
       this.loaded()
       this.$apply()
     }
@@ -160,16 +160,5 @@
       font-size: $font-size-medium
       border-radius: 4px
 
-  .coupon .couponList-item-head-container .couponList-item-head-left .couponList-itemPay view
-    display: flex
-    align-items: center
-    position: relative
-    transform: translateY(-25%)
-    .couponList-bigMoney
-      display: inline
-    .couponList-midMoney
-      position: absolute
-      bottom: 2px
-      left: -5px
 
 </style>

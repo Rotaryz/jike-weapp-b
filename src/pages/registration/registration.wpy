@@ -111,8 +111,8 @@
               <view class="ways" wx:for="{{wayList}}" wx:key="{{index}}">
                 {{item.title}}
                 <view class="sel" @tap="chioceWay({{index}})">
-                  <image
-                    src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/b-image/page/icon-selected.png'}}"></image>
+                  <image wx:if="{{imageUri}}"
+                         src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
                 </view>
               </view>
               <view class="ways" style="border:none">
@@ -134,8 +134,8 @@
               <view>{{item.promotion_title}}</view>
               <text>剩余{{item.promotion_stock}}个</text>
               <view class="sel" @tap="selRed({{index}})">
-                <image
-                  src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png':imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
+                <image wx:if="{{imageUri}}"
+                       src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
               </view>
             </view>
             <view class="add-weight ways">
@@ -143,7 +143,7 @@
               <image wx:if="{{imageUri}}"
                      src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
                      @tap="subtract"></image>
-              <input value="{{addNum}}" type="number" bindblur="setNum"/>
+              <input value="{{addNum}}" type="number" bindinput="setNum"/>
               <image wx:if="{{imageUri}}"
                      src="{{imageUri + '/defaults/b-image/page/add.png'}}"
                      @tap="addReds"></image>
@@ -174,7 +174,9 @@
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
-
+  //  红包图片
+  const img1 = URIS.image + '/defaults/b-image/page/icon-1_money.png'
+  const img2 = URIS.image + '/defaults/b-image/page/icon_notchecked.png'
   export default class Registration extends wepy.page {
     mixins = [base]
 
@@ -200,7 +202,7 @@
         latitude: 0,
         longitude: 0,
         width: 32,
-        height: 28.5
+        height: 34
       }],
       btime: '',
       etime: '结束时间',
@@ -209,38 +211,38 @@
       showTimes: false,
       redPac: [{
         title: '奖励',
-        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
+        image: img1,
         showTitle: 1,
         ispacket: 1
       }, {
         title: '第二天',
-        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
+        image: img2,
         showTitle: 0,
         ispacket: 0
 
       }, {
         title: '第三天',
-        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
+        image: img2,
         showTitle: 0,
         ispacket: 0
       }, {
         title: '奖励',
-        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
+        image: img1,
         showTitle: 1,
         ispacket: 2
       }, {
         title: '第五天',
-        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
+        image: img2,
         showTitle: 0,
         ispacket: 0
       }, {
         title: '第六天',
-        image: URIS.image + '/defaults/b-image/page/icon_notchecked.png',
+        image: img2,
         showTitle: 0,
         ispacket: 0
       }, {
         title: '奖励',
-        image: URIS.image + '/defaults/b-image/page/icon-1_money.png',
+        image: img1,
         showTitle: 1,
         ispacket: 3
       }],
@@ -294,7 +296,8 @@
       showText: true,
       height: 75,
       hidePage: false,
-      showMap: false
+      showMap: false,
+      isPaused: 1
     }
 
     methods = {
@@ -309,24 +312,20 @@
         if (value > number) {
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
           this.addNum = number
-//          return this.addNum
         } else {
           this.addNum = value
         }
         this.redPack[this.numTimes]['promotion_stock'] = number - this.addNum
+        return this.addNum
       },
       endDateChange(e) {
         this.etime = e.detail.value
       },
+//      红包奖品的选择
       isChioce(type) {
-//        wepy.pageScrollTo({
-//          scrollTop: 300
-//        })
         setTimeout(() => {
           this.showTimes = false
           this.showChioce = true
-//          this.hidePage = true
-//          this.height = 100
           this.$apply()
         }, 250)
 
@@ -355,6 +354,7 @@
           }
         }
       },
+//      活动标题
       titleint(e) {
         this.name = e.detail.value
         this.nameLen = this.name.length
@@ -363,6 +363,7 @@
         this.textares = e.detail.value
         this.textarinp = this.textares.length
       },
+//      距离的默认选择
       chioceWay(index) {
         this.wayList.map((item, idx) => {
           if (idx === index) {
@@ -373,6 +374,7 @@
         })
         this.disNum.way = index
       },
+//      手动输入距离
       setWay(e) {
         this.wayList.map((item, idx) => {
           item.sel = false
@@ -386,6 +388,7 @@
         this.hidePage = false
         this.height = 165
       },
+//      保存距离设置
       sureWays() {
         if (this.disNum.way !== -1 && this.wayList[this.disNum.way].sel) {
           this.value = this.wayList[this.disNum.way].title
@@ -444,6 +447,10 @@
       },
 //      保存红包
       save() {
+        if (this.addNum === 0) {
+          this.$invoke('Toast', 'show', '添加红包数不能为0')
+          return false
+        }
         this.showChioce = false
         this.showText = true
         let title = '添加奖品'
@@ -462,13 +469,16 @@
           promotion_title: title
         })
       },
+//      时间选择
       bindChange(e) {
         this.timeValue = e.detail.value
       },
+//      取消按钮
       cancel() {
         this.showText = true
         this.showChioce = false
       },
+//      提交发布
       async submitOk() {
         if (this.name === '') {
           this.$invoke('Toast', 'show', '请输入标题')
@@ -479,48 +489,56 @@
         } else if (this.value === '' || this.value === '0公里') {
           this.$invoke('Toast', 'show', '请输入签到范围')
           return false
+        }
+
+        let disway = 0
+        if (this.value.indexOf('公里') !== -1) {
+          disway = parseInt(this.value) * 1000
         } else {
-          let disway = 0
-          if (this.value.indexOf('公里') !== -1) {
-            disway = parseInt(this.value) * 1000
-          } else {
-            disway = parseInt(this.value)
-          }
-          this.redPack[this.paizrList[0].record].promotion_stock =
-            this.paizrList[0].addNum
-          this.redPack[this.paizrList[1].record].promotion_stock =
-            this.paizrList[1].addNum
-          this.redPack[this.paizrList[2].record].promotion_stock =
-            this.paizrList[2].addNum
-          let allMsg = {}
+          disway = parseInt(this.value)
+        }
+        this.redPack[this.paizrList[0].record].promotion_stock =
+          this.paizrList[0].addNum
+        this.redPack[this.paizrList[1].record].promotion_stock =
+          this.paizrList[1].addNum
+        this.redPack[this.paizrList[2].record].promotion_stock =
+          this.paizrList[2].addNum
+        let allMsg = {}
 //          修改时间！！
-          Object.assign(allMsg,
-            {
-              title: this.name,
-              to_date: this.etime,
-              scope: disway,
-              explain: this.textares,
-              is_paused: 0,
-              first_redpacket: this.redPack[this.paizrList[0].record],
-              third_redpacket: this.redPack[this.paizrList[1].record],
-              seventh_redpacket: this.redPack[this.paizrList[2].record]
-            })
-          let res = null
-          if (this.id !== -1) {
-            res = await regist.putData(this.id, allMsg)
-          } else {
-            res = await regist.createData(allMsg)
-            this.load()
+        Object.assign(allMsg,
+          {
+            title: this.name,
+            to_date: this.etime,
+            scope: disway,
+            explain: this.textares,
+            is_paused: this.isPaused,
+            first_redpacket: this.redPack[this.paizrList[0].record],
+            third_redpacket: this.redPack[this.paizrList[1].record],
+            seventh_redpacket: this.redPack[this.paizrList[2].record]
+          })
+        let res = null
+        if (this.id !== -1) {
+          if (this.paizrList.length === 3) {
+            for (let item of this.paizrList) {
+              if (item.addNum === 0) {
+                this.$invoke('Toast', 'show', '请选择奖品')
+                return false
+              }
+            }
           }
-          this.loaded()
-          if (res.error === 0) {
-            this.$invoke('Toast', 'show', '保存成功')
-            setTimeout(() => {
-              this.$back()
-            }, 1000)
-          } else {
-            this.$invoke('Toast', 'show', res.message)
-          }
+          res = await regist.putData(this.id, allMsg)
+        } else {
+          res = await regist.createData(allMsg)
+          this.load()
+        }
+        this.loaded()
+        if (res.error === 0) {
+          this.$invoke('Toast', 'show', '保存成功')
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }
@@ -529,52 +547,67 @@
         return newValue
       }
     }
-
+//  判断该活动是编辑还是新建状态
     async load () {
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
       let res = this.infoRes(await regist.seeRegist())
-      console.log(res)
       this.loaded()
       if (res) {
+        this.isPaused = res.is_paused
         this.id = res.id
         this.name = res.title
         this.nameLen = this.name.length
         this.etime = res.to_date
         this.textares = res.explain
         this.textarinp = this.textares.length
+//        遍历确认红包
         this.redPack.forEach((item, idx) => {
-          if (item.promotion_id === res.first_redpacket.promotion_id) {
-            res.first_redpacket.index = idx
+          if (res.first_redpacket) {
+            if (item.promotion_id === res.first_redpacket.promotion_id) {
+              res.first_redpacket.index = idx
+            }
           }
-          if (item.promotion_id === res.third_redpacket.promotion_id) {
-            res.third_redpacket.index = idx
+          if (res.third_redpacket) {
+            if (item.promotion_id === res.third_redpacket.promotion_id) {
+              res.third_redpacket.index = idx
+            }
           }
-          if (item.promotion_id === res.seventh_redpacket.promotion_id) {
-            res.seventh_redpacket.index = idx
+          if (res.seventh_redpacket) {
+            if (item.promotion_id === res.seventh_redpacket.promotion_id) {
+              res.seventh_redpacket.index = idx
+            }
           }
         })
-        this.paizrList[0] = {
-          title: '首次签到奖励红包',
-          promotion_title: res.first_redpacket.promotion_title + ' ' +
-          res.first_redpacket.promotion_stock + '个',
-          addNum: res.first_redpacket.promotion_stock * 1,
-          record: res.first_redpacket.index
+//        初始化奖品列表
+        if (res.first_redpacket !== null) {
+          this.paizrList[0] = {
+            title: '首次签到奖励红包',
+            promotion_title: res.first_redpacket.promotion_title + ' ' +
+            res.first_redpacket.promotion_stock + '个',
+            addNum: res.first_redpacket.promotion_stock * 1,
+            record: res.first_redpacket.index
+          }
         }
-        this.paizrList[1] = {
-          title: '连续签到4天奖励红包',
-          promotion_title: res.third_redpacket.promotion_title + ' ' +
-          res.third_redpacket.promotion_stock + '个',
-          addNum: res.third_redpacket.promotion_stock * 1,
-          record: res.third_redpacket.index
+        if (res.third_redpacket !== null) {
+          this.paizrList[1] = {
+            title: '连续签到4天奖励红包',
+            promotion_title: res.third_redpacket.promotion_title + ' ' +
+            res.third_redpacket.promotion_stock + '个',
+            addNum: res.third_redpacket.promotion_stock * 1,
+            record: res.third_redpacket.index
+          }
         }
-        this.paizrList[2] = {
-          title: '连续签到7天奖励红包',
-          promotion_title: res.seventh_redpacket.promotion_title + ' ' +
-          res.seventh_redpacket.promotion_stock + '个',
-          addNum: res.seventh_redpacket.promotion_stock * 1,
-          record: res.seventh_redpacket.index
+        if (res.seventh_redpacket !== null) {
+          this.paizrList[2] = {
+            title: '连续签到7天奖励红包',
+            promotion_title: res.seventh_redpacket.promotion_title + ' ' +
+            res.seventh_redpacket.promotion_stock + '个',
+            addNum: res.seventh_redpacket.promotion_stock * 1,
+            record: res.seventh_redpacket.index
+          }
         }
+//        计算距离
         if (res.scope !== null) {
           this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
         } else {
@@ -584,6 +617,7 @@
       }
     }
 
+//  初始化数据
     infoRes (res) {
       if (res.error === ERR_OK) {
         return res.data
@@ -596,8 +630,8 @@
       this.loaded()
       this.markers[0].latitude = shop.latitude
       this.markers[0].longitude = shop.longitude
+      this.markers[0].iconPath = `./icon-s_${shop.industry.code_name}@2x.png`
       this.showMap = true
-//      this.markers[0].iconPath = `./{}.png`
       this.shop = shop
       this.redPack = data
       await this.load()

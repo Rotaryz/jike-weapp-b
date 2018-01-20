@@ -17,12 +17,14 @@
           <image src="{{item.image}}"></image>
         </view>
       </view>
-      <view class="num-item" @tap="submitCode">
-        <view class="nums">
-          <image wx:if="{{imageUrlHead}}"
-                 src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
-        </view>
-      </view>
+      <form bindsubmit="getFormId" report-submit='true' class="num-item">
+        <button class="num-item" @tap="submitCode" form-type="submit">
+          <view class="nums">
+            <image wx:if="{{imageUrlHead}}"
+                   src="{{imageUrlHead + (testCode?'/defaults/b-image/page/pic-validate2@2x.png':'/defaults/b-image/page/pic-validate1@2x.png')}}"></image>
+          </view>
+        </button>
+      </form>
       <view class="num-item" @touchstart="oncap(11)" @touchend="endTap"
             wx:if="{{code.length>0}}">
         <view class="nums">
@@ -104,6 +106,7 @@
     }
 
     methods = {
+//      触摸时改变按钮状态
       oncap(index, num) {
         if (this.loadIng) {
           this.$invoke('Toast', 'show', '核销中...')
@@ -142,6 +145,7 @@
         this.code += num
         this.$apply()
       },
+//      结束触摸时还原状态
       endTap() {
         clearInterval(this.timer)
         setTimeout(() => {
@@ -153,6 +157,7 @@
           this.$apply()
         }, 100)
       },
+//      提交验证
       async submitCode() {
         if (!this.testCode) {
           return
@@ -160,7 +165,6 @@
         wx.vibrateShort()
         this.loadIng = true
         let res = await shop.verification(this.code)
-
         this.loaded()
         if (res.error === ERR_OK) {
           Tips.success('核销成功')
@@ -170,6 +174,18 @@
         }
         this.loadIng = false
         this.$apply()
+      },
+//      父店铺进行收集FormId
+      async getFormId (e) {
+        if (!this.testCode) {
+          return
+        }
+        let parent = await wepy.getStorage({key: 'is_parent'})
+        if (parent.data === 1) {
+          const formId = e.detail.formId
+          shop.form({form_ids: [formId]})
+          this.loaded()
+        }
       }
     }
 
@@ -233,6 +249,15 @@
     .num-item
       width: 33.33%
       position: relative
+      button
+        position: absolute
+        height: 100%
+        width: 100%
+        top: 0
+        left: 0
+        background: $color-white
+        &::after
+          border: none
       .nums
         width: 88px
         height: 88px

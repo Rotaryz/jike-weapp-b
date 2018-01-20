@@ -10,7 +10,7 @@
   export default class Toast extends wepy.component {
     data = {
       showToast: false,
-      content: 'error! error!'
+      content: ''
     }
 
     methods = {

@@ -15,7 +15,7 @@
             @tap="showData({{index}})">
         <view>{{item.title}}</view>
         <view>{{item.count}}</view>
-        <view>较前天
+        <view>较{{nacList[showNac].day}}
           <text>{{item.percentage}}%</text>
           <image
             src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
@@ -58,10 +58,7 @@
     }
 
     config = {
-      navigationBarTitleText: '数据流量',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTextStyle: 'black'
-
+      navigationBarTitleText: '数据流量'
     }
     components = {
       AeraChart: AeraChart

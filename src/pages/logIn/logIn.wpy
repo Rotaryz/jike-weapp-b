@@ -22,7 +22,7 @@
                  bindinput="putPhone" maxlength="11"/>
           <view class="eye" @tap.stop="clearPhone">
             <image class="close"
-                   src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-del34@2x.png'}}"
                    wx:if="{{imageUri && showClose}}"></image>
           </view>
 
@@ -141,7 +141,6 @@
     rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
-      console.log(content)
       this.showMistake = true
       setTimeout(() => {
         this.showMistake = false
@@ -218,17 +217,21 @@
         return this.password
       },
       async submit() {
+        let data = await wepy.login()
         if (this.submit) {
 //            登陆
           let res = await logIn.login({
             mobile: this.phoneNum,
-            password: this.password
+            password: this.password,
+            wx_code: data.code
           })
           this.loaded()
           if (res.error === ERR_OK) {
             wepy.setStorageSync('token', res.data.access_token)
             wepy.setStorageSync('is_leader',
               res.data.merchant_info.merchant_data.is_leader)
+            wepy.setStorageSync('is_parent',
+              res.data.merchant_info.is_parent)
             this.rightTip('登录成功')
             setTimeout(async () => {
               await wepy.switchTab({
@@ -236,11 +239,15 @@
               })
             }, 1000)
           } else {
-//              this.$invoke('Toast', 'show', res.message)
+//          this.$invoke('Toast', 'show', res.message)
             this.rightTip(res.message, false)
           }
         }
       }
+    }
+
+    onShow () {
+      wepy.clearStorageSync()
     }
   }
 </script>

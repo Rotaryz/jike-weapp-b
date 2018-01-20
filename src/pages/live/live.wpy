@@ -3,21 +3,23 @@
     <view class="live" id="lis">
       <scroll-view class="live_conpon" scroll-y>
         <view class="con-item" wx:for="{{activityPromotion}}"
-              wx:key="index"
-              @tap="conponDetail({{item.promotion_id}},{{index}})">
-          <image class="con_bk" src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}" wx:if="{{showBk !== index && imageUrlHead}}"></image>
-          <image class="con_bk" src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
+              wx:key="index">
+          <image class="con_bk"
+                 src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}"
+                 wx:if="{{showBk !== index && imageUrlHead}}"></image>
+          <image class="con_bk"
+                 src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
                  wx:if="{{showBk  === index && imageUrlHead}}"></image>
           <view class="con-title">
             <view></view>
             <view>{{item.promotion_title}}</view>
-            <view class="monlogo">{{item.promotion_shop_price}}</view>
+            <view class="monlogo">{{item.promotion_platform_price}}</view>
           </view>
         </view>
       </scroll-view>
       <view class="live_video video-bk" wx:if="{{!showVideo}}">
         <image wx:if="{{imageUrlHead}}"
-          src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
+               src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
       </view>
       <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
       </video>
@@ -28,7 +30,8 @@
         <view class="upload">
           <image class="video-box {{showError?'no-border':''}}"
                  @tap="upVideo" src="{{videoImage}}" binderror="binderror">
-            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
+            <image wx:if="{{imageUrlHead}}"
+                   src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
             <view></view>
           </image>
           <!--<video class="video-box no-border" src="{{videoSrc}}"-->
@@ -46,12 +49,12 @@
             {{item.promotion_title}}
             <view class="close-box" @tap="delCou({{index}})">
               <image wx:if="{{imageUrlHead}}"
-                src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
+                     src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
             </view>
           </view>
           <view class="add-cou" @tap="choice">
             <image wx:if="{{imageUrlHead}}"
-              src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
+                   src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
             添加服务
           </view>
         </view>
@@ -64,6 +67,7 @@
     </view>
   </view>
   <Toast></Toast>
+  <Confirm></Confirm>
 </template>
 
 <script>
@@ -74,10 +78,12 @@
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
+  import Confirm from '@/base/confirm/confirm'
   export default class Live extends wepy.page {
     mixins = [base]
     components = {
-      Toast: Toast
+      Toast: Toast,
+      Confirm: Confirm
     }
 
     onShareAppMessage () {
@@ -85,9 +91,7 @@
     }
 
     config = {
-      navigationBarTitleText: '直播优惠',
-      navigationBarBackgroundColor: '#363547',
-      navigationBarTextStyle: 'white'
+      navigationBarTitleText: '直播优惠'
     }
     data = {
       videoImage: '',
@@ -100,7 +104,9 @@
       scrollTops: 0,
       id: 0,
       showError: false,
-      imageUrlHead: URIS.image
+      imageUrlHead: URIS.image,
+      isPaused: 1,
+      delIndex: 0
     }
 
     methods = {
@@ -131,12 +137,14 @@
         })
       },
       delCou(index) {
-        this.activityPromotion.splice(index, 1)
+        this.delIndex = index
+        this.$invoke('Confirm', 'show')
       },
       async submitOk() {
+        console.log(this.isPaused)
         Object.assign(this.allMsg, {
           name: '直播活动',
-          is_paused: 0,
+          is_paused: this.isPaused,
           file_id: this.fileId,
           image_id: this.imageId,
           activity_promotions: this.activityPromotion
@@ -161,6 +169,11 @@
         }
       }
     }
+    events = {
+      'confirm': async () => {
+        this.activityPromotion.splice(this.delIndex, 1)
+      }
+    }
 
     onShow () {
       if (this.$parent.globalData.coupon &&
@@ -175,6 +188,7 @@
       let res = await live.watchlive()
       if (res.error === ERR_OK) {
         res = res.data
+        this.isPaused = res.is_paused
         this.id = res.id
         this.videoSrc = res.file_url
         this.showVideo = true

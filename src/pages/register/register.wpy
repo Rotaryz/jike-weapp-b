@@ -24,7 +24,7 @@
                  bindinput="putPhone" maxlength="11"/>
           <view class="eye" @tap.stop="clearPhone">
             <image class="close"
-                   src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-del34@2x.png'}}"
                    wx:if="{{imageUri && showClose}}"></image>
           </view>
 
@@ -110,7 +110,6 @@
       isSet: false,
       phoneFocus: false
     }
-
     onShareAppMessage () {
       this.ShareAppMessage()
     }
@@ -126,14 +125,14 @@
 
       this.checkTip()
     }
-
+//    显示停留提示
     showTip (status, title) {
       this.showMistake = status
       this.mistakeTip = title
       this.showLogo = false
       return false
     }
-
+//  提示闪现
     rightTip (content, showLogo = true) {
       this.mistakeTip = content
       this.showLogo = showLogo
@@ -144,7 +143,7 @@
       }, 2000)
       this.$apply()
     }
-
+//  检测是否可注册
     checkTip () {
       let phoneStatus = REGPHONE.test(this.phoneNum)
       let passStatus = REGPASS.test(this.password)
@@ -159,6 +158,7 @@
     }
 
     methods = {
+//      输入手机号码
       putPhone(e) {
         this.phoneNum = e.detail.value
         if (e.detail.value.length > 0) {
@@ -173,6 +173,7 @@
         }
         this.checkAngin()
       },
+//      清除手机号码
       clearPhone() {
         this.phoneNum = ''
         this.phoneSusses = ''
@@ -186,6 +187,7 @@
         this.showMistake = false
         this.checkAngin()
       },
+//      密码可视化
       showCiphertext() {
         this.ciphertext = !this.ciphertext
         setTimeout(() => {
@@ -250,6 +252,7 @@
           return false
         }
       },
+//      密码输入
       putPassword(e) {
         this.password = e.detail.value
         this.password = this.password.replace(/[\u2E80-\u9FFF]/gi, '')
@@ -257,24 +260,29 @@
         this.checkAngin()
         return this.password
       },
-
+//    获取验证码
       getCode(e) {
         this.code = e.detail.value
         this.checkAngin()
       },
+//      注册
       async submit() {
+        let data = await wepy.login()
         if (this.submit) {
 //            注册
           let res = await logIn.register({
             mobile: this.phoneNum,
             password: this.password,
-            code: this.code
+            code: this.code,
+            wx_code: data.code
           })
           this.loaded()
           if (res.error === ERR_OK) {
             wepy.setStorageSync('token', res.data.access_token)
             wepy.setStorageSync('is_leader',
               res.data.merchant_info.merchant_data.is_leader)
+            wepy.setStorageSync('is_parent',
+              res.data.merchant_info.is_parent)
             this.rightTip('注册成功')
             setTimeout(async () => {
               await wepy.switchTab({

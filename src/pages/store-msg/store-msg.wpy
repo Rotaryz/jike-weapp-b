@@ -267,7 +267,7 @@
 
     async load() {
       this.qqmapsdk = new QQMapWX({
-        key: 'WPABZ-ZVD6P-RJJD5-VSCIN-BBADV-FMFJX'
+        key: 'V6VBZ-5MB6S-JOKOW-6B724-OCXOF-3OFG2'
 
       })
       let Json = await Store.getMsgList()
