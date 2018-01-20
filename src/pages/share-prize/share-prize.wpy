@@ -136,7 +136,10 @@
           to_date: this.shareEndTime,
           activity_promotions: this.prizeListArr
         }
-        if (this.shareEndTime && this.prizeListArr.length > 0) {
+        let testArr = this.prizeListArr.filter((item) => {
+          return item.type !== 'delete' && item.promotion_stock * 1 !== 0
+        })
+        if (this.shareEndTime && this.prizeListArr.length > 0 && testArr.length > 0) {
           let sqlRes
           if (this.isCompile) {
             sqlRes = await Activity.chengeActivity(data, this.shareMsg.id)
@@ -156,7 +159,7 @@
         } else if (!this.shareEndTime) {
           this.$invoke('Toast', 'show', '请选择活动时间')
           return
-        } else if (this.prizeListArr.length === 0) {
+        } else if (this.prizeListArr.length === 0 || testArr.length === 0) {
           this.$invoke('Toast', 'show', '还没有添加奖品哦')
           return
         }
