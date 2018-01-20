@@ -476,12 +476,12 @@
         this.loaded()
         let res = Json.data
         this.paymentMoneying = false
-        if (Json.error === ERR_OK && !res.payInfo) {
+        if (Json.error === ERR_OK && !res) {
           this.paymentSuccess = true
           setTimeout(() => {
             this.$back()
           }, 1500)
-        } else if (Json.error === ERR_OK && res.payInfo) {
+        } else if (Json.error === ERR_OK && res) {
           const {timestamp, nonceStr, signType, paySign} = res.payInfo
           const pay = await wepy.requestPayment({
             timeStamp: timestamp,
