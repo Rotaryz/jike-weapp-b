@@ -296,7 +296,8 @@
       showText: true,
       height: 75,
       hidePage: false,
-      showMap: false
+      showMap: false,
+      isPaused: 1
     }
 
     methods = {
@@ -488,48 +489,56 @@
         } else if (this.value === '' || this.value === '0公里') {
           this.$invoke('Toast', 'show', '请输入签到范围')
           return false
+        }
+
+        let disway = 0
+        if (this.value.indexOf('公里') !== -1) {
+          disway = parseInt(this.value) * 1000
         } else {
-          let disway = 0
-          if (this.value.indexOf('公里') !== -1) {
-            disway = parseInt(this.value) * 1000
-          } else {
-            disway = parseInt(this.value)
-          }
-          this.redPack[this.paizrList[0].record].promotion_stock =
-            this.paizrList[0].addNum
-          this.redPack[this.paizrList[1].record].promotion_stock =
-            this.paizrList[1].addNum
-          this.redPack[this.paizrList[2].record].promotion_stock =
-            this.paizrList[2].addNum
-          let allMsg = {}
+          disway = parseInt(this.value)
+        }
+        this.redPack[this.paizrList[0].record].promotion_stock =
+          this.paizrList[0].addNum
+        this.redPack[this.paizrList[1].record].promotion_stock =
+          this.paizrList[1].addNum
+        this.redPack[this.paizrList[2].record].promotion_stock =
+          this.paizrList[2].addNum
+        let allMsg = {}
 //          修改时间！！
-          Object.assign(allMsg,
-            {
-              title: this.name,
-              to_date: this.etime,
-              scope: disway,
-              explain: this.textares,
-              is_paused: 0,
-              first_redpacket: this.redPack[this.paizrList[0].record],
-              third_redpacket: this.redPack[this.paizrList[1].record],
-              seventh_redpacket: this.redPack[this.paizrList[2].record]
-            })
-          let res = null
-          if (this.id !== -1) {
-            res = await regist.putData(this.id, allMsg)
-          } else {
-            res = await regist.createData(allMsg)
-            this.load()
+        Object.assign(allMsg,
+          {
+            title: this.name,
+            to_date: this.etime,
+            scope: disway,
+            explain: this.textares,
+            is_paused: this.isPaused,
+            first_redpacket: this.redPack[this.paizrList[0].record],
+            third_redpacket: this.redPack[this.paizrList[1].record],
+            seventh_redpacket: this.redPack[this.paizrList[2].record]
+          })
+        let res = null
+        if (this.id !== -1) {
+          if (this.paizrList.length === 3) {
+            for (let item of this.paizrList) {
+              if (item.addNum === 0) {
+                this.$invoke('Toast', 'show', '请选择奖品')
+                return false
+              }
+            }
           }
-          this.loaded()
-          if (res.error === 0) {
-            this.$invoke('Toast', 'show', '保存成功')
-            setTimeout(() => {
-              this.$back()
-            }, 1000)
-          } else {
-            this.$invoke('Toast', 'show', res.message)
-          }
+          res = await regist.putData(this.id, allMsg)
+        } else {
+          res = await regist.createData(allMsg)
+          this.load()
+        }
+        this.loaded()
+        if (res.error === 0) {
+          this.$invoke('Toast', 'show', '保存成功')
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
         }
       }
     }
@@ -545,12 +554,14 @@
       let res = this.infoRes(await regist.seeRegist())
       this.loaded()
       if (res) {
+        this.isPaused = res.is_paused
         this.id = res.id
         this.name = res.title
         this.nameLen = this.name.length
         this.etime = res.to_date
         this.textares = res.explain
         this.textarinp = this.textares.length
+//        遍历确认红包
         this.redPack.forEach((item, idx) => {
           if (res.first_redpacket) {
             if (item.promotion_id === res.first_redpacket.promotion_id) {
@@ -568,7 +579,8 @@
             }
           }
         })
-        if (res.first_redpacket) {
+//        初始化奖品列表
+        if (res.first_redpacket !== null) {
           this.paizrList[0] = {
             title: '首次签到奖励红包',
             promotion_title: res.first_redpacket.promotion_title + ' ' +
@@ -577,7 +589,7 @@
             record: res.first_redpacket.index
           }
         }
-        if (res.third_redpacket) {
+        if (res.third_redpacket !== null) {
           this.paizrList[1] = {
             title: '连续签到4天奖励红包',
             promotion_title: res.third_redpacket.promotion_title + ' ' +
@@ -586,7 +598,7 @@
             record: res.third_redpacket.index
           }
         }
-        if (res.seventh_redpacket) {
+        if (res.seventh_redpacket !== null) {
           this.paizrList[2] = {
             title: '连续签到7天奖励红包',
             promotion_title: res.seventh_redpacket.promotion_title + ' ' +
@@ -595,6 +607,7 @@
             record: res.seventh_redpacket.index
           }
         }
+//        计算距离
         if (res.scope !== null) {
           this.value = res.scope >= 1000 ? `${res.scope / 1000}公里` : `${res.scope}米`
         } else {

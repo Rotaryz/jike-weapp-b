@@ -426,7 +426,9 @@
           Tips.success('保存成功')
           this.deletePromtions = []
           this._getLucky(false)
-          wepy.pageScrollTo({scrollTop: 0})
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
         } else {
           this._toast(res.message)
         }
