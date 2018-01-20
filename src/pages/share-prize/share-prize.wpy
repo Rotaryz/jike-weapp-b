@@ -137,7 +137,7 @@
           activity_promotions: this.prizeListArr
         }
         let testArr = this.prizeListArr.filter((item) => {
-          return item.type !== 'delete' && item.promotion_stock * 1 !== 0
+          return item.type !== 'delete' || item.promotion_stock * 1 !== 0
         })
         if (this.shareEndTime && this.prizeListArr.length > 0 && testArr.length > 0) {
           let sqlRes
