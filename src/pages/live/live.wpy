@@ -67,6 +67,7 @@
     </view>
   </view>
   <Toast></Toast>
+  <Confirm></Confirm>
 </template>
 
 <script>
@@ -77,10 +78,12 @@
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
+  import Confirm from '@/base/confirm/confirm'
   export default class Live extends wepy.page {
     mixins = [base]
     components = {
-      Toast: Toast
+      Toast: Toast,
+      Confirm: Confirm
     }
 
     onShareAppMessage () {
@@ -102,7 +105,8 @@
       id: 0,
       showError: false,
       imageUrlHead: URIS.image,
-      isPaused: 1
+      isPaused: 1,
+      delIndex: 0
     }
 
     methods = {
@@ -133,7 +137,8 @@
         })
       },
       delCou(index) {
-        this.activityPromotion.splice(index, 1)
+        this.delIndex = index
+        this.$invoke('Confirm', 'show')
       },
       async submitOk() {
         console.log(this.isPaused)
@@ -162,6 +167,11 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
+      }
+    }
+    events = {
+      'confirm': async () => {
+        this.activityPromotion.splice(this.delIndex, 1)
       }
     }
 

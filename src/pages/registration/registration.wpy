@@ -518,6 +518,8 @@
           })
         let res = null
         if (this.id !== -1) {
+          res = await regist.putData(this.id, allMsg)
+        } else {
           if (this.paizrList.length === 3) {
             for (let item of this.paizrList) {
               if (item.addNum === 0) {
@@ -526,8 +528,6 @@
               }
             }
           }
-          res = await regist.putData(this.id, allMsg)
-        } else {
           res = await regist.createData(allMsg)
           this.load()
         }
@@ -540,11 +540,6 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
-      }
-    }
-    watch = {
-      redPack(newValue, oldValue) {
-        return newValue
       }
     }
 //  判断该活动是编辑还是新建状态

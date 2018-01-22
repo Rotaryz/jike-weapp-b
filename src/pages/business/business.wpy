@@ -100,10 +100,10 @@
 
     async _checkBusiness (data) {
       let res = await shop.checkBusiness(data)
-      for (let i = 0; i < res.length; i++) {
-        if (res[i].current_merchant) {
-          this.pageTitle = res[i].business_circle.alias
-          res.splice(i, 1)
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].current_merchant) {
+          this.pageTitle = res.data[i].business_circle.alias
+          res.data.splice(i, 1)
           break
         }
       }
