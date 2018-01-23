@@ -182,13 +182,13 @@
     async load() {
       this.nowDate = new Date().toLocaleDateString()
       this.nowDate = this.nowDate.replace(/\//g, '-')
-      let Json = await Activity.getShareList()
       let Json1 = await PrizePool.getPrizeRedlist()
       if (Json1.error !== ERR_OK) {
         this.loaded()
         return
       }
       this.prizePollList = Json1.data
+      let Json = await Activity.getShareList()
       let res
       if (Json.error === ERR_OK) {
         this.isCompile = true
