@@ -189,12 +189,13 @@
         return
       }
       this.prizePollList = Json1.data
-      let res = Json.data
+      let res
       if (Json.error === ERR_OK) {
         this.isCompile = true
+        res = Json.data
       } else {
-        res = {}
         this.isCompile = false
+        res = {}
       }
       this.shareMsg = res
       this.shareEndTime = res.to_date || ''
