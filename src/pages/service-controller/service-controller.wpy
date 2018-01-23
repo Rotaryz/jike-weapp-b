@@ -156,7 +156,7 @@
                 </view>
                 <view class="input-wrapper border-bottom-1px">
                   <view class="label">数量</view>
-                  <input type="text"
+                  <input type="number"
                          value="{{item.number}}"
                          maxlength="10"
                          @input="handleInput('numberservice{{index}}')"
@@ -165,7 +165,7 @@
                 </view>
                 <view class="input-wrapper">
                   <view class="label">价格</view>
-                  <input type="text"
+                  <input type="digit"
                          value="{{item.price}}"
                          maxlength="10"
                          @input="handleInput('priceservice{{index}}')"
@@ -216,7 +216,7 @@
           </picker>
         </view>
       </view>
-      <view class="time input-wrapper border-bottom-1px" @tap="showValidDateModal">
+      <view class="time input-wrapper border-bottom-1px">
         <view class="label">券有效期</view>
         <view class="content">
           <view class="start">自上线之日起</view>
