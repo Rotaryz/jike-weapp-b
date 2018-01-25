@@ -42,7 +42,6 @@
 
 <script>
   import wepy from 'wepy'
-  //  import NavHeader from '@/base/nav-header/nav-header'
   import Blank from '@/base/blank/blank'
   import shop from 'api/shop'
   import base from 'common/mixins/base'
@@ -64,7 +63,6 @@
       navigationBarTextStyle: 'white'
     }
     components = {
-//      NavHeader: NavHeader,
       Blank: Blank,
       Toast: Toast
     }
@@ -212,10 +210,11 @@
         this.$apply()
       },
       async navSetTime() {
-        this.$parent.globalData.merchantId = this.merchantId
+//        this.$parent.globalData.merchantId = this.merchantId
+        this.$parent.updateGlobalData('merchantId', this.merchantId)
         let urls = ''
         if (this.merchantId.length === 1) {
-          this.conList.forEach((item, idx) => {
+          this.conList.forEach((item) => {
             if (item['is_check']) {
               this.btime = item.start_showed_at === '' ? '开始时间' : item.start_showed_at
               this.etime = item.end_showed_at === '' ? '结束时间' : item.end_showed_at

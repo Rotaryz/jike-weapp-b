@@ -94,7 +94,7 @@
     }
 
     async onShow() {
-      this.load()
+      await this.load()
     }
     async load() {
       let Json = await Activity.getAllActivity()

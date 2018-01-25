@@ -113,7 +113,7 @@
 
     async onLoad(option) {
       let id = option.id * 1
-      this.load(id)
+      await this.load(id)
     }
 
     async load(id) {

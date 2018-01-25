@@ -10,41 +10,6 @@
                    class="full-image"></image>
           </view>
         </view>
-        <!--<catelog-modal title="行业类型">-->
-        <!--<view slot="content" class="catelog-modal">-->
-        <!--<view class="tab-wrapper">-->
-        <!--<view class="tab {{catelogTab === 1 ? 'active' : ''}}" @tap.stop="selectCatelogTab(1)">餐饮-->
-        <!--<view class="arrow-right" wx:if="{{catelogTab === 1}}">-->
-        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-arrow_right_red@2x.png'}}" class="full-image"></image>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--<view class="tab {{catelogTab === 2 ? 'active' : ''}}" @tap.stop="selectCatelogTab(2)">丽人-->
-        <!--<view class="arrow-right" wx:if="{{catelogTab === 2}}">-->
-        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-arrow_right_red@2x.png'}}" class="full-image"></image>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--<view class="tab {{catelogTab === 3 ? 'active' : ''}}" @tap.stop="selectCatelogTab(3)">娱乐行业-->
-        <!--<view class="arrow-right" wx:if="{{catelogTab === 3}}">-->
-        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-arrow_right_red@2x.png'}}" class="full-image"></image>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--<view class="tab-content">-->
-        <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(1)">-->
-        <!--<text>美发</text>-->
-        <!--<view class="radio {{catelogId !== 1 ? 'unselected' : ''}}">-->
-        <!--<image class="full-image" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" wx:if="{{catelogId === 1 && imageUri}}"></image>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--<view class="content border-bottom-1px" @tap.stop="selectCatelogId(2)">-->
-        <!--<text>美容</text>-->
-        <!--<view class="radio {{catelogId !== 2 ? 'unselected' : ''}}">-->
-        <!--<image class="full-image" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" wx:if="{{catelogId === 2 && imageUri}}"></image>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--</catelog-modal>-->
       </view>
       <view class="type input-wrapper border-bottom-1px" @tap="showMealModal">
         <view class="label">类型</view>
@@ -793,9 +758,6 @@
         }
         this.loaded()
       },
-//      showCatelogModal() {
-//        this.$invoke('catelog-modal', 'show')
-//      },
       showMealModal() {
         this.$invoke('meal-modal', 'show')
       },
@@ -838,13 +800,8 @@
     }
 
     components = {
-//      'catelog-modal': BaseModal,
       'meal-modal': BaseModal,
       'service-modal': BaseModal,
-//      'sell-time-modal': BaseModal,
-//      'sell-time-picker': DatePicker,
-//      'valid-date-modal': BaseModal,
-//      'valid-date-picker': DatePicker,
       'not-allow-time-modal': BaseModal,
       'count-modal': BaseModal,
       'know-modal': BaseModal,

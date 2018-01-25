@@ -78,12 +78,8 @@
       avatarUrl: null
     }
 
-    async onLoad() {
-
-    }
-
-    onShow() {
-      this.load()
+    async onShow() {
+      await this.load()
     }
 
     async load() {

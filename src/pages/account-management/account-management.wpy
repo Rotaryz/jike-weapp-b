@@ -34,10 +34,6 @@
       backgroundColor: '#F9F9F9'
     }
 
-    components = {
-
-    }
-
     data = {
       imageUrlHead: URIS.image,
       accountList: []
@@ -56,12 +52,8 @@
       }
     }
 
-    async onLoad() {
-
-    }
-
-    onShow() {
-      this.load()
+    async onShow() {
+      await this.load()
     }
 
     async load() {
