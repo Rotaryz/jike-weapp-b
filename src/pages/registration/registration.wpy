@@ -480,6 +480,7 @@
       },
 //      提交发布
       async submitOk() {
+        console.log(this.paizrList)
         if (this.name === '') {
           this.$invoke('Toast', 'show', '请输入标题')
           return false
@@ -490,7 +491,12 @@
           this.$invoke('Toast', 'show', '请输入签到范围')
           return false
         }
-
+        for (let item of this.paizrList) {
+          if (item.record === -1) {
+            this.$invoke('Toast', 'show', '请选择奖品')
+            return false
+          }
+        }
         let disway = 0
         if (this.value.indexOf('公里') !== -1) {
           disway = parseInt(this.value) * 1000
@@ -520,14 +526,6 @@
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
         } else {
-          if (this.paizrList.length === 3) {
-            for (let item of this.paizrList) {
-              if (item.addNum === 0) {
-                this.$invoke('Toast', 'show', '请选择奖品')
-                return false
-              }
-            }
-          }
           res = await regist.createData(allMsg)
           this.load()
         }
@@ -623,9 +621,12 @@
       let data = this.infoRes(await regist.Redpack())
       let shop = this.infoRes(await regist.getData())
       this.loaded()
-      this.markers[0].latitude = shop.latitude
-      this.markers[0].longitude = shop.longitude
-      this.markers[0].iconPath = `./icon-s_${shop.industry.code_name}@2x.png`
+      console.log(shop)
+      if (shop.industry !== null) {
+        this.markers[0].latitude = shop.latitude
+        this.markers[0].longitude = shop.longitude
+        this.markers[0].iconPath = `./icon-s_${shop.industry.code_name}@2x.png`
+      }
       this.showMap = true
       this.shop = shop
       this.redPack = data
