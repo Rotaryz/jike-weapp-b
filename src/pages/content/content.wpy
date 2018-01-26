@@ -114,6 +114,7 @@
       },
       async showMsg(num) {
         this.nothing = false
+        this.page = 1
         this.navNum = num
         this.contentList = []
         this.load(num)
@@ -173,6 +174,7 @@
     }
 
     async onLoad (options) {
+      this.nothing = false
       this.contentList = []
       if (options.show) {
         this.navNum = options.show * 1
