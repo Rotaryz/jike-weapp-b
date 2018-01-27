@@ -26,7 +26,7 @@
         <view class="title">活动规则：</view>
         <view class="content">大礼包会上架到活动联盟商家的优惠券列表</view>
         <view class="content">各个商家优惠券的数量会平均分配</view>
-        <view class="content">各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。</view>
+        <view class="content">各个商家的优惠券的交易金额会按照异业联盟的贡献，分配给商家。</view>
         <view class="title">活动入选条件：</view>
         <view class="content">服务品类限{{industries}}</view>
         <!--<view class="content">单个单数不能多于100</view>-->

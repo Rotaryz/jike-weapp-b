@@ -242,7 +242,6 @@
       }
       this.$apply()
       this.loaded()
-      console.log(this.offLines)
     }
 
     methods = {
@@ -259,8 +258,28 @@
       },
       async delete() {
         const res = await Coupons.deleteCoupon(this.deleteId)
-        this.$invoke('toast', 'show', res.message)
-        await this.getCouponList()
+        this.loaded()
+        if (res.error !== ERR_OK) {
+          this.$invoke('toast', 'show', res.message)
+          return
+        }
+        let list
+        switch (this.tabIndex) {
+          case 0:
+            list = this.willOnLines
+            break
+          case 1:
+            list = this.onLines
+            break
+          case 2:
+            list = this.offLines
+            break
+          default:
+            break
+        }
+        const deleteIndex = list.findIndex((item) => item.id === this.deleteId)
+        list.splice(deleteIndex, 1)
+        this.$apply()
       },
       edit(id) {
         this.$navigate(`/pages/service-controller/service-controller?id=${id}`)

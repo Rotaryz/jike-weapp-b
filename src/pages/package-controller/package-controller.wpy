@@ -371,7 +371,9 @@
         }
         this.selectStoreIds.forEach((id) => {
           const selectIndex = this.stores.findIndex((item) => Math.floor(item.merchant_id) === Math.floor(id))
-          this.stores[selectIndex].check = true
+          if (this.stores[selectIndex]) {
+            this.stores[selectIndex].check = true
+          }
         })
       }
       this.tempStores = this.stores.map((item) => Object.assign({}, item))

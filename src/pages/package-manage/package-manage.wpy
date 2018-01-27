@@ -287,9 +287,30 @@
       },
       async delete() {
         const res = await Packages.deletePackage(this.deleteId)
-        console.log(res)
-        await this._getPackageLists()
-        this.loaded()
+        if (res.error !== ERR_OK) {
+          this.$invoke('toast', 'show', res.message)
+          return
+        }
+        let list
+        switch (this.tabIndex) {
+          case 0:
+            list = this.willOnLines
+            break
+          case 1:
+            list = this.onLines
+            break
+          case 2:
+            list = this.offLines
+            break
+          case 3:
+            list = this.willApplys
+            break
+          default:
+            break
+        }
+        const deleteIndex = list.findIndex((item) => item.id === this.deleteId)
+        list.splice(deleteIndex, 1)
+        this.$apply()
       },
       edit(id) {
         this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
