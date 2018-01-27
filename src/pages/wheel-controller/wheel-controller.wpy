@@ -906,5 +906,4 @@
         font-size: $font-size-medium
         color: $color-white
         background-color: $color-theme
-
 </style>

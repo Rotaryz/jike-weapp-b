@@ -226,15 +226,15 @@
       const res = json.data
       switch (this.tabIndex) {
         case 0:
-          this.willOnLines = res
+          this.willOnLines = [...this.willOnLines, ...res]
           this.hasWill = res.length >= 10
           break
         case 1:
-          this.onLines = res
+          this.onLines = [...this.onLines, ...res]
           this.hasOn = res.length >= 10
           break
         case 2:
-          this.offLines = res
+          this.offLines = [...this.offLines, ...res]
           this.hasOff = res.length >= 10
           break
         default:
@@ -242,14 +242,15 @@
       }
       this.$apply()
       this.loaded()
+      console.log(this.offLines)
     }
 
     methods = {
-      changeTab(index) {
+      async changeTab(index) {
         this.tabIndex = Math.floor(index)
         this.tabTranslateX = (100 * this.tabIndex) + '%'
         if ((this.tabIndex === 0 && this.willOnLines.length === 0) || (this.tabIndex === 1 && this.onLines.length === 0) || (this.tabIndex === 2 && this.offLines.length === 0)) {
-          this.getCouponList()
+          await this.getCouponList()
         }
       },
       showConfirm(id) {
@@ -259,7 +260,7 @@
       async delete() {
         const res = await Coupons.deleteCoupon(this.deleteId)
         this.$invoke('toast', 'show', res.message)
-        this.getCouponList()
+        await this.getCouponList()
       },
       edit(id) {
         this.$navigate(`/pages/service-controller/service-controller?id=${id}`)

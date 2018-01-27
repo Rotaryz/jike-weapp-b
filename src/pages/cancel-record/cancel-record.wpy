@@ -26,6 +26,7 @@
   import Blank from '@/base/blank/blank'
   import { ERR_OK } from 'api/base'
   import URIS from 'common/js/config'
+
   export default class record extends wepy.page {
     mixins = [base]
 
@@ -72,8 +73,8 @@
       let data = {page: page}
       let res = await shop.verificationLog(data)
       if (res.error === ERR_OK) {
-        this._showBlank(res.data)
         this.verification = this.verification.concat(res.data)
+        this._showBlank(this.verification)
         this.$apply()
         this.loaded()
         return res.data

@@ -53,7 +53,7 @@
           this.$parent.globalData.coupon = this.couponList[this.num]
           this.$parent.globalData.couIndex = this.index
         } else {
-          this.couponList.forEach((item, idx) => {
+          this.couponList.forEach((item) => {
             if (item['checked']) {
               this.moreList.push(item)
             }
