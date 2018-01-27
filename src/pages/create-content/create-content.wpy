@@ -421,14 +421,15 @@
           this.loaded()
           if (res.error === ERR_OK) {
             this.$invoke('Toast', 'show', '发布成功')
-            let num = this.addType
-            if (this.addType === '') {
-              num = 0
-            }
-            setTimeout(async () => {
-              await wepy.redirectTo({
-                url: '/pages/content/content?show=' + num
-              })
+//            let num = this.addType
+//            if (this.addType === '') {
+//              num = 0
+//            }
+            setTimeout(() => {
+//              await wepy.redirectTo({
+//                url: '/pages/content/content?show=' + num
+//              })
+              this.$back(1)
             }, 1000)
           } else {
             this.$invoke('Toast', 'show', res.message)
