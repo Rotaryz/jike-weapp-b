@@ -486,7 +486,7 @@
         &:first-child
           padding-top: 4px
       .monlogo
-        font-size: $font-size-large-xx
+        font-size: $font-size-medium-x
         color: #5D5D5D
         position: relative
         text-indent: 5px

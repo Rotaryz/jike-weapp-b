@@ -225,7 +225,8 @@
       title: '',
       allMsg: {},
       addType: '',
-      conId: -1
+      conId: -1,
+      isAdd: 1
     }
 //  选择图片
     async _upImage (num, status, type) {
@@ -355,11 +356,19 @@
         num = num * 1
         await this._upVideo(num)
       },
+//    删除
+      delItem (num) {
+        if (this.addType !== '') {
+          this.delete_ids.push(this.contentList[num].id)
+        }
+        this.contentList.splice(num, 1)
+      },
       async upImage(num) {
         num = num * 1
         await this._upImage(num)
       },
       async addMore(type) {
+        this.isAdd = 1
         if (type === 0) {
           await this._upImage(this.num, 'add', type)
         } else if (type === 1) {
@@ -373,6 +382,7 @@
         }
       },
       async setText(index) {
+        this.isAdd = 0
         await wepy.navigateTo({
           url: '/pages/compile/compile?index=' + index + '&type=change'
         })
@@ -380,6 +390,7 @@
       },
 //      添加优惠券
       async addCoupon(num) {
+        this.isAdd = 0
         await wepy.navigateTo({
           url: '/pages/choice-coupon/choice-coupon?index=' + num
         })
@@ -390,6 +401,9 @@
           return false
         } else if (this.imgSrc === '') {
           this.$invoke('Toast', 'show', '请上传封面图')
+          return false
+        } else if (this.contentList.length === 0) {
+          this.$invoke('Toast', 'show', '请添加内容')
           return false
         } else {
           let res = null
@@ -443,7 +457,7 @@
       }
     }
 
-    delItem(num) {
+    delItem (num) {
       if (this.addType !== '') {
         this.delete_ids.push(this.contentList[num].id)
       }
@@ -463,11 +477,14 @@
       if (this.$parent.globalData.fontText) {
         const index = this.$parent.globalData.index * 1
         DATA.type = 1
-        if (this.contentList[index] === undefined) {
-          this.contentList[index] = DATA
+//          判断是否新增
+        if (this.isAdd) {
+          this.contentList.splice(index, 0, DATA)
         } else {
-          this.contentList[index] = Object.assign({}, this.contentList[index],
-            {'detail_id': 0})
+          let res = {}
+          console.log(this.contentList[index])
+          res = Object.assign({}, this.contentList[index], {'detail_id': 0})
+          this.contentList.splice(index, 1, res)
         }
         if (index === 0) {
           this.showAdd = false
@@ -482,8 +499,11 @@
         this.$parent.globalData.coupon !== '') {
         DATA.type = 3
         const index = this.$parent.globalData.couIndex
-        if (this.contentList[index] === undefined) {
-          this.contentList[index] = DATA
+        if (this.isAdd) {
+//          判断是否新增
+          this.contentList.splice(index, 0, DATA)
+        } else {
+          this.contentList.splice(index, 1, DATA)
         }
         if (index === 0) {
           this.showAdd = false
@@ -650,6 +670,8 @@
 
         font-family: 'PingFang SC'
         text
+          word-break: break-all
+          word-wrap: break-word
           line-height: 16px
           color: $color-theme
 

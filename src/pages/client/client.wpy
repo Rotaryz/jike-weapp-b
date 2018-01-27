@@ -225,8 +225,8 @@
           if (this.page > 1) {
             let res = await shop.customerList({page: this.page})
             this.loaded()
-            this.customerList = this.customerList.concat(res)
-            if (res.length === 0) {
+            this.customerList = this.customerList.concat(res.data)
+            if (res.data.length === 0) {
               this.nothing = true
             }
           }
