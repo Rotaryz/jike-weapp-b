@@ -36,10 +36,12 @@
         <view class="blank-tip" style="color:#9b9b9b">{{impTip}}</view>
       </view>
     </view>
-    <view class="ap-list" wx:for="{{commentList}}" wx:key="{{index}}">
-      <view>{{item.detail}}</view>
-      <view>{{item.customer ? item.customer.nickname : '匿名评价'}}</view>
-    </view>
+    <scroll-view scroll-y class="ap-list-box" bindscrolltolower="appraiseMore">
+      <view class="ap-list" wx:for="{{commentList}}" wx:key="{{index}}">
+        <text class="ap-list-text">{{item.detail}}</text>
+        <view class="gray">匿名评价</view>
+      </view>
+    </scroll-view>
   </view>
 </template>
 
@@ -72,7 +74,9 @@
       comSrc: URIS.image + '/defaults/b-image/common/pic-empty_impression@2x.png',
       impSrc: URIS.image + '/defaults/b-image/common/pic-empty_evaluate@2x.png',
       comTip: '暂无印象',
-      impTip: '暂无评价'
+      impTip: '暂无评价',
+      page: 1,
+      noMore: false
     }
 
     infoRes (res) {
@@ -126,9 +130,17 @@
     }
 
     async _showComment (page = 1) {
+      if (this.noMore) {
+        return
+      }
       let data = {page: page}
       let res = await shop.getComment(data)
       res = this.infoRes(res)
+      if (res.length === 0) {
+        this.page --
+        this.noMore = true
+        this.$apply()
+      }
       for (let i = 0; i < res.length; i++) {
         if (res[i].detail === '') {
           res.splice(i, 1)
@@ -147,6 +159,13 @@
 
     async onLoad () {
       await this.load()
+    }
+
+    methods = {
+      async appraiseMore() {
+        this.page ++
+        await this._showComment(this.page)
+      }
     }
   }
 </script>
@@ -213,15 +232,19 @@
 
   .appraise
     padding-bottom: 28px
-    .ap-list
-      border-bottom: 0.5px solid $color-split-line
-      padding: 12px 0
-      font-size: $font-size-small
-      display: flex
-      view
-        flex: 8
-        color: $color-theme
-        &:last-child
+    .ap-list-box
+      max-height: 220px
+      .ap-list
+        border-bottom: 0.5px solid $color-split-line
+        padding: 12px 0
+        font-size: $font-size-small
+        display: flex
+        .ap-list-text
+          flex: 8
+          color: $color-theme
+          word-break: break-all
+          word-wrap: break-word
+        .gray
           flex: 2
           text-align: center
           color: $color-text-d

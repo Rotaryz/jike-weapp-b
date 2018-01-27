@@ -17,16 +17,23 @@
     }
     data = {
       index: -1,
-      vaule: ''
+      vaule: '',
+      type: ''
     }
     methods = {
       async confirm(e) {
         let text = e.detail.value
+        console.log(text)
+        this.$parent.updateGlobalData('fontText', text)
+        this.$parent.updateGlobalData('index', this.index)
         if (text === '') {
-          text = ' '
+          this.$parent.updateGlobalData('textType', 'delete')
+        } else {
+          this.$parent.updateGlobalData('textType', 'change')
         }
-        this.$parent.globalData.fontText = text
-        this.$parent.globalData.index = this.index
+        if (this.type === 'add' && text === '') {
+          this.$parent.updateGlobalData('index', -1)
+        }
         await wepy.navigateBack({
           delta: 1
         })
@@ -36,6 +43,7 @@
 
     onLoad(options) {
       this.index = options.index * 1
+      this.type = options.type
       this.$apply()
     }
 

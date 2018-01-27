@@ -38,7 +38,7 @@
           <!--wx:if="{{showVideo}}" controls="false" muted="false">-->
           <!--<cover-view class="video-gen" @tap="upVideo"></cover-view>-->
           <!--</video>-->
-          <view class="tip">上传十分钟视频</view>
+          <view class="tip">上传25M以内的视频</view>
         </view>
       </view>
       <view class="upCoupon">
@@ -59,6 +59,7 @@
           </view>
         </view>
       </view>
+      <!--<view class="beginPush" @tap="beginLive">开始直播</view>-->
     </view>
     <view class="con-submit" @tap="submitOk">
       <view>
@@ -71,6 +72,7 @@
 </template>
 
 <script>
+  /* eslint-disable no-undef */
   import wepy from 'wepy'
   import Uploads from 'api/uploads'
   import live from 'api/live'
@@ -168,6 +170,19 @@
           this.$invoke('Toast', 'show', res.message)
         }
       }
+//      beginLive() {
+//        wx.navigateToMiniProgram({
+//          appId: 'wx7331ec9e7f642a99',
+//          path: 'pages/live-push/live-push?id=123',
+//          extraData: {
+//          },
+//          envVersion: 'develop',
+//          success(res) {
+//            // 打开成功
+//            console.log(res)
+//          }
+//        })
+//      }
     }
     events = {
       'confirm': async () => {
@@ -246,6 +261,16 @@
       width: 4px
       left: 12px
       background: $color-assist-f
+
+  .beginPush
+    margin-bottom: 60px
+    width: 100px
+    height: 30px
+    line-height: 30px
+    text-align: center
+    font-size: $font-size-medium
+    border-radius: 4px
+    background: $color-white
 
   .upload
     height: 111px
