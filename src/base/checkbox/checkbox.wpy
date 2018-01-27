@@ -20,23 +20,12 @@
 </template>
 
 <script>
-  /* eslint-disable no-undef */
   import wepy from 'wepy'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
 
   export default class CheckBox extends wepy.component {
     mixins = [base]
-
-//    radioMsg: {
-//      headTxt: '营业状态', // 头部标题
-//      radioChecked: ['暂停营业', '筹建中'], // 默认选择哪一个
-//      items: [
-//        {value: 0, txt: '营业中', checked: false},
-//        {value: 1, txt: '暂停营业', checked: true},
-//        {value: 2, txt: '筹建中', checked: true},
-//        {value: 3, txt: '已关门', checked: false}]
-//    }
 
     data = {
       imageUrlHead: URIS.image,

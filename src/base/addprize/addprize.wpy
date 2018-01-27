@@ -74,10 +74,12 @@
         } else {
           this.prizeCount = e.detail.value
         }
+        this._changePrize()
         this.$apply()
         return this.prizeCount
       },
       cancleMsg() {
+        this._initPrize()
         this.coverShow = false
         this.prizeCount = 0
         this.prizeCheckedIdx = null
@@ -102,6 +104,8 @@
         if (this.prizeCount <= 0) {
           this.prizeCount = 0
         }
+        this._changePrize()
+        this.$apply()
       },
       addCount() {
         if (!this.prizeCheckedId) {
@@ -113,8 +117,11 @@
           this.prizeCount = this.maxNum
           this.$invoke('Toast', 'show', '已达奖品池最大数量')
         }
+        this._changePrize()
+        this.$apply()
       },
       checkedPrize(item, idx) {
+        this._initPrize()
         this.prizeCheckedId = item.promotion_id
         this.prizeCheckedType = item.promotion_type
         this.maxNum = item.promotion_stock
@@ -145,6 +152,22 @@
         this.prizeCheckedItem = null
         this.$apply()
       }
+    }
+
+    _changePrize() {
+      this.prizeList.forEach((item) => {
+        if (item.promotion_id * 1 === this.prizeCheckedId * 1) {
+          item.promotion_stock = this.maxNum - this.prizeCount
+        }
+      })
+    }
+
+    _initPrize() {
+      this.prizeList.forEach((item) => {
+        if (item.promotion_id * 1 === this.prizeCheckedId * 1) {
+          item.promotion_stock = this.maxNum ? this.maxNum : item.promotion_stock
+        }
+      })
     }
   }
 </script>
@@ -185,7 +208,7 @@
         height: 320px
 
       .prizeList
-        max-height: 270px
+        height: 270px
         overflow-y: auto
 
         .prizeItem

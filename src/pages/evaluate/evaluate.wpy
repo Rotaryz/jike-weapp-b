@@ -121,7 +121,7 @@
         this.comBlank = false
       }
 //    评论内容
-      this._showComment()
+      await this._showComment()
       this.$apply()
     }
 

@@ -196,14 +196,7 @@
     data = {
       imageUri: URIS.image,
       shop: [],
-      markers: [{
-        iconPath: './icon-shop_normal.png',
-        id: 0,
-        latitude: 0,
-        longitude: 0,
-        width: 32,
-        height: 34
-      }],
+      markers: [],
       btime: '',
       etime: '结束时间',
       timeTimes: 1,
@@ -480,7 +473,6 @@
       },
 //      提交发布
       async submitOk() {
-        console.log(this.paizrList)
         if (this.name === '') {
           this.$invoke('Toast', 'show', '请输入标题')
           return false
@@ -621,11 +613,16 @@
       let data = this.infoRes(await regist.Redpack())
       let shop = this.infoRes(await regist.getData())
       this.loaded()
-      console.log(shop)
-      if (shop.industry !== null) {
-        this.markers[0].latitude = shop.latitude
-        this.markers[0].longitude = shop.longitude
-        this.markers[0].iconPath = `./icon-s_${shop.industry.code_name}@2x.png`
+      if (shop.industry) {
+        const marker = {
+          iconPath: `./icon-s_${shop.industry.code_name}@2x.png`,
+          id: 0,
+          latitude: shop.latitude,
+          longitude: shop.longitude,
+          width: 32,
+          height: 34
+        }
+        this.markers.push(marker)
       }
       this.showMap = true
       this.shop = shop

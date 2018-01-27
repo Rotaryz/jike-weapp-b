@@ -147,7 +147,7 @@
     }
 
     async onLoad() {
-      this.load()
+      await this.load()
     }
 
     async load() {

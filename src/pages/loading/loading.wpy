@@ -31,7 +31,7 @@
       time: ''
     }
 
-    show () {
+    show() {
       setInterval(() => {
         if (this.showLoad < 3) {
           this.showLoad++
@@ -82,7 +82,7 @@
           width: 5.5px
           background: $color-text-td
           border: 0.5px solid $color-text-td
-          border-radius: 50%
+          border-radius: 100%
         .white
           background: $color-text-d
           border: 0.5px solid $color-text-d

@@ -136,7 +136,10 @@
           to_date: this.shareEndTime,
           activity_promotions: this.prizeListArr
         }
-        if (this.shareEndTime && this.prizeListArr.length > 0) {
+        let testArr = this.prizeListArr.filter((item) => {
+          return item.type !== 'delete' || item.promotion_stock * 1 !== 0
+        })
+        if (this.shareEndTime && this.prizeListArr.length > 0 && testArr.length > 0) {
           let sqlRes
           if (this.isCompile) {
             sqlRes = await Activity.chengeActivity(data, this.shareMsg.id)
@@ -156,7 +159,7 @@
         } else if (!this.shareEndTime) {
           this.$invoke('Toast', 'show', '请选择活动时间')
           return
-        } else if (this.prizeListArr.length === 0) {
+        } else if (this.prizeListArr.length === 0 || testArr.length === 0) {
           this.$invoke('Toast', 'show', '还没有添加奖品哦')
           return
         }
@@ -179,19 +182,20 @@
     async load() {
       this.nowDate = new Date().toLocaleDateString()
       this.nowDate = this.nowDate.replace(/\//g, '-')
-      let Json = await Activity.getShareList()
       let Json1 = await PrizePool.getPrizeRedlist()
       if (Json1.error !== ERR_OK) {
         this.loaded()
         return
       }
       this.prizePollList = Json1.data
-      let res = Json.data
+      let Json = await Activity.getShareList()
+      let res
       if (Json.error === ERR_OK) {
         this.isCompile = true
+        res = Json.data
       } else {
-        res = {}
         this.isCompile = false
+        res = {}
       }
       this.shareMsg = res
       this.shareEndTime = res.to_date || ''
@@ -210,8 +214,6 @@
           res = Object.assign(res, {type: 'add'})
           this.prizeListArr.push(Object.assign(res))
         }
-        let prizePollData = this._checkId(this.prizePollList, res.promotion_id, res.promotion_type)
-        prizePollData.promotion_stock = prizePollData.promotion_stock * 1 - res.promotion_stock * 1
         this.$apply()
       },
       confirm() {
@@ -399,6 +401,7 @@
         .prizeList
           background: $color-white
           padding-bottom: 60px
+          padding-top: 10px
 
           .prizeList-item
             display: flex

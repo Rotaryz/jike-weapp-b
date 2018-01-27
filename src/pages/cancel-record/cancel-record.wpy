@@ -26,6 +26,7 @@
   import Blank from '@/base/blank/blank'
   import { ERR_OK } from 'api/base'
   import URIS from 'common/js/config'
+
   export default class record extends wepy.page {
     mixins = [base]
 

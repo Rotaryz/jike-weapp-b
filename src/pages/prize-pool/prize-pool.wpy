@@ -188,10 +188,10 @@
 
     }
 
-    onShow() {
+    async onShow() {
       this.menuTab = 1
       this.$apply()
-      this.load()
+      await this.load()
     }
 
     // 加载可使用列表

@@ -48,7 +48,6 @@
   export default class busTimes extends wepy.page {
     mixins = [base]
     data = {
-      title: 'jdaskjdaskj',
       allNums: 0,
       begTime: '开始时间',
       endTime: '结束时间',

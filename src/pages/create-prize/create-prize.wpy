@@ -299,7 +299,7 @@
       EXimgId: '',
       paymentMsg: '',
       payEnough: true,
-      paymengMoneyIn: false
+      paymentMoneying: false
     }
 
     methods = {
@@ -381,7 +381,6 @@
         switch (this.prizeType) {
           case 1:
             let res1 = this._testEXmsg()
-            console.log(res1)
             if (res1) {
               let data1 = await PrizePool.createEXchange(res1)
               if (data1.error === ERR_OK) {
@@ -447,8 +446,8 @@
         this.$apply()
       },
       payChange(idx) {
-        if (this.paymengMoneyIn) {
-          this.$invoke('Toast', 'show', '订单处理中')
+        if (this.paymentMoneying) {
+          this.$invoke('Toast', 'show', '充值处理中，请勿重复提交')
           return
         }
         if (idx * 1 === 1 && !this.payEnough) {
@@ -458,11 +457,11 @@
         this.$apply()
       },
       async paymentMoney() {
-        if (this.paymengMoneyIn) {
-          this.$invoke('Toast', 'show', '不要重复提交订单')
+        if (this.paymentMoneying) {
+          this.$invoke('Toast', 'show', '充值处理中，请勿重复提交')
           return
         }
-        this.paymengMoneyIn = true
+        this.paymentMoneying = true
         let codeRes = await wepy.login()
         let data
         switch (this.paymentType) {
@@ -473,16 +472,16 @@
             data = Object.assign({}, this.paymentMsg, {pay_type: 'wechat_pay', code: codeRes.code})
             break
         }
-        let res = await PrizePool.createRedpack(data)
+        let Json = await PrizePool.createRedpack(data)
         this.loaded()
-        this.paymengMoneyIn = false
-        if (res.error === ERR_OK) {
+        let res = Json.data
+        this.paymentMoneying = false
+        if (Json.error === ERR_OK && !res) {
           this.paymentSuccess = true
           setTimeout(() => {
             this.$back()
           }, 1500)
-          this.$apply()
-        } else if (res.payInfo) {
+        } else if (Json.error === ERR_OK && res) {
           const {timestamp, nonceStr, signType, paySign} = res.payInfo
           const pay = await wepy.requestPayment({
             timeStamp: timestamp,
@@ -493,7 +492,6 @@
           })
           if (pay.errMsg === 'requestPayment:ok') {
             this.paymentSuccess = true
-            this.$apply()
             setTimeout(() => {
               this.$back()
             }, 1500)
@@ -501,11 +499,12 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
+        this.$apply()
       }
     }
 
     async onLoad() {
-      this.load()
+      await this.load()
     }
 
     async load() {
@@ -530,11 +529,19 @@
         return reg.test(this.redpackMin) && this.redpackMin < mean && this.redpackMin >= 0.01
       },
       fixedRedpacketTotal() {
-        return '￥' + this.prizeCount * this.fixedRedpacket
+        if (isNaN(this.prizeCount * this.fixedRedpacket)) {
+          return '金额有误'
+        } else {
+          return '￥' + (this.prizeCount * this.fixedRedpacket).toFixed(2)
+        }
       },
       fixedRpMoneyTest() {
         let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
         return reg.test(this.fixedRedpacket) && this.fixedRedpacket > 0
+      },
+      totalMoneyTest() {
+        let reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        return reg.test(this.total) && this.total > 0
       }
     }
 
@@ -583,14 +590,14 @@
         title: this.prizeName,
         is_lucky_redpacket: 1,
         num: this.prizeCount,
-        min_price: 0.01,
+        min_price: this.redpackMin,
         max_price: this.redpackMax,
         total_amount: this.total
       }
       let errMsg = [
         {value: this.prizeName, txt: '奖品名称未填写'},
         {value: this.prizeCountTest, txt: '奖品数量有误'},
-        {value: this.total, txt: '请填写红包总金额'},
+        {value: this.totalMoneyTest, txt: '红包总金额有误'},
         {value: this.maxMoneyTest, txt: '红包最大值要小于总金额且大于平均值'},
         {value: this.minMoneyTest, txt: '红包最小值要小于平均值且不能小于0.01'}
       ]
@@ -953,6 +960,8 @@
               height: 18px
               text-align: center
               color: $color-text-title
+            .randomRP-prize-total-input.error
+              color: $color-assist-f
 
         .randomRP-prize-max-min
           display: flex

@@ -186,6 +186,7 @@
         let data = {time: time}
         let res = this.infoRes(await shop.customerTrend(data))
         this.customerTrend = res
+        // 统一用 $invoke
         this.$com.AeraChart.$wxpage.infoArea(this.customerTrend)
       } else if (num === 1) {
         let res = this.infoRes(await shop.customerList())
@@ -203,6 +204,7 @@
         if (this.customerCity.length === 0) {
           this.impBlank = true
         }
+        // 统一用 $invoke
         this.$com.Pie.$wxpage.infoPie(res)
       }
       this.loaded()
@@ -233,7 +235,6 @@
     }
 
     async onLoad () {
-      console.log()
       await this._showMsg(0)
     }
   }

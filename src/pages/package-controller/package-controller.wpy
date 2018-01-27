@@ -235,6 +235,7 @@
   import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Uploads from 'api/uploads'
+  import Merchants from 'api/merchants'
   import Tips from 'common/js/tips'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
@@ -288,7 +289,19 @@
     }
 
     async load() {
+      await this._getMerchantData()
       await this._getIndustries()
+    }
+
+    async _getMerchantData() {
+      const json = await Merchants.getMerchantData({get_circle: 1})
+      if (json.error !== ERR_OK) {
+        return
+      }
+      const res = json.data
+      const {district, name} = res.business_circle
+      this.business = `${district}${name}商圈`
+      this.$apply()
     }
 
     async _getPackageDetail() {

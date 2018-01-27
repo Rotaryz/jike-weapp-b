@@ -34,7 +34,6 @@
 </template>
 
 <script>
-  /* eslint-disable no-undef */
   import wepy from 'wepy'
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
@@ -42,62 +41,6 @@
 
   export default class TwoRadioBox extends wepy.component {
     mixins = [base]
-
-//    {
-//      headTxt: '行业类型', // 头部标题
-//      radioChecked: {
-//        one: 0,
-//        two: 0
-//      }, // 默认选择哪一个 下标
-//      oneTitle: 'industries', //一级标题,
-//      twoTitle: 'industry', //二级标题
-//      "industries": [
-//          {
-//            "id": 1,
-//            "name": "餐饮",
-//            "parent_id": 0,
-//            "created_at": null,
-//            "updated_at": null,
-//            "industry": [
-//              {
-//                "id": 4,
-//                "name": "自助餐",
-//                "parent_id": 1,
-//                "created_at": null,
-//                "updated_at": null
-//              }]
-//          },
-//          {
-//            "id": 2,
-//            "name": "丽人",
-//            "parent_id": 0,
-//            "created_at": null,
-//            "updated_at": null,
-//            "industry": [
-  //            {
-  //              "id": 5,
-  //              "name": "美发",
-  //              "parent_id": 2,
-  //              "created_at": null,
-  //              "updated_at": null
-  //            },
-  //            {
-  //              "id": 6,
-  //              "name": "美甲",
-  //              "parent_id": 2,
-  //              "created_at": null,
-  //              "updated_at": null
-  //            },
-  //            {
-  //              "id": 7,
-  //              "name": "美容",
-  //              "parent_id": 2,
-  //              "created_at": null,
-  //              "updated_at": null
-  //            }
-//            ]
-//          }]
-//    }
     components = {
       Toast
     }

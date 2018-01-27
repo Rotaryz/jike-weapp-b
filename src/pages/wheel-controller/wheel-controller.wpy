@@ -403,7 +403,10 @@
         }
       },
       async submitForm() {
-        if (Math.floor(this.percentage) > 100 || this.percentage === '') {
+        if (!this.name) {
+          this._toast('请输入活动名称')
+          return
+        } else if (Math.floor(this.percentage) > 100 || this.percentage === '') {
           this._toast('请输入正确的概率')
           return
         } else if (this.activityPromotions.length < 5) {
@@ -903,5 +906,4 @@
         font-size: $font-size-medium
         color: $color-white
         background-color: $color-theme
-
 </style>
