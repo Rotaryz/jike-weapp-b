@@ -113,9 +113,9 @@ export default class shop extends base {
    * 商店评价内容
    * @returns {Promise.<*>}
    */
-  static async getComment () {
+  static async getComment (data) {
     const url = `${this.baseUrl}/api/appraises/star`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**

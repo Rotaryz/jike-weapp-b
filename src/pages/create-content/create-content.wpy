@@ -64,9 +64,9 @@
                  @tap="delItem({{index}})"></image>
           <view class="con-item" @tap="setText({{index}})">
             <view class="text-detail">
-              <view>
+              <text>
                 {{item.text}}
-              </view>
+              </text>
             </view>
           </view>
           <view class="up-down">
@@ -364,7 +364,7 @@
           await this._upImage(this.num, 'add', type)
         } else if (type === 1) {
           await wepy.navigateTo({
-            url: '../compile/compile?index=' + (this.num * 1 + 1)
+            url: '../compile/compile?index=' + (this.num * 1 + 1) + '&type=add'
           })
         } else if (type === 2) {
           this._upVideo(this.num, 'add', type)
@@ -374,21 +374,15 @@
       },
       async setText(index) {
         await wepy.navigateTo({
-          url: '/pages/compile/compile?index=' + index
+          url: '/pages/compile/compile?index=' + index + '&type=change'
         })
-        this.$parent.globalData.fontText = this.contentList[index].text
+        this.$parent.updateGlobalData('fontText', this.contentList[index].text)
       },
 //      添加优惠券
       async addCoupon(num) {
         await wepy.navigateTo({
           url: '/pages/choice-coupon/choice-coupon?index=' + num
         })
-      },
-      delItem(num) {
-        if (this.addType !== '') {
-          this.delete_ids.push(this.contentList[num].id)
-        }
-        this.contentList.splice(num, 1)
       },
       async issue() {
         if (this.title === '') {
@@ -449,6 +443,13 @@
       }
     }
 
+    delItem(num) {
+      if (this.addType !== '') {
+        this.delete_ids.push(this.contentList[num].id)
+      }
+      this.contentList.splice(num, 1)
+    }
+
     onShow () {
       const DATA = {
         'id': 0,
@@ -459,8 +460,7 @@
         'cover_image_id': '',
         'detail': []
       }
-      if (this.$parent.globalData.fontText !== null &&
-        this.$parent.globalData.fontText) {
+      if (this.$parent.globalData.fontText) {
         const index = this.$parent.globalData.index * 1
         DATA.type = 1
         if (this.contentList[index] === undefined) {
@@ -476,7 +476,7 @@
         }
         this.contentList[index].text = this.$parent.globalData.fontText ===
         ' ' ? '' : this.$parent.globalData.fontText
-        this.$parent.globalData.fontText = null
+        this.$parent.updateGlobalData('fontText', '')
         this.upDateList(this.contentList[index])
       } else if (this.$parent.globalData.coupon &&
         this.$parent.globalData.coupon !== '') {
@@ -492,8 +492,10 @@
         }
         this.contentList[index].detail[0] = this.$parent.globalData.coupon
         this.contentList[index].detail_id = this.$parent.globalData.coupon.id
-        this.$parent.globalData.coupon = ''
+        this.$parent.updateGlobalData('coupon', '')
         this.upDateList(this.contentList[index])
+      } else if (!this.$parent.globalData.fontText && this.$parent.globalData.textType === 'delete' && this.$parent.globalData.index !== -1) {
+        this.delItem(this.$parent.globalData.index)
       }
       this.$apply()
     }
@@ -644,15 +646,12 @@
         padding: 6.5px 7.5px
         background: $color-background
         font-size: $font-size-small
+        overflow-y: auto
 
         font-family: 'PingFang SC'
-        view
+        text
           line-height: 16px
           color: $color-theme
-          display: -webkit-box
-          -webkit-box-orient: vertical
-          -webkit-line-clamp: 4
-          overflow: hidden
 
     .coupon
       margin: 0
