@@ -117,8 +117,8 @@
         this.page = 1
         this.navNum = num
         this.contentList = []
-        this.load(num)
         this.$apply()
+        this.load()
       },
       async access(id, index) {
         let res = await content.switchOnline(id)
@@ -139,15 +139,17 @@
         })
       },
       async showMore() {
-        if (!this.nothing) {
-          this.page++
-          if (this.page > 1) {
-            let res = await this.load(this.navNum, this.page)
-            if (res.length === 0 && res) {
-              this.nothing = true
-            }
+        if (this.nothing) {
+          return
+        }
+        this.page++
+        if (this.page > 1) {
+          let res = await this.load(this.page)
+          if (res.length === 0 && res) {
+            this.nothing = true
           }
         }
+        this.$apply()
       }
     }
     events = {
@@ -161,8 +163,8 @@
       }
     }
 
-    async load (num, page = 1) {
-      let data = {status: num, page: page}
+    async load (page = 1) {
+      let data = {status: this.navNum, page: page}
       let res = await content.contentList(data)
       if (res.error === ERR_OK) {
         this.contentList = this.contentList.concat(res.data)
@@ -173,13 +175,11 @@
       }
     }
 
-    async onLoad (options) {
+    async onShow() {
       this.nothing = false
       this.contentList = []
-      if (options.show) {
-        this.navNum = options.show * 1
-      }
-      await this.load(this.navNum)
+      this.page = 1
+      await this.load()
       this.$apply()
     }
   }
