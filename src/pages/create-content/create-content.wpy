@@ -387,6 +387,7 @@
           url: '/pages/compile/compile?index=' + index + '&type=change'
         })
         this.$parent.updateGlobalData('fontText', this.contentList[index].text)
+        this.$parent.updateGlobalData('index', index)
       },
 //      添加优惠券
       async addCoupon(num) {
@@ -483,13 +484,13 @@
           this.contentList.splice(index, 0, DATA)
         } else {
           let res = {}
-          console.log(this.contentList[index])
           res = Object.assign({}, this.contentList[index], {'detail_id': 0})
           this.contentList.splice(index, 1, res)
         }
         if (index === 0) {
           this.showAdd = false
         } else {
+          console.log(this.contentList, index)
           this.contentList[index - 1].showAdds = false
         }
         this.contentList[index].text = this.$parent.globalData.fontText ===
