@@ -490,7 +490,6 @@
         if (index === 0) {
           this.showAdd = false
         } else {
-          console.log(this.contentList, index)
           this.contentList[index - 1].showAdds = false
         }
         this.contentList[index].text = this.$parent.globalData.fontText ===
@@ -581,7 +580,6 @@
     position: relative
     view
       position: absolute
-      color: $color-white
       bottom: 12px
       right: 12px
       height: 20px

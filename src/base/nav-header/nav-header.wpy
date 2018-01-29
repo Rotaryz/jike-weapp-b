@@ -39,6 +39,8 @@
         margin: 0 auto
         width: 71.2%
         white-space: nowrap
+        color: $color-white
+        font-size: $font-size-medium
         border-bottom: 2px solid $color-theme
     .choice
       text

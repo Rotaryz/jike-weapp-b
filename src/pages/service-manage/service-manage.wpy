@@ -3,7 +3,7 @@
     <view class="tab-wrapper">
       <repeat for="{{tabs}}" index="index" key="index" item="item">
         <view class="tab" @tap="changeTab({{index}})">
-          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}</text>
+          <text class="content {{tabIndex === index ? 'active' : ''}}">{{item}}</text>
         </view>
       </repeat>
       <view class="line-wrapper" style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
@@ -303,8 +303,8 @@
           line-height: 36px
           color: $color-white
           font-size: $font-size-medium
-          &.active
-            color: $color-assist-f
+        .content.active
+          color: $color-assist-f
       .line-wrapper
         position: absolute
         left: 0
