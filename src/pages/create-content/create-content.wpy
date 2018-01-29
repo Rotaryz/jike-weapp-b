@@ -370,9 +370,13 @@
         if (type === 0) {
           await this._upImage(this.num, 'add', type)
         } else if (type === 1) {
-          await wepy.navigateTo({
-            url: '../compile/compile?index=' + (this.num * 1 + 1) + '&type=add'
-          })
+          this.$parent.updateGlobalData('fontText', '')
+          this.$parent.updateGlobalData('index', -1)
+//          await wepy.navigateTo({
+//            url: '../compile/compile?index=' + (this.num * 1 + 1) + '&type=add'
+//          })
+          let url = '../compile/compile?index=' + (this.num * 1 + 1) + '&type=add'
+          this.$navigate(url)
         } else if (type === 2) {
           this._upVideo(this.num, 'add', type)
         } else if (type === 3) {
