@@ -62,11 +62,9 @@
                  src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
                  class="con-close"
                  @tap="delItem({{index}})"></image>
-          <view class="con-item" @tap="setText({{index}})">
-            <view class="text-detail">
-              <text>
-                {{item.text}}
-              </text>
+          <view class="con-item">
+            <view class="text-detail" @tap="setText({{index}})">
+              <text>{{item.text}}</text>
             </view>
           </view>
           <view class="up-down">
@@ -409,11 +407,12 @@
         } else {
           let res = null
           if (this.addType !== '') {
-            Object.assign(this.allMsg, {title: this.title},
+            this.allMsg = Object.assign(this.allMsg, {title: this.title},
               {
                 'content_details': this.changeList,
                 delete_ids: this.delete_ids
               })
+            console.log(this.allMsg)
             res = await content.merchantDetail(this.conId, this.allMsg)
           } else {
             Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
@@ -476,7 +475,7 @@
         'cover_image_id': '',
         'detail': []
       }
-      if (this.$parent.globalData.fontText) {
+      if (this.$parent.globalData.fontText && this.$parent.globalData.textType === 'change') {
         const index = this.$parent.globalData.index * 1
         DATA.type = 1
 //          判断是否新增
@@ -495,6 +494,7 @@
         this.contentList[index].text = this.$parent.globalData.fontText ===
         ' ' ? '' : this.$parent.globalData.fontText
         this.$parent.updateGlobalData('fontText', '')
+        this.$parent.updateGlobalData('textType', '')
         this.upDateList(this.contentList[index])
       } else if (this.$parent.globalData.coupon &&
         this.$parent.globalData.coupon !== '') {
@@ -624,8 +624,9 @@
           height: 10px
           width: 10px
           position: absolute
-          left: 5px
-          top: 5px
+          padding: 5px
+          left: 0
+          top: 0
           z-index: 300
         .up-down
           position: absolute
