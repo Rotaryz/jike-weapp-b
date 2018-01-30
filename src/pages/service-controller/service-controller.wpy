@@ -584,6 +584,9 @@
       } else if (!this.sellCount) {
         this._toast('请选择最大可售数量')
         return false
+      } else if (this.sellCount === '0') {
+        this._toast('最大可售数量不可为0')
+        return false
       }
       return true
     }
