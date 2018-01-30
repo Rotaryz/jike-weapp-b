@@ -25,7 +25,7 @@
           <image wx:if="{{imageUri}}"
                  src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
                  class="con-close"
-                 @tap="delItem({{index}})"></image>
+                 @tap="delItemIn({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
                    src="{{item.detail[0].url +'?second=1&width=259&height=60'}}"></image>
@@ -61,7 +61,7 @@
           <image wx:if="{{imageUri}}"
                  src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
                  class="con-close"
-                 @tap="delItem({{index}})"></image>
+                 @tap="delItemIn({{index}})"></image>
           <view class="con-item">
             <view class="text-detail" @tap="setText({{index}})">
               <text>{{item.text}}</text>
@@ -94,7 +94,7 @@
           <image wx:if="{{imageUri}}"
                  src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
                  class="con-close"
-                 @tap="delItem({{index}})"></image>
+                 @tap="delItemIn({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upImage({{index}})"
                    src="{{item.detail[0].url}}"></image>
@@ -126,7 +126,7 @@
           <image wx:if="{{imageUri}}"
                  src="{{imageUri + '/defaults/b-image/page/icon-dels@2x.png'}}"
                  class="con-close"
-                 @tap="delItem({{index}})"></image>
+                 @tap="delItemIn({{index}})"></image>
           <view class="con-item" @tap="addCoupon({{index}})">
             <repeat for="{{item.detail.length === 1 ? item.detail : 1}}"
                     key="index"
@@ -244,7 +244,7 @@
         const imageId = await Uploads.uploadImages(file)
         if (res) {
           if (status === 'add') {
-            DATA.detail[0] = {url: imageId.url}
+            DATA.detail[0] = {url: imageId.url, id: imageId.id}
             DATA['detail_id'] = imageId.id
             DATA.type = type
             if (num === -1) {
@@ -301,7 +301,7 @@
       if (res.size <= 50 * 1024 * 1024) {
         if (status === 'add') {
           DATA.type = type
-          DATA.detail[0] = {url: videoId.url}
+          DATA.detail[0] = {url: videoId.url, id: videoId.id}
           DATA['detail_id'] = videoId.id
           if (num === -1) {
             this.contentList.unshift(DATA)
@@ -350,16 +350,12 @@
           this.contentList[this.num].showAdds = true
         }
       },
+      delItemIn(num) {
+        this.delItem(num)
+      },
       async upVideo(num) {
         num = num * 1
         await this._upVideo(num)
-      },
-//    删除
-      delItem (num) {
-        if (this.addType !== '') {
-          this.delete_ids.push(this.contentList[num].id)
-        }
-        this.contentList.splice(num, 1)
       },
       async upImage(num) {
         num = num * 1
@@ -410,16 +406,22 @@
           return false
         } else {
           let res = null
+          let detailList = this._upListComputed()
           if (this.addType !== '') {
+//            this.allMsg = Object.assign(this.allMsg, {title: this.title},
+//              {
+//                'content_details': this.changeList,
+//                delete_ids: this.delete_ids
+//              })
             this.allMsg = Object.assign(this.allMsg, {title: this.title},
               {
-                'content_details': this.changeList,
+                'content_details': detailList,
                 delete_ids: this.delete_ids
               })
             console.log(this.allMsg)
             res = await content.merchantDetail(this.conId, this.allMsg)
           } else {
-            Object.assign(this.allMsg, {title: this.title}, {'content_details': this.contentList})
+            this.allMsg = Object.assign(this.allMsg, {title: this.title}, {'content_details': detailList})
             res = await content.createContent(this.allMsg)
           }
           this.loaded()
@@ -546,6 +548,14 @@
       this.loaded()
       this.$apply()
     }
+
+    _upListComputed() {
+      return this.contentList.map((item) => {
+        let copyItem = Object.assign({}, item)
+        copyItem.detail = item.detail[0]
+        return copyItem
+      })
+    }
   }
 </script>
 
@@ -634,18 +644,21 @@
           z-index: 300
         .up-down
           position: absolute
-          height: 29vw
-          width: 10px
-          right: 4px
+          height: 20vw
+          padding: 12.5px 0
+          width: 17.5px
+          right: 0
           top: 0
+          box-sizing: content-box
           image
             height: 10px
             width: 10px
             position: absolute
+            padding: 3px
           .up
-            top: 6px
+            top: 0
           .down
-            bottom: 5px
+            bottom: 0
       .con-item
         background: $color-white
         border-radius: 4px
