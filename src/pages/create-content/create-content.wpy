@@ -418,7 +418,6 @@
                 'content_details': detailList,
                 delete_ids: this.delete_ids
               })
-            console.log(this.allMsg)
             res = await content.merchantDetail(this.conId, this.allMsg)
           } else {
             this.allMsg = Object.assign(this.allMsg, {title: this.title}, {'content_details': detailList})
@@ -552,7 +551,7 @@
     _upListComputed() {
       return this.contentList.map((item) => {
         let copyItem = Object.assign({}, item)
-        copyItem.detail = item.detail[0]
+        copyItem.detail = item.detail[0] || ''
         return copyItem
       })
     }
