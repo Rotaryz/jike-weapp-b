@@ -2,9 +2,9 @@
   <view class="content-big">
     <NavHeader>
       <view wx:for="{{navList}}"
-            class="{{navNum === item.type ? 'choice' : ''}}"
+            class="{{item.type === navNum ? 'choice' : ''}}"
             wx:key="{{index}}" @tap="showMsg({{item.type}})">
-        <text>{{item.text}}</text>
+        <text class="{{item.type === navNum ? 'choiceTxt' : ''}}">{{item.text}}</text>
       </view>
     </NavHeader>
     <Blank></Blank>
@@ -115,7 +115,7 @@
       async showMsg(num) {
         this.nothing = false
         this.page = 1
-        this.navNum = num
+        this.navNum = num * 1
         this.contentList = []
         this.$apply()
         this.load()
@@ -195,6 +195,10 @@
     height: 100vh
     overflow-y: hidden
 
+    .choiceTxt
+      color: $color-assist-f
+      border-bottom: 2px solid $color-assist-f
+
   .content-coupon
     padding: 0 3.2vw 70px
     display: flex
@@ -263,4 +267,5 @@
     view
       text
         width: 45%
+
 </style>
