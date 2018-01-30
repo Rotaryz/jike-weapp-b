@@ -43,7 +43,6 @@
     onLoad(options) {
       this.index = options.index * 1
       this.type = options.type
-      console.log(this.index)
       this.$apply()
     }
 
