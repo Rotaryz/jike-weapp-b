@@ -420,14 +420,19 @@
       },
 //      加红包数
       addReds() {
-        let number = this.redPack[this.numTimes]['promotion_stock'] +
-          this.addNum
-        if (this.addNum < number) {
-          this.addNum++
-          this.redPack[this.numTimes]['promotion_stock'] = this.redPack[this.numTimes]['promotion_stock'] - 1
-          this.saveNum++
-          this.saveType = 0
-        }
+        this.redPack.forEach((item) => {
+          if (item.sel) {
+            let number = this.redPack[this.numTimes]['promotion_stock'] +
+              this.addNum
+            if (this.addNum < number) {
+              this.addNum++
+              this.redPack[this.numTimes]['promotion_stock'] = this.redPack[this.numTimes]['promotion_stock'] - 1
+              this.saveNum++
+              this.saveType = 0
+            }
+            return false
+          }
+        })
       },
 //      减红包数
       subtract() {
@@ -495,12 +500,13 @@
         } else {
           disway = parseInt(this.value)
         }
-        this.redPack[this.paizrList[0].record].promotion_stock =
-          this.paizrList[0].addNum
-        this.redPack[this.paizrList[1].record].promotion_stock =
-          this.paizrList[1].addNum
-        this.redPack[this.paizrList[2].record].promotion_stock =
-          this.paizrList[2].addNum
+        console.log(this.paizrList[0].addNum)
+        let rebArr = []
+        for (let i = 0; i < 3; i++) {
+          let data = JSON.parse(JSON.stringify(this.redPack[this.paizrList[i].record]))
+          data.promotion_stock = this.paizrList[i].addNum
+          rebArr.push(data)
+        }
         let allMsg = {}
 //          修改时间！！
         Object.assign(allMsg,
@@ -510,10 +516,11 @@
             scope: disway,
             explain: this.textares,
             is_paused: this.isPaused,
-            first_redpacket: this.redPack[this.paizrList[0].record],
-            third_redpacket: this.redPack[this.paizrList[1].record],
-            seventh_redpacket: this.redPack[this.paizrList[2].record]
+            first_redpacket: rebArr[0],
+            third_redpacket: rebArr[1],
+            seventh_redpacket: rebArr[2]
           })
+        console.log(allMsg)
         let res = null
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
@@ -549,6 +556,7 @@
 //        遍历确认红包
         this.redPack.forEach((item, idx) => {
           if (res.first_redpacket) {
+            console.log(item.promotion_id, res.first_redpacket.promotion_id)
             if (item.promotion_id === res.first_redpacket.promotion_id) {
               res.first_redpacket.index = idx
             }

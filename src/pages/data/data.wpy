@@ -39,7 +39,7 @@
           wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
       </view>
     </view>
-    <AeraChart></AeraChart>
+    <AeraChart wx:if="{{showAera}}"></AeraChart>
   </view>
 </template>
 
@@ -64,6 +64,7 @@
       AeraChart: AeraChart
     }
     data = {
+      showAera: false,
       imageUri: URIS.image,
       showNac: 0,
       showType: 'hit',
