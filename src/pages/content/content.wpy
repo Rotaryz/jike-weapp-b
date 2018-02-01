@@ -232,14 +232,14 @@
         align-items: center
         margin-top: -2px
         padding: 0 3.2vw
-        image
-          height: 10px
-          width: 10px
         view
           display: inline-block
           font-size: $font-size-small
           color: $color-text-d
         .con-cou-item-ri
+          image
+            height: 16px
+            width: 16px
           view
             margin-right: 17px
             &:last-child
