@@ -1,17 +1,16 @@
 <template>
-
   <view class="textarea-box" @tap="showTextarea" style="height:{{height}}px">
-    <textarea maxlength="{{maxLength}}"
-              style="transform:translateX({{translateX}})"
-              class="prize-picker-textarea-input"
-              placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}"
-              value="{{value}}"
-              placeholder-class="prize-picker-textarea-placeholder"
-              bindblur="blurFn" bindinput="inputFn"></textarea>
-    <view class="textarea-length" wx:if="{{maxLength !== '-1'}}">{{textLength}}/{{maxLength}}</view>
-    <view class="textarea-view {{value?'':'gary'}}">
-      {{value ? value : placeHolder}}
+    <view class="textarea-container" style="height:{{height-25}}px">
+      <textarea maxlength="{{maxLength}}"
+                style="transform:translateX({{translateX}})"
+                class="prize-picker-textarea-input"
+                placeholder="{{placeholderTxt}}" focus="{{textareaFocus}}"
+                value="{{value}}"
+                placeholder-class="prize-picker-textarea-placeholder"
+                bindblur="blurFn" bindinput="inputFn"></textarea>
+      <text class="textarea-view {{value?'':'gary'}}" wx:if="{{!textareaFocus}}">{{value ? value : placeHolder}}</text>
     </view>
+    <view class="textarea-length" wx:if="{{maxLength !== '-1'}}">{{textLength}}/{{maxLength}}</view>
   </view>
 </template>
 
@@ -89,6 +88,13 @@
     box-sizing: border-box
     border-radius: 2px
     border-1px()
+    padding-bottom: 20px
+
+    .textarea-container
+      position: relative
+      overflow-y: auto
+      overflow-x: hidden
+      width: 100%
 
     .prize-picker-textarea-input
       position: absolute
@@ -96,7 +102,6 @@
       left: 0
       width: 100%
       height: 100%
-      padding: 10px 10px 0 10px
       box-sizing: border-box
       background: $color-background
       font-size: $font-size-medium
@@ -107,7 +112,7 @@
       font-family: 'PingFangSC-Light'
     .textarea-length
       position: absolute
-      bottom: 10px
+      bottom: 3px
       right: 10px
       font-size: $font-size-small-s
       color: $color-text-d
@@ -115,6 +120,7 @@
     .textarea-view
       /*padding-top: 9px*/
       /*padding-left: 5px*/
+      display: block
       line-height: 16.5px
       font-size: $font-size-medium
       color: $color-text-title

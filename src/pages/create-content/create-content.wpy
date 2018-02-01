@@ -6,9 +6,10 @@
              bindinput="onInput"/>
       <text>{{textLength}}/20</text>
     </view>
-    <image class="theme" src="{{imgSrc}}" @tap="imageCover">
-      <view>更换封面</view>
-    </image>
+    <view class="pic-item" @tap="imageCover">
+      <image class="theme" src="{{imgSrc}}" mode="widthFix"></image>
+      <view class="addPic">更换封面</view>
+    </view>
     <view class="add">
       <image wx:if="{{imageUri}}"
              src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
@@ -96,14 +97,12 @@
                  class="con-close"
                  @tap="delItemIn({{index}})"></image>
           <view class="con-item">
-            <image class="cantainer" @tap="upImage({{index}})"
-                   src="{{item.detail[0].url}}"></image>
+            <view class="cantainer">
+              <image class="cantainer-img" @tap="upImage({{index}})" src="{{item.detail[0].url}}" mode="widthFix"></image>
+            </view>
           </view>
           <view class="up-down">
-            <image class="up"
-                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
-                   wx:if="{{imageUri && index > 0}}"
-                   @tap="up({{index}})"></image>
+            <image class="up" src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}" wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -570,12 +569,12 @@
     box-sizing: border-box
 
   .inps
-    height: 30px
+    height: 44px
     position: relative
     input
       height: 100%
       width: 100%
-      line-height: 30px
+      line-height: 44px
       padding-left: $padding
       font-size: $font-size-small
       color: $color-theme
@@ -586,12 +585,16 @@
       right: 12px
       color: $color-text-d
 
-  .theme
-    height: 36.53vw
+  .pic-item
+    height: 40vw
     width: 100vw
-    background: $color-theme
+    background: $color-pic-bac
+    overflow: hidden
     position: relative
-    view
+
+    .theme
+      width: 100vw
+    .addPic
       position: absolute
       bottom: 12px
       right: 12px
@@ -667,8 +670,10 @@
         .cantainer
           height: 20vw
           width: 100%
-          background-color: $color-theme
-          background-size: cover
+          background-color: $color-pic-bac
+          overflow: hidden
+          .cantainer-img
+            width: 100%
 
     .con-item-video
       .video-ico
