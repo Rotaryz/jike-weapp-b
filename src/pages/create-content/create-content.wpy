@@ -46,9 +46,9 @@
                    @tap="down({{index}})">
             </image>
           </view>
-          <view class="add" @tap.catch="showMore({{index}})">
+          <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -79,9 +79,9 @@
                    @tap="down({{index}})">
             </image>
           </view>
-          <view class="add" @tap.catch="showMore({{index}})">
+          <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -109,9 +109,9 @@
                    @tap="down({{index}})">
             </image>
           </view>
-          <view class="add" @tap.catch="showMore({{index}})">
+          <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -146,9 +146,9 @@
                    @tap="down({{index}})">
             </image>
           </view>
-          <view class="add" @tap.catch="showMore({{index}})">
+          <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -344,10 +344,11 @@
       showMore(num) {
         this.num = num * 1
         if (this.num === -1) {
-          this.showAdd = true
+          this.showAdd = !this.showAdd
         } else {
-          this.contentList[this.num].showAdds = true
+          this.contentList[this.num].showAdds = !this.contentList[this.num].showAdds
         }
+        this.$apply()
       },
       delItemIn(num) {
         this.delItem(num)
