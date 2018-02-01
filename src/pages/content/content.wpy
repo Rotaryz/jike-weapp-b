@@ -237,11 +237,16 @@
           font-size: $font-size-small
           color: $color-text-d
         .con-cou-item-ri
+          display: flex
+          align-items: center
           image
             height: 16px
             width: 16px
+            margin-right: 4px
           view
             margin-right: 17px
+            display: flex
+            align-items: center
             &:last-child
               margin-right: 0
         .con-cou-item-le
