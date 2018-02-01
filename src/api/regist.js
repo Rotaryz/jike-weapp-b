@@ -15,7 +15,7 @@ export default class regist extends base {
    * 获取奖品池红包列表
    */
   static async Redpack() {
-    const url = `${this.baseUrl}/api/redpackets/promotion`
+    const url = `${this.baseUrl}/api/redpackets/promotion?per_page=0`
     return await this.get(url)
   }
 
