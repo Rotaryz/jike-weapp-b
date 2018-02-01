@@ -47,7 +47,7 @@
                 <image class="full-image"
                        wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
               </view>
-              <image wx:if="{{item.image_url}}" src="{{item.image_url}}" class="image full-image"></image>
+              <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image" @tap="showPicDetail({{item.image_url}})"></image>
               <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
                 <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}"
                        class="full-image"></image>
@@ -55,9 +55,8 @@
             </view>
           </repeat>
         </view>
-        <view class="tip-wrapper">
-          添加1-3张服务项目图片(尺寸:750x400,大小50K以下)
-        </view>
+        <view class="tip-wrapper">点击图片预览实际展示效果</view>
+        <view class="tip-wrapper">添加1-3张服务项目图片(尺寸:750x400,大小2M以下)</view>
       </view>
       <view class="title input-wrapper border-bottom-1px">
         <view class="label">标题</view>
@@ -387,6 +386,7 @@
       <button class="btn" @tap="submitForm">提交</button>
     </view>
     <toast></toast>
+    <Picture></Picture>
   </view>
 </template>
 
@@ -403,6 +403,7 @@
   import base from 'common/mixins/base'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
+  import Picture from '@/base/picture-detail/picture-detail'
 
   const IMAGE_INIT = {
     id: 0,
@@ -799,6 +800,9 @@
       confirmValidDatePicker(date) {
         this.validDate = date
         this.$invoke('valid-date-modal', 'hide')
+      },
+      showPicDetail(url) {
+        this.$invoke('Picture', 'showPic', url, 400 / 750)
       }
     }
 
@@ -809,7 +813,8 @@
       'count-modal': BaseModal,
       'know-modal': BaseModal,
       'text-area': Textarea,
-      'toast': Toast
+      'toast': Toast,
+      Picture
     }
 
     config = {
@@ -852,8 +857,9 @@
         justify-content: space-between
         padding-right: 12px
       .picture-wrapper
-        height: 102px
+        height: 135px
         padding-top: 12.5px
+        padding-bottom: 12.5px
         box-sizing: border-box
         .label
           margin-bottom: 12.5px
@@ -865,28 +871,28 @@
             display: flex
             align-items: center
             justify-content: center
-            width: 32px
-            height: 32px
+            width: 55px
+            height: 55px
             margin-right: 20px
             text-align: center
-            line-height 32px
+            line-height 55px
             border-radius: 4px
-            border-1px($color-text-d, 4px, dashed)
+            border-1px($color-text-d, 4px, solid)
             .delete
               position: absolute
               top: -5px
               right: -3.5px
               z-index: 10
-              width: 12px
-              height: 12px
+              width: 16px
+              height: 16px
             .add
-              width: 12px
-              height: 12px
+              width: 16px
+              height: 16px
               padding: 10px
             .image
               border-radius: 4px
         .tip-wrapper
-          margin-top: 6.5px
+          line-height: 20px
           color: $color-text-d
           font-size: $font-size-small-s
       .title

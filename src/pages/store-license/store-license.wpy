@@ -30,8 +30,8 @@
       </view>
       <view class="store-license-body-imgBox">
         <view class="store-license-imgBC" wx:for="{{images}}" wx:key="{{item}}">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-id_fm@2x.png'}}" class="store-license-imgBC-img"></image>
-          <image src="{{item.image_url}}" class="store-license-upImg"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-id_fm_slic@2x.png'}}" class="store-license-imgBC-img"></image>
+          <image src="{{item.image_url}}" class="store-license-upImg" mode="aspectFit"></image>
           <view class="store-license-imgBtn" @tap="uploadImg({{index}})">{{item.title}}</view>
         </view>
       </view>
@@ -239,6 +239,7 @@
           position: relative
           margin-right: 15px
           margin-bottom: 15px
+          border: 1px dashed $color-text-d
 
           .store-license-imgBC-img
             width: 44.8vw

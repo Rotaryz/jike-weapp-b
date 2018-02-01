@@ -41,7 +41,7 @@
         <view class="shopMsg" wx:if="{{type === 'logo'}}">
           <image
             src="{{coupon.shop_logo ? coupon.shop_logo : coupon.merchant_data.logo_image}}"
-            class="shopLogo"></image>
+            class="shopLogo" mode="aspectFill"></image>
           <view class="shopName">
             {{coupon.shop_name ? coupon.shop_name : coupon.merchant_data.shop_name}}
           </view>
