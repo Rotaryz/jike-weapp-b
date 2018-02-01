@@ -34,8 +34,6 @@
                    src="{{imageUri + '/defaults/b-image/page/icon-video@2x.png'}}"
                    class="video-ico"
                    @tap="upVideo({{index}})"></image>
-          </view>
-          <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
@@ -67,8 +65,6 @@
             <view class="text-detail" @tap="setText({{index}})">
               <text>{{item.text}}</text>
             </view>
-          </view>
-          <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
@@ -100,8 +96,6 @@
             <view class="cantainer">
               <image class="cantainer-img" @tap="upImage({{index}})" src="{{item.detail[0].url}}" mode="widthFix"></image>
             </view>
-          </view>
-          <view class="up-down">
             <image class="up" src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}" wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
@@ -133,9 +127,6 @@
                     item="item">
               <Coupon :coupon.sync="item" :border.sync="'yes'"></Coupon>
             </repeat>
-
-          </view>
-          <view class="up-down">
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
@@ -645,23 +636,7 @@
           left: 0
           top: 0
           z-index: 300
-        .up-down
-          position: absolute
-          height: 20vw
-          padding: 12.5px 0
-          width: 17.5px
-          right: 0
-          top: 0
-          box-sizing: content-box
-          image
-            height: 10px
-            width: 10px
-            position: absolute
-            padding: 3px
-          .up
-            top: 0
-          .down
-            bottom: 0
+
       .con-item
         background: $color-white
         border-radius: 4px
@@ -675,6 +650,20 @@
           overflow: hidden
           .cantainer-img
             width: 100%
+        .up
+          height: 10px
+          width: 10px
+          position: absolute
+          padding: 5px 3px 3px 5px
+          top: 0
+          right: 0
+        .down
+          height: 10px
+          width: 10px
+          position: absolute
+          padding: 5px 3px 3px 5px
+          bottom: 0
+          right: 0
 
     .con-item-video
       .video-ico
