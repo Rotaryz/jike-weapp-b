@@ -1049,6 +1049,6 @@
         .store-msg-logo-txt
           font-size: $font-size-small-s
           color: $color-text-d
-          padding-bottom: 10px
+          padding-bottom: 5px
 
 </style>

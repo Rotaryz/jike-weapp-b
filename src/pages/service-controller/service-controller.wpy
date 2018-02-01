@@ -877,7 +877,7 @@
             text-align: center
             line-height 55px
             border-radius: 4px
-            border-1px($color-text-d, 4px, solid)
+            border: 1px solid $color-col-line
             .delete
               position: absolute
               top: -5px
@@ -892,7 +892,7 @@
             .image
               border-radius: 4px
         .tip-wrapper
-          line-height: 20px
+          line-height: 16px
           color: $color-text-d
           font-size: $font-size-small-s
       .title

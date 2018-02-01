@@ -136,8 +136,8 @@
       <view class="plan">
         <view class="title">活动计划</view>
         <text-area :value.sync="plan"
-                   maxLength="-1"
-                   height="75"
+                   maxLength="250"
+                   height="80"
                    placeHolder="请输入"
                    @input.user="handleTextarea"></text-area>
       </view>
@@ -654,7 +654,7 @@
             text-align: center
             line-height 55px
             border-radius: 4px
-            border-1px($color-text-d, 4px, dashed)
+            border: 1px solid $color-col-line
             .delete
               position: absolute
               top: -5px
@@ -669,7 +669,7 @@
             .image
               border-radius: 4px
         .tip-wrapper
-          line-height: 20px
+          line-height: 16px
           color: $color-text-d
           font-size: $font-size-small-s
       .title
