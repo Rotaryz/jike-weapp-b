@@ -204,8 +204,9 @@
         if (this.customerCity.length === 0) {
           this.impBlank = true
         }
+        this.loaded()
         // 统一用 $invoke
-        this.$com.Pie.$wxpage.infoPie(res)
+        this.$invoke('Pie', 'infoPie', res)
       }
       this.loaded()
       this.$apply()
