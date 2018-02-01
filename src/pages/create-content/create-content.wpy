@@ -247,7 +247,7 @@
           } else {
             if (imageId) {
               if (num !== -1) {
-                this.contentList[num].detail[0] = {url: imageId.url}
+                this.contentList[num].detail[0] = {url: imageId.url, id: imageId.id}
                 this.contentList[num]['detail_id'] = imageId.id
               } else {
                 this.imgSrc = imageId.url
@@ -303,7 +303,7 @@
           this.upDateList(this.contentList[num + 1])
         } else {
           if (videoId) {
-            this.contentList[num].detail[0] = {url: videoId.url}
+            this.contentList[num].detail[0] = {url: videoId.url, id: videoId.id}
             this.contentList[num]['detail_id'] = videoId.id
             this.upDateList(this.contentList[num])
             this.$apply()

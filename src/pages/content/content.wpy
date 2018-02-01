@@ -252,7 +252,11 @@
         .con-cou-item-le
           view
             font-size: $font-size-small-s
-            padding: 1.3vw 5.3vw
+            width: 16vw
+            height: 6vw
+            line-height: 6vw
+            box-sizing: content-box
+            text-align: center
             border-radius: 2px
             margin-right: 5px
             border: 0.5px solid $color-text-d
