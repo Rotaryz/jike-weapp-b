@@ -37,16 +37,16 @@
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
-                   @tap="up({{index}})"></image>
+                   @tap.stop="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
-                   @tap="down({{index}})">
+                   @tap.stop="down({{index}})">
             </image>
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -68,16 +68,16 @@
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
-                   @tap="up({{index}})"></image>
+                   @tap.stop="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
-                   @tap="down({{index}})">
+                   @tap.stop="down({{index}})">
             </image>
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -96,16 +96,16 @@
             <view class="cantainer">
               <image class="cantainer-img" @tap="upImage({{index}})" src="{{item.detail[0].url}}" mode="widthFix"></image>
             </view>
-            <image class="up" src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}" wx:if="{{imageUri && index > 0}}" @tap="up({{index}})"></image>
+            <image class="up" src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}" wx:if="{{imageUri && index > 0}}" @tap.stop="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
-                   @tap="down({{index}})">
+                   @tap.stop="down({{index}})">
             </image>
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -130,16 +130,16 @@
             <image class="up"
                    src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
                    wx:if="{{imageUri && index > 0}}"
-                   @tap="up({{index}})"></image>
+                   @tap.stop="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
-                   @tap="down({{index}})">
+                   @tap.stop="down({{index}})">
             </image>
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.catch="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
