@@ -194,7 +194,7 @@
         width: 21.3vw
         margin-left :12.2vw
         margin-right: 1.44vw
-        transform: translateY(-3px)
+        transform: translateY(-1.5px)
       .start-title
         white-space: nowrap
         width :24px

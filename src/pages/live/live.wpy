@@ -262,8 +262,9 @@
     line-height: 40px
     &::before
       content: ''
-      col-center()
-      height: 12px
+      position: absolute
+      top: 13px
+      height: 13px
       width: 4px
       left: 12px
       background: $color-assist-f
