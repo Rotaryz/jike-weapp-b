@@ -189,8 +189,6 @@
     }
 
     async onShow() {
-      this.menuTab = 1
-      this.$apply()
       await this.load()
     }
 

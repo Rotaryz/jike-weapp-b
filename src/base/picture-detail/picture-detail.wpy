@@ -1,7 +1,7 @@
 <template>
   <view class="picture-detail" style="width:{{show ? '100vw': '0vw'}};height:100vh;" @tap="hidePic">
     <view class="container" style="width:{{show ? (width ? width + 'px' : '100vw'): '0vw'}};height:{{width ? width * height + 'px' : height*100 + 'vw'}};">
-      <image src="{{url}}" mode="{{mode}}" style="width:{{show ? (width ? width + 'px' : '100vw') : '0vw'}};"></image>
+      <image src="{{url}}" mode="{{mode}}" style="width:{{show ? (width ? width + 'px' : '100vw') : '0vw'}};height:{{width ? width + 'px' : ''}}"></image>
     </view>
   </view>
 </template>
