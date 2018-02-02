@@ -8,15 +8,15 @@
             src="{{imageUri + '/defaults/b-image/page/icon-evaluate_red@2x.png'}}"
             wx:for="{{imageUri && item.star_level}}" wx:key="{{index}}"></image>
         </view>
-        <view>{{item.star_level}}星</view>
+        <view class="start-title">{{item.star_level}}星</view>
         <progress stroke-width="4" activeColor="#e6e6e6" activeColor="#EF705D"
                   percent="{{item.percentage}}" active="true"></progress>
-        <view>{{item.count}}单</view>
+        <view class="start-single">{{item.count}}单</view>
       </view>
     </view>
   </view>
   <view class="impression">
-    <view class="eva-title">印象</view>
+    <view class="eva-title"><view class="eva-title-s">印象</view></view>
     <view class="blank" wx:if="{{comBlank}}">
       <view>
         <image src="{{comSrc}}"></image>
@@ -29,7 +29,7 @@
     </view>
   </view>
   <view class="appraise">
-    <view class="eva-title">评价</view>
+    <view class="eva-title"><view class="eva-title-s">评价</view></view>
     <view class="blank" wx:if="{{impBlank}}">
       <view>
         <image src="{{impSrc}}"></image>
@@ -177,39 +177,52 @@
     background-color: $color-white
     .start-title
       font-size: 14px
-      line-height: 44px
+      line-height: 11.73vw
       text-align: center
     .star-fa
       padding-bottom: 7px
     .star-item
       display: flex
-      justify-content: center
       font-size: $font-size-small
       margin-bottom: 9.5px
+      align-items :center
       image
-        width: 16px
-        height: 16px
+        width: 4.26vw
+        height: 4.26vw
       .stars
         text-align: right
-        width: 80px
-        margin-right: 5.4px
+        width: 21.3vw
+        margin-left :12.2vw
+        margin-right: 1.44vw
         transform: translateY(-3px)
+      .start-title
+        white-space: nowrap
+        width :24px
+        height :18px
+        line-height: 18px
+        text-align : left
       progress
-        width: 135px
-        margin: 0 5.4px
+        width: 36vw
+        margin: 0 1.44vw
         transform: translateY(-3px)
+      .start-single
+        text-align :left
 
   .eva-title
     display: block
-    font-size: $font-size-medium
     position: relative
-    color: $color-text-d
     padding-left: 12px
-    line-height: 43px
+    height :44px
+    .eva-title-s
+      color: $color-text-d
+      position: absolute
+      top: 15px
+      font-size: $font-size-medium
     &::before
       content: ''
-      col-center()
-      height: 12px
+      position: absolute
+      top: 14px
+      height: 13px
       width: 4px
       left: 0px
       background: $color-assist-f
