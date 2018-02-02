@@ -293,7 +293,7 @@
       isPaused: 1,
       isCancel: false,
       sortRecord: -1,
-      isSelect: false,
+      isSelect: false
     }
 
     methods = {

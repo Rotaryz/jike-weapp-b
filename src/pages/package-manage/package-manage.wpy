@@ -153,6 +153,7 @@
       <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
     </view>
     <confirm @confirm.user="delete"></confirm>
+    <toast></toast>
   </view>
 </template>
 
@@ -161,6 +162,7 @@
   import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
+  import Toast from '@/base/toast/toast'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
 
@@ -287,6 +289,7 @@
       },
       async delete() {
         const res = await Packages.deletePackage(this.deleteId)
+        this.loaded()
         if (res.error !== ERR_OK) {
           this.$invoke('toast', 'show', res.message)
           return
@@ -324,7 +327,8 @@
     }
 
     components = {
-      'confirm': Confirm
+      'confirm': Confirm,
+      'toast': Toast
     }
 
     config = {
