@@ -14,7 +14,7 @@
           <view class="prizeItem-top">
             <view class="prizeItem-top-left">
               <image class="prizeItem-top-left-img" src="{{item.promotion_img}}"
-                     wx:if="{{item.promotion_type==='exchange'}}"></image>
+                     wx:if="{{item.promotion_type==='exchange'}}" mode="aspectFit"></image>
               <view class="prizeItem-top-left-Msg"
                     wx:if="{{item.promotion_type!=='exchange'}}">
                 <text class="prizeItem-top-left-Msg-txt">￥</text>
@@ -72,7 +72,7 @@
         <view class="prizeItem-top">
           <view class="prizeItem-top-left">
             <image class="prizeItem-top-left-img" src="{{item.promotion_img}}"
-                   wx:if="{{item.promotion_type==='exchange'}}"></image>
+                   wx:if="{{item.promotion_type==='exchange'}}" mode="aspectFit"></image>
             <view class="prizeItem-top-left-Msg"
                   wx:if="{{item.promotion_type!=='exchange'}}">
               <text class="prizeItem-top-left-Msg-txt">￥</text>
@@ -307,21 +307,20 @@
 
           .prizeItem-top
             display: flex
-            height: 50px
+            height: 70px
             padding: 10px
 
             .prizeItem-top-left
               width: 90px
-              height: 50px
+              height: 70px
               display: flex
               align-items: center
               justify-content: center
-              border: .5px solid $color-col-line
               border-radius: 2px
 
               .prizeItem-top-left-img
-                width: 50px
-                height: 25px
+                width: 55px
+                height: 55px
 
               .prizeItem-top-left-Msg
                 text-align: center
@@ -331,6 +330,7 @@
 
                 .prizeItem-top-left-Msg-txt
                   font-size: 8px
+                  margin-right: -2px
                   color: $color-assist-f
 
             .prizeItem-top-right
@@ -338,6 +338,7 @@
               flex-direction: column
               justify-content: space-between
               margin-left: 10px
+              padding: 10px 0
 
               .prizeItem-top-right-up
 
@@ -406,28 +407,26 @@
 
       .prizeItem
         margin-top: 10px
-        border: 0.5px solid $color-col-line
         border-radius: 2px
         background: $color-white
         position: relative
 
         .prizeItem-top
           display: flex
-          height: 50px
+          height: 70px
           padding: 10px
 
           .prizeItem-top-left
             width: 90px
-            height: 50px
+            height: 70px
             display: flex
             align-items: center
             justify-content: center
-            background: $color-text-d
             border-radius: 2px
 
             .prizeItem-top-left-img
-              width: 50px
-              height: 25px
+              width: 55px
+              height: 55px
 
             .prizeItem-top-left-Msg
               text-align: center
@@ -437,6 +436,7 @@
 
               .prizeItem-top-left-Msg-txt
                 font-size: 8px
+                margin-right: -2px
                 color: $color-white
 
           .prizeItem-top-right
@@ -444,6 +444,7 @@
             flex-direction: column
             justify-content: space-between
             margin-left: 10px
+            padding: 10px 0
 
             .prizeItem-top-right-up
 
