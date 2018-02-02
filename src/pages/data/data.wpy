@@ -93,6 +93,7 @@
         this.dataList = res.data
         this.typeList = this.dataList.detail
         this.$com.AeraChart.$wxpage.infoArea(res.data)
+        this.showAera = true
         this.loaded()
         this.$apply()
       }

@@ -12,8 +12,8 @@
                  wx:if="{{showBk  === index && imageUrlHead}}"></image>
           <view class="con-title">
             <view></view>
-            <view>{{item.promotion_title}}</view>
             <view class="monlogo">{{item.promotion_platform_price}}</view>
+            <view>{{item.promotion_title}}</view>
           </view>
         </view>
       </scroll-view>
@@ -193,6 +193,12 @@
     onShow () {
       if (this.$parent.globalData.coupon &&
         this.$parent.globalData.coupon !== '') {
+        for (let item of this.activityPromotion) {
+          if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
+            this.$invoke('Toast', 'show', '不可选择重复优惠券')
+            return false
+          }
+        }
         this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
         this.$parent.globalData.coupon = ''
         this.$apply()
@@ -481,23 +487,25 @@
       width: 100%
       view
         color: #5D5D5D
-        padding-bottom: 4px
-        padding-left: 16px
+        padding-left: 10px
+        width :60px
         &:first-child
-          padding-top: 4px
+          padding-top: 10px
       .monlogo
-        font-size: $font-size-medium-x
+        padding-bottom: 3px
+        font-size: 17px
+        font-weight :600
         color: #5D5D5D
         position: relative
-        text-indent: 5px
+        text-indent: 6px
         font-family: $font-family-m
         &:before
           content: '￥'
           color: #5D5D5D
           font-size: $font-size-small-s
           position: absolute
-          top: 3px
-          left: 9px
+          bottom: 5px
+          left: 1px
 
   //优惠券详情
   .service-detail

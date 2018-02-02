@@ -290,7 +290,10 @@
       height: 75,
       hidePage: false,
       showMap: false,
-      isPaused: 1
+      isPaused: 1,
+      isCancel: false,
+      sortRecord: -1,
+      isSelect: false,
     }
 
     methods = {
@@ -321,7 +324,6 @@
           this.showChioce = true
           this.$apply()
         }, 250)
-
         this.saveNum = 0
         this.saveType = -1
         if (type === 'way') {
@@ -377,9 +379,16 @@
       },
 //      关闭
       hideDetail() {
+        let num = this.paizrList[this.record].record
+        if (num !== -1 && this.isSelect) {
+          this.redPack[num].promotion_stock = this.redPack[num].promotion_stock - this.paizrList[this.record].addNum
+          this.redPack[this.numTimes].promotion_stock = this.redPack[this.numTimes].promotion_stock + this.addNum
+        }
+        this.isCancel = true
         this.showChioce = false
         this.hidePage = false
         this.height = 165
+        this.isSelect = false
       },
 //      保存距离设置
       sureWays() {
@@ -394,13 +403,16 @@
       },
 //      选择红包
       selRed(index) {
-        this.redPack[this.numTimes]['promotion_stock'] =
-          this.redPack[this.numTimes]['promotion_stock'] + this.paizrList[this.record]['addNum']
+        this.isSelect = true
+        this.redPack[this.numTimes]['promotion_stock'] = this.redPack[this.numTimes]['promotion_stock'] + this.addNum
         this.oldNum = this.numTimes
         this.saveType = 1
         this.saveNum = this.paizrList[this.record]['addNum']
         this.addNum = 0
         this.redPack.map((item, idx) => {
+          if (item.sel) {
+            this.sortRecord = idx
+          }
           if (idx === index) {
             item.sel = !item.sel
           } else {
@@ -409,13 +421,7 @@
         })
         if (this.redPack[index].sel) {
           this.numTimes = index
-          if (index === this.paizrList[this.record]['record']) {
-            this.addNum = this.paizrList[this.record]['addNum']
-            this.paizrList[this.record]['addNum'] = 0
-          } else {
-            this.paizrList[this.record]['addNum'] = 0
-            this.addNum = 0
-          }
+          this.redPack[this.sortRecord].promotion_stock = this.addNum + this.redPack[this.sortRecord].promotion_stock
         }
       },
 //      加红包数
@@ -500,7 +506,6 @@
         } else {
           disway = parseInt(this.value)
         }
-        console.log(this.paizrList[0].addNum)
         let rebArr = []
         for (let i = 0; i < 3; i++) {
           let data = JSON.parse(JSON.stringify(this.redPack[this.paizrList[i].record]))
@@ -520,7 +525,6 @@
             third_redpacket: rebArr[1],
             seventh_redpacket: rebArr[2]
           })
-        console.log(allMsg)
         let res = null
         if (this.id !== -1) {
           res = await regist.putData(this.id, allMsg)
@@ -556,7 +560,6 @@
 //        遍历确认红包
         this.redPack.forEach((item, idx) => {
           if (res.first_redpacket) {
-            console.log(item.promotion_id, res.first_redpacket.promotion_id)
             if (item.promotion_id === res.first_redpacket.promotion_id) {
               res.first_redpacket.index = idx
             }
