@@ -44,8 +44,12 @@
             <view class="ctrl-wrapper">
               <view class="status">未上线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="left-btn" @tap="showConfirm({{item.id}})">
+                  <text>删除</text>
+                </view>
+                <view class="right-btn" @tap="edit({{item.id}})">
+                  <text>编辑</text>
+                </view>
               </view>
             </view>
           </view>
@@ -86,8 +90,12 @@
             <view class="ctrl-wrapper">
               <view class="status">已上线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="left-btn" @tap="showConfirm({{item.id}})">
+                  <text>删除</text>
+                </view>
+                <view class="right-btn" @tap="edit({{item.id}})">
+                  <text>编辑</text>
+                </view>
               </view>
             </view>
           </view>
@@ -128,8 +136,12 @@
             <view class="ctrl-wrapper">
               <view class="status">已下线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="left-btn" @tap="showConfirm({{item.id}})">
+                  <text>删除</text>
+                </view>
+                <view class="right-btn" @tap="edit({{item.id}})">
+                  <text>编辑</text>
+                </view>
               </view>
             </view>
           </view>
@@ -411,6 +423,15 @@
                 text-align: center
                 font-size: $font-size-small-s
                 color: $color-text-d
+                position: relative
+                text
+                  display: block
+                  line-height: 12px
+                  font-size: $font-size-small-s
+                  position: absolute
+                  left: 50%
+                  top: 50%
+                  transform: translate(-50%, -50%)
               .right-btn
                 margin-left: 5px
                 border-1px($color-assist-f, 4px)

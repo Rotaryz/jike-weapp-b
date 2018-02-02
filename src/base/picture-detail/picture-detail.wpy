@@ -1,7 +1,7 @@
 <template>
   <view class="picture-detail" style="width:{{show ? '100vw': '0vw'}};height:100vh;" @tap="hidePic">
     <view class="container" style="width:{{show ? (width ? width + 'px' : '100vw'): '0vw'}};height:{{width ? width * height + 'px' : height*100 + 'vw'}};">
-      <image src="{{url}}" mode="widthFix" style="width:{{show ? (width ? width + 'px' : '100vw') : '0vw'}};"></image>
+      <image src="{{url}}" mode="{{mode}}" style="width:{{show ? (width ? width + 'px' : '100vw') : '0vw'}};"></image>
     </view>
   </view>
 </template>
@@ -13,13 +13,15 @@
       show: false,
       height: 0,
       url: '',
-      width: ''
+      width: '',
+      mode: 'widthFix'
     }
 
     methods = {
       showPic(url, scale, width) {
         if (typeof (width) === 'string') {
           this.width = width
+          this.mode = 'aspectFit'
         }
         this.url = url
         this.height = scale
@@ -31,6 +33,7 @@
         this.height = 0
         this.url = ''
         this.width = ''
+        this.mode = 'widthFix'
         this.$emit('showMapPic')
         this.$apply()
       }

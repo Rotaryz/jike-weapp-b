@@ -29,10 +29,14 @@
               </view>
             </view>
             <view class="con-cou-item-le">
-              <view @tap="nvaContent({{item.id}})">编辑</view>
-              <view @tap="delCon({{item.id}},{{index}})">删除</view>
-              <view @tap="access({{item.id}},{{index}})">{{
-                textType[navNum].text}}
+              <view @tap="nvaContent({{item.id}})">
+                <text>编辑</text>
+              </view>
+              <view @tap="delCon({{item.id}},{{index}})">
+                <text>删除</text>
+              </view>
+              <view @tap="access({{item.id}},{{index}})">
+                <text>{{textType[navNum].text}}</text>
               </view>
             </view>
           </view>
@@ -261,6 +265,13 @@
             margin-right: 5px
             border: 0.5px solid $color-text-d
             color: $color-theme
+            position: relative
+            text
+              position: absolute
+              display: block
+              left: 50%
+              top: 50%
+              transform: translate(-50%, -50%)
             &:last-child
               margin-right: 0
               border: 0.5px solid $color-assist-f
