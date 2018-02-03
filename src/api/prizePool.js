@@ -21,7 +21,10 @@ export default class PrizePool extends base {
    */
   static async getPrizeRedlist() {
     const url = `${this.baseUrl}/api/redpackets/promotion`
-    return await this.get(url)
+    let data = {
+      per_page: 0
+    }
+    return await this.get(url, data)
   }
   /**
    * 新建兑换券
