@@ -166,20 +166,22 @@
         </view>
         <prize-pool-modal title="添加奖品" type="big" @cancel.user="cancelSelectPrize" @confirm.user="saveSelectPrize">
           <view class="prize-pool-modal" slot="content">
-            <repeat for="{{prizePool}}" index="index" key="key" item="item">
-              <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
-                <view class="name">{{item.promotion_title}}</view>
-                <view class="stock">剩余{{item.promotion_stock}}个</view>
-                <view class="check-box-wrapper">
-                  <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                    <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+            <view class="prize-poll-list">
+              <repeat for="{{prizePool}}" index="index" key="key" item="item">
+                <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
+                  <view class="name">{{item.promotion_title}}</view>
+                  <view class="stock">剩余{{item.promotion_stock}}个</view>
+                  <view class="check-box-wrapper">
+                    <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
+                      <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}"
+                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                             class="full-image"></image>
+                    </view>
                   </view>
                 </view>
-              </view>
-            </repeat>
-            <view class="number-control">
+              </repeat>
+            </view>
+            <view class="number-control border-top-1px">
               <view class="text">添加数量</view>
               <view class="dec" @tap.stop="decSelectStock">-</view>
               <view class="number">
@@ -805,6 +807,9 @@
               height: 10px
         .prize-pool-modal
           padding: 0 12px
+          .prize-poll-list
+            height: 280px
+            overflow-y: auto
           .prize
             display: flex
             align-items: center
@@ -836,10 +841,6 @@
             align-items: center
             justify-content: center
             height: 40px
-            margin-top: 6.5px
-            margin-bottom: 4px
-            border-radius: 4px
-            border-1px($color-split-line, 4px, dashed)
             font-size: $font-size-small
             .text
               margin-right: 5px
