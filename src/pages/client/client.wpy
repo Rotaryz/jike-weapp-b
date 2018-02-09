@@ -189,7 +189,7 @@
         let res = this.infoRes(await shop.customerTrend(data))
         this.customerTrend = res
         // 统一用 $invoke
-        this.$com.AeraChart.$wxpage.infoArea(this.customerTrend)
+        this.$invoke('AeraChart', 'infoArea', this.customerTrend)
       } else if (num === 1) {
         let res = this.infoRes(await shop.customerList())
         this.customerList = res
