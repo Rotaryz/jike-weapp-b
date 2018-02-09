@@ -1,8 +1,9 @@
 <template>
   <view class="compile">
-      <textarea name="compile" id="" auto-height auto-focus
+    <textarea name="compile" id="" auto-height auto-focus
                 placeholder="请输入" bindconfirm="confirm"
-                value="{{values}}" textarea="1000"></textarea>
+                value="{{values}}" maxlength="250" bindinput="textInput"></textarea>
+    <view class="text-length">{{length}}/250</view>
   </view>
 </template>
 
@@ -18,12 +19,12 @@
     data = {
       index: -1,
       vaule: '',
-      type: ''
+      type: '',
+      length: 0
     }
     methods = {
       async confirm(e) {
         let text = e.detail.value
-        console.log(text)
         this.$parent.updateGlobalData('fontText', text)
         this.$parent.updateGlobalData('index', this.index)
         if (text === '') {
@@ -38,12 +39,17 @@
           delta: 1
         })
 //        回到创建内容页面
+      },
+      textInput(e) {
+        this.length = e.detail.value.length
+        this.$apply()
       }
     }
 
     onLoad(options) {
       this.index = options.index * 1
       this.type = options.type
+      this.length = this.$parent.globalData.fontText.length
       this.$apply()
     }
 
@@ -52,7 +58,6 @@
         let text = this.$parent.globalData.fontText || ''
         return text
       }
-
     }
   }
 </script>
@@ -68,8 +73,13 @@
     overflow-x: hidden
 
   textarea
-    width: 100vw
+    width: 96vw
+    margin: 0 auto
     font-size: $font-size-small
-    padding: $padding 0 0 $padding
     min-height: 100px
+  .text-length
+    font-size: $font-size-small
+    padding: 0 12px
+    text-align: right
+    color: $color-text-d
 </style>

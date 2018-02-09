@@ -2,7 +2,7 @@
   <view class="mine-wrapper">
     <view class="mine-head">
       <view class="mine-head-avtarBox">
-        <image class="mine-head-avatar" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
+        <image class="mine-head-avatar" mode="aspectFill" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
         <view class="mine-head-name">{{storeMsg.shop_name}}</view>
         <view class="switch-store" @tap="switchStore" wx:if="{{false}}">
           <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-switch@2x.png'}}" class="switch-store-img"></image>

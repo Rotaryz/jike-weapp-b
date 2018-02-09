@@ -3,7 +3,7 @@
     <view class="tab-wrapper">
       <repeat for="{{tabs}}" index="index" key="index" item="item">
         <view class="tab" @tap="changeTab({{index}})">
-          <text class="content {{tabId === index ? 'active' : ''}}">{{item}}</text>
+          <text class="content {{tabIndex === index ? 'active' : ''}}">{{item}}</text>
         </view>
       </repeat>
       <view class="line-wrapper" style="transform: {{'translate3d('+ tabTranslateX + ', 0, 0)'}}">
@@ -25,7 +25,7 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
+                <image class="full-image-fix" mode="widthFix" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
@@ -61,7 +61,7 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
+                <image class="full-image-fix" mode="widthFix" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
@@ -95,7 +95,7 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
+                <image class="full-image-fix" mode="widthFix" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
@@ -129,7 +129,7 @@
           <view class="content-wrapper">
             <view class="desc-wrapper">
               <view class="image-wrapper">
-                <image class="full-image" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
+                <image class="full-image-fix" mode="widthFix" src="{{item.gift_bag_images[0].image_url ? item.gift_bag_images[0].image_url : item.gift_bag_images[1].image_url ? item.gift_bag_images[1].image_url : item.gift_bag_images[2].image_url}}"></image>
               </view>
               <view class="desc">
                 <view class="name">{{item.title}}</view>
@@ -153,6 +153,7 @@
       <navigator url="/pages/package-controller/package-controller" class="btn">新建礼包</navigator>
     </view>
     <confirm @confirm.user="delete"></confirm>
+    <toast></toast>
   </view>
 </template>
 
@@ -161,6 +162,7 @@
   import {ERR_OK} from 'api/base'
   import Packages from 'api/packages'
   import Confirm from '@/base/confirm/confirm'
+  import Toast from '@/base/toast/toast'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
 
@@ -287,9 +289,31 @@
       },
       async delete() {
         const res = await Packages.deletePackage(this.deleteId)
-        console.log(res)
-        await this._getPackageLists()
         this.loaded()
+        if (res.error !== ERR_OK) {
+          this.$invoke('toast', 'show', res.message)
+          return
+        }
+        let list
+        switch (this.tabIndex) {
+          case 0:
+            list = this.willOnLines
+            break
+          case 1:
+            list = this.onLines
+            break
+          case 2:
+            list = this.offLines
+            break
+          case 3:
+            list = this.willApplys
+            break
+          default:
+            break
+        }
+        const deleteIndex = list.findIndex((item) => item.id === this.deleteId)
+        list.splice(deleteIndex, 1)
+        this.$apply()
       },
       edit(id) {
         this.$navigate(`/pages/package-controller/package-controller?id=${id}`)
@@ -303,7 +327,8 @@
     }
 
     components = {
-      'confirm': Confirm
+      'confirm': Confirm,
+      'toast': Toast
     }
 
     config = {
@@ -387,6 +412,9 @@
               border-radius: 4px
               overflow: hidden
               background-color: $color-theme
+              .full-image-fix
+                width: 100%
+                display: block
             .desc
               flex: 1
               padding-left: 10px

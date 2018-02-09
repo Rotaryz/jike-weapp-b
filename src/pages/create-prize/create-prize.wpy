@@ -83,11 +83,12 @@
           <view class="prize-picker-title">奖品图片</view>
           <view class="exBox-imgBox-right">
             <view class="exBox-imgBox-right-imgOuter">
-              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add.png'}}" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl && imageUrlHead}}"></image>
-              <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}"></image>
+              <image src="{{imageUrlHead + '/defaults/b-image/page/icon-add@2x.png'}}" class="exBox-imgBox-right-uploadBtn" @tap="uploadEXimg" wx:if="{{!EXimgUrl && imageUrlHead}}"></image>
+              <image class="exBox-img" src="{{EXimgUrl}}" wx:if="{{EXimgUrl}}" @tap="showPicDetail({{EXimgUrl}})" mode="aspectFit"></image>
               <image class="exBox-img-delBtn" src="{{imageUrlHead + '/defaults/b-image/page/icon-del24@2x.png'}}" wx:if="{{EXimgUrl && imageUrlHead}}" @tap="delEXimg"></image>
             </view>
-            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小200k以下）</view>
+            <view class="exBox-imgBox-right-txt">点击图片预览实际展示效果</view>
+            <view class="exBox-imgBox-right-txt">添加兑换券图片（尺寸：110*64，大小2M以下）</view>
           </view>
         </view>
 
@@ -244,6 +245,7 @@
     </view>
 
     <Toast></Toast>
+    <Picture></Picture>
   </view>
 </template>
 
@@ -258,6 +260,7 @@
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
   import {ERR_OK} from '@/api/base'
+  import Picture from '@/base/picture-detail/picture-detail'
 
   export default class CreatePrizePage extends wepy.page {
     mixins = [base, users]
@@ -272,7 +275,8 @@
     components = {
       Toast,
       Confirm,
-      Textarea
+      Textarea,
+      Picture
     }
 
     data = {
@@ -500,6 +504,9 @@
           this.$invoke('Toast', 'show', res.message)
         }
         this.$apply()
+      },
+      showPicDetail(url) {
+        this.$invoke('Picture', 'showPic', url, 1, '200')
       }
     }
 
@@ -756,7 +763,7 @@
                 padding: 0 10px
 
         .exBox-imgBox
-          height: 74px
+          height: 111px
           display: flex
           align-items: center
           border-bottom: 0.5px solid $color-col-line
@@ -771,26 +778,30 @@
             display: flex
             flex-direction: column
             justify-content: center
-            height: 74px
+            height: 95px
 
             .exBox-imgBox-right-imgOuter
               position: relative
-              width: 32px
-              height: 32px
+              width: 55px
+              height: 55px
+              border-radius: 4px
+              border: 1px solid $color-col-line
 
               .exBox-imgBox-right-uploadBtn
                 position: absolute
-                width: 32px
-                height: 32px
+                width: 16px
+                height: 16px
+                padding: 19.5px
                 left: 0px
                 top: 0
 
               .exBox-img
                 position: absolute
-                width: 32px
-                height: 32px
+                width: 55px
+                height: 55px
                 left: 0px
                 top: 0
+                border-radius: 4px
 
               .exBox-img-delBtn
                 width: 13px

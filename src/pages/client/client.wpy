@@ -41,7 +41,9 @@
       <scroll-view scroll-y bindscrolltolower="showMore">
         <view class="client-item" wx:for="{{customerList}}" wx:key="{{index}}">
           <view>
-            <image src="{{item.avatar_url}}"></image>
+            <view class="avatar-box">
+              <image src="{{item.avatar_url}}" mode="aspectFill"></image>
+            </view>
             <text>{{item.nickname}}</text>
           </view>
           <view>{{item.created_at}}</view>
@@ -319,18 +321,24 @@
         font-size: $font-size-small
         padding: 0 12px
         border-bottom: 0.5px solid $color-split-line
-        view
+        >view
           &:first-child
             position: relative
             text
               margin-left: 33px
-            image
+            .avatar-box
               width: 24px
               height: 24px
-              border-radius: 50%
+              border-radius: 100%
+              overflow: hidden
               left: 0
               col-center()
-
+              box-sizing: content-box
+              border: 0.5px solid $color-col-line
+              image
+                width: 24px
+                height: 24px
+                border-radius: 100%
     .picture-title
       font-size: $font-size-medium
       height: 43.5px

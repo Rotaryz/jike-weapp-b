@@ -5,9 +5,7 @@
     </view>
     <view class="activity">
       <view class="block-title border-bottom-1px">活动计划</view>
-      <view class="container">
-        {{giftbag.activity_project}}
-      </view>
+      <text class="container">{{giftbag.activity_project}}</text>
     </view>
     <view class="apply-know">
       <view class="header" @tap="toggleApplyKnow">
@@ -26,9 +24,9 @@
         <view class="title">活动规则：</view>
         <view class="content">大礼包会上架到活动联盟商家的优惠券列表</view>
         <view class="content">各个商家优惠券的数量会平均分配</view>
-        <view class="content">各个商家的优惠劵的交易金额会按照异业联盟的贡献，分配给商家。</view>
-        <view class="title">活动入选条件：</view>
-        <view class="content">服务品类限{{industries}}</view>
+        <view class="content">各个商家的优惠券的交易金额会按照异业联盟的贡献，分配给商家。</view>
+        <!--<view class="title">活动入选条件：</view>-->
+        <!--<view class="content">服务品类限{{industries}}</view>-->
         <!--<view class="content">单个单数不能多于100</view>-->
       </view>
     </view>
@@ -162,6 +160,9 @@
       .block-title
         background-color: $color-white
       .container
+        display: block
+        white-space: normal
+        word-break: break-all
         padding-top: 11px
         padding-right: 12px
         padding-bottom: 20px

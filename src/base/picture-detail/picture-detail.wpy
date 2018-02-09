@@ -1,0 +1,62 @@
+<template>
+  <view class="picture-detail" style="width:{{show ? '100vw': '0vw'}};height:100vh;" @tap="hidePic">
+    <view class="container" style="width:{{show ? (width ? width + 'px' : '100vw'): '0vw'}};height:{{width ? width * height + 'px' : height*100 + 'vw'}};">
+      <image src="{{url}}" mode="{{mode}}" style="width:{{show ? (width ? width + 'px' : '100vw') : '0vw'}};height:{{width ? width + 'px' : ''}}"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Picture extends wepy.component {
+    data = {
+      show: false,
+      height: 0,
+      url: '',
+      width: '',
+      mode: 'widthFix'
+    }
+
+    methods = {
+      showPic(url, scale, width) {
+        if (typeof (width) === 'string') {
+          this.width = width
+          this.mode = 'aspectFit'
+        }
+        this.url = url
+        this.height = scale
+        this.show = true
+        this.$apply()
+      },
+      hidePic() {
+        this.show = false
+        this.height = 0
+        this.url = ''
+        this.width = ''
+        this.mode = 'widthFix'
+        this.$emit('showMapPic')
+        this.$apply()
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .picture-detail
+    position: fixed
+    z-index: 1000
+    left: 0
+    top: 0
+    background: rgba(54, 53, 71, .5)
+    .container
+      position: absolute
+      left: 50%
+      top: 40%
+      transform: translate(-50%, -50%)
+      overflow: hidden
+      background: $color-pic-bac
+      border-radius: 4px
+
+</style>
