@@ -513,6 +513,8 @@
         this.upDateList(this.contentList[index])
       } else if (!this.$parent.globalData.fontText && this.$parent.globalData.textType === 'delete' && this.$parent.globalData.index !== -1) {
         this.delItem(this.$parent.globalData.index)
+        this.$parent.updateGlobalData('fontText', '')
+        this.$parent.updateGlobalData('textType', '')
       }
       this.$apply()
     }
