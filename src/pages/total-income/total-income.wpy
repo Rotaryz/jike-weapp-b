@@ -1,0 +1,232 @@
+<template>
+  <view class="total-income">
+    <view class="top-wrapper">
+      <view class="t-content">累计收入(元)  <image wx:if="{{imageUrl}}" class="help" src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image></view>
+      <view class="b-content">￥{{totalIncome}}</view>
+      <base-modal type="tip" title="提示信息">
+        <view class="tip-modal" slot="content">
+          <text class="text">当顾客购买了优惠券，相关订单资金转入累计收入账户，当顾客退款，相关订单资金转出累计收入账户。</text>
+        </view>
+      </base-modal>
+    </view>
+    <view class="split-line border-bottom-1px border-top-1px"></view>
+    <view class="container">
+      <view class="select-wrapper border-bottom-1px">
+        <picker mode="selector" range="{{types}}" range-key="name" @change="changeType">
+          <view class="type-wrapper">
+            <view class="content">优惠券</view>
+            <view class="arrow-down"></view>
+          </view>
+        </picker>
+        <picker mode="date" fields="month" @change="changeDate">
+          <view class="date-wrapper">
+            <view class="content">{{date}}</view>
+            <view class="arrow-down"></view>
+          </view>
+        </picker>
+      </view>
+      <view class="list-wrapper" wx:if="{{list.length > 0}}">
+        <repeat for="{{list}}" key="index" index="index">
+          <navigator url="/pages/asset-detail/asset-detail?type=2&id={{item.id}}" class="item-wrapper border-bottom-1px">
+            <view class="content-wrapper">
+              <view class="t-content">{{item.title}}</view>
+              <view class="b-content">{{item.created_at}}</view>
+            </view>
+            <view class="content-wrapper">
+              <view class="t-content">+{{item.money}}</view>
+              <view class="b-content">{{item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 5 ? '已评价' : (item.status === 7 || item.status === 8) ? '退款失败' : item.status === 9 ? '已关闭' : ''}}</view>
+            </view>
+          </navigator>
+        </repeat>
+      </view>
+      <view wx:if="{{list.length === 0}}" class="empty-wrapper">
+        <view class="image-wrapper">
+          <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
+        </view>
+        <view class="desc">暂无数据</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+  import base from 'common/mixins/base'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+  import BaseModal from '@/base/base-modal/base-modal'
+
+  export default class TotalIncome extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrl: URIS.image,
+      totalIncome: '0.00',
+      types: [
+        {
+          id: 1,
+          name: '优惠券'
+        }
+      ],
+      selectType: {
+        id: 1,
+        name: '优惠券'
+      },
+      date: '',
+      list: [],
+      hasMore: true,
+      page: 1
+    }
+
+    async onLoad() {
+      this._setDate()
+      await this._getSaleLogs()
+    }
+
+    async onReachBottom() {
+      if (!this.hasMore) {
+        return
+      }
+      this.page += 1
+      await this._getSaleLogs()
+    }
+
+    _setDate() {
+      const date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      this.date = `${year}-${month < 10 ? '0' + month : month}`
+      this.$apply()
+    }
+
+    async _getSaleLogs() {
+      const res = await Monies.getSaleLogs({date: this.date, type: this.selectType.id, page: this.page})
+      if (res.error === ERR_OK) {
+        this.totalIncome = res.total_money
+        this.list = this.page === 1 ? res.data : [...this.list, ...res.data]
+        this.hasMore = res.data.length >= 10
+        this.$apply()
+      }
+      this.loaded()
+    }
+
+    methods = {
+      showTip() {
+        this.$invoke('base-modal', 'show')
+      },
+      changeType(e) {
+        const newType = this.types[e.detail.value]
+        if (this.selectType === newType) {
+          return
+        }
+        this.selectType = this.types[e.detail.value]
+        this.page = 1
+        this._getSaleLogs()
+      },
+      changeDate(e) {
+        const newDate = e.detail.value
+        if (this.date === newDate) {
+          return
+        }
+        this.date = e.detail.value
+        this.page = 1
+        this._getSaleLogs()
+      }
+    }
+
+    components = {
+      'base-modal': BaseModal
+    }
+
+    config = {
+      navigationBarTitleText: '累计收入',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  page
+    background: transparent
+  .total-income
+    .tip-modal
+      padding: 16px 10px 0 10px
+      .text
+        font-size: $font-size-medium
+        color: $color-text
+    .split-line
+      height: 10px
+      background: $color-background
+    .top-wrapper
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+      height: 137px
+      .t-content
+        display: flex
+        align-items: center
+        margin-bottom: 5px
+        font-size: $font-size-medium
+        color: $color-text
+        .help
+          width: 16px
+          height: 16px
+          margin-left: 5px
+      .b-content
+        font-family: $font-family-bold
+        font-size: 30px
+        color: $color-assist-tr
+    .container
+      .select-wrapper
+        display: flex
+        align-items: center
+        justify-content: space-between
+        height: 50px
+        padding: 0 12px
+        .arrow-down
+          width: 0
+          height: 0
+          border-left: 5px solid transparent
+          border-right: 5px solid transparent
+          border-top: 5px solid $color-text-d
+          margin-left: 3px
+        .type-wrapper
+          display: flex
+          align-items: center
+          .content
+            font-size: $font-size-medium-x
+            color: $color-text-d
+        .date-wrapper
+          display: flex
+          align-items: center
+          .content
+            font-size: $font-size-medium-x
+            color: $color-text
+          .arrow-down
+            border-top: 5px solid $color-text
+      .list-wrapper
+        padding-left: 12px
+        .item-wrapper
+          display: flex
+          align-items: center
+          justify-content: space-between
+          height: 49.5px
+          padding-right: 12px
+          .content-wrapper
+            &:last-child .b-content
+              text-align: right
+            .t-content
+              margin-bottom: 4.5px
+              font-size: $font-size-medium
+              color: $color-text-td
+            .b-content
+              font-size: $font-size-small-s
+              color: $color-text-d
+</style>

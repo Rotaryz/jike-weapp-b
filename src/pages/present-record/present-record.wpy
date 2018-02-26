@@ -1,0 +1,96 @@
+<template>
+  <view class="present-record">
+    <repeat for="{{list}}" key="index" index="index">
+      <navigator url="/pages/asset-detail/asset-detail?type=1&id={{item.id}}" class="item-wrapper border-bottom-1px">
+        <view class="content-wrapper">
+          <view class="t-content">{{item.title}}</view>
+          <view class="b-content">{{item.created_at}}</view>
+        </view>
+        <view class="content-wrapper">
+          <view class="t-content">{{item.money}}</view>
+          <view class="b-content">{{item.status === 0 ? '处理中' : item.status === 1 ? '提现成功' : item.status === 2 ? '提现失败' : ''}}</view>
+        </view>
+      </navigator>
+    </repeat>
+    <view wx:if="{{list.length === 0}}" class="empty-wrapper">
+      <view class="image-wrapper">
+        <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
+      </view>
+      <view class="desc">暂无数据</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+  import URIS from 'common/js/config'
+
+  export default class PresentRecord extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrl: URIS.image,
+      list: [],
+      hasMore: true,
+      page: 1
+    }
+
+    async onLoad() {
+      await this._getWithdrawalLogs()
+      this.loaded()
+    }
+
+    async onReachBottom() {
+      if (!this.hasMore) {
+        return
+      }
+      this.page += 1
+      await this._getWithdrawalLogs()
+    }
+
+    async _getWithdrawalLogs() {
+      const res = await Monies.getWithdrawalLogs({page: this.page})
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.list = [...this.list, ...data]
+        this.hasMore = data.length >= 10
+      }
+    }
+
+    config = {
+      navigationBarTitleText: '提现记录',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  page
+    background-color: $color-white
+  .present-record
+    padding-left: 12px
+    .item-wrapper
+      display: flex
+      align-items: center
+      justify-content: space-between
+      height: 49.5px
+      padding-right: 12px
+      .content-wrapper
+        &:last-child
+          text-align: right
+        .t-content
+          margin-bottom: 4.5px
+          font-size: $font-size-medium
+          color: $color-text-td
+        .b-content
+          font-size: $font-size-small-s
+          color: $color-text-d
+</style>

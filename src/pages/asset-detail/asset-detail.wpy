@@ -1,0 +1,180 @@
+<template>
+  <view class="asset-detail">
+    <view class="top-wrapper border-bottom-1px">
+      <view class="t-content">
+        <view class="icon-wrapper" wx:if="{{type === 1}}">
+          <image class="full-image" src="{{info.image_url.image_url}}"></image>
+        </view>
+        <view class="content-wrapper">{{info.title}}</view>
+      </view>
+      <view class="m-content">{{info.total_money ? '¥' + info.total_money : ''}}</view>
+      <view class="b-content" wx:if="{{type === 1}}">{{info.status === 0 ? '处理中' : info.status === 1 ? '提现成功' : info.status === 2 ? '提现失败' : ''}}</view>
+      <view class="b-content" wx:if="{{type === 2}}">{{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}</view>
+    </view>
+    <view class="container border-bottom-1px">
+      <view class="content-wrapper border-bottom-1px">
+        <view class="item-wrapper">
+          <view class="l-content">业务类型</view>
+          <view class="r-content">{{info.type}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">业务描述</view>
+          <view class="r-content">{{info.title}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">{{type === 1 ? '申请时间' : '创建时间'}}</view>
+          <view class="r-content">{{info.created_at}}</view>
+        </view>
+        <view class="item-wrapper">
+          <text class="l-content">{{type === 1 ? '到账时间' : '支付时间'}}</text>
+          <view class="r-content">{{type === 1 ? info.status === 0 ? '预计三天内到账,节假日可能延时到账' : info.status === 2 ? '未到账' : info.updated_at : info.pay_time}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">商户订单号</view>
+          <view class="r-content">{{info.order_sn}}</view>
+        </view>
+      </view>
+      <view class="content-wrapper border-bottom-1px">
+        <view class="item-wrapper">
+          <view class="l-content">{{type === 1 ? '提现对象' : '顾客'}}</view>
+          <view class="r-content">{{info.user}}</view>
+        </view>
+      </view>
+      <view class="content-wrapper">
+        <view class="item-wrapper">
+          <view class="l-content">{{type === 1 ? '到账金额' : '订单金额'}}</view>
+          <view class="r-content">{{info.money}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">{{type === 1 ? '手续费' : '服务费'}}</view>
+          <view class="r-content">{{info.poundage}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">{{type === 1 ? '实付金额' : '收入'}}</view>
+          <view class="r-content">{{info.total_money}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="l-content">订单状态</view>
+          <view class="r-content" wx:if="{{type === 1}}">{{info.status === 0 ? '处理中' : info.status === 1 ? '提现成功' : info.status === 2 ? '提现失败' : ''}}</view>
+          <view class="r-content" wx:if="{{type === 2}}">{{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+
+  const ORDER_TYPE = 1
+  const SERVICE_TYPE = 2
+
+  export default class AssetDetail extends wepy.page {
+    mixins = [base]
+
+    data = {
+      type: 1,
+      id: 0,
+      info: []
+    }
+
+    async onLoad(options) {
+      this.id = options.id
+      this.type = Math.floor(options.type)
+      await this.load()
+      this.loaded()
+    }
+
+    async load() {
+      switch (this.type) {
+        case ORDER_TYPE:
+          wepy.setNavigationBarTitle({title: '订单详情'})
+          await this._showWithdrawalLog()
+          break
+        case SERVICE_TYPE:
+          wepy.setNavigationBarTitle({title: '服务详情'})
+          await this._showSaleLog()
+          break
+        default:
+          break
+      }
+    }
+
+    async _showWithdrawalLog() {
+      const res = await Monies.showWithdrawalLog(this.id)
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.info = data
+      }
+    }
+
+    async _showSaleLog() {
+      const res = await Monies.showSaleLog(this.id)
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.info = data
+      }
+    }
+
+    config = {
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .asset-detail
+    background-color: $color-white
+    .top-wrapper
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+      height: 137px
+      .t-content
+        display: flex
+        align-items: center
+        margin-bottom: 22.5px
+        .icon-wrapper
+          width: 16px
+          height: 16px
+          margin-right: 5px
+        .content-wrapper
+          font-size: $font-size-medium
+          color: $color-text
+      .m-content
+        margin-bottom: 10px
+        font-family: $font-family-bold
+        font-size: 30px
+        color: $color-text
+      .b-content
+        font-size: $font-size-small
+        color: $color-text-d
+    .container
+      padding-left: 12px
+      .content-wrapper
+        padding: 14.5px 12px 14.5px 0
+        .item-wrapper
+          display: flex
+          justify-content: space-between
+          margin-bottom: 12.5px
+          &:last-child
+            margin-bottom: 0
+          .l-content
+            flex: 0 0 32.1479%
+            font-size: $font-size-medium
+            color: $color-text
+          .r-content
+            line-height: 19px
+            font-size: $font-size-medium
+            color: $color-text-d
+            text-align: right
+</style>

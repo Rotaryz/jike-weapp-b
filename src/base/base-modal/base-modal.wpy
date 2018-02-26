@@ -8,7 +8,7 @@
         <slot name="content"></slot>
       </view>
       <view class="btn-group border-top-1px">
-        <view class="btn-cancel border-right-1px" @tap.stop="cancel">取消</view>
+        <view class="btn-cancel border-right-1px" @tap.stop="cancel" wx:if="{{type !== 'tip'}}">取消</view>
         <view class="btn-confirm" @tap.stop="confirm">确定</view>
       </view>
       <!--<view class="close-wrapper" @tap.stop="close">-->

@@ -11,7 +11,7 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
-          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}"/>
+          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}" disabled="{{userName}}"/>
         </view>
       </view>
 
