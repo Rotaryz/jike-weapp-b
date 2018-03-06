@@ -8,26 +8,26 @@
           {{shop.address}}
         </view>
         <view class="map-box">
-          <!--<map name="address" latitude="{{shop.latitude}}"-->
-               <!--longitude="{{shop.longitude}}"-->
-               <!--markers="{{markers}}" style="width: 100%;height: 64vw"-->
-               <!--wx:if="{{showMap}}">-->
-            <!--<cover-view class="map-box">-->
-              <!--<cover-image wx:if="{{imageUri}}"-->
-                           <!--src="{{imageUri + '/defaults/b-image/page/pic-map_shade@2x.png'}}"-->
-                           <!--class="bk">-->
-              <!--</cover-image>-->
-              <!--<cover-view class="tip-box">-->
-                <!--<cover-image wx:if="{{imageUri}}"-->
-                             <!--src="{{imageUri +'/defaults/b-image/page/pic-range_bg@2x.png'}}"-->
-                             <!--class="tip"></cover-image>-->
-                <!--<cover-view>本店周边{{value}}内可签到</cover-view>-->
-              <!--</cover-view>-->
-              <!--<cover-image wx:if="{{imageUri}}"-->
-                           <!--src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"-->
-                           <!--class="peo"></cover-image>-->
-            <!--</cover-view>-->
-          <!--</map>-->
+          <map name="address" latitude="{{shop.latitude}}"
+               longitude="{{shop.longitude}}"
+               markers="{{markers}}" style="width: 100%;height: 64vw"
+               wx:if="{{showMap}}">
+            <cover-view class="map-box">
+              <cover-image wx:if="{{imageUri}}"
+                           src="{{imageUri + '/defaults/b-image/page/pic-map_shade@2x.png'}}"
+                           class="bk">
+              </cover-image>
+              <cover-view class="tip-box">
+                <cover-image wx:if="{{imageUri}}"
+                             src="{{imageUri +'/defaults/b-image/page/pic-range_bg@2x.png'}}"
+                             class="tip"></cover-image>
+                <cover-view>本店周边{{value}}内可签到</cover-view>
+              </cover-view>
+              <cover-image wx:if="{{imageUri}}"
+                           src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
+                           class="peo"></cover-image>
+            </cover-view>
+          </map>
         </view>
         <view class="reg_red">
           <image class="line" wx:if="{{imageUri}}"
