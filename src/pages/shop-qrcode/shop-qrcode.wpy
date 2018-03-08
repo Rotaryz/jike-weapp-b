@@ -71,9 +71,6 @@
     }
 
     async load() {
-      let res = await wepy.getSystemInfo()
-      let maxWidth = res.screenWidth
-      console.log(maxWidth)
       let resData = await Merchant.getMerchantQRcode(false)
       if (resData.error !== ERR_OK) {
         return

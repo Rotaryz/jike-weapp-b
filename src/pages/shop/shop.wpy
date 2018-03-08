@@ -149,9 +149,9 @@
       }
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
-      if (this.leader === 1 && this.navList[6].text !== '商圈') {
+      if (this.leader === 1 && this.navList[7].text !== '商圈') {
         this.navList.pop()
-        this.navList.splice(6, 0, BUS)
+        this.navList.splice(7, 0, BUS)
       }
       this.$apply()
     }
@@ -186,7 +186,6 @@
         return
       }
       let res = await wepy.scanCode({onlyFromCamera: false})
-      console.log(res)
       let data
       if (res.result[1] === '"') {
         res = JSON.parse(res.result)
