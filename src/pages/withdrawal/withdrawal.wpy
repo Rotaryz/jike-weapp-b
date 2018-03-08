@@ -80,7 +80,7 @@
       balance: ''
     }
 
-    async onShow() {
+    async onShow () {
       await this._getWithdrawalInfo()
       this.loaded()
     }
