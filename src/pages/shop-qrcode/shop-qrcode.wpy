@@ -1,0 +1,182 @@
+<template>
+  <view class="shop-qrcode">
+    <canvas canvas-id="myCanvas" class="canvas" hidden="{{true}}"></canvas>
+    <view class="top">
+      <image class="qrcode-img" src="{{shareImg}}" wx:if="{{shareImg}}" @longpress="saveImg"></image>
+    </view>
+    <view class="down">
+      <view class="title">长按上图保存二维码发送给好友</view>
+      <view class="item-list">
+        <view class="item">
+          <image src="{{shareImg}}" class="item-img" mode="aspectFill"></image>
+          <image class="checked-img" wx:if="{{imageUrlHead && shareImg}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-login_right@2x.png'}}"></image>
+        </view>
+        <view class="item">
+          <image src="" class="item-img"></image>
+        </view>
+        <view class="item">
+          <image src="" class="item-img"></image>
+        </view>
+        <view class="item">
+          <image src="" class="item-img"></image>
+        </view>
+        <view class="item">
+          <image src="" class="item-img"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import Merchant from '@/api/merchants'
+  import {ERR_OK} from '@/api/base'
+  import Tips from 'common/js/tips'
+
+  export default class ShopQRcode extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '店铺二维码',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+
+    data = {
+      imageUrlHead: URIS.image,
+      shopName: '',
+      qrcode: '',
+      shareImg: ''
+    }
+
+    methods = {
+      async saveImg() {
+        let res = await Tips.confirm('确定保存该图片？', true, '')
+        if (!res) {
+          return
+        }
+        await wepy.saveImageToPhotosAlbum({filePath: this.shareImg})
+        Tips.success('保存成功')
+      }
+    }
+
+    async onLoad () {
+      Tips.loading('生成中')
+      await this.load()
+      await this.drawImage()
+      this.$apply()
+    }
+
+    async load() {
+      let res = await wepy.getSystemInfo()
+      let maxWidth = res.screenWidth
+      console.log(maxWidth)
+      let resData = await Merchant.getMerchantQRcode(false)
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      this.shopName = resData.data.shop_name
+      this.qrcode = resData.data.url
+      this.$apply()
+    }
+
+    async drawImage() {
+      const ctx = await wepy.createCanvasContext('myCanvas')
+      // 背景
+      const bg = await wepy.downloadFile({url: URIS.image + '/defaults/b-image/mine/pic-mycode@2x.png'})
+      // 小程序码
+      const qrcode = await wepy.downloadFile({url: this.qrcode})
+      let bgImg = bg.tempFilePath
+      let QR = qrcode.tempFilePath
+      ctx.drawImage(bgImg, 0, 0, 1180, 1800)
+      ctx.drawImage(QR, 700, 1348, 320, 320)
+      ctx.setFontSize(72)
+      ctx.setTextAlign('center')
+      ctx.fillText(this.shopName, 590, 155)
+      ctx.draw()
+      const res = await wepy.canvasToTempFilePath({
+        x: 0,
+        y: 0,
+        width: 1180,
+        height: 1800,
+        destWidth: 1180,
+        destHeight: 1800,
+        canvasId: 'myCanvas'
+      })
+      this.shareImg = res.tempFilePath
+      Tips.loaded()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+
+  page
+    width: 100vw
+    height: 100vh
+    background: $color-theme
+    overflow: hidden
+
+    .canvas
+      width: 1180px
+      height: 1800px
+
+    .top
+      height: 80vh
+      position: relative
+      .qrcode-img
+        width: 78.6666666666666vw
+        height: 120vw
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        border-radius: 5px
+    .down
+      height: 20vh
+      background: $color-white
+      display: flex
+      flex-direction: column
+      justify-content: center
+      .title
+        width: 100%
+        text-align: center
+        font-size: $font-size-small
+        color: $color-text-d
+        margin-bottom: 15px
+      .item-list
+        width: 100%
+        height: 14.66666666666vw
+        display: flex
+        justify-content: center
+        .item
+          width: 14.66666666666vw
+          height: 14.66666666666vw
+          margin-right: 4.5vw
+          position: relative
+          box-sizing: border-box
+          border-radius: 2px
+          border: 1px solid $color-col-line
+          .item-img
+            position: absolute
+            width: 100%
+            height: 100%
+            left: 0
+            top: 0
+            border-radius: 2px
+          .checked-img
+            position: absolute
+            width: 24px
+            height: 24px
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+        .item:last-child
+          margin-right: 0
+
+</style>

@@ -1,11 +1,11 @@
 <template>
   <view class="shop">
     <view class="shop-header">
-      <navigator url="/pages/qrCode/qrCode">
+      <view class="inCode" @tap="skipTo('/pages/qrCode/qrCode', '输码核销')">
         <image wx:if="{{imageUri}}"
                src="{{imageUri + '/defaults/b-image/page/icon-inputcode@2x.png'}}"></image>
         <view>输码核销</view>
-      </navigator>
+      </view>
       <form bindsubmit="getFormId" report-submit='true'>
         <button form-type="submit" @tap="scanCodes">
           <image wx:if="{{imageUri}}"
@@ -13,11 +13,11 @@
           <view>扫码核销</view>
         </button>
       </form>
-      <navigator url="/pages/cancel-record/cancel-record">
+      <view class="inCode" @tap="skipTo('/pages/cancel-record/cancel-record', '核销记录')">
         <image wx:if="{{imageUri}}"
                src="{{imageUri + '/defaults/b-image/page/icon-record@2x.png'}}"></image>
         <view>核销记录</view>
-      </navigator>
+      </view>
     </view>
     <view class="shop-father">
       <view class="shop-manage">
@@ -47,16 +47,14 @@
         </view>
       </view>
       <view class="shop-extend border-bottom-1px border-right-1px">
-        <navigator class="border-top-1px border-left-1px" wx:for="{{navList}}"
-                   wx:key="{{index}}"
-                   url="{{item.src}}">
+        <view class="border-top-1px border-left-1px shop-item" wx:for="{{navList}}" wx:key="{{index}}" @tap="skipTo({{item.src}}, {{item.text}})">
           <image src="{{item.image}}"></image>
           <view>{{item.text}}</view>
-        </navigator>
-
+        </view>
       </view>
     </view>
     <Toast></Toast>
+    <ServiceDue></ServiceDue>
   </view>
 </template>
 
@@ -67,6 +65,8 @@
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
+  import ServiceDue from '@/base/service-due/service-due'
+  import Merchant from '@/api/merchants'
 
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
   const BUS = {
@@ -87,7 +87,8 @@
       navigationBarTextStyle: 'white'
     }
     components = {
-      Toast: Toast
+      Toast: Toast,
+      ServiceDue
     }
     data = {
       imageUri: URIS.image,
@@ -134,7 +135,8 @@
         image: ''
       }],
       dataList: [],
-      leader: 0
+      leader: 0,
+      serviceDue: false
     }
 
     async load (time = 'yesterday', type = 'hit') {
@@ -163,7 +165,25 @@
       }
     }
 
+    async onShow() {
+      let resData = await Merchant.getService(false)
+      if (resData.error !== ERR_OK) {
+        this.serviceDue = wepy.getStorageSync('serviceDue')
+        return
+      }
+      this.serviceDue = resData.data.is_expiration
+      if (this.serviceDue) {
+        this.$invoke('ServiceDue', 'show')
+      }
+      wepy.setStorageSync('serviceDue', this.serviceDue)
+      this.$apply()
+    }
+
     async scanCodes (e) {
+      if (this.serviceDue) {
+        this.$invoke('ServiceDue', 'show')
+        return
+      }
       let res = await wepy.scanCode({onlyFromCamera: false})
       let data
       if (res.result[1] === '"') {
@@ -192,6 +212,13 @@
         await wepy.switchTab({
           url: '/pages/data/data'
         })
+      },
+      skipTo(url, txt) {
+        if ((txt === '礼包' || txt === '输码核销') && this.serviceDue) {
+          this.$invoke('ServiceDue', 'show')
+          return
+        }
+        this.$navigate(url)
       }
     }
 
@@ -222,7 +249,7 @@
     box-sizing: border-box
     height: 19.1%
     align-items: flex-end
-    navigator, > form
+    .inCode, > form
       flex: 1
       height: 100%
       position: relative
@@ -320,7 +347,7 @@
       margin-top: 5px
       box-sizing: border-box
       font-size: $font-size-small
-      > navigator
+      .shop-item
         width: 33.33%
         height: 33.33%
         background: $color-white
