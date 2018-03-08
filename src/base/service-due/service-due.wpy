@@ -1,0 +1,122 @@
+<template>
+  <view class="service-due" wx:if="{{showCover}}">
+    <view class="service-due-content">
+      <view class="service-due-top">
+        <image class="service-due-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-popup@2x.png'}}"></image>
+      </view>
+      <view class="service-due-down">
+        <view class="service-due-txt">试用到期！</view>
+        <view class="service-due-txt"><text class="red-small">￥</text><text class="red-big">4980</text> / 年</view>
+        <view class="service-due-txt">活动期间，订购1年再送2年</view>
+        <navigator hover-class="none" url="/pages/open-server/open-server">
+          <view class="service-due-btn">立即开通</view>
+        </navigator>
+      </view>
+      <view class="close-btn" @tap="hide">
+        <image class="close-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-delet@2x.png'}}"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+
+  export default class RadioBox extends wepy.component {
+    mixins = [base]
+
+    data = {
+      imageUrlHead: URIS.image,
+      showCover: false
+    }
+
+    onLoad() {
+
+    }
+
+    methods = {
+      show() {
+        this.showCover = true
+        this.$apply()
+      },
+      hide() {
+        this.showCover = false
+        this.$apply()
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .service-due
+    position: fixed
+    z-index: 1000
+    left: 0
+    top: 0
+    height: 100vh
+    width: 100vw
+    background: rgba(54, 53, 71, .5)
+
+    .service-due-content
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+      background: $color-white
+      width: 265px
+      height: 280px
+      border-radius: 10px
+      .service-due-top
+        width: 100%
+        height: 115px
+        border-radius: 10px 10px 0 0
+        overflow: hidden
+        .service-due-img
+          width: 100%
+          height: 115px
+          position: static
+      .service-due-down
+        height: 145px
+        padding-top: 20px
+        .service-due-txt
+          text-align: center
+          font-size: $font-size-small
+          color: $color-text
+          line-height: 24px
+          .red-small
+            font-size: $font-size-small
+            color: $color-assist-f
+          .red-big
+            font-size: $font-size-medium-x
+            color: $color-assist-f
+      .service-due-btn
+        width: 240px
+        height: 40px
+        margin: 0 auto
+        margin-top: 20px
+        font-size: $font-size-medium
+        color: $color-white
+        line-height: 40px
+        text-align: center
+        background: $color-orange
+        border-radius: 4px
+
+      .close-btn
+        width: 40px
+        height: 40px
+        position: absolute
+        bottom: -20vw
+        left: 50%
+        transform: translate(-50%)
+        .close-img
+          width: 25px
+          height: 25px
+          position: absolute
+          left: 50%
+          top: 50%
+          transform: translate(-50%, -50%)
+</style>

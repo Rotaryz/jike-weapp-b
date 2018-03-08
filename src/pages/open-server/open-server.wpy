@@ -1,0 +1,316 @@
+<template>
+  <view class="open-server">
+    <view class="open-server-tabBox">
+      <view class="tab-item">
+        <view class="item {{tabIdx===1?'active':''}}" @tap="changeTab(1)">自费开通</view>
+      </view>
+      <view class="tab-item">
+        <view class="item {{tabIdx===2?'active':''}}" @tap="changeTab(2)">盟主开通</view>
+      </view>
+    </view>
+    <view class="container">
+      <view class="content-box" hidden="{{tabIdx!==1}}">
+        <view class="list-item">
+          <view class="title">开通帐号</view>
+          <view class="item-txt">{{mobile}}</view>
+        </view>
+        <view class="list-item">
+          <view class="title">店铺名称</view>
+          <view class="item-txt">{{name}}</view>
+        </view>
+        <view class="list-item last">
+          <view class="title">推荐人手机号</view>
+          <input type="number" maxlength="11" class="input-txt" placeholder="输入手机号(选填)" placeholder-class="holder-class" bindinput="phoneInput" disabled="{{openSuccess}}"/>
+        </view>
+        <view class="cut-off-line"></view>
+        <view class="list-item">
+          <view class="title">支付金额</view>
+          <view class="money">4980元</view>
+        </view>
+        <view class="hint">注: 支付成功后立即生效</view>
+        <view class="submit-btn {{openSuccess?'dis':''}}" @tap="submit">{{btnTxt}}</view>
+      </view>
+      <view class="content-box" hidden="{{tabIdx!==2}}">
+        <view class="list-item">
+          <view class="title">开通帐号</view>
+          <view class="item-txt">{{mobile}}</view>
+        </view>
+        <view class="list-item">
+          <view class="title">店铺名称</view>
+          <view class="item-txt">{{name}}</view>
+        </view>
+        <view class="list-item">
+          <view class="title">激活码</view>
+          <input type="number" maxlength="9" class="input-txt-big" placeholder="输入激活码(必填)" placeholder-class="holder-class" bindinput="codeInput" disabled="{{disInput && openSuccess}}"/>
+        </view>
+        <view class="list-item">
+          <view class="title">推荐人</view>
+          <view class="item-txt black">{{Referrer}}</view>
+        </view>
+        <view class="hint">注: 支付成功后立即生效</view>
+        <view class="submit-btn {{codeTest && code.length === 8 && !openSuccess?'':'dis'}}" @tap="submit">{{btnTxt}}</view>
+      </view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import Store from '@/api/store'
+  import base from '@/common/mixins/base'
+  import URIS from 'common/js/config'
+  import Toast from '@/base/toast/toast'
+  import Merchant from '@/api/merchants'
+  import Tips from 'common/js/tips'
+  import {ERR_OK} from '@/api/base'
+
+  export default class OpenServer extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '开通服务',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      Toast
+    }
+
+    data = {
+      imageUrlHead: URIS.image,
+      tabIdx: 1,
+      code: '',
+      mobile: '',
+      name: '',
+      ReferrerMobile: '',
+      Referrer: '',
+      disInput: false,
+      codeTest: false,
+      openSuccess: false
+    }
+
+    async onShow() {
+      await this.load()
+    }
+
+    async load() {
+      let resData = await Store.getMsgList()
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      let res = resData.data
+      this.mobile = res.mobile
+      this.name = res.shop_name
+      this.loaded()
+    }
+
+    methods = {
+      changeTab(idx) {
+        if (this.openSuccess) {
+          return
+        }
+        this.tabIdx = idx * 1
+        this.$apply()
+      },
+      codeInput(e) {
+        let code = e.detail.value.replace(/\s/g, '')
+        this.code = code
+        this.$apply()
+        return code.replace(/(\d{4})/g, '$1 ')
+      },
+      phoneInput(e) {
+        this.ReferrerMobile = e.detail.value
+        this.$apply()
+      },
+      async submit() {
+        if (this.openSuccess) {
+          return
+        }
+        let isLeader, code
+        switch (this.tabIdx) {
+          case 1:
+            if (!this.phoneTest && this.ReferrerMobile !== '') {
+              this.$invoke('Toast', 'show', '请输入正确的手机号')
+              return
+            }
+            isLeader = 0
+            let codeRes = await wepy.login()
+            code = codeRes.code
+            break
+          case 2:
+            if (this.code.length !== 8 || !this.codeTest) {
+              this.$invoke('Toast', 'show', '请输入正确的邀请码')
+              return
+            }
+            isLeader = 1
+            code = ''
+            break
+        }
+        let data = {
+          mobile: this.mobile,
+          shop_name: this.name,
+          leader_open: isLeader,
+          inviter_mobile: this.ReferrerMobile,
+          inviter_code: this.code,
+          code: code
+        }
+        let resData = await Merchant.openService(data)
+        this.loaded()
+        if (resData.error !== ERR_OK) {
+          this.$invoke('Toast', 'show', resData.message)
+          return
+        }
+        let res = resData.data
+        if (this.tabIdx === 1) {
+          const {timestamp, nonceStr, signType, paySign} = res.pay_info
+          const pay = await wepy.requestPayment({
+            timeStamp: timestamp,
+            nonceStr,
+            package: res.pay_info.package,
+            signType,
+            paySign
+          })
+          if (pay.errMsg === 'requestPayment:ok') {
+            this.openSuccess = true
+            Tips.success('开通成功')
+          }
+        } else if (this.tabIdx === 2) {
+          this.openSuccess = true
+          Tips.success('开通成功')
+        }
+        this.$apply()
+      }
+    }
+
+    async _getName(code) {
+      let resData = await Merchant.getInviter(code)
+      this.loaded()
+      if (resData.error !== ERR_OK) {
+        this.codeTest = false
+        this.$invoke('Toast', 'show', resData.message)
+        return ''
+      }
+      this.codeTest = true
+      return resData.data.user_name
+    }
+
+    watch = {
+      async code() {
+        if (this.code.length >= 8) {
+          this.disInput = true
+          let res = await this._getName(this.code)
+          this.Referrer = res
+          this.disInput = false
+          this.$apply()
+        }
+      }
+    }
+
+    computed = {
+      phoneTest() {
+        let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
+        return reg.test(this.ReferrerMobile)
+      },
+      btnTxt() {
+        if (this.openSuccess) {
+          return '已开通'
+        } else {
+          return '立即开通'
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .open-server
+    width: 100%
+    height: 100vh
+    background: $color-white
+
+    .open-server-tabBox
+      height: 40px
+      width: 100%
+      background: $color-theme
+      display: flex
+      .tab-item
+        flex: 1
+        height: 40px
+        display: flex
+        justify-content: center
+        .item
+          width: 75px
+          box-sizing: border-box
+          height: 40px
+          border-bottom: 2px solid $color-theme
+          text-align: center
+          line-height: 40px
+          color: $color-white
+          font-size: $font-size-medium
+        .item.active
+          color: $color-assist-f
+          border-bottom: 2px solid $color-assist-f
+
+    .container
+      .content-box
+        .list-item
+          height: 44px
+          display: flex
+          align-items: center
+          margin-left: 12px
+          border-bottom: 0.5px solid $color-col-line
+          .title
+            font-size: $font-size-medium
+            color: $color-text-title
+            width: 100px
+          .item-txt
+            color: $color-text-d
+            font-size: $font-size-medium
+          .input-txt
+            font-size: $font-size-medium
+            color: $color-text-title
+          .input-txt-big
+            font-size: $font-size-large
+            color: $color-text-title
+            font-family: PingFangSC-Medium
+          .holder-class
+            font-size: $font-size-medium
+            color: #ccc
+          .money
+            font-size: $font-size-large
+            color: $color-assist-f
+            font-family: PingFangSC-Medium
+          .black
+            color: $color-text
+            font-size: $font-size-medium
+        .list-item.last
+          border-bottom: 0 none
+        .cut-off-line
+          height: 10px
+          background: $color-background
+        .hint
+          font-size: $font-size-small
+          color: $color-text-d
+          line-height: 40px
+          padding-left: 12px
+        .submit-btn
+          margin: 0 12px
+          margin-top: 15px
+          height: 11.7333333333vw
+          line-height: 11.7333333333vw
+          text-align: center
+          background: $color-theme
+          font-size: $font-size-medium
+          font-family: PingFangSC-Regular
+          color: $color-white
+          border-radius: 2px
+        .submit-btn.dis
+          background: rgba(54,53,71,0.50)
+
+</style>

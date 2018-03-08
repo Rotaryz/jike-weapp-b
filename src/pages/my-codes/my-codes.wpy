@@ -1,0 +1,376 @@
+<template>
+  <view class="my-codes">
+    <view class="my-codes-tabBox">
+      <view class="tab-item">
+        <view class="item {{tabIdx===1?'active':''}}" @tap="changeTab(1)">未使用</view>
+      </view>
+      <view class="tab-item">
+        <view class="item {{tabIdx===2?'active':''}}" @tap="changeTab(2)">已使用</view>
+      </view>
+    </view>
+    <view class="code-list">
+      <scroll-view scroll-y class="list-content" hidden="{{tabIdx!==1}}" bindscrolltolower="loadMoreCanUse">
+        <view class="item" wx:for="{{canUseArr}}" wx:key="{{item}}">
+          <view class="item-left">
+            <image class="item-left-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-key_unused@2x.png'}}"></image>
+          </view>
+          <view class="item-right">
+            <view class="item-code" hidden="{{!item.looking}}">{{item.beautyCode}}</view>
+            <view class="item-code" hidden="{{item.looking}}">**** ****</view>
+            <view class="item-looking" @tap="lookCode({{index}})">
+              <image class="item-lookIcon" wx:if="{{imageUrlHead}}" hidden="{{!item.looking}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-display@2x.png'}}"></image>
+              <image class="item-lookIcon" wx:if="{{imageUrlHead}}" hidden="{{item.looking}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-hide@2x.png'}}"></image>
+            </view>
+          </view>
+        </view>
+        <view class="code-hint" wx:if="{{canUseArr.length}}">请妥善保管您的激活码，若被盗用可联系客服申诉。</view>
+        <view class="nothing-box" wx:if="{{!canUseArr.length}}">
+          <image class="nothing-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+          <view class="nothing-txt">暂无数据</view>
+        </view>
+      </scroll-view>
+      <scroll-view scroll-y class="list-content-used" hidden="{{tabIdx!==2}}" bindscrolltolower="loadMoreUsed">
+        <view class="item" wx:for="{{usedArr}}" wx:key="{{item}}">
+          <view class="item-left">
+            <image class="item-left-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-key_used@2x.png'}}"></image>
+          </view>
+          <view class="item-right">
+            <view class="item-code">{{item.beautyCode}}</view>
+            <view class="item-looking">
+              <view class="shop-name">{{item.used_shop_name}}</view>
+            </view>
+          </view>
+        </view>
+        <view class="code-hint" wx:if="{{usedArr.length}}">请妥善保管您的激活码，若被盗用可联系客服申诉。</view>
+        <view class="nothing-box" wx:if="{{!usedArr.length}}">
+          <image class="nothing-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+          <view class="nothing-txt">暂无数据</view>
+        </view>
+      </scroll-view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from '@/common/mixins/base'
+  import URIS from 'common/js/config'
+  import Toast from '@/base/toast/toast'
+  import Merchant from '@/api/merchants'
+  import {ERR_OK} from '@/api/base'
+
+  export default class OpenServer extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '我的激活码',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+
+    components = {
+      Toast
+    }
+
+    data = {
+      imageUrlHead: URIS.image,
+      tabIdx: 1,
+      usedArr: [],
+      canUseArr: [],
+      openCodes: [],
+      canUseNoMore: false,
+      canUsePage: 1,
+      usedNoMore: false,
+      usedPage: 1
+    }
+
+    async onShow() {
+      await this.load()
+    }
+
+    async load() {
+      let resData = await Merchant.getInviterCode()
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      let res = resData.data
+      this.canUseArr = this._addBeautyCode(res)
+      this.loaded()
+    }
+
+    async _getCanUseCode() {
+      let resData = await Merchant.getInviterCode()
+      this.loaded()
+      if (resData.error !== ERR_OK) {
+        this.$invoke('Toast', 'show', resData.message)
+        return
+      }
+      let res = resData.data
+      let arr = this._addBeautyCode(res)
+      this.canUseArr = this._checkShowCode(arr)
+      this.$apply()
+    }
+
+    async _getUsedCode() {
+      let resData = await Merchant.getInviterCode(1)
+      this.loaded()
+      if (resData.error !== ERR_OK) {
+        this.$invoke('Toast', 'show', resData.message)
+        return
+      }
+      let res = resData.data
+      this.usedArr = this._addBeautyCode(res)
+      this.$apply()
+    }
+
+    _addBeautyCode(arr) {
+      return arr.map((item) => {
+        let code = `${item.inviter_code}`
+        item.beautyCode = code.replace(/(\d{4})/g, '$1 ')
+        return item
+      })
+    }
+
+    _checkShowCode(arr) {
+      return arr.map((item) => {
+        if (this.openCodes.indexOf(item.id) !== -1) {
+          item.looking = true
+        }
+        return item
+      })
+    }
+
+    _showCode(idx) {
+      this.canUseArr = this.canUseArr.map((item, index) => {
+        if (idx === index) {
+          item.looking = !item.looking
+          if (item.looking) {
+            this.openCodes.push(item.id)
+          } else {
+            let id = item.id
+            this.openCodes = this.openCodes.filter((item) => {
+              return item !== id
+            })
+          }
+        }
+        return item
+      })
+      this.$apply()
+    }
+
+    methods = {
+      changeTab(idx) {
+        this.tabIdx = idx * 1
+        if (this.tabIdx === 1) {
+          this._getCanUseCode()
+        } else if (this.tabIdx === 2) {
+          this._getUsedCode()
+        }
+        this.$apply()
+      },
+      lookCode(idx) {
+        this._showCode(idx)
+      },
+      async loadMoreCanUse() {
+        if (this.canUseNoMore) {
+          return
+        }
+        this.canUsePage ++
+        let resData = await Merchant.getInviterCode(0, this.canUsePage)
+        this.loaded()
+        if (resData.error !== ERR_OK) {
+          this.$invoke('Toast', 'show', resData.message)
+          return
+        }
+        let res = resData.data
+        if (res.length === 0) {
+          this.canUseNoMore = true
+          this.canUsePage --
+          this.$apply()
+          return
+        }
+        let arr = this._addBeautyCode(res)
+        this.canUseArr = [...this.canUseArr, ...arr]
+        this.$apply()
+      },
+      async loadMoreUsed() {
+        if (this.usedNoMore) {
+          return
+        }
+        this.usedPage ++
+        let resData = await Merchant.getInviterCode(1, this.usedPage)
+        this.loaded()
+        if (resData.error !== ERR_OK) {
+          this.$invoke('Toast', 'show', resData.message)
+          return
+        }
+        let res = resData.data
+        if (res.length === 0) {
+          this.usedNoMore = true
+          this.usedPage --
+          this.$apply()
+          return
+        }
+        let arr = this._addBeautyCode(res)
+        this.usedArr = [...this.usedArr, ...arr]
+        this.$apply()
+      }
+    }
+
+    computed = {
+
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .my-codes
+    width: 100%
+    height: 100vh
+    background: $color-white
+
+    .my-codes-tabBox
+      height: 7vh
+      width: 100%
+      background: $color-theme
+      display: flex
+      .tab-item
+        flex: 1
+        height: 7vh
+        display: flex
+        justify-content: center
+        .item
+          width: 75px
+          box-sizing: border-box
+          height: 7vh
+          border-bottom: 2px solid $color-theme
+          text-align: center
+          line-height: 7vh
+          color: $color-white
+          font-size: $font-size-medium
+        .item.active
+          color: $color-assist-f
+          border-bottom: 2px solid $color-assist-f
+
+    .code-list
+      height: 93vh
+      .list-content
+        height: 93vh
+        .item
+          display: flex
+          height: 60px
+          align-items: center
+          padding-left: 15px
+          .item-left
+            height: 60px
+            display: flex
+            align-items: center
+            margin-right: 15px
+            .item-left-img
+              width: 25px
+              height: 25px
+          .item-right
+            flex: 1
+            height: 60px
+            box-sizing: border-box
+            display: flex
+            justify-content: space-between
+            align-items: center
+            padding-right: 13px
+            border-bottom: 1px solid $color-row-line
+            .item-code
+              font-size: $font-size-large
+              color: $color-text
+              line-height: 60px
+              font-family: PingFangSC-Medium
+            .item-looking
+              height: 100%
+              display: flex
+              align-items: center
+              .item-lookIcon
+                width: 20px
+                height: 20px
+                padding: 5px
+
+        .code-hint
+          font-size: $font-size-small
+          color: $color-text-d
+          line-height: 32px
+          padding-left: 50px
+
+        .nothing-box
+          height: 240px
+          display: flex
+          flex-direction: column
+          justify-content: center
+          align-items: center
+          .nothing-img
+            width: 95.5px
+            height: 75.5px
+            margin-bottom: 12px
+          .nothing-txt
+            font-size: $font-size-small
+            color: $color-text-d
+
+      .list-content-used
+        height: 93vh
+        .item
+          display: flex
+          height: 60px
+          align-items: center
+          padding-left: 15px
+          .item-left
+            height: 60px
+            display: flex
+            align-items: center
+            margin-right: 15px
+            .item-left-img
+              width: 25px
+              height: 25px
+          .item-right
+            flex: 1
+            height: 60px
+            box-sizing: border-box
+            display: flex
+            justify-content: space-between
+            align-items: center
+            padding-right: 13px
+            border-bottom: 1px solid $color-row-line
+            .item-code
+              font-size: $font-size-large
+              color: $color-text-d
+              line-height: 60px
+              font-family: PingFangSC-Medium
+            .item-looking
+              height: 100%
+              display: flex
+              align-items: center
+              .shop-name
+                font-size: $font-size-medium
+                color: $color-text-d
+
+        .code-hint
+          font-size: $font-size-small
+          color: $color-text-d
+          line-height: 32px
+          padding-left: 50px
+
+        .nothing-box
+          height: 240px
+          display: flex
+          flex-direction: column
+          justify-content: center
+          align-items: center
+          .nothing-img
+            width: 95.5px
+            height: 75.5px
+            margin-bottom: 12px
+          .nothing-txt
+            font-size: $font-size-small
+            color: $color-text-d
+</style>

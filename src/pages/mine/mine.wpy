@@ -1,28 +1,55 @@
 <template>
   <view class="mine-wrapper">
+    <view class="service-hint" wx:if="{{serviceDue}}">您的店铺已到期，用户无法访问，请尽快开通服务！</view>
     <view class="mine-head">
       <view class="mine-head-avtarBox">
         <image class="mine-head-avatar" mode="aspectFill" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
-        <view class="mine-head-name">{{storeMsg.shop_name}}</view>
-        <view class="switch-store" @tap="switchStore" wx:if="{{false}}">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-switch@2x.png'}}" class="switch-store-img"></image>
-          <view class="switch-store-txt">
-            <view class="trigon"><view class="trigon-content"></view></view>
-            切换门店
+        <view class="mine-head-nameBox">
+          <view class="mine-head-name">{{storeMsg.shop_name}}</view>
+          <view class="leader-box" wx:if="{{isLeader}}">
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-leader@2x.png'}}" class="leader-icon"></image>
+            <view class="leader-txt">我是盟主</view>
           </view>
         </view>
       </view>
-      <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-1_bg@2x.png'}}" class="mine-head-border"></image>
+      <view class="mine-head-tabBox">
+        <view class="item" @tap="showQRcode">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-code@2x.png'}}" class="item-icon"></image>
+          <view class="item-txt">店铺二维码</view>
+        </view>
+        <view class="item" @tap="previewShop">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-preview@2x.png'}}" class="item-icon"></image>
+          <view class="item-txt">预览我的店</view>
+        </view>
+        <view class="middle-line"></view>
+      </view>
     </view>
     <view class="mine-list">
       <view class="mine-list-item" wx:for="{{listItems}}" wx:key="{{item}}" @tap="skip({{item.txt}}, {{item.skipUrl}})">
-        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-2_bg@2x.png'}}" class="mine-list-item-cover"></image>
         <view class="mine-list-item-left">
           <image src="{{item.url}}" class="mine-list-item-img"></image>
           <view class="mine-list-item-txt">{{item.txt}}</view>
         </view>
         <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
       </view>
+      <view class="mine-list-item" @tap="skip('开通服务', '/pages/open-server/open-server')">
+        <view class="mine-list-item-left">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-service@2x.png'}}" class="mine-list-item-img"></image>
+          <view class="mine-list-item-txt">开通服务</view>
+        </view>
+        <view class="mine-list-item-right">
+          <view class="mine-list-item-txt">{{!serviceDue && serviceType ? '已开通':''}}</view>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
+        </view>
+      </view>
+    </view>
+
+    <view class="mine-item-box" @tap="skip('激活码', '/pages/my-codes/my-codes')" wx:if="{{isLeader}}">
+      <view class="mine-list-item-left">
+        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-key@2x.png'}}" class="mine-list-item-img"></image>
+        <view class="mine-list-item-txt">我的激活码</view>
+      </view>
+      <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
     </view>
 
     <view class="logout" @tap="outLogin">
@@ -33,10 +60,14 @@
       <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
     </view>
 
-    <view class="mine-logo">
-      <image class="mine-logo-image" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/pic-logo_zanbo@2x.png'}}"></image>
-      <view class="mine-logo-txt">赞播提供技术支持</view>
+    <view class="trial-hint" @tap="skip('开通服务', '/pages/open-server/open-server')" wx:if="{{!serviceDue && !serviceType}}">
+      <image class="hint-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-banner_entrance@2x.png'}}"></image>
     </view>
+
+    <!--<view class="mine-logo">-->
+      <!--<image class="mine-logo-image" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/pic-logo_zanbo@2x.png'}}"></image>-->
+      <!--<view class="mine-logo-txt">赞播提供技术支持</view>-->
+    <!--</view>-->
     <Toast></Toast>
   </view>
 </template>
@@ -75,7 +106,12 @@
         {url: URIS.image + '/defaults/b-image/page/icon-sp_phone@2x.png', txt: '联系销售', skipUrl: '/pages/contact-sales/contact-sales'}
       ],
       storeMsg: null,
-      avatarUrl: null
+      avatarUrl: null,
+      isLeader: 0,
+      serviceDue: false,
+      serviceType: '',
+      appID: '',
+      path: ''
     }
 
     async onShow() {
@@ -90,6 +126,11 @@
       let res = resData.data
       this.storeMsg = res
       this.avatarUrl = res.logo_image
+      this.isLeader = res.is_leader
+      this.serviceDue = res.is_expiration
+      this.serviceType = res.service_version
+      this.appId = res.app_id
+      this.path = res.path
       this.loaded()
     }
 
@@ -98,6 +139,11 @@
         let skipUrl
         if (txt === '联系销售') {
           skipUrl = url + '?id=' + this.storeMsg.salesman_id
+        } else if (txt === '开通服务') {
+          if (!this.serviceDue && this.serviceType) {
+            return
+          }
+          skipUrl = url
         } else {
           skipUrl = url
         }
@@ -123,6 +169,22 @@
             this.$invoke('Toast', 'show', outRes.message)
           }
         }
+      },
+      previewShop() {
+        wx.navigateToMiniProgram({
+          appId: this.appId,
+          path: this.path,
+          extraData: {
+          },
+          envVersion: 'release',
+          success(res) {
+            // 打开成功
+            console.log(res)
+          }
+        })
+      },
+      showQRcode() {
+        this.$navigate('/pages/shop-qrcode/shop-qrcode')
       }
     }
   }
@@ -139,82 +201,85 @@
     height: 100%
     position: relative
 
+    .service-hint
+      height: 40px
+      line-height: 40px
+      padding-left: 12px
+      font-size: $font-size-medium
+      color: $color-white
+      background: $color-assist-f
+
     .mine-head
       width: 100vw
-      height: 24vw
-      background: $color-theme
-      position: relative
-      padding-top: 4vw
+      background: $color-white
+      margin-bottom: 10px
 
       .mine-head-avtarBox
+        height: 80px
         display: flex
         align-items: center
-        position: relative
 
         .mine-head-avatar
-          border: 1px solid $color-white
+          border: 0.5px solid $color-col-line
           width: 48px
           height: 48px
           border-radius: 50%
           margin-left: 12px
 
-        .mine-head-name
-          font-size: $font-size-medium
-          color: $color-white
-          margin-left: 10px
-          font-family: $font-family-regular
-
-        .switch-store
-          width: 76px
-          height: 22px
-          border: .5px solid #56546c
-          border-radius: 2px
-          position: absolute
-          top: 50%
-          transform: translate(0, -50%)
-          right: 12px
+        .mine-head-nameBox
           display: flex
-          align-items: center
+          height: 80px
+          flex-direction: column
           justify-content: center
+          margin-left: 10px
 
-          .switch-store-img
-            width: 13px
-            height: 13px
-            margin-right: 3px
-
-          .switch-store-txt
-            color: $color-white
-            font-size: $font-size-small
+          .mine-head-name
+            font-size: $font-size-medium
+            color: $color-text
             font-family: $font-family-regular
+          .leader-box
+            margin-top: 6px
+            width: 94px
+            height: 24px
+            border-radius: 12px
+            border: 1px solid $color-theme
+            display: flex
+            align-items: center
+            justify-content: center
+            .leader-icon
+              width: 15px
+              height: 15px
+              margin-right: 2px
+            .leader-txt
+              font-size: $font-size-small
+              color: $color-text
+              font-family: PingFangSC-Regular
 
-          .trigon
-            display: block
-            width: 0
-            height: 0
-            border-width: 3px 8px 3px 0
-            border-style: solid
-            border-color: transparent #56546c transparent transparent
-            position: absolute
-            left: -8px
-            top: 50%
-            transform: translate(0, -50%)
-
-            .trigon-content
-              display: block
-              width: 0
-              height: 0
-              border-width: 3px 8px 3px 0
-              border-style: solid
-              border-color: transparent $color-theme transparent transparent
-              position: absolute
-              top: -3px
-              left: 1px
-
-      .mine-head-border
-        width: 100vw
-        height: 11vw
-        position: absolute
-        bottom: 0
+      .mine-head-tabBox
+        border-top: 0.5px solid #EFEFEF
+        height: 34px
+        display: flex
+        position: relative
+        .item
+          flex: 1
+          display: flex
+          justify-content: center
+          align-items: center
+          height: 34px
+          .item-icon
+            width: 14px
+            height: 14px
+            margin-right: 5px
+          .item-txt
+            font-size: $font-size-medium
+        .middle-line
+          width: 1px
+          height: 16px
+          background: #EFEFEF
+          position: absolute
+          left: 50%
+          top: 50%
+          transform: translate(-50%, -50%)
 
     .mine-list
 
@@ -244,6 +309,16 @@
           .mine-list-item-txt
             font-size: $font-size-medium
 
+        .mine-list-item-right
+          display: flex
+          align-items: center
+          height: 100%
+
+          .mine-list-item-txt
+            font-size: $font-size-medium
+            color: $color-text-d
+            margin-right: 10px
+
         .mine-list-item-arrow
           width: 10px
           height: 10px
@@ -255,6 +330,47 @@
         height: 30px
         position: absolute
         top: 0
+
+    .mine-item-box
+      margin-top: 10px
+      height: 59px
+      display: flex
+      align-items: center
+      justify-content: space-between
+      background: $color-white
+      position: relative
+
+      .mine-list-item-cover
+        display: none
+
+      .mine-list-item-left
+        display: flex
+        align-items: center
+        height: 100%
+        margin-left: 12px
+
+        .mine-list-item-img
+          width: 25px
+          height: 25px
+          margin-right: 10px
+
+        .mine-list-item-txt
+          font-size: $font-size-medium
+
+      .mine-list-item-right
+        display: flex
+        align-items: center
+        height: 100%
+
+        .mine-list-item-txt
+          font-size: $font-size-medium
+          color: $color-text-d
+          margin-right: 10px
+
+      .mine-list-item-arrow
+        width: 10px
+        height: 10px
+        margin-right: 12px
 
     .logout
       margin-top: 10px
@@ -299,5 +415,13 @@
       .mine-logo-txt
         font-size: $font-size-small-s
         color: #c8c8c8
+
+    .trial-hint
+      width: 100%
+      height: 24.8vw
+      margin-top: 20px
+      .hint-img
+        width: 100%
+        height: 100%
 
 </style>

@@ -99,7 +99,10 @@
         'pages/create-prize/create-prize',
         'pages/exchange-editor/exchange-editor',
         'pages/apply/apply',
-        'pages/mine/mine'
+        'pages/mine/mine',
+        'pages/open-server/open-server',
+        'pages/my-codes/my-codes',
+        'pages/shop-qrcode/shop-qrcode'
       ],
       window: {
         backgroundColor: '#363547',
