@@ -1,0 +1,174 @@
+<template>
+  <view class="bind-card">
+    <view class="form-wrapper">
+      <view class="input-wrapper border-bottom-1px">
+        <view class="label">持卡人</view>
+        <view class="input">{{user_name}}</view>
+      </view>
+      <view class="input-wrapper border-bottom-1px">
+        <view class="label">银行卡号</view>
+        <input class="input" type="text" placeholder="请输入持卡人本人银行卡号" value="{{withdrawal_card}}"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light" @input="changeCard" maxlength="23"/>
+      </view>
+      <picker range="{{banks}}" range-key="name" @change="changeBank">
+        <view class="input-wrapper border-bottom-1px">
+          <view class="label">开户行</view>
+          <view class="select-wrapper">
+            <view class="name {{!bank ? 'unselected' : ''}}">{{bank ? bank : '请选择开户行'}}</view>
+            <view class="arrow-right">
+              <image wx:if="{{imageUrl}}" class="full-image"
+                     src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            </view>
+          </view>
+        </view>
+      </picker>
+    </view>
+    <view class="btn-wrapper">
+      <view class="btn {{!checkForm ? 'disable' : ''}}" @tap="save">保存</view>
+    </view>
+    <toast></toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+  import base from 'common/mixins/base'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+  import Toast from '@/base/toast/toast'
+
+  export default class BindCard extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrl: URIS.image,
+      id: 0,
+      user_name: '',
+      bank: '',
+      withdrawal_card: '',
+      banks: []
+    }
+
+    computed = {
+      checkForm() {
+        return this.user_name && this.bank && this.withdrawal_card
+      }
+    }
+
+    async onLoad() {
+      await this._getBankCardDetail()
+      await this._getBanks()
+      this.loaded()
+    }
+
+    async _getBankCardDetail() {
+      const res = await Monies.getBankCardDetail()
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.user_name = data.user_name
+        this.id = data.id ? data.id : 0
+        this.bank = data.bank ? data.bank : ''
+        this.withdrawal_card = data.withdrawal_card ? data.withdrawal_card : ''
+      }
+    }
+
+    async _getBanks() {
+      const res = await Monies.getBanks()
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.banks = data
+      }
+    }
+
+    methods = {
+      changeCard(e) {
+        let value = e.detail.value
+        if (/\S{5}/.test(value)) {
+          value = value.replace(/\s/g, '').replace(/(.{4})/g, '$1 ')
+        }
+        this.withdrawal_card = value
+      },
+      changeBank(e) {
+        const index = e.detail.value
+        this.bank = this.banks[index].name
+      },
+      async save() {
+        if (!this.checkForm) {
+          return
+        }
+        const data = {
+          bank: this.bank,
+          withdrawal_card: this.withdrawal_card
+        }
+        const res = this.id ? await Monies.updateBankCard(this.id, data) : await Monies.addBankCards(data)
+        this.loaded()
+        if (res.error === ERR_OK) {
+          this.$invoke('toast', 'show', '保存成功')
+          setTimeout(() => {
+            this.$back()
+          }, 2000)
+        }
+      }
+    }
+
+    components = {
+      'toast': Toast
+    }
+
+    config = {
+      navigationBarTitleText: '银行卡',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .bind-card
+    .arrow-right
+      width: 10px
+      height: 10px
+    .form-wrapper
+      padding-left: 12px
+      .input-wrapper
+        display: flex
+        align-items: center
+        justify-content: space-between
+        height: 45px
+        padding-right: 12px
+        .label
+          flex: 0 0 91px
+          width: 91px
+          font-size: $font-size-medium
+        .input
+          flex: 1
+          font-size: $font-size-medium
+        .select-wrapper
+          display: flex
+          align-items: center
+          .name
+            font-size: $font-size-medium
+            color: $color-text
+            &.unselected
+              color: $color-text-d
+    .btn-wrapper
+      margin-top: 20px
+      padding: 0 12px
+      .btn
+        display: flex
+        align-items: center
+        justify-content: center
+        height: 44px
+        margin-bottom: 12px
+        border-radius: 4px
+        font-size: $font-size-medium
+        color: $color-white
+        background-color: $color-theme
+        &.disable
+          background-color: $color-mask-bgc
+</style>

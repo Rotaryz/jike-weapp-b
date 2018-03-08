@@ -1,0 +1,280 @@
+<template>
+  <view class="asset">
+    <view class="tab-wrapper">
+      <view class="tab-content">
+        <view class="tab {{activeTab === 1 ? 'active' : ''}}" @tap="clickTab(1)">收入</view>
+        <view class="tab {{activeTab === 2 ? 'active' : ''}}" @tap="clickTab(2)">支出</view>
+      </view>
+      <view class="tab-line {{activeTab === 2 ? 'tab2' : ''}}">
+        <view class="line"></view>
+      </view>
+    </view>
+    <view class="container">
+      <view class="income-wrapper" wx:if="{{activeTab === 1}}">
+        <view class="top-wrapper">
+          <view class="content">
+            <view class="t-content">可提现(元) <image wx:if="{{imageUrl}}" class="help" src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image></view>
+            <view class="b-content">¥{{remaining}}</view>
+            <base-modal type="tip" title="提示信息">
+              <view class="tip-modal" slot="content">
+                <text class="text">当顾客使用优惠券或优惠券过期，相关订单资金即转入可提现账户。</text>
+              </view>
+            </base-modal>
+
+          </view>
+          <navigator url="/pages/withdrawal/withdrawal" class="btn">提现</navigator>
+          <view class="tip">每天可提现一次，每笔限额1万元</view>
+        </view>
+        <view class="split-line border-bottom-1px border-top-1px"></view>
+        <view class="list-wrapper">
+          <navigator url="/pages/present-record/present-record" class="item border-bottom-1px">
+            <view class="label">提现记录</view>
+            <view class="content-wrapper">
+              <view class="arrow-right">
+                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+              </view>
+            </view>
+          </navigator>
+          <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
+            <view class="label">累计收入</view>
+            <view class="content-wrapper">
+              <view class="content">￥{{totalRemaining}}</view>
+              <view class="arrow-right">
+                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+              </view>
+            </view>
+          </navigator>
+        </view>
+      </view>
+      <view class="outcome-wrapper" wx:if="{{activeTab === 2}}">
+        <view class="top-wrapper">
+          <view class="t-content">已支出(元)</view>
+          <view class="b-content">￥{{outcome}}</view>
+        </view>
+        <view class="split-line border-bottom-1px border-top-1px"></view>
+        <view class="list-wrapper">
+          <view class="header block-title border-bottom-1px">支出列表</view>
+          <view class="list" wx:if="{{outcomeList.length > 0}}">
+            <view class="item-wrapper border-bottom-1px">
+              <view class="left-content">
+                <view class="t-content">购买服务</view>
+                <view class="b-content">2018-02-10  17:00</view>
+              </view>
+              <view class="right-content">-100</view>
+            </view>
+          </view>
+          <view class="empty-wrapper" wx:if="{{outcomeList.length === 0}}">
+            <view class="image-wrapper">
+              <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
+            </view>
+            <view class="desc">暂无数据</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+  import BaseModal from '@/base/base-modal/base-modal'
+
+  export default class Asset extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrl: URIS.image,
+      activeTab: 1,
+      remaining: '0.00',
+      totalRemaining: '0.00',
+      outcome: '0.00',
+      outcomeList: []
+    }
+
+    async onShow() {
+      await this.load()
+    }
+
+    async load() {
+      await this._getWithdrawalInfo()
+      this.loaded()
+    }
+
+    async _getWithdrawalInfo() {
+      const res = await Monies.getWithdrawalInfo()
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.remaining = data.remaining
+        this.totalRemaining = data.total_remaining
+        this.$apply()
+      }
+    }
+
+    methods = {
+      clickTab(tabId) {
+        this.activeTab = Math.floor(tabId)
+      },
+      showTip() {
+        this.$invoke('base-modal', 'show')
+      }
+    }
+
+    components = {
+      'base-modal': BaseModal
+    }
+
+    config = {
+      navigationBarTitleText: '财务管理',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  page
+    background-color: $color-white
+  .asset
+    .tip-modal
+      padding: 16px 10px 0 10px
+      .text
+        font-size: $font-size-medium
+        color: $color-text
+    .arrow-right
+      width: 10px
+      height: 10px
+    .split-line
+      height: 10px
+      background: $color-background
+    .tab-wrapper
+      position: relative
+      height: 44px
+      background-color: $color-theme
+      .tab-content
+        display: flex
+        align-items: center
+        .tab
+          flex: 1
+          line-height: 44px
+          text-align: center
+          font-size: $font-size-medium
+          color: $color-white
+          transition: all .3s
+          &.active
+            color: $color-assist-f
+      .tab-line
+        position: absolute
+        bottom: 0
+        display: flex
+        justify-content: center
+        width: 50%
+        height: 2px
+        transition: all .3s
+        &.tab2
+          transform: translate3d( 100%, 0, 0)
+        .line
+          width: 65px
+          height: 2px
+          background-color: $color-assist-f
+    .container
+      .income-wrapper
+        .top-wrapper
+          height: 215px
+          padding: 0 12px
+          box-sizing: border-box
+          .content
+            display: flex
+            flex-direction: column
+            align-items: center
+            justify-content: center
+            height: 127px
+            .t-content
+              display: flex
+              align-items: center
+              margin-bottom: 5px
+              font-size: $font-size-medium
+              color: $color-text
+              .help
+                width: 16px
+                height: 16px
+                margin-left: 5px
+            .b-content
+              font-family: $font-family-bold
+              font-size: 30px
+              color: $color-assist-tr
+          .btn
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 100%
+            height: 44px
+            margin-bottom: 12px
+            border-radius: 4px
+            font-size: $font-size-medium
+            color: $color-white
+            background-color: $color-theme
+          .tip
+            font-size: $font-size-small
+            color: $color-text-d
+        .list-wrapper
+          padding-left: 12px
+          .item
+            display: flex
+            align-items: center
+            justify-content: space-between
+            height: 44.5px
+            padding-right: 12px
+            font-size: 14px
+            color: $color-text-td
+            .content-wrapper
+              display: flex
+              align-items: center
+      .outcome-wrapper
+        .top-wrapper
+          display: flex
+          flex-direction: column
+          align-items: center
+          justify-content: center
+          height: 127px
+          .t-content
+            margin-bottom: 5px
+            font-size: $font-size-medium
+            color: $color-text
+          .b-content
+            font-family: $font-family-bold
+            font-size: 30px
+            color: $color-assist-tr
+        .list-wrapper
+          padding-left: 12px
+          .header
+            height: 45.5px
+            font-size: $font-size-medium-x
+            color: $color-text-td
+            background-color: transparent
+          .list
+            .item-wrapper
+              display: flex
+              align-items: center
+              justify-content: space-between
+              height: 49px
+              padding-right: 12px
+              .left-content
+                .t-content
+                  margin-bottom: 4.5px
+                  font-size: $font-size-medium
+                  color: $color-text-td
+                .b-content
+                  font-size: $font-size-small-s
+                  color: $color-text-d
+              .right-content
+                font-size: $font-size-medium
+                color: $color-text-td
+</style>

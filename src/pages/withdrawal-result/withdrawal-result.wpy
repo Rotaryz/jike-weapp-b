@@ -1,0 +1,93 @@
+<template>
+  <view class="withdrawal-result">
+    <view class="content-wrapper">
+      <view class="left">
+        <image class="progress" wx:if="{{imageUrl}}" src="{{imageUrl + '/defaults/b-image/page/pic-finance_current2@2x.png'}}"></image>
+      </view>
+      <view class="right">
+        <view class="t-content">
+          <view class="title">您的提现申请已提交</view>
+          <text class="sub-title">{{date}}</text>
+        </view>
+        <view class="b-content">
+          <view class="title">系统处理中</view>
+          <text class="sub-title">预计3天内到账
+            节假日期间可能延迟到账，请耐心等待</text>
+        </view>
+      </view>
+    </view>
+    <view class="btn-wrapper">
+      <view class="btn" @tap="finish">完成</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+
+  export default class WithdrawalResult extends wepy.page {
+    data = {
+      imageUrl: URIS.image,
+      date: ''
+    }
+
+    onLoad(option) {
+      this.date = option.date
+    }
+
+    methods = {
+      finish() {
+        this.$back(2)
+      }
+    }
+
+    config = {
+      navigationBarTitleText: '提现',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  page
+    background-color: $color-white
+  .withdrawal-result
+    .content-wrapper
+      display: flex
+      padding-top: 34.5px
+      padding-bottom: 40.5px
+      .left
+        padding-top: 3px
+        padding-left: 40px
+        .progress
+          width: 10px
+          height: 71.5px
+      .right
+        margin-left: 10px
+        .t-content, .b-content
+          .title
+            font-size: $font-size-medium
+          .sub-title
+            font-size: $font-size-small
+            color: $color-text-d
+        .b-content
+          margin-top: 30px
+    .btn-wrapper
+      padding: 0 12px
+      .btn
+        display: flex
+        align-items: center
+        justify-content: center
+        height: 44px
+        margin-bottom: 12px
+        border-radius: 4px
+        font-size: $font-size-medium
+        color: $color-white
+        background-color: $color-theme
+</style>

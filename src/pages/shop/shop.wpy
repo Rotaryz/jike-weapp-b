@@ -125,8 +125,9 @@
         image: URIS.image + '/defaults/b-image/page/icon-evaluate@2x.png',
         src: '/pages/evaluate/evaluate'
       }, {
-        text: '',
-        image: ''
+        text: '资产',
+        image: URIS.image + '/defaults/b-image/page/icon-asset@2x.png',
+        src: '/pages/asset/asset'
       }, {
         text: '',
         image: ''
@@ -185,6 +186,7 @@
         return
       }
       let res = await wepy.scanCode({onlyFromCamera: false})
+      console.log(res)
       let data
       if (res.result[1] === '"') {
         res = JSON.parse(res.result)

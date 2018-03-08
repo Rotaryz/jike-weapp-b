@@ -1,0 +1,300 @@
+<template>
+  <view class="withdrawal">
+    <navigator url="/pages/bind-card/bind-card" class="card-wrapper">
+      <view class="left">
+        <view class="icon-wrapper">
+          <image class="full-image" wx:if="{{imageUrl && !card.image_url}}"
+                 src="{{imageUrl + '/defaults/b-image/page/icon-finance_card@2x.png'}}"></image>
+          <image class="full-image" wx:if="{{card.image_url}}" src="{{card.image_url}}"></image>
+        </view>
+        <view class="content {{card.withdrawal_card ? 'have' : ''}}">
+          {{card.withdrawal_card ? card.withdrawal_card : '点击添加银行卡'}}
+        </view>
+      </view>
+      <view class="right">
+        <view class="content">{{card.user_name}}</view>
+        <view class="arrow-right">
+          <image wx:if="{{imageUrl}}" class="full-image"
+                 src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+        </view>
+      </view>
+    </navigator>
+    <view class="split-line border-bottom-1px border-top-1px"></view>
+    <view class="container">
+      <view class="price-wrapper">
+        <view class="input-wrapper border-bottom-1px">
+          <view class="font">提现金额</view>
+          <view class="money">¥</view>
+          <input type="digit" class="input" value="{{money}}" disabled="{{disableWithdrawal}}" @input="changeMoney"/>
+        </view>
+        <view class="can-withdrawal" wx:if="{{!poundage}}">
+          <text class="price-amount">可提现金额￥{{remaining}}</text>
+          <text class="click-all" @tap="withdrawalAll">全部提现</text>
+        </view>
+        <view class="poundage" wx:if="{{poundage}}">手续费 ¥ {{poundage}}</view>
+      </view>
+      <view class="btn-wrapper">
+        <view class="btn {{!money || card.length === 0 || !canWithdrawal ? 'disable' : ''}}" @tap="checkValid">提现</view>
+        <view class="tip">微信按提现金额0.1%收取手续费，最低1元，最高10元。</view>
+      </view>
+    </view>
+    <toast></toast>
+    <base-modal title="确认信息" @confirm.user="withdrawal">
+      <view class="modal-wrapper" slot="content">
+        <view class="item-wrapper border-bottom-1px">
+          <view class="left">到账金额：</view>
+          <view class="right">￥{{money}}</view>
+        </view>
+        <view class="item-wrapper border-bottom-1px">
+          <view class="left">手续费：</view>
+          <view class="right">￥{{poundage}}</view>
+        </view>
+        <view class="item-wrapper">
+          <view class="left">余额：</view>
+          <view class="right">￥{{caculateBalance}}</view>
+        </view>
+      </view>
+    </base-modal>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+  import Monies from 'api/monies'
+  import {ERR_OK} from 'api/base'
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import BaseModal from '@/base/base-modal/base-modal'
+
+  export default class Withdrawal extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrl: URIS.image,
+      card: [],
+      canWithdrawal: false,
+      remaining: '0.00',
+      poundage: '',
+      money: '',
+      balance: ''
+    }
+
+    async onShow() {
+      await this._getWithdrawalInfo()
+      this.loaded()
+    }
+
+    computed = {
+      disableWithdrawal() {
+        return Math.abs(this.remaining) < 1
+      },
+      caculateBalance() {
+        return Math.abs(this.remaining) - Math.abs(this.money)
+      }
+    }
+
+    async _getWithdrawalInfo() {
+      const res = await Monies.getWithdrawalInfo()
+      if (res.error === ERR_OK) {
+        const data = res.data
+        this.remaining = Math.abs(data.remaining)
+        this.canWithdrawal = data.can_withdrawal
+        this.card = data.withdrawal_info.length !== 0 ? data.withdrawal_info : []
+        this.$apply()
+      }
+    }
+
+    _caculate() {
+      const money = this.money
+      if (money / 1000 < 1) {
+        this.poundage = 1
+      } else if (money / 1000 > 10) {
+        this.poundage = 10
+      } else {
+        this.poundage = money / 1000
+      }
+      this.$apply()
+    }
+
+    methods = {
+      changeMoney(e) {
+        const money = e.detail.value
+        if (money > this.remaining) {
+          this.money = this.remaining
+          this._caculate()
+          return this.money
+        }
+        if (money === '') {
+          this.money = ''
+          this.poundage = ''
+        } else if (money < 1) {
+          this.money = 1
+          this.poundage = 1
+          return 1
+        } else if (money > 10000) {
+          this.money = 10000
+          this.poundage = 10
+          return 10000
+        } else {
+          this.money = money
+          this._caculate()
+        }
+      },
+      withdrawalAll() {
+        if (this.remaining < 1) {
+          return
+        } else if (this.remaining > 10000) {
+          this.money = 10000
+          this._caculate()
+          return
+        }
+        this.money = this.remaining
+        this._caculate()
+      },
+      checkValid() {
+        if (!this.money || this.card.length === 0) {
+          return
+        }
+        if (!this.canWithdrawal) {
+          this.$invoke('toast', 'show', '今日提现次数为0')
+          return
+        }
+        this.$invoke('base-modal', 'show')
+      },
+      async withdrawal() {
+        const res = await Monies.applyWithdrawal({money: this.money})
+        this.loaded()
+        if (res.error === ERR_OK) {
+//          this.$invoke('toast', 'show', '提现成功')
+//          setTimeout(() => {
+          this.$navigate(`/pages/withdrawal-result/withdrawal-result?date=${res.message}`)
+//          }, 2000)
+        } else {
+          this.$invoke('toast', 'show', res.message)
+        }
+      }
+    }
+
+    components = {
+      'toast': Toast,
+      'base-modal': BaseModal
+    }
+
+    config = {
+      navigationBarTitleText: '提现',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#363547'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  page
+    background-color: $color-white
+
+  .withdrawal
+    .arrow-right
+      width: 10px
+      height: 10px
+    .split-line
+      height: 10px
+      background: $color-background
+    .card-wrapper
+      display: flex
+      align-items: center
+      justify-content: space-between
+      height: 45px
+      padding: 0 12px
+      .left
+        display: flex
+        align-items: center
+        .icon-wrapper
+          width: 16px
+          height: 16px
+        .content
+          margin-left: 5px
+          font-size: $font-size-medium
+          color: $color-text-d
+          &.have
+            color: $color-text
+      .right
+        display: flex
+        align-items: center
+        .content
+          font-size: $font-size-medium
+          color: $color-text
+    .container
+      .price-wrapper
+        padding-left: 12px
+        .input-wrapper
+          display: flex
+          align-items: center
+          height: 50px
+          padding-right: 12px
+          .font
+            flex: 0 0 86px
+            width: 86px
+            font-size: $font-size-medium
+            color: $color-text-td
+          .money
+            margin-right: 5px
+            font-family: $font-family-regular
+            font-size: $font-size-large-xx
+            color: $color-text
+          .input
+            flex: 1
+            font-family: $font-family-regular
+            font-size: $font-size-large-xx
+            color: $color-text
+        .can-withdrawal
+          margin-top: 13.5px
+          font-size: $font-size-medium
+          .price-amount
+            margin-right: 10px
+            color: $color-text-d
+          .click-all
+            color: $color-text
+        .poundage
+          margin-top: 13.5px
+          font-size: $font-size-medium
+          color: $color-text-d
+      .btn-wrapper
+        margin-top: 30px
+        padding: 0 12px
+        .btn
+          display: flex
+          align-items: center
+          justify-content: center
+          height: 44px
+          margin-bottom: 12px
+          border-radius: 4px
+          font-size: $font-size-medium
+          color: $color-white
+          background-color: $color-theme
+          &.disable
+            background-color: $color-mask-bgc
+        .tip
+          font-size: $font-size-small
+          color: $color-text-d
+    .modal-wrapper
+      padding: 0 10px
+      .item-wrapper
+        display: flex
+        align-items: center
+        height: 44px
+        font-size: $font-size-medium
+        &:last-child
+          .left, .right
+            color: $color-text-d
+        .left
+          flex: 0 0 75px
+          width: 75px
+          text-align: right
+        .right
+          flex: 1
+</style>

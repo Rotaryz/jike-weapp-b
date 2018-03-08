@@ -56,6 +56,13 @@
     config = {
       pages: [
         'pages/loading/loading',
+        'pages/asset/asset',
+        'pages/withdrawal/withdrawal',
+        'pages/withdrawal-result/withdrawal-result',
+        'pages/bind-card/bind-card',
+        'pages/asset-detail/asset-detail',
+        'pages/total-income/total-income',
+        'pages/present-record/present-record',
         'pages/logIn/logIn',
         'pages/forget/forget',
         'pages/register/register',

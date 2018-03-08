@@ -204,7 +204,6 @@
       progress
         width: 36vw
         margin: 0 1.44vw
-        transform: translateY(-3px)
       .start-single
         text-align :left
 
