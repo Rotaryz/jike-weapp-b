@@ -50,19 +50,17 @@
     methods = {
       async submitOk() {
         if (this.index !== -1) {
-          this.$parent.globalData.coupon = this.couponList[this.num]
-          this.$parent.globalData.couIndex = this.index
+          this.$parent.updateGlobalData('coupon', this.couponList[this.num])
+          this.$parent.updateGlobalData('couIndex', this.index)
         } else {
           this.couponList.forEach((item) => {
             if (item['checked']) {
               this.moreList.push(item)
             }
           })
-          this.$parent.globalData.coupon = this.moreList
+          this.$parent.updateGlobalData('coupon', this.moreList)
         }
-        await wepy.navigateBack({
-          delta: 1
-        })
+        this.$back()
       }
     }
     events = {
