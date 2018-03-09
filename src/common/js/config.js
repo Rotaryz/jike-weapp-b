@@ -22,21 +22,21 @@ const version = '/v2'
  * 研发环境
  * @type {{image: string, login: string, api: string}}
  */
-// const URLS = {
-//   image: 'https://img.jerryf.cn',
-//   login: 'https://dev.jike-jwt.jerryf.cn',
-//   api: 'https://dev.jike-backend-api.jerryf.cn' + version
-// }
+const URLS = {
+  image: 'https://img.jerryf.cn',
+  login: 'https://dev.jike-jwt.jerryf.cn',
+  api: 'https://dev.jike-backend-api.jerryf.cn' + version
+}
 
 /**
  * 测试环境
  * @type {{image: string, login: string, api: string}}
  */
-const URLS = {
-  image: 'https://img.jkweixin.net',
-  login: 'https://jwt.jkweixin.net',
-  api: 'https://backend-api.jkweixin.net' + version
-}
+// const URLS = {
+//   image: 'https://img.jkweixin.net',
+//   login: 'https://jwt.jkweixin.net',
+//   api: 'https://backend-api.jkweixin.net' + version
+// }
 // const URLS = {
 //   image: 'https://img.live.gytcrm.com',
 //   login: 'https://jwt.live.gytcrm.com',

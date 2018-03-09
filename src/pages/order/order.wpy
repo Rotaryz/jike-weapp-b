@@ -48,7 +48,7 @@
               <view class="order-title">手机号码: {{item.customer_phone}}</view>
             </view>
             <text>
-              {{navList[navNum].title}}
+              {{statusTxt[item.status]}}
             </text>
           </view>
           <view class="order-bottom">
@@ -136,7 +136,8 @@
       searchValue: '',
       datail: {},
       page: 1,
-      nothing: false
+      nothing: false,
+      statusTxt: ['待付款', '待使用', '待评价', '退款中', '退款成功', '已评价', '已关闭', '退款失败', '退款失败', '已关闭']
     }
 
     _showBlank (res) {
