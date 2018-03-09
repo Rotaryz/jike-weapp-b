@@ -5,7 +5,7 @@
       <view class="mine-head-avtarBox">
         <image class="mine-head-avatar" mode="aspectFill" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
         <view class="mine-head-nameBox">
-          <view class="mine-head-name">{{storeMsg.shop_name}}</view>
+          <view class="mine-head-name">{{storeMsg.shop_name}}开通服务开通服务</view>
           <view class="leader-box" wx:if="{{isLeader}}">
             <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-leader@2x.png'}}" class="leader-icon"></image>
             <view class="leader-txt">我是盟主</view>
@@ -229,8 +229,7 @@
         .mine-head-nameBox
           display: flex
           height: 80px
-          flex-direction: column
-          justify-content: center
+          align-items: center
           margin-left: 10px
 
           .mine-head-name
@@ -238,11 +237,11 @@
             color: $color-text
             font-family: $font-family-regular
           .leader-box
-            margin-top: 6px
             width: 94px
             height: 24px
+            margin-left: 10px
             border-radius: 12px
-            border: 1px solid $color-theme
+            border: 0.5px solid $color-col-line
             display: flex
             align-items: center
             justify-content: center

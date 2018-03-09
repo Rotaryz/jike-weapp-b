@@ -2,10 +2,10 @@
   <view class="shop-qrcode">
     <canvas canvas-id="myCanvas" class="canvas" hidden="{{true}}"></canvas>
     <view class="top">
-      <image class="qrcode-img" src="{{shareImg}}" wx:if="{{shareImg}}" @longpress="saveImg"></image>
+      <image class="qrcode-img" src="{{shareImg}}" wx:if="{{shareImg}}" @tap="saveImg"></image>
     </view>
     <view class="down">
-      <view class="title">长按上图保存二维码发送给好友</view>
+      <view class="title">选择模板后点击大图预览</view>
       <view class="item-list">
         <view class="item">
           <image src="{{shareImg}}" class="item-img" mode="aspectFill"></image>
@@ -54,12 +54,13 @@
 
     methods = {
       async saveImg() {
-        let res = await Tips.confirm('确定保存该图片？', true, '')
-        if (!res) {
-          return
-        }
-        await wepy.saveImageToPhotosAlbum({filePath: this.shareImg})
-        Tips.success('保存成功')
+//        let res = await Tips.confirm('确定保存该图片？', true, '')
+//        if (!res) {
+//          return
+//        }
+//        await wepy.saveImageToPhotosAlbum({filePath: this.shareImg})
+//        Tips.success('保存成功')
+        await wepy.previewImage({urls: [this.shareImg]})
       }
     }
 
