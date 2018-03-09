@@ -3,11 +3,11 @@
     <view class="salesMsg">
       <view class="salesMsg-left">
         <view class="avatarBox">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + (saleMsg.user_image?saleMsg.user_image:'/defaults/b-image/page/pic-default_portrait@2x.png')}}" class="avatarImg"></image>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-default_portrait@2x.png'}}" class="avatarImg"></image>
         </view>
-        <view class="sales-name">{{saleMsg.user_name?saleMsg.user_name:'集客商家助手'}}</view>
+        <view class="sales-name">集客客服</view>
       </view>
-      <view class="salesMsg-complaint" @tap="showCover" wx:if="{{salesmanId}}">投诉</view>
+      <view class="salesMsg-complaint" @tap="showCover">反馈</view>
     </view>
     <view class="salesMsg-tel">
       <view class="salesMsg-tel-left">
@@ -19,10 +19,10 @@
 
     <view class="complaint-cover" wx:if="{{complaintIn}}">
       <view class="complaint-center">
-        <view class="complaint-center-head">投诉</view>
+        <view class="complaint-center-head">反馈</view>
         <view class="complaint-center-body">
-          <view class="complaint-center-body-title">投诉对象： {{saleMsg.user_name}}</view>
-          <textarea placeholder="请输入投诉内容" placeholder-class="complaint-placeholder" class="complaint-input" bindblur="complaintChange"></textarea>
+          <view class="complaint-center-body-title">反馈意见：</view>
+          <textarea placeholder="请输入反馈内容" placeholder-class="complaint-placeholder" class="complaint-input" bindinput="complaintChange"></textarea>
         </view>
         <view class="foot-btnBox border-top-1px">
           <view class="prizeItem-saveBtn border-right-1px firstBtn" @tap="cancleMsg">取消</view>
@@ -40,7 +40,6 @@
   import Account from '@/api/account'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
-  import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
   import {ERR_OK} from '@/api/base'
 
@@ -61,19 +60,14 @@
     data = {
       imageUrlHead: URIS.image,
       complaintIn: false,
-      saleMsg: null,
-      mobile: '11111111111',
-      complaintInTxt: '',
-      salesmanId: ''
+      mobile: '',
+      complaintInTxt: ''
     }
 
     methods = {
       showCover() {
-        if (this.salesmanId) {
-          this.complaintIn = true
-        } else {
-          this.$invoke('Toast', 'show', '请先联系客服购买哦')
-        }
+        this.complaintIn = true
+        this.$apply()
       },
       call() {
         let phoneNum = this.mobile
@@ -93,43 +87,43 @@
       async saveMsg() {
         if (this.complaintInTxt.length > 0) {
           let data = {
-            salesman_id: this.salesmanId,
+            salesman_id: 0,
             content: this.complaintInTxt
           }
           let res = await Account.complaint(data)
           this.loaded()
           if (res.error === ERR_OK) {
-            Tips.success('投诉成功')
+            this.$invoke('Toast', 'show', '感谢您的建议,客服人员会尽快处理')
             this.complaintIn = false
             this.$apply()
           } else {
             this.$invoke('Toast', 'show', res.message)
           }
         } else {
-          this.$invoke('Toast', 'show', '请填写投诉内容')
+          this.$invoke('Toast', 'show', '请填写反馈内容')
         }
       }
     }
 
-    async onLoad(option) {
-      let id = option.id * 1
-      await this.load(id)
+    onLoad(option) {
+      this.mobile = option.phone
+      this.$apply()
     }
 
-    async load(id) {
-      if (id) {
-        let res = await Account.getSalesMsg(id)
-        this.loaded()
-        if (res.error !== ERR_OK) {
-          this.saleMsg = {}
-          return
-        }
-        this.saleMsg = res.data
-        this.mobile = res.data.mobile
-        this.salesmanId = id
-        this.$apply()
-      }
-    }
+//    async load(id) {
+//      if (id) {
+//        let res = await Account.getSalesMsg(id)
+//        this.loaded()
+//        if (res.error !== ERR_OK) {
+//          this.saleMsg = {}
+//          return
+//        }
+//        this.saleMsg = res.data
+//        this.mobile = res.data.mobile
+//        this.salesmanId = id
+//        this.$apply()
+//      }
+//    }
   }
 </script>
 
