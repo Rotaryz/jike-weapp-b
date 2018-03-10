@@ -167,15 +167,16 @@
     }
 
     async onShow() {
+      await this.showLoad()
+    }
+
+    async showLoad() {
       let resData = await Merchant.getService(false)
       if (resData.error !== ERR_OK) {
         this.serviceDue = wepy.getStorageSync('serviceDue')
         return
       }
       this.serviceDue = resData.data.is_expiration
-      if (this.serviceDue) {
-        this.$invoke('ServiceDue', 'show')
-      }
       wepy.setStorageSync('serviceDue', this.serviceDue)
       this.$apply()
     }
@@ -226,6 +227,10 @@
     async onLoad () {
       this.showTime = 0
       await this.load()
+      await this.showLoad()
+      if (this.serviceDue) {
+        this.$invoke('ServiceDue', 'show')
+      }
       this.$apply()
     }
   }
