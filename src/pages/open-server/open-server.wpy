@@ -93,18 +93,28 @@
       openSuccess: false
     }
 
-    async onShow() {
+    async onLoad() {
       await this.load()
     }
 
     async load() {
+      let shopMsg = wepy.getStorageSync('shopMsg')
+      if (shopMsg && shopMsg.account) {
+        this.mobile = shopMsg.account
+        this.name = shopMsg.shopName
+        return
+      }
       let resData = await Store.getMsgList()
       if (resData.error !== ERR_OK) {
         return
       }
       let res = resData.data
-      this.mobile = res.mobile
+      this.mobile = res.account
       this.name = res.shop_name
+      wepy.setStorageSync('shopMsg', {
+        account: res.account,
+        shopName: res.shop_name
+      })
       this.loaded()
     }
 

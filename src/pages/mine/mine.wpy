@@ -138,6 +138,10 @@
       this.serviceType = res.service_version
       this.appId = res.app_id
       this.path = res.path
+      wepy.setStorageSync('shopMsg', {
+        account: res.account,
+        shopName: res.shop_name
+      })
       this.loaded()
     }
 
