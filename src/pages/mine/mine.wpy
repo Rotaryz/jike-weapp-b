@@ -138,6 +138,10 @@
       this.serviceType = res.service_version
       this.appId = res.app_id
       this.path = res.path
+      wepy.setStorageSync('shopMsg', {
+        account: res.account,
+        shopName: res.shop_name
+      })
       this.loaded()
     }
 
@@ -282,7 +286,7 @@
                 font-family: PingFangSC-Regular
 
         .mine-head-tabBox
-          border-top: 0.5px solid #DEDEDE
+          border-top: 0.5px solid #E7EAF1
           height: 36%
           box-sizing: border-box
           display: flex
@@ -302,7 +306,7 @@
           .middle-line
             width: 0.5px
             height: 16px
-            background: #DEDEDE
+            background: #E7EAF1
             position: absolute
             left: 50%
             top: 50%

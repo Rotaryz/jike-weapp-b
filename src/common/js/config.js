@@ -22,11 +22,11 @@ const version = '/v2'
  * 研发环境
  * @type {{image: string, login: string, api: string}}
  */
-const URLS = {
-  image: 'https://img.jerryf.cn',
-  login: 'https://dev.jike-jwt.jerryf.cn',
-  api: 'https://dev.jike-backend-api.jerryf.cn' + version
-}
+// const URLS = {
+//   image: 'https://img.jerryf.cn',
+//   login: 'https://dev.jike-jwt.jerryf.cn',
+//   api: 'https://dev.jike-backend-api.jerryf.cn' + version
+// }
 
 /**
  * 测试环境
@@ -47,11 +47,11 @@ const URLS = {
  * 生产环境
  * @type {{image: string, login: string, api: string}}
  */
-// const URIS = {
-//   image: 'https://img.jkweixin.com',
-//   login: 'https://jwt.jkweixin.com',
-//   api: 'https://backend-api.jkweixin.com' + version
-// }
+const URLS = {
+  image: 'https://img.jkweixin.com',
+  login: 'https://jwt.jkweixin.com',
+  api: 'https://backend-api.jkweixin.com' + version
+}
 
 class URIS {
   constructor() {
