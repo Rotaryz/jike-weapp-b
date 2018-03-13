@@ -90,10 +90,10 @@
         return Math.abs(this.remaining) < 1
       },
       caculateBalance() {
-        return Math.abs(this.remaining) - Math.abs(this.money)
+        return (Math.abs(this.remaining) - Math.abs(this.money)).toFixed(2)
       },
       caculateRealMoney() {
-        return Math.abs(this.money) - Math.abs(this.poundage)
+        return Math.abs(this.money) - Math.abs(this.poundage).toFixed(2)
       }
     }
 
@@ -115,7 +115,7 @@
       } else if (money / 1000 > 10) {
         this.poundage = 10
       } else {
-        this.poundage = money / 1000
+        this.poundage = (money / 1000).toFixed(2)
       }
       this.$apply()
     }
