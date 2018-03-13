@@ -17,7 +17,7 @@
                      wx:if="{{item.promotion_type==='exchange'}}" mode="aspectFit"></image>
               <view class="prizeItem-top-left-Msg"
                     wx:if="{{item.promotion_type!=='exchange'}}">
-                <text class="prizeItem-top-left-Msg-txt">￥</text>
+                <text class="prizeItem-top-left-Msg-txt">¥</text>
                 {{item.promotion_type === 'redpacket' ? item.max_price : item.min_price + '~' + item.max_price}}
               </view>
             </view>
@@ -75,7 +75,7 @@
                    wx:if="{{item.promotion_type==='exchange'}}" mode="aspectFit"></image>
             <view class="prizeItem-top-left-Msg"
                   wx:if="{{item.promotion_type!=='exchange'}}">
-              <text class="prizeItem-top-left-Msg-txt">￥</text>
+              <text class="prizeItem-top-left-Msg-txt">¥</text>
               {{item.promotion_type === 'redpacket' ? item.max_price : item.min_price + '~' + item.max_price}}
             </view>
           </view>

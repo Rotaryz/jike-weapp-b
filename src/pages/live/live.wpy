@@ -413,7 +413,7 @@
               padding-left: 4px
               &:before
                 position: absolute
-                content: '￥'
+                content: '¥'
                 color: $color-orange
                 left: 0px
                 font-size: $font-size-small-s
@@ -501,7 +501,7 @@
         text-indent: 6px
         font-family: $font-family-m
         &:before
-          content: '￥'
+          content: '¥'
           color: #5D5D5D
           font-size: $font-size-small-s
           position: absolute

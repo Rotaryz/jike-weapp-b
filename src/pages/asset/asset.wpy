@@ -38,7 +38,7 @@
           <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
             <view class="label">累计收入</view>
             <view class="content-wrapper">
-              <view class="content">￥{{totalRemaining}}</view>
+              <view class="content">¥{{totalRemaining}}</view>
               <view class="arrow-right">
                 <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
@@ -49,7 +49,7 @@
       <view class="outcome-wrapper" wx:if="{{activeTab === 2}}">
         <view class="top-wrapper">
           <view class="t-content">已支出(元)</view>
-          <view class="b-content">￥{{outcome}}</view>
+          <view class="b-content">¥{{outcome}}</view>
         </view>
         <view class="split-line border-bottom-1px border-top-1px"></view>
         <view class="list-wrapper">

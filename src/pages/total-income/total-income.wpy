@@ -2,7 +2,7 @@
   <view class="total-income">
     <view class="top-wrapper">
       <view class="t-content">累计收入(元)  <image wx:if="{{imageUrl}}" class="help" src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image></view>
-      <view class="b-content">￥{{totalIncome}}</view>
+      <view class="b-content">¥{{totalIncome}}</view>
       <base-modal type="tip" title="提示信息">
         <view class="tip-modal" slot="content">
           <text class="text">当顾客购买了优惠券，相关订单资金转入累计收入账户，当顾客退款，相关订单资金转出累计收入账户。</text>
