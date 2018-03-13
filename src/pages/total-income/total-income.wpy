@@ -18,7 +18,7 @@
             <view class="arrow-down"></view>
           </view>
         </picker>
-        <picker mode="date" fields="month" @change="changeDate">
+        <picker mode="date" fields="month" start="2017-01-01" value="{{startDate}}" @change="changeDate">
           <view class="date-wrapper">
             <view class="content">{{date}}</view>
             <view class="arrow-down"></view>
@@ -73,6 +73,7 @@
         id: 1,
         name: '优惠券'
       },
+      startDate: '',
       date: '',
       list: [],
       hasMore: true,
@@ -96,7 +97,9 @@
       const date = new Date()
       let year = date.getFullYear()
       let month = date.getMonth() + 1
+      let day = date.getDay()
       this.date = `${year}-${month < 10 ? '0' + month : month}`
+      this.startDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`
       this.$apply()
     }
 

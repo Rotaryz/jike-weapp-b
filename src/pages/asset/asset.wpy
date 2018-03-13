@@ -13,7 +13,10 @@
       <view class="income-wrapper" wx:if="{{activeTab === 1}}">
         <view class="top-wrapper">
           <view class="content">
-            <view class="t-content">可提现(元) <image wx:if="{{imageUrl}}" class="help" src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image></view>
+            <view class="t-content">可提现(元)
+              <image wx:if="{{imageUrl}}" class="help"
+                     src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image>
+            </view>
             <view class="b-content">¥{{remaining}}</view>
             <base-modal type="tip" title="提示信息">
               <view class="tip-modal" slot="content">
@@ -31,7 +34,8 @@
             <view class="label">提现记录</view>
             <view class="content-wrapper">
               <view class="arrow-right">
-                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+                <image wx:if="{{imageUrl}}" class="full-image"
+                       src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
             </view>
           </navigator>
@@ -40,7 +44,8 @@
             <view class="content-wrapper">
               <view class="content">¥{{totalRemaining}}</view>
               <view class="arrow-right">
-                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+                <image wx:if="{{imageUrl}}" class="full-image"
+                       src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
             </view>
           </navigator>
@@ -55,17 +60,20 @@
         <view class="list-wrapper">
           <view class="header block-title border-bottom-1px">支出列表</view>
           <view class="list" wx:if="{{outcomeList.length > 0}}">
-            <view class="item-wrapper border-bottom-1px">
-              <view class="left-content">
-                <view class="t-content">购买服务</view>
-                <view class="b-content">2018-02-10  17:00</view>
+            <repeat for="{{outcomeList}}" key="index" index="index">
+              <view class="item-wrapper border-bottom-1px">
+                <view class="left-content">
+                  <view class="t-content">{{item.title}}</view>
+                  <view class="b-content">{{item.created_at}}</view>
+                </view>
+                <view class="right-content">-{{item.money}}</view>
               </view>
-              <view class="right-content">-100</view>
-            </view>
+            </repeat>
           </view>
           <view class="empty-wrapper" wx:if="{{outcomeList.length === 0}}">
             <view class="image-wrapper">
-              <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
+              <image wx:if="{{imageUrl}}" class="full-image"
+                     src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
             </view>
             <view class="desc">暂无数据</view>
           </view>
@@ -114,9 +122,24 @@
       }
     }
 
+    async _getSpendLogs() {
+      if (this.outcomeList.length === 0) {
+        const res = await Monies.getSpendLogs()
+        this.loaded()
+        if (res.error === ERR_OK) {
+          this.outcome = res.total_money
+          this.outcomeList = res.data
+        }
+        this.$apply()
+      }
+    }
+
     methods = {
-      clickTab(tabId) {
+      async clickTab(tabId) {
         this.activeTab = Math.floor(tabId)
+        if (this.activeTab === 2) {
+          await this._getSpendLogs()
+        }
       },
       showTip() {
         this.$invoke('base-modal', 'show')
@@ -142,6 +165,7 @@
 
   page
     background-color: $color-white
+
   .asset
     .tip-modal
       padding: 16px 10px 0 10px
@@ -179,7 +203,7 @@
         height: 2px
         transition: all .3s
         &.tab2
-          transform: translate3d( 100%, 0, 0)
+          transform: translate3d(100%, 0, 0)
         .line
           width: 65px
           height: 2px
