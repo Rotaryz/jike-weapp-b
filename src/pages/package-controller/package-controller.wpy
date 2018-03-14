@@ -4,7 +4,7 @@
       <view class="business input-wrapper border-bottom-1px">
         <view class="label">适用商圈</view>
         <view class="arrow-content-wrapper">
-          <view class="content">{{business}}</view>
+          <view class="content">{{alliance}}</view>
           <view class="arrow-right">
             <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                    class="full-image"></image>
@@ -546,7 +546,7 @@
           return
         }
         const data = {
-          business_circles_name: this.business,
+          business_circles_name: this.alliance,
           industry_ids: this.selectCategoryIds,
           merchant_ids: this.selectStoreIds,
           title: this.title,

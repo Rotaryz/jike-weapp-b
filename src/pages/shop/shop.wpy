@@ -70,9 +70,14 @@
 
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
   const BUS = {
-    text: '商圈',
+    text: '广场',
     image: URIS.image + '/defaults/b-image/page/icon-tradingarea@2x.png',
     src: '/pages/business/business'
+  }
+  const alliance = {
+    text: '联盟',
+    image: URIS.image + '/defaults/b-image/page/icon-tradingarea@2x.png',
+    src: '/pages/alliance/alliance'
   }
   export default class Shop extends wepy.page {
     mixins = [base]
@@ -139,7 +144,6 @@
       leader: 0,
       serviceDue: false
     }
-
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
@@ -149,9 +153,10 @@
       }
       let lead = await wepy.getStorage({key: 'is_leader'})
       this.leader = lead.data
-      if (this.leader === 1 && this.navList[7].text !== '商圈') {
+      if (this.leader === 1 && this.navList[7].text !== '广场') {
         this.navList.pop()
-        this.navList.splice(7, 0, BUS)
+        this.navList.splice(7, 0, alliance)
+        this.navList.splice(8, 0, BUS)
       }
       this.$apply()
     }
