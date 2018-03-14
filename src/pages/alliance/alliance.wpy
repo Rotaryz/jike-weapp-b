@@ -216,7 +216,6 @@
         this.$apply()
       },
       async navSetTime() {
-//        this.$parent.globalData.merchantId = this.merchantId
         this.$parent.updateGlobalData('merchantId', this.merchantId)
         let urls = ''
         if (this.merchantId.length === 1) {
