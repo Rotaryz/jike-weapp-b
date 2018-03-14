@@ -16,7 +16,7 @@
 //   B端api地址   https://backend-api.jkweixin.com
 //   C端api地址   https://wap-api.jkweixin.com
 
-const version = '/v2'
+const version = '/v1'
 
 /**
  * 研发环境
@@ -32,11 +32,11 @@ const version = '/v2'
  * 测试环境
  * @type {{image: string, login: string, api: string}}
  */
-// const URLS = {
-//   image: 'https://img.jkweixin.net',
-//   login: 'https://jwt.jkweixin.net',
-//   api: 'https://backend-api.jkweixin.net' + version
-// }
+const URLS = {
+  image: 'https://img.jkweixin.net',
+  login: 'https://jwt.jkweixin.net',
+  api: 'https://backend-api.jkweixin.net' + version
+}
 // const URLS = {
 //   image: 'https://img.live.gytcrm.com',
 //   login: 'https://jwt.live.gytcrm.com',
@@ -47,11 +47,11 @@ const version = '/v2'
  * 生产环境
  * @type {{image: string, login: string, api: string}}
  */
-const URLS = {
-  image: 'https://img.jkweixin.com',
-  login: 'https://jwt.jkweixin.com',
-  api: 'https://backend-api.jkweixin.com' + version
-}
+// const URLS = {
+//   image: 'https://img.jkweixin.com',
+//   login: 'https://jwt.jkweixin.com',
+//   api: 'https://backend-api.jkweixin.com' + version
+// }
 
 class URIS {
   constructor() {
