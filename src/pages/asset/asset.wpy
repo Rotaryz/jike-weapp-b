@@ -222,7 +222,7 @@
             height: 127px
             .t-content
               display: flex
-              align-items: center
+              /*align-items: center*/
               margin-bottom: 5px
               font-size: $font-size-medium
               color: $color-text
@@ -230,6 +230,7 @@
                 width: 16px
                 height: 16px
                 margin-left: 5px
+                margin-top: -8px
             .b-content
               font-family: $font-family-bold
               font-size: 30px
