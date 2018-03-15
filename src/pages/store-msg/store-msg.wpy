@@ -36,10 +36,10 @@
     <view class="store-msg-body">
       <view class="store-msg-picker">
         <view class="store-msg-picker-title">地区</view>
-        <picker mode="region" bindchange="bindRegionChange" value="{{region}}" class="sitebox">
+        <picker mode="region" bindchange="bindRegionChange" disabled="{{disableFlag}}" value="{{region}}" class="sitebox">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
-            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            <view class="{{disableFlag ? 'store-msg-picker-txt-dis':'store-msg-picker-txt'}}">{{region[2] ? region[2] : ''}}</view>
+            <image class="store-msg-picker-arrow" wx:if="{{!disableFlag && imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -47,10 +47,10 @@
       <view class="store-msg-picker">
         <view class="areaCover" @tap.stop="testRegion" wx:if="{{!region[2]}}"></view>
         <view class="store-msg-picker-title">商圈</view>
-        <picker bindchange="areaChange" value="{{index}}" range="{{areaArr}}" range-key="name">
+        <picker bindchange="areaChange" disabled="{{disableFlag}}" value="{{index}}" range="{{areaArr}}" range-key="name">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{area}}</view>
-            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            <view class="{{disableFlag ? 'store-msg-picker-txt-dis':'store-msg-picker-txt'}}">{{area}}</view>
+            <image class="store-msg-picker-arrow" wx:if="{{!disableFlag && imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -264,7 +264,8 @@
       twocolumnboxShow: false,
       logoUrl: '',
       logoId: 0,
-      storeImgs: []
+      storeImgs: [],
+      disableFlag: false
     }
 
     async onLoad() {
@@ -293,7 +294,6 @@
       this.site = res.address ? res.address : ''
       this.mapAddress = res.address ? res.address : ''
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
-      this.longitude = res.longitude ? res.longitude : 113.324520
       this.latitude = res.latitude ? res.latitude : 23.099994
       this.movelongitude = this.longitude
       this.movelatitude = this.latitude
@@ -324,6 +324,10 @@
       this._choiseChecked(this.weekValue)
       this.hourBegin = res.open_time ? res.open_time : '9:00'
       this.hourEnd = res.close_time ? res.close_time : '21:00'
+      if (res.is_leader === 1) {
+        this.disableFlag = res.business_circle ? !this.disableFlag : this.disableFlag
+      }
+      this.longitude = res.longitude ? res.longitude : 113.324520
       this.$apply()
       this.loaded()
     }
@@ -810,6 +814,9 @@
         .store-msg-picker-txt
           font-size: $font-size-medium
           margin-right: 10px
+        .store-msg-picker-txt-dis
+          font-size: $font-size-medium
+          color:$color-text-d
 
     .time-picker
       display: flex

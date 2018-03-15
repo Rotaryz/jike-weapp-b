@@ -1,0 +1,214 @@
+<template>
+  <view class="busTimes">
+    <view class="bus-item">
+      <view>开启周期</view>
+      <view class="times">
+        <image wx:if="{{mageUrlHead}}" src="{{mageUrlHead+'/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
+        <picker mode="date" value="{{begTime}}" start="{{startTime}}"
+                end="{{endTime === '结束时间' ? '' : endTime}}"
+                bindchange="startDateChange">
+          <view>{{begTime}}</view>
+        </picker>
+      </view>
+      <view>至</view>
+      <view class="times">
+        <image wx:if="{{mageUrlHead}}"
+               src="{{mageUrlHead + '/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
+        <picker mode="date" value="{{endTime}}"
+                start="{{begTime === '开始时间' ? startTime : begTime}}"
+                bindchange="endDateChange">
+          <view>{{endTime}}</view>
+        </picker>
+      </view>
+      <view class="clear" @tap="clear">清除</view>
+    </view>
+    <view class="bus-item">
+      <view>开启时长</view>
+      <view>{{days}}天</view>
+    </view>
+    <view class="bus-item">
+      <view>已选门店</view>
+      <view>{{allNums}}家</view>
+    </view>
+    <view class="con-submit" @tap="submitSave">
+      <view>
+        {{subText}}
+      </view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import shop from 'api/shop'
+  import circle from 'api/circle'
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+  export default class busTimes extends wepy.page {
+    mixins = [base]
+    data = {
+      allNums: 0,
+      begTime: '开始时间',
+      endTime: '结束时间',
+      startTime: '',
+      days: 0,
+      merchantId: [],
+      isClaer: false,
+      subText: '提交',
+      mageUrlHead: URIS.image
+    }
+    components = {
+      Toast: Toast
+    }
+    methods = {
+      startDateChange(e) {
+        this.begTime = e.detail.value
+        this.subText = '提交'
+        this.sum()
+      },
+      endDateChange(e) {
+        this.endTime = e.detail.value
+        this.subText = '提交'
+        this.sum()
+      },
+      clear() {
+        this.endTime = '结束时间'
+        this.begTime = '开始时间'
+        this.days = 0
+        this.subText = '关闭商圈'
+        this.isClaer = true
+      },
+      async submitSave() {
+        let data = {}
+        if (!this.isClaer) {
+          if (this.begTime === '开始时间') {
+            this.$invoke('Toast', 'show', '请选择开始时间')
+            return false
+          } else if (this.endTime === '结束时间') {
+            this.$invoke('Toast', 'show', '请选择结束时间')
+            return false
+          }
+          data = {
+            merchant_ids: this.merchantId,
+            start_showed_at: this.begTime,
+            end_showed_at: this.endTime
+          }
+        } else {
+          if (this.begTime !== '开始时间' && this.endTime === '结束时间') {
+            this.$invoke('Toast', 'show', '请选择结束时间')
+            return false
+          } else if (this.endTime !== '结束时间' && this.begTime === '开始时间') {
+            this.$invoke('Toast', 'show', '请选择开始时间')
+            return false
+          } else if (this.begTime === '开始时间' && this.endTime === '结束时间') {
+            data = {
+              merchant_ids: this.merchantId,
+              start_showed_at: null,
+              end_showed_at: null
+            }
+          } else {
+            data = {
+              merchant_ids: this.merchantId,
+              start_showed_at: this.begTime,
+              end_showed_at: this.endTime
+            }
+          }
+        }
+        // let res = await shop.setMapShowed(data)
+        let res = await circle.setMapShowed(data)
+        this.loaded()
+        if (res.error === 0) {
+          await wepy.redirectTo({
+            url: '/pages/alliance/alliance?status=1'
+          })
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+      }
+    }
+
+    sum () {
+      if (this.begTime !== '开始时间' && this.endTime !== '结束时间') {
+        let begin = new Date(this.begTime)
+        let end = new Date(this.endTime)
+        let ms = end.getTime() - begin.getTime()
+        this.days = ms / 1000 / 60 / 60 / 24
+      }
+    }
+
+    info () {
+      let now = new Date()
+      this.startTime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+    }
+
+    async onLoad (options) {
+      this.info()
+      this.merchantId = this.$parent.globalData.merchantId
+      this.allNums = options.allNum
+      if (options.begTime) {
+        this.begTime = options.begTime
+        this.endTime = options.endTime
+        this.sum()
+      }
+      await wepy.setNavigationBarTitle({
+        title: `${options.title}商圈`
+      })
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  .busTimes
+    background: $color-white
+    .bus-item
+      border-bottom: 0.5px solid $color-split-line
+      font-size: $font-size-small
+      color: $color-theme
+      display: flex
+      height: 39px
+      padding: 0 $padding
+      justify-content: space-between
+      > view
+        height: 100%
+        line-height: 39px
+        &:first-child
+          width: 48px
+      .clear
+        text-decoration: underline
+      .times
+        position: relative
+        view
+          line-height: 39px
+          min-width: 60.5px
+        image
+          height: 11px
+          width: 11px
+          right: -14px
+          position: absolute
+          top: 13px
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
+
+</style>

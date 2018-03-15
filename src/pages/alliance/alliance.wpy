@@ -1,0 +1,488 @@
+<template>
+  <view>
+    <view class="client-head-box">
+      <view class="client-head">
+        <view class="cover"></view>
+        <view wx:for="{{navList}}" class="item {{navNum === index ? 'choice' : ''}}"
+              wx:key="{{index}}" @tap="showType({{item.id}},{{index}})">
+          <text>{{item.name}}</text>
+        </view>
+        <view class="last"></view>
+      </view>
+    </view>
+    <Blank></Blank>
+    <scroll-view scroll-y class="business" bindscrolltolower="showMore">
+      <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
+        <view>
+          <image class="header-logo" src="{{item.logo_image}}"
+                 wx:if="{{index !== 0}}" mode="aspectFill"></image>
+          {{item.shop_name}}
+        </view>
+        <view class="bus-tt"
+              @tap="checkboxChange({{index}},{{item.merchant_id}})">
+          {{item.start_showed_at}}{{item.start_showed_at !== '' ? '至' : ''}}{{
+          item.end_showed_at}}
+        </view>
+        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})"
+                        id="checkboxs">
+          <label class="radioLabel {{item.checked?'active':''}}">
+            <checkbox value="{{item.shop_name}}" checked="{{item.is_check}}"
+                      hidden="true"/>
+            {{item.txt}}
+            <image class="radio-Icon" wx:if="{{imageUri}}"
+                   src="{{item.is_check ? imageUri + '/defaults/b-image/page/icon-select@2x.png' : imageUri + '/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
+          </label>
+        </checkbox-group>
+      </view>
+    </scroll-view>
+    <view class="con-submit" @tap="navSetTime" wx:if="{{showNext}}">
+      <view>
+        下一步，设置时间
+      </view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Blank from '@/base/blank/blank'
+  import shop from 'api/shop'
+  import circle from 'api/circle'
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
+
+  export default class business extends wepy.page {
+    mixins = [base]
+
+    onShareAppMessage () {
+      this.ShareAppMessage()
+    }
+
+// 懒加载
+    config = {
+      navigationBarTitleText: '',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      Blank: Blank,
+      Toast: Toast
+    }
+    data = {
+      imageUri: URIS.image,
+      industryParentId: '',
+      navNum: 0,
+      navList: [{
+        name: '全部',
+        id: ''
+      }],
+      merchantId: [],
+      conList: [{
+        'shop_name': '全部',
+        'merchant_id': '',
+        'start_showed_at': ''
+      }],
+      showTime: false,
+      animation: {},
+      time: '',
+      value: [],
+      btime: '选择开始时间',
+      etime: '选择结束时间',
+      timeTimes: 1,
+      tapTimes: 0,
+      section: '',
+      showNext: false,
+      pageTitle: '',
+      allNum: 0,
+      page: 1,
+      nothing: false
+    }
+
+    async _checkBusiness (data) {
+      // let res = await shop.checkBusiness(data)
+      let res = await circle.getShopList(data)
+      console.log(res)
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].current_merchant) {
+          this.pageTitle = res.data[i].business_circle.alias
+          res.data.splice(i, 1)
+          break
+        }
+      }
+      this.loaded()
+      return res
+    }
+
+    async _setMapShowed (data) {
+      let res = await circle.setMapShowed(data)
+      this.loaded()
+      return res
+    }
+
+    showBlank (res) {
+      if (res.length === 0) {
+        this.$invoke('Blank',
+          'show',
+          `${this.imageUri}/defaults/b-image/common/pic-empty_shop@2x.png`,
+          '一大波商家正在路上',
+          '15.2')
+      } else {
+        this.$invoke('Blank', 'hide')
+      }
+    }
+    methods = {
+      async showType(id, index) {
+        this.page = 1
+        this.nothing = false
+        this.navNum = index
+        this.industryParentId = {industry_parent_id: id}
+        let res = await this._checkBusiness(this.industryParentId)
+        res = this.infoRes(res)
+        if (res.length === 0) {
+          this.conList = []
+        } else {
+          this.conList = [{
+            'shop_name': '全部',
+            'merchant_id': '',
+            'start_showed_at': ''
+          }]
+          this.conList = this.conList.concat(res)
+        }
+        this.showBlank(this.conList)
+        this.$apply()
+      },
+      async showMore() {
+        if (!this.nothing) {
+          this.page++
+          if (this.page > 1) {
+            let data = {}
+            Object.assign(data, this.industryParentId, {page: this.page})
+            let res = await this._checkBusiness(data)
+            res = this.infoRes(res)
+            this.conList = this.conList.concat(res)
+            if (res.length === 0) {
+              this.nothing = true
+            }
+          }
+        }
+      },
+//      选择框
+      async checkboxChange(e, id) {
+        if (e !== 0) {
+          this.conList[e]['is_check'] = !this.conList[e]['is_check']
+          if (!this.conList[e]['is_check']) {
+            this.conList[0]['is_check'] = false
+          }
+          let resNum = 0
+          this.merchantId = []
+          this.conList.forEach((item, idx) => {
+            if (idx > 0) {
+              if (item['is_check']) {
+                this.merchantId.push(item.merchant_id)
+                resNum++
+              }
+            }
+            return item
+          })
+          this.allNum = resNum
+          if (resNum === this.conList.length - 1) {
+            this.conList[0]['is_check'] = true
+          }
+          if (resNum > 0) {
+            this.showNext = true
+          } else {
+            this.showNext = false
+          }
+        } else {
+          let status = !this.conList[0]['is_check']
+          if (status) {
+            this.showNext = true
+          } else {
+            this.showNext = false
+          }
+          this.merchantId = []
+          this.allNum = this.conList.length - 1
+          this.conList.map((item, idx) => {
+            if (idx !== 0) {
+              this.merchantId.push(item.merchant_id)
+            }
+            item['is_check'] = status
+            return item
+          })
+        }
+        this.$apply()
+      },
+      async navSetTime() {
+        this.$parent.updateGlobalData('merchantId', this.merchantId)
+        let urls = ''
+        if (this.merchantId.length === 1) {
+          this.conList.forEach((item) => {
+            if (item['is_check']) {
+              this.btime = item.start_showed_at === '' ? '开始时间' : item.start_showed_at
+              this.etime = item.end_showed_at === '' ? '结束时间' : item.end_showed_at
+            }
+          })
+          urls =
+            `/pages/cir-times/cir-times?title=${this.pageTitle}&allNum=${this.allNum}&begTime=${this.btime}&endTime=${this.etime}`
+        } else {
+          urls =
+            `/pages/cir-times/cir-times?title=${this.pageTitle}&allNum=${this.allNum}`
+        }
+        await wepy.navigateTo({
+          url: urls
+        })
+      },
+      bindChange(e) {
+        this.value = e.detail.value
+      },
+      cancel() {
+        this.showChioce = false
+      }
+    }
+
+    infoRes (res) {
+      if (res.error === ERR_OK) {
+        return res.data
+      }
+    }
+
+    async onLoad (options) {
+      this.conList = [{
+        'shop_name': '全部',
+        'merchant_id': '',
+        'start_showed_at': ''
+      }]
+      this.navList = [{
+        name: '全部',
+        id: ''
+      }]
+      let data = await this._checkBusiness({})
+      data = this.infoRes(data)
+      let res = await shop.industries()
+      res = this.infoRes(res)
+      this.loaded()
+      if (data.length === 0) {
+        this.conList = []
+      } else {
+        this.conList = this.conList.concat(data)
+      }
+      this.showBlank(this.conList)
+      this.navList = this.navList.concat(res)
+      await wepy.setNavigationBarTitle({
+        title: `${this.pageTitle}商圈`
+      })
+      if (options.status) {
+        this.$invoke('Toast', 'show', '设置成功')
+      }
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  ::-webkit-scrollbar
+    width: 0
+    height: 0
+    color: transparent
+
+  view
+    box-sizing: border-box
+
+  .client-head-box
+    position: relative
+    width: 100%
+    height: 38.5px
+
+    .client-head
+      height: 38.5px
+      background: $color-theme
+      overflow-x: auto
+      overflow-y: hidden
+      align-items: center
+      display: flex
+      padding-top: 10.5px
+      .cover
+        height: 36.5px
+        width: 20px
+        position: absolute
+        right: 0
+        top: 0
+        background: linear-gradient(to left, rgba(54, 53, 71, .9) , rgba(54, 53, 71, .5))
+
+      .item
+        font-family: $font-family-light
+        color: $color-white
+        font-size: $font-size-medium
+        min-width: 44px
+        text-align: center
+        line-height: 26px
+        text
+          text-align: center
+          display: inline-block
+          margin: 0 auto
+          width: 110%
+          white-space: nowrap
+          border-bottom: 2px solid $color-theme
+      .item.choice
+        text
+          color: $color-assist-f
+          border-bottom: 2px solid $color-assist-f
+      .last
+        min-width: 20px
+        height: 36px
+
+  .business
+    font-size: $font-size-small
+    height: 93vh
+    padding-bottom: 50px
+    box-sizing: border-box
+    .wx-checkbox-input
+      height: 16px
+      width: 16px
+    label
+      font-size: $font-size-small
+      margin-right: 10px
+      height: 16px
+      width: 16px
+    .wx-switch-input
+      height: 21px
+      width: 41px
+      &:before
+        height: 21px
+        width: 41px
+        border: none
+        background: $color-split-line
+      &:after
+        height: 20px
+        width: 20px
+    .bus-item
+      display: flex
+      height: 43px
+      background: $color-white
+      padding: 0 $padding
+      border-bottom: 0.5px solid $color-split-line
+      .bus-tt
+        min-width: 50vw
+      .header-logo
+        height: 24px
+        width: 24px
+        border-radius: 50%
+        margin-bottom: 0
+        border: 0.5px solid $color-split-line
+        transform: translateY(6px)
+      view
+        no-wrap()
+        color: $color-theme
+        line-height: 43px
+        text-indent: 6px
+        width: 38.46vw
+        text-align: left
+        transform: translateY(2px)
+
+  .times
+    position: fixed
+    height 100%
+    width: 100%
+    top: 0
+    background: $color-mask-bgc
+    .times-ti
+      height: 325px
+      width: 265px
+      background: $color-white
+      all-center()
+      .set-time
+        height: 40px
+        line-height: 40px
+        text-align: center
+        background-color: $color-theme
+        color: $color-white
+        font-size: $font-size-medium-x
+        font-family: $font-family-light
+    picker-view
+      position: absolute
+      bottom: 0
+      height: 200px
+      width: 100%
+      text-align: center
+      font-size: $font-size-medium
+    .time-ok
+      height: 45px
+      display: flex
+      font-size: $font-size-small
+      align-items: center
+      background: $color-background
+      position: relative
+      view
+        flex: 1
+        text-align: center
+        border-bottom: 2px solid $color-text-d
+        &:nth-child(2)
+          position: absolute
+          all-center()
+          width: 18px
+          height: 18px
+          line-height: 18px
+          border-radius: 50%
+          text-align: center
+          font-size: $font-size-small-s
+          background: $color-text-d
+          color: $color-white
+        &:nth-child(1), &:nth-child(3)
+          line-height: 1
+          padding-bottom: 9.5px
+          margin: 19.5px 24px 0
+      .tactive
+        border-bottom: 2px solid  $color-assist-f
+        color: $color-text
+    .time-sure
+      height: 39.5px
+      border-bottom: 0.5px solid $color-split-line
+      padding: 18.5px $padding 0
+      display: flex
+      color: $color-text
+      justify-content: space-between
+      font-size: $font-size-small
+
+    image
+      position: absolute
+      height: 24px
+      width: 24px
+      bottom: 16vw
+      row-center()
+
+  #checkboxs
+    display: flex
+    justify-content: center
+    align-items: center
+
+  .radio-Icon
+    width: 16px
+    height: 16px
+
+  .radioLabel.active
+    color: $color-assist-f
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0px
+    height: 14.93vw
+    background: $color-background
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+</style>
