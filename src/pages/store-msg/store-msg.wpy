@@ -38,8 +38,8 @@
         <view class="store-msg-picker-title">地区</view>
         <picker mode="region" bindchange="bindRegionChange" disabled="{{disableFlag}}" value="{{region}}" class="sitebox">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{region[2] ? region[2] : ''}}</view>
-            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            <view class="{{disableFlag ? 'store-msg-picker-txt-dis':'store-msg-picker-txt'}}">{{region[2] ? region[2] : ''}}</view>
+            <image class="store-msg-picker-arrow" wx:if="{{!disableFlag && imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -49,8 +49,8 @@
         <view class="store-msg-picker-title">商圈</view>
         <picker bindchange="areaChange" disabled="{{disableFlag}}" value="{{index}}" range="{{areaArr}}" range-key="name">
           <view class="store-msg-picker-right">
-            <view class="store-msg-picker-txt">{{area}}</view>
-            <image class="store-msg-picker-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+            <view class="{{disableFlag ? 'store-msg-picker-txt-dis':'store-msg-picker-txt'}}">{{area}}</view>
+            <image class="store-msg-picker-arrow" wx:if="{{!disableFlag && imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </picker>
       </view>
@@ -814,6 +814,9 @@
         .store-msg-picker-txt
           font-size: $font-size-medium
           margin-right: 10px
+        .store-msg-picker-txt-dis
+          font-size: $font-size-medium
+          color:$color-text-d
 
     .time-picker
       display: flex
