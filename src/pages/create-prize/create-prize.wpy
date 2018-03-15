@@ -137,7 +137,7 @@
         <view class="randomRP-prize-total">
           <view class="prize-picker-title">红包总金额</view>
           <view class="prize-picker-right">
-            <txt>￥</txt>
+            <txt>¥</txt>
             <view class="inputBox">
               <input type="digit" class="randomRP-prize-total-input {{totalMoneyTest?'':'error'}}" bindblur="totalChange"/>
             </view>
@@ -187,7 +187,7 @@
         <view class="randomRP-prize-total">
           <view class="prize-picker-title">每个红包金额</view>
           <view class="prize-picker-right">
-            <txt>￥</txt>
+            <txt>¥</txt>
             <view class="inputBox">
               <input type="digit" class="randomRP-prize-total-input {{fixedRpMoneyTest?'':'error'}}" bindblur="fixedChange" value="{{fixedRedpacket}}"/>
             </view>
@@ -217,7 +217,7 @@
         <view wx:if="{{!paymentSuccess}}">
           <view class="payment-total">
             <view class="payment-total-left">红包总金额</view>
-            <view class="payment-total-right"><text class="payment-total-small">￥</text>{{prizeType===3?prizeCount*fixedRedpacket:total}}</view>
+            <view class="payment-total-right"><text class="payment-total-small">¥</text>{{prizeType===3?prizeCount*fixedRedpacket:total}}</view>
           </view>
           <view class="payment-type-head">选择支付方式</view>
           <view class="payment-type" @tap.stop="payChange(1)">
@@ -539,7 +539,7 @@
         if (isNaN(this.prizeCount * this.fixedRedpacket)) {
           return '金额有误'
         } else {
-          return '￥' + (this.prizeCount * this.fixedRedpacket).toFixed(2)
+          return '¥' + (this.prizeCount * this.fixedRedpacket).toFixed(2)
         }
       },
       fixedRpMoneyTest() {

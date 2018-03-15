@@ -69,7 +69,7 @@
         <view>用户ID：{{datail.customer_id}}</view>
         <view>数量：{{datail.count}}</view>
         <view>总价：
-          <text>￥{{datail.total}}</text>
+          <text>¥{{datail.total}}</text>
         </view>
         <view @tap="hideDetail">确定</view>
       </view>

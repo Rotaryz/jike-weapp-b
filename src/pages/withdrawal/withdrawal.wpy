@@ -28,7 +28,7 @@
           <input type="digit" class="input" value="{{money}}" disabled="{{disableWithdrawal}}" @input="changeMoney"/>
         </view>
         <view class="can-withdrawal" wx:if="{{!poundage}}">
-          <text class="price-amount">可提现金额￥{{remaining}}</text>
+          <text class="price-amount">可提现金额¥{{remaining}}</text>
           <text class="click-all" @tap="withdrawalAll">全部提现</text>
         </view>
         <view class="poundage" wx:if="{{poundage}}">手续费 ¥ {{poundage}}</view>
@@ -43,15 +43,15 @@
       <view class="modal-wrapper" slot="content">
         <view class="item-wrapper border-bottom-1px">
           <view class="left">到账金额：</view>
-          <view class="right">￥{{money}}</view>
+          <view class="right">¥{{caculateRealMoney}}</view>
         </view>
         <view class="item-wrapper border-bottom-1px">
           <view class="left">手续费：</view>
-          <view class="right">￥{{poundage}}</view>
+          <view class="right">¥{{poundage}}</view>
         </view>
         <view class="item-wrapper">
           <view class="left">余额：</view>
-          <view class="right">￥{{caculateBalance}}</view>
+          <view class="right">¥{{caculateBalance}}</view>
         </view>
       </view>
     </base-modal>
@@ -90,7 +90,10 @@
         return Math.abs(this.remaining) < 1
       },
       caculateBalance() {
-        return Math.abs(this.remaining) - Math.abs(this.money)
+        return (Math.abs(this.remaining) - Math.abs(this.money)).toFixed(2)
+      },
+      caculateRealMoney() {
+        return Math.abs(this.money) - Math.abs(this.poundage).toFixed(2)
       }
     }
 
@@ -112,7 +115,7 @@
       } else if (money / 1000 > 10) {
         this.poundage = 10
       } else {
-        this.poundage = money / 1000
+        this.poundage = (money / 1000).toFixed(2)
       }
       this.$apply()
     }

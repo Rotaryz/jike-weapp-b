@@ -6,7 +6,7 @@
       </view>
       <view class="service-due-down">
         <view class="service-due-txt">试用到期！</view>
-        <view class="service-due-txt"><text class="red-small">￥</text><text class="red-big">4980</text> / 年</view>
+        <view class="service-due-txt"><text class="red-small">¥</text><text class="red-big">4980</text> / 年</view>
         <view class="service-due-txt">活动期间，订购1年再送2年</view>
         <navigator hover-class="none" url="/pages/open-server/open-server">
           <view class="service-due-btn">立即开通</view>

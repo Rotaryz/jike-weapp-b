@@ -108,4 +108,13 @@ export default class Monies extends base {
     const url = id ? `${this.baseUrl}/api/monies/bank-cards/${id}` : `${this.baseUrl}/api/monies/bank-card-detail`
     return await this.get(url)
   }
+
+  /**
+   * 获取支出记录
+   * @returns {Promise.<*>}
+   */
+  static async getSpendLogs() {
+    const url = `${this.baseUrl}/api/monies/spend-logs`
+    return await this.get(url)
+  }
 }

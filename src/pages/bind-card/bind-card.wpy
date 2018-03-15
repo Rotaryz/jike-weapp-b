@@ -7,7 +7,7 @@
       </view>
       <view class="input-wrapper border-bottom-1px">
         <view class="label">银行卡号</view>
-        <input class="input" type="text" placeholder="请输入持卡人本人银行卡号" value="{{withdrawal_card}}"
+        <input class="input" type="number" placeholder="请输入持卡人本人银行卡号" value="{{withdrawal_card}}"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light" @input="changeCard" maxlength="23"/>
       </view>
       <picker range="{{banks}}" range-key="name" @change="changeBank">
