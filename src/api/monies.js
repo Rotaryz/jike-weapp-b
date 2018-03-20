@@ -113,8 +113,8 @@ export default class Monies extends base {
    * 获取支出记录
    * @returns {Promise.<*>}
    */
-  static async getSpendLogs() {
+  static async getSpendLogs(data) {
     const url = `${this.baseUrl}/api/monies/spend-logs`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 }
