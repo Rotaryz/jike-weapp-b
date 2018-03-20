@@ -104,7 +104,6 @@
     async _checkBusiness (data) {
       // let res = await shop.checkBusiness(data)
       let res = await circle.getShopList(data)
-      console.log(res)
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].current_merchant) {
           this.pageTitle = res.data[i].business_circle.alias
@@ -248,7 +247,27 @@
         return res.data
       }
     }
-
+    async onShow() {
+      let statusAlliance = wepy.getStorageSync('statusAlliance')
+      if (statusAlliance) {
+        this.$invoke('Toast', 'show', '设置成功')
+        wepy.setStorageSync('statusAlliance', 0)
+        let res = await this._checkBusiness(this.industryParentId)
+        res = this.infoRes(res)
+        if (res.length === 0) {
+          this.conList = []
+        } else {
+          this.conList = [{
+            'shop_name': '全部',
+            'merchant_id': '',
+            'start_showed_at': ''
+          }]
+          this.conList = this.conList.concat(res)
+        }
+        this.showBlank(this.conList)
+        this.$apply()
+      }
+    }
     async onLoad (options) {
       this.conList = [{
         'shop_name': '全部',
@@ -274,9 +293,6 @@
       await wepy.setNavigationBarTitle({
         title: `${this.pageTitle}商圈`
       })
-      if (options.status) {
-        this.$invoke('Toast', 'show', '设置成功')
-      }
       this.$apply()
     }
   }
