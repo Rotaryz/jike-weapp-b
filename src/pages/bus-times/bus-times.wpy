@@ -118,8 +118,9 @@
         let res = await shop.setMapShowed(data)
         this.loaded()
         if (res.error === 0) {
-          await wepy.redirectTo({
-            url: '/pages/business/business?status=1'
+          wepy.setStorageSync('statusBusiness', 1)
+          await wepy.navigateBack({
+            delta: 1
           })
         } else {
           this.$invoke('Toast', 'show', res.message)

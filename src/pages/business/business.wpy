@@ -247,7 +247,28 @@
         return res.data
       }
     }
-
+    async onShow() {
+      let statusBusiness = wepy.getStorageSync('statusBusiness')
+      if (statusBusiness) {
+        this.$invoke('Toast', 'show', '设置成功')
+        wepy.setStorageSync('statusBusiness', 0)
+        console.log(this.industryParentId)
+        let res = await this._checkBusiness(this.industryParentId)
+        res = this.infoRes(res)
+        if (res.length === 0) {
+          this.conList = []
+        } else {
+          this.conList = [{
+            'shop_name': '全部',
+            'merchant_id': '',
+            'start_showed_at': ''
+          }]
+          this.conList = this.conList.concat(res)
+        }
+        this.showBlank(this.conList)
+        this.$apply()
+      }
+    }
     async onLoad (options) {
       this.conList = [{
         'shop_name': '全部',
@@ -273,9 +294,6 @@
       await wepy.setNavigationBarTitle({
         title: `${this.pageTitle}商圈`
       })
-      if (options.status) {
-        this.$invoke('Toast', 'show', '设置成功')
-      }
       this.$apply()
     }
   }

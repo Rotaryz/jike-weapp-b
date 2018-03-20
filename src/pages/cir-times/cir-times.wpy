@@ -120,8 +120,9 @@
         let res = await circle.setMapShowed(data)
         this.loaded()
         if (res.error === 0) {
-          await wepy.redirectTo({
-            url: '/pages/alliance/alliance?status=1'
+          wepy.setStorageSync('statusAlliance', 1)
+          await wepy.navigateBack({
+            delta: 1
           })
         } else {
           this.$invoke('Toast', 'show', res.message)
