@@ -25,7 +25,8 @@ const version = '/v2'
 // const URLS = {
 //   image: 'https://img.jerryf.cn',
 //   login: 'https://dev.jike-jwt.jerryf.cn',
-//   api: 'https://dev.jike-backend-api.jerryf.cn' + version
+//   api: 'https://dev.jike-backend-api.jerryf.cn' + version,
+//   jumpVersion: 'develop'
 // }
 
 /**
@@ -35,7 +36,8 @@ const version = '/v2'
 const URLS = {
   image: 'https://img.jkweixin.net',
   login: 'https://jwt.jkweixin.net',
-  api: 'https://backend-api.jkweixin.net' + version
+  api: 'https://backend-api.jkweixin.net' + version,
+  jumpVersion: 'release'
 }
 
 /**
@@ -45,7 +47,8 @@ const URLS = {
 // const URLS = {
 //   image: 'https://img.jkweixin.com',
 //   login: 'https://jwt.jkweixin.com',
-//   api: 'https://backend-api.jkweixin.com' + version
+//   api: 'https://backend-api.jkweixin.com' + version,
+//   jumpVersion: 'release'
 // }
 
 class URIS {
@@ -53,6 +56,7 @@ class URIS {
     this.image = URLS.image
     this.login = URLS.login
     this.api = URLS.api
+    this.jumpVersion = URLS.jumpVersion
   }
 }
 
