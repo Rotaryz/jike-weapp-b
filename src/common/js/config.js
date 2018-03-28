@@ -37,7 +37,7 @@ const URLS = {
   image: 'https://img.jkweixin.net',
   login: 'https://jwt.jkweixin.net',
   api: 'https://backend-api.jkweixin.net' + version,
-  jumpVersion: 'release'
+  jumpVersion: 'trial'
 }
 
 /**
