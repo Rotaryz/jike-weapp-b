@@ -76,6 +76,12 @@
       <!--<view class="mine-logo-txt">赞播提供技术支持</view>-->
     <!--</view>-->
     <Toast></Toast>
+    <view class="customer-service">
+      <button class="customer-service-btn" open-type="contact"></button>
+      <div class="customer-service-icon">
+        <image class="customer-service-icon-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-product@2x.png'}}"></image>
+      </div>
+    </view>
   </view>
 </template>
 
@@ -122,9 +128,16 @@
     }
 
     async onShow() {
+      let flag = true
+      if (!flag) {
+        let res = await Tips.modal('请完善门店信息', '提示')
+        if (res) {
+          console.log(res)
+          this.$navigate('/pages/store-msg/store-msg')
+        }
+      }
       await this.load()
     }
-
     async load() {
       let resData = await Store.getMsgList()
       if (resData.error !== ERR_OK) {
@@ -196,6 +209,10 @@
       },
       showQRcode() {
         this.$navigate('/pages/shop-qrcode/shop-qrcode')
+      },
+      service() {
+        // 跳转微信小程序的客服
+        console.log('跳转微信小程序的客服')
       }
     }
   }
@@ -203,7 +220,6 @@
 
 <style lang="stylus">
   @import "../../common/stylus/variable"
-
   page
     width: 100%
     height: 100%
@@ -454,5 +470,32 @@
       .hint-img
         width: 100%
         height: 100%
-
+  .customer-service
+    position: fixed
+    height: 40px
+    width: 40px
+    border-radius: 100%
+    bottom: 30px
+    right: 15px
+    background: rgba(0, 0, 0, .42)
+    display: flex
+    justify-content: center
+    align-items: center
+    .customer-service-btn
+      position: absolute
+      width: 100%
+      height: 100%
+      text-align: center
+      padding: 0px
+      border-radius: 50%
+      z-index: 2
+      opacity:0.01
+    .customer-service-icon
+      position: absolute
+      height: 24.5px
+      width: 24.5px
+      z-index: 1
+      .customer-service-icon-img
+        width: 100%
+        height: 100%
 </style>

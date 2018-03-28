@@ -1,8 +1,17 @@
 <template>
   <view class="order-box">
     <view class="or-header" wx:if="{{!showInput}}">
-      <view>
-        <text>服务订单</text>
+      <!--<text>服务订单</text>-->
+      <view class="{{showOrder ? 'active' : ''}}" @tap="showOrders">
+        <text>{{orders[orderPage].title}}</text>
+        <image wx:if="{{imageUrlHead}}"
+               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
+        <view class="day-select first" wx:if="{{showOrder}}">
+          <view wx:for="{{orders}}" wx:key="{{index}}"
+                class="{{orderPage === index? 'tactive' : ''}}"
+                @tap="orderPage({{index}})">{{item.title}}
+          </view>
+        </view>
       </view>
       <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
         <text>{{days[dayPage].title}}</text>
@@ -11,8 +20,7 @@
         <view class="day-select" wx:if="{{showDay}}">
           <view wx:for="{{days}}" wx:key="{{index}}"
                 class="{{dayPage === index? 'tactive' : ''}}"
-                @tap="showPage({{index}})">{{
-            item.title}}
+                @tap="showPage({{index}})">{{item.title}}
           </view>
         </view>
       </view>
@@ -36,8 +44,7 @@
       </view>
     </NavHeader>
     <Blank></Blank>
-    <scroll-view scroll-y="true"
-                 bindscrolltolower="loadMore">
+    <scroll-view scroll-y="true" bindscrolltolower="loadMore">
       <view class="order-conpon">
         <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
           <image wx:if="{{imageUrlHead}}"
@@ -105,8 +112,17 @@
       imageUrlHead: URIS.image,
       showDay: false,
       dayPage: 0,
+      showOrder: false,
+      orderPage: 0,
       isDetail: false,
       navNum: 0,
+      orders: [{
+        title: '服务订单',
+        type: 'serve'
+      }, {
+        title: '买单订单',
+        type: 'buy'
+      }],
       navList: [{
         title: '待使用'
       }, {
@@ -164,16 +180,24 @@
       showDays() {
         this.showDay = !this.showDay
       },
+      showOrders() {
+        this.showOrder = !this.showOrder
+      },
       showPage(num) {
         this.dayPage = num
         this.dayType = this.days[num].type
-        this.load(this.navNum, this.dayType, '', this.page)
+        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
+      },
+      orderPage(num) {
+        this.orderPage = num
+        this.orderType = this.orders[num].type
+        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
       },
       showMsg(index) {
         this.nothing = false
         this.navNum = index
         this.page = 1
-        this.load(this.navNum, this.dayType, '', this.page)
+        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
       },
       isInput() {
         this.showInput = true
@@ -184,7 +208,7 @@
         this.dayType = 'all'
         this.dayPage = 4
         setTimeout(() => {
-          this.load(this.navNum, this.dayType, this.searchValue, this.page)
+          this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page)
         }, 1000)
       },
       bindblurs() {
@@ -194,7 +218,7 @@
       async loadMore(e) {
         if (!this.nothing) {
           this.page++
-          let res = await this.load(this.navNum, this.dayType,
+          let res = await this.load(this.orderType, this.navNum, this.dayType,
             this.searchValue, this.page, 2)
           if (res.length === 0) {
             this.nothing = true
@@ -203,8 +227,8 @@
       }
     }
 
-    async load (status = 0, date = 'today', mobile = '', page = 1, type) {
-      let data = {status, mobile, date, page}
+    async load (order = 'serve', status = 0, date = 'today', mobile = '', page = 1, type) {
+      let data = {order, status, mobile, date, page}
       let res = await shop.wechatOrders(data)
       if (res.error === ERR_OK) {
         if (type === 2) {
@@ -262,8 +286,6 @@
         height: 12px
         width: 12px
         transform: translate(3px, 2px)
-      &:first-child
-        color: $color-text-d
       &:last-child
         image
           transform: translate(-3px, 2px)
@@ -291,7 +313,8 @@
           text-indent 10.5px
         .tactive
           color: $color-assist-f
-
+      .first
+        left: -25%
   .inputs
     background: $color-theme
     position: relative

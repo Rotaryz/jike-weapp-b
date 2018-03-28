@@ -1,17 +1,19 @@
 <template>
   <view class="store-license">
+    <view class="store-top-msg">{{storeMsg}}</view>
     <view class="store-license-head">
-      <view class="store-license-txt">
-        <view class="store-license-txt-title">证件类型</view>
-        <view class="store-license-txt-right">
-          <view class="store-license-txt-msg">{{credentialType}}</view>
-        </view>
-      </view>
 
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
           <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}" disabled="{{userName}}"/>
+        </view>
+      </view>
+
+      <view class="store-license-txt">
+        <view class="store-license-txt-title">证件类型</view>
+        <view class="store-license-txt-right">
+          <view class="store-license-txt-msg">{{credentialType}}</view>
         </view>
       </view>
 
@@ -37,7 +39,7 @@
       </view>
     </view>
 
-    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">保存</view>
+    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">{{submitTxt[submitIndex]}}</view>
 
     <Toast></Toast>
   </view>
@@ -78,7 +80,9 @@
         {title: '上传身份证反面'},
         {title: '手持证件照'},
         {title: '商户承诺函证明'}],
-      nothing: true
+      nothing: true,
+      submitTxt: ['提交审核', '审核中', '已认证'],
+      submitIndex: 0
     }
 
     methods = {
@@ -150,6 +154,7 @@
       }
       let res = Json.data
       this.storeMsg = res
+      console.log(res)
       this.credentialType = res.credential_type || '身份证'
       this.credentialNumber = res.credential_number || ''
       this.userName = res.user_name || ''
@@ -160,7 +165,11 @@
       }
       this.$apply()
     }
-
+    async verifyAudit() {
+      let res = await Store.verifyAudit()
+      this.submitIndex = res.id
+      return res
+    }
     _computedImg(arr, Msg) {
       return arr.map((item, index) => {
         item = Object.assign({}, item, Msg[index])
