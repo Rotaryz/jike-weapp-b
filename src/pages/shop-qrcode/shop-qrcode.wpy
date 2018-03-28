@@ -1,27 +1,19 @@
 <template>
   <view class="shop-qrcode">
     <canvas canvas-id="myCanvas" class="canvas" hidden="{{true}}"></canvas>
-    <view class="top">
-      <image class="qrcode-img" src="{{shareImg}}" wx:if="{{shareImg}}" @tap="saveImg"></image>
-    </view>
+    <swiper class="top" current="{{bigImgIdx}}" duration="300" bindchange="imgMove">
+      <block wx:for="{{imgArr}}" wx:key="{{item}}">
+        <swiper-item>
+          <image class="qrcode-img" src="{{item}}" @tap="showImg({{item}})"></image>
+        </swiper-item>
+      </block>
+    </swiper>
     <view class="down">
       <view class="title">选择模板后点击大图预览</view>
       <view class="item-list">
-        <view class="item">
-          <image src="{{shareImg}}" class="item-img" mode="aspectFill"></image>
-          <image class="checked-img" wx:if="{{imageUrlHead && shareImg}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-login_right@2x.png'}}"></image>
-        </view>
-        <view class="item">
-          <image src="" class="item-img"></image>
-        </view>
-        <view class="item">
-          <image src="" class="item-img"></image>
-        </view>
-        <view class="item">
-          <image src="" class="item-img"></image>
-        </view>
-        <view class="item">
-          <image src="" class="item-img"></image>
+        <view class="item" @tap="changeImg({{index}})" wx:for="{{imgArr}}" wx:key="{{item}}">
+          <image src="{{item}}" class="item-img" mode="aspectFill"></image>
+          <image class="checked-img" wx:if="{{imageUrlHead && index === smallImgIdx && item}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-login_right@2x.png'}}"></image>
         </view>
       </view>
     </view>
@@ -49,26 +41,39 @@
       imageUrlHead: URIS.image,
       shopName: '',
       qrcode: '',
-      shareImg: ''
+      bigImgIdx: 0,
+      smallImgIdx: 0,
+      imgArr: ['', '', '', '', '']
     }
 
     methods = {
-      async saveImg() {
-//        let res = await Tips.confirm('确定保存该图片？', true, '')
-//        if (!res) {
-//          return
-//        }
-//        await wepy.saveImageToPhotosAlbum({filePath: this.shareImg})
-//        Tips.success('保存成功')
-        await wepy.previewImage({urls: [this.shareImg]})
+      async showImg(url) {
+        await wepy.previewImage({
+          current: url,
+          urls: this.imgArr
+        })
+      },
+      changeImg(idx) {
+        this.bigImgIdx = idx * 1
+        this.smallImgIdx = idx * 1
+        this.$apply()
+      },
+      imgMove(e) {
+        if (e.detail.source === 'touch') {
+          this.smallImgIdx = e.detail.current * 1
+          this.$apply()
+        }
       }
     }
 
     async onLoad () {
       Tips.loading('生成中')
       await this.load()
-      await this.drawImage()
+      // 小程序码
+      const qrcode = await wepy.downloadFile({url: this.qrcode})
+      this.imgArr = await this.getImgs([0, 1, 2, 3, 4], qrcode)
       this.$apply()
+      Tips.loaded()
     }
 
     async load() {
@@ -81,31 +86,80 @@
       this.$apply()
     }
 
-    async drawImage() {
+    async getImgs(data, qrcode) {
+      let resArr = await Promise.all(data.map(async (item, index) => {
+        let res = await this.drawImage(index, qrcode)
+        return res
+      }))
+      return resArr
+    }
+
+    async drawImage(idx, qrcode) {
       const ctx = await wepy.createCanvasContext('myCanvas')
       // 背景
-      const bg = await wepy.downloadFile({url: URIS.image + '/defaults/b-image/mine/pic-mycode@2x.png'})
-      // 小程序码
-      const qrcode = await wepy.downloadFile({url: this.qrcode})
+      const bg = await wepy.downloadFile({url: URIS.image + '/defaults/b-image/mine/pic-bg' + idx + '@2x.png'})
       let bgImg = bg.tempFilePath
       let QR = qrcode.tempFilePath
-      ctx.drawImage(bgImg, 0, 0, 1180, 1800)
-      ctx.drawImage(QR, 700, 1348, 320, 320)
-      ctx.setFontSize(72)
-      ctx.setTextAlign('center')
-      ctx.fillText(this.shopName, 590, 155)
+      switch (idx * 1) {
+        case 0:
+          ctx.setFillStyle('white')
+          ctx.fillRect(670, 1335, 340, 340)
+          ctx.drawImage(QR, 674, 1341, 326, 326)
+          ctx.drawImage(bgImg, 0, 0, 1132, 1800)
+          ctx.setFillStyle('black')
+          ctx.setFontSize(72)
+          ctx.setTextAlign('center')
+          ctx.fillText(this.shopName, 566, 155)
+          break
+        case 1:
+          ctx.setFillStyle('white')
+          ctx.fillRect(690, 1360, 340, 340)
+          ctx.drawImage(QR, 696, 1366, 322, 322)
+          ctx.drawImage(bgImg, 0, 0, 1132, 1800)
+          ctx.setFillStyle('white')
+          ctx.setFontSize(60)
+          ctx.fillText(this.shopName, 90, 1480)
+          break
+        case 2:
+          ctx.setFillStyle('white')
+          ctx.fillRect(400, 1350, 340, 340)
+          ctx.drawImage(QR, 404, 1358, 322, 322)
+          ctx.drawImage(bgImg, 0, 0, 1132, 1800)
+          ctx.setFillStyle('black')
+          ctx.setFontSize(60)
+          ctx.fillText(this.shopName, 176, 1010)
+          break
+        case 3:
+          ctx.setFillStyle('white')
+          ctx.fillRect(700, 1405, 340, 340)
+          ctx.drawImage(QR, 704, 1408, 322, 322)
+          ctx.drawImage(bgImg, 0, 0, 1132, 1800)
+          ctx.setFillStyle('black')
+          ctx.setFontSize(60)
+          ctx.fillText(this.shopName, 94, 1570)
+          break
+        case 4:
+          ctx.setFillStyle('white')
+          ctx.fillRect(410, 1040, 320, 320)
+          ctx.drawImage(QR, 414, 1044, 296, 296)
+          ctx.drawImage(bgImg, 0, 0, 1132, 1800)
+          ctx.setFillStyle('white')
+          ctx.setFontSize(60)
+          ctx.setTextAlign('center')
+          ctx.fillText(this.shopName, 566, 834)
+          break
+      }
       ctx.draw()
       const res = await wepy.canvasToTempFilePath({
         x: 0,
         y: 0,
-        width: 1180,
+        width: 1132,
         height: 1800,
-        destWidth: 1180,
+        destWidth: 1132,
         destHeight: 1800,
         canvasId: 'myCanvas'
       })
-      this.shareImg = res.tempFilePath
-      Tips.loaded()
+      return res.tempFilePath
     }
   }
 </script>
@@ -121,14 +175,14 @@
     overflow: hidden
 
     .canvas
-      width: 1180px
+      width: 1132px
       height: 1800px
 
     .top
       height: 80vh
       position: relative
       .qrcode-img
-        width: 78.6666666666666vw
+        width: 75.466666666666vw
         height: 120vw
         position: absolute
         left: 50%
