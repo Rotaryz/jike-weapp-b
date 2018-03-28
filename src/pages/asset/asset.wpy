@@ -100,7 +100,9 @@
       remaining: '0.00',
       totalRemaining: '0.00',
       outcome: '0.00',
-      outcomeList: []
+      outcomeList: [],
+      page: 1,
+      hasMore: true
     }
 
     async onShow() {
@@ -110,6 +112,14 @@
     async load() {
       await this._getWithdrawalInfo()
       this.loaded()
+    }
+
+    async onReachBottom() {
+      if (this.activeTab !== 2 || !this.hasMore) {
+        return
+      }
+      this.page += 1
+      await this._getSpendLogs()
     }
 
     async _getWithdrawalInfo() {
@@ -123,21 +133,20 @@
     }
 
     async _getSpendLogs() {
-      if (this.outcomeList.length === 0) {
-        const res = await Monies.getSpendLogs()
-        this.loaded()
-        if (res.error === ERR_OK) {
-          this.outcome = res.total_money
-          this.outcomeList = res.data
-        }
-        this.$apply()
+      const res = await Monies.getSpendLogs({page: this.page})
+      this.loaded()
+      if (res.error === ERR_OK) {
+        this.outcome = res.total_money
+        this.outcomeList = this.page === 1 ? res.data : [...this.outcomeList, ...res.data]
+        this.hasMore = res.data.length >= 10
       }
+      this.$apply()
     }
 
     methods = {
       async clickTab(tabId) {
         this.activeTab = Math.floor(tabId)
-        if (this.activeTab === 2) {
+        if (this.activeTab === 2 && this.outcomeList.length === 0) {
           await this._getSpendLogs()
         }
       },

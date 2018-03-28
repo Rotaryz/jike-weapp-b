@@ -291,7 +291,7 @@
       this.showBlank(this.conList)
       this.navList = this.navList.concat(res)
       await wepy.setNavigationBarTitle({
-        title: `${this.pageTitle}商圈`
+        title: `${this.pageTitle}联盟`
       })
       this.$apply()
     }

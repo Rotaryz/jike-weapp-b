@@ -31,7 +31,7 @@
         </view>
         <view class="item-wrapper" wx:if="{{type === 1 && info.status === 2}}">
           <view class="l-content">失败原因</view>
-          <view class="r-content">{{info.remark}}</view>
+          <text class="r-content">{{info.remark}}</text>
         </view>
         <view class="item-wrapper">
           <view class="l-content">商户订单号</view>
@@ -181,4 +181,6 @@
             font-size: $font-size-medium
             color: $color-text-d
             text-align: right
+            word-wrap:break-word
+            overflow: hidden
 </style>
