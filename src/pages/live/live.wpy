@@ -1,4 +1,8 @@
 <template>
+  <view class="header">
+    <view>{{navigationBarTitleText}}</view>
+    <switch></switch>
+  </view>
   <view class="lives" enable-back-to-top="true">
     <view class="live" id="lis">
       <scroll-view class="live_conpon" scroll-y>
@@ -108,7 +112,8 @@
       showError: false,
       imageUrlHead: URIS.image,
       isPaused: 1,
-      delIndex: 0
+      delIndex: 0,
+      navigationBarTitleText: '直播优惠'
     }
 
     methods = {
