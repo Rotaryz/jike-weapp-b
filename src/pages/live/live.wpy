@@ -2,13 +2,13 @@
   <view class="header">
     <view>{{navigationBarTitleText}}</view>
     <view
-      class="switchbox {{isChecked===1?'':'checked'}}"
+      class="switchbox {{isChecked?'checked':''}}"
       @tap="switchChange"
     >
-      <view class="switch-circle {{isChecked===1?'':'checked'}}"></view>
+      <view class="switch-circle {{isChecked?'checked':''}}"></view>
     </view>
   </view>
-  <view class="lives" enable-back-to-top="true" hidden="{{isChecked===1}}">
+  <view class="lives" enable-back-to-top="true" hidden="{{!isChecked}}">
     <view class="live" id="lis">
       <scroll-view class="live_conpon" scroll-y>
         <view class="con-item" wx:for="{{activityPromotion}}"
@@ -78,7 +78,6 @@
   </view>
   <Toast></Toast>
   <Confirm></Confirm>
-  <ServiceDue></ServiceDue>
 </template>
 
 <script>
@@ -91,24 +90,9 @@
   import URIS from 'common/js/config'
   import {ERR_OK} from 'api/base'
   import Confirm from '@/base/confirm/confirm'
-  import ServiceDue from '@/base/service-due/service-due'
-  import Activity from '@/api/activitys'
-  import Tips from '@/common/js/tips'
 
   export default class Live extends wepy.page {
     mixins = [base]
-    components = {
-      Toast: Toast,
-      Confirm: Confirm
-    }
-
-    onShareAppMessage() {
-      this.ShareAppMessage()
-    }
-
-    config = {
-      navigationBarTitleText: '直播优惠'
-    }
     data = {
       videoImage: '',
       showVideo: false,
@@ -124,124 +108,113 @@
       isPaused: 1,
       delIndex: 0,
       navigationBarTitleText: '直播优惠',
-      isChecked: 1,
-      serviceDue: false
+      isChecked: true
     }
 
-    async _checkService() {
-      let resData = await Merchant.getService(false)
-      if (resData.error !== ERR_OK) {
-        this.serviceDue = wepy.getStorageSync('serviceDue')
-        return
-      }
-      this.serviceDue = resData.data.is_expiration
-      wepy.setStorageSync('serviceDue', this.serviceDue)
-      this.$apply()
-    }
-
-    async _executeSwitch(isChecked) {
-      if (this.serviceDue) {
-        this.$invoke('ServiceDue', 'show')
-        return
-      }
-      // let type
-      // switch (3) {
-      //   case 0:
-      //     type = 'lucky_draw'
-      //     break
-      //   case 1:
-      //     type = 'sign'
-      //     break
-      //   case 2:
-      //     type = 'share'
-      //     break
-      //   case 3:
-      //     type = 'video_live'
-      //     break
-      // }
-      let data = {
-        activity_type: 'video_live',
-        is_paused: isChecked
-      }
-      const res = await  Activity.switchActivity(data)
-      this.loaded()
-      if (res.error === ERR_OK) {
-        let msg = isChecked ? '开启成功' : '关闭成功'
-        return isChecked
-        Tips.success(msg)
-      } else {
-        this.$invoke('Toast', 'show', res.message)
-        return isChecked === 1 ? 0 : 1
-      }
-    }
-  }
-
-  methods = {
-    async switchChange() {
-      // 执行开关动作
-      let isChecked = this.isChecked * 1 === 1 ? 0 : 1
-      isChecked = await this._executeSwitch(isChecked)
-      this.isChecked = isChecked
-      this.$apply()
-    },
-    async upVideo() {
-      const res = await wepy.chooseVideo({sourceType: ['album']})
-//      需要限制大小，待确定！
-      let file = res.tempFilePath
-      const videoId = await Uploads.uploadVideo(file)
-      console.log(videoId)
-      if (videoId) {
-        this.videoSrc = res.tempFilePath
-        this.videoImage = videoId.url + '?second=1&height=80&width=80'
-        this.showVideo = true
-        this.fileId = videoId.id
+    async onShow() {
+      if (this.$parent.globalData.coupon &&
+        this.$parent.globalData.coupon !== '') {
+        for (let item of this.activityPromotion) {
+          if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
+            this.$invoke('Toast', 'show', '不可选择重复优惠券')
+            return false
+          }
+        }
+        this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
+        this.$parent.globalData.coupon = ''
         this.$apply()
       }
-    },
-    binderror(e) {
-      if (e.detail.errMsg) {
-        this.videoImage = ''
-        this.showError = true
-        this.$invoke('Toast', 'show', '解析视频封面图出错')
-      }
-    },
-    async choice() {
-      await wepy.navigateTo({
-        url: '../choice-coupon/choice-coupon'
-      })
-    },
-    delCou(index) {
-      this.delIndex = index
-      this.$invoke('Confirm', 'show')
-    },
-    async submitOk() {
-      console.log(this.isPaused)
-      Object.assign(this.allMsg, {
-        name: '直播活动',
-        is_paused: this.isPaused,
-        file_id: this.fileId,
-        image_id: this.imageId,
-        activity_promotions: this.activityPromotion
-      })
-      let res = null
-      if (this.id !== 0) {
-//        更新
-        res = await live.putlive(this.id, this.allMsg)
-      } else {
-//          新建
-        res = await live.createlive(this.allMsg)
-        await this.load()
+    }
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
+    async load() {
+      let res = await live.watchlive()
+      if (res.error === ERR_OK) {
+        res = res.data
+        this.isPaused = res.is_paused
+        this.id = res.id
+        this.videoSrc = res.file_url
+        this.showVideo = true
+        this.videoImage = res.file_url + '?second=1&height=80&width=80'
+        this.fileId = res.file_id
+        this.imageId = res.file_id
+        this.activityPromotion = res.activity_promotion
       }
       this.loaded()
-      if (res.error === ERR_OK) {
-        this.$invoke('Toast', 'show', '保存成功')
-        setTimeout(() => {
-          this.$back()
-        }, 1000)
-      } else {
-        this.$invoke('Toast', 'show', res.message)
-      }
+      this.$apply()
     }
+
+    async onLoad() {
+      await this.load()
+    }
+
+    methods = {
+      async switchChange() {
+        // 执行开关动作
+        this.isChecked = !this.isChecked
+        this.$apply()
+      },
+      async upVideo() {
+        const res = await wepy.chooseVideo({sourceType: ['album']})
+//      需要限制大小，待确定！
+        let file = res.tempFilePath
+        const videoId = await Uploads.uploadVideo(file)
+        console.log(videoId)
+        if (videoId) {
+          this.videoSrc = res.tempFilePath
+          this.videoImage = videoId.url + '?second=1&height=80&width=80'
+          this.showVideo = true
+          this.fileId = videoId.id
+          this.$apply()
+        }
+      },
+      binderror(e) {
+        if (e.detail.errMsg) {
+          this.videoImage = ''
+          this.showError = true
+          this.$invoke('Toast', 'show', '解析视频封面图出错')
+        }
+      },
+      async choice() {
+        await wepy.navigateTo({
+          url: '../choice-coupon/choice-coupon'
+        })
+      },
+      delCou(index) {
+        this.delIndex = index
+        this.$invoke('Confirm', 'show')
+      },
+      async submitOk() {
+        console.log(this.isPaused)
+        Object.assign(this.allMsg, {
+          name: '直播活动',
+          is_paused: this.isPaused,
+          file_id: this.fileId,
+          image_id: this.imageId,
+          activity_promotions: this.activityPromotion
+        })
+        let res = null
+        if (this.id !== 0) {
+//        更新
+          res = await live.putlive(this.id, this.allMsg)
+        } else {
+//          新建
+          res = await live.createlive(this.allMsg)
+          await this.load()
+        }
+        this.loaded()
+        if (res.error === ERR_OK) {
+          this.$invoke('Toast', 'show', '保存成功')
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+      }
 //      beginLive() {
 //        wx.navigateToMiniProgram({
 //          appId: 'wx7331ec9e7f642a99',
@@ -255,54 +228,19 @@
 //          }
 //        })
 //      }
-  }
-  events = {
-    'confirm': async () => {
-      this.activityPromotion.splice(this.delIndex, 1)
     }
-  }
-
-  onShow() {
-    if (this.$parent.globalData.coupon && this.$parent.globalData.coupon !== '') {
-      for (let item of this.activityPromotion) {
-        if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
-          this.$invoke('Toast', 'show', '不可选择重复优惠券')
-          // return false
-        }
+    events = {
+      'confirm': async () => {
+        this.activityPromotion.splice(this.delIndex, 1)
       }
-      this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
-      this.$parent.globalData.coupon = ''
-      this.$apply()
     }
-  }
-
-  async load() {
-    let res = await
-    live.watchlive()
-    if (res.error === ERR_OK) {
-      res = res.data
-      this.isPaused = res.is_paused
-      this.id = res.id
-      this.videoSrc = res.file_url
-      this.showVideo = true
-      this.videoImage = res.file_url + '?second=1&height=80&width=80'
-      this.fileId = res.file_id
-      this.imageId = res.file_id
-      this.activityPromotion = res.activity_promotion
+    components = {
+      Toast: Toast,
+      Confirm: Confirm
     }
-    this.loaded()
-    this.$apply()
-  }
-
-  async onLoad() {
-    await
-    this.load()
-  }
-
-  components = {
-    Toast,
-    ServiceDue
-  }
+    config = {
+      navigationBarTitleText: '直播优惠'
+    }
   }
 </script>
 

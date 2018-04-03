@@ -1,170 +1,171 @@
 <template>
-  <view class="page">
-    <view class="registration {{hidePage ? 'reghide' : ''}}">
-      <view class="map">
-        <view class="map-title">
-          <image wx:if="{{imageUri}}"
-                 src="{{imageUri + '/defaults/b-image/page/Group9.png'}}"></image>
-          {{shop.address}}
-        </view>
-        <view class="map-box">
-          <map name="address" latitude="{{shop.latitude}}"
-               longitude="{{shop.longitude}}"
-               markers="{{markers}}" style="width: 100%;height: 64vw"
-               wx:if="{{showMap}}">
-            <cover-view class="map-box">
-              <cover-image wx:if="{{imageUri}}"
-                           src="{{imageUri + '/defaults/b-image/page/pic-map_shade@2x.png'}}"
-                           class="bk">
-              </cover-image>
-              <cover-view class="tip-box">
+  <marketing-switch class="registration-page" title="签到红包">
+    <view class="page">
+      <view class="registration {{hidePage ? 'reghide' : ''}}">
+        <view class="map">
+          <view class="map-title">
+            <image wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/Group9.png'}}"></image>
+            {{shop.address}}
+          </view>
+          <view class="map-box">
+            <map name="address" latitude="{{shop.latitude}}"
+                 longitude="{{shop.longitude}}"
+                 markers="{{markers}}" style="width: 100%;height: 64vw"
+                 wx:if="{{showMap}}">
+              <cover-view class="map-box">
                 <cover-image wx:if="{{imageUri}}"
-                             src="{{imageUri +'/defaults/b-image/page/pic-range_bg@2x.png'}}"
-                             class="tip"></cover-image>
-                <cover-view>本店周边{{value}}内可签到</cover-view>
+                             src="{{imageUri + '/defaults/b-image/page/pic-map_shade@2x.png'}}"
+                             class="bk">
+                </cover-image>
+                <cover-view class="tip-box">
+                  <cover-image wx:if="{{imageUri}}"
+                               src="{{imageUri +'/defaults/b-image/page/pic-range_bg@2x.png'}}"
+                               class="tip"></cover-image>
+                  <cover-view>本店周边{{value}}内可签到</cover-view>
+                </cover-view>
+                <cover-image wx:if="{{imageUri}}"
+                             src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
+                             class="peo"></cover-image>
               </cover-view>
-              <cover-image wx:if="{{imageUri}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-manoutside.png'}}"
-                           class="peo"></cover-image>
-            </cover-view>
-          </map>
-        </view>
-        <view class="reg_red">
-          <image class="line" wx:if="{{imageUri}}"
-                 src="{{imageUri + '/defaults/b-image/page/pic-dashed@2x.png'}}"></image>
-          <view wx:for="{{redPac}}" wx:key="{{index}}">
-            <view class="red-title {{item.showTitle ===1 ? 'award': ''}}">{{
-              item.title}}
-            </view>
-            <image
-              src="{{imageUri + '/defaults/b-image/page/Rectangle 5.png'}}"
-              class="award"
-              wx:if="{{imageUri && item.showTitle ===1}}"></image>
-            <image src="{{item.image}}"></image>
+            </map>
           </view>
-        </view>
-      </view>
-      <view class="activity">
-        <view class="eva-title">活动信息</view>
-        <view class="acts">
-          <view class="acti-item">
-            活动名称
-            <input type="text" value="{{name}}" maxlength="10"
-                   bindinput="titleint"/>
-            <text class="num">{{nameLen}}/10</text>
-          </view>
-          <view class="acti-item">
-            活动时间
-            <view class="txt">
-              当天
-              <text class="zhi">至</text>
-              <view class="time">
-                <picker mode="date" value="{{etime}}"
-                        start="{{btime}}"
-                        bindchange="endDateChange">
-                  <view>{{etime}}</view>
-                </picker>
+          <view class="reg_red">
+            <image class="line" wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/pic-dashed@2x.png'}}"></image>
+            <view wx:for="{{redPac}}" wx:key="{{index}}">
+              <view class="red-title {{item.showTitle ===1 ? 'award': ''}}">{{
+                item.title}}
               </view>
-            </view>
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
-          </view>
-          <view class="acti-item" @tap="isChioce(way)">
-            签到范围
-            <text>{{value}}</text>
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
-          </view>
-        </view>
-      </view>
-      <view class="rules">
-        <view class="eva-title">签到规则</view>
-        <view class="acts">
-          <view class="acti-item" wx:for="{{paizrList}}" wx:key="{{index}}">
-            {{item.title}}
-            <view class="bo-tip" @tap="isChioce({{index}})">
               <image
-                src="{{imageUri + '/defaults/b-image/page/icon-add20@2x.png'}}"
-                wx:if="{{imageUri && item.promotion_title === '添加奖品'}}"></image>
-              {{item.promotion_title}}
+                src="{{imageUri + '/defaults/b-image/page/Rectangle 5.png'}}"
+                class="award"
+                wx:if="{{imageUri && item.showTitle ===1}}"></image>
+              <image src="{{item.image}}"></image>
             </view>
           </view>
-          <view class="acti-item">
-            活动说明
-          </view>
-          <!--<textarea name="" id="" placeholder="请输入"-->
-          <!--placeholder-style="color:#9b9b9b" maxlength="30"-->
-          <!--value="{{textares}}"-->
-          <!--bindinput="textinp" wx:if="{{showText}}">-->
-          <!--<text class="num">{{textarinp}}/30</text>-->
-          <repeat>
-            <Textarea :height.sync="75" :maxLength.sync="30"
-                      :value.sync="textares"></Textarea>
-          </repeat>
         </view>
-      </view>
-      <view class="order-detail" wx:if="{{showChioce}}">
-        <view class="order-box">
-          <view>{{chioceTitle}}</view>
-          <view wx:if="{{way && !showTimes}}">
-            <scroll-view scroll-y>
-              <view class="ways" wx:for="{{wayList}}" wx:key="{{index}}">
-                {{item.title}}
-                <view class="sel" @tap="chioceWay({{index}})">
-                  <image wx:if="{{imageUri}}"
-                         src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
+        <view class="activity">
+          <view class="eva-title">活动信息</view>
+          <view class="acts">
+            <view class="acti-item">
+              活动名称
+              <input type="text" value="{{name}}" maxlength="10"
+                     bindinput="titleint"/>
+              <text class="num">{{nameLen}}/10</text>
+            </view>
+            <view class="acti-item">
+              活动时间
+              <view class="txt">
+                当天
+                <text class="zhi">至</text>
+                <view class="time">
+                  <picker mode="date" value="{{etime}}"
+                          start="{{btime}}"
+                          bindchange="endDateChange">
+                    <view>{{etime}}</view>
+                  </picker>
                 </view>
               </view>
-              <view class="ways" style="border:none">
-                <input type="number" placeholder="请输入公里数"
-                       placeholder-style="color:#9b9b9b" bindinput="setWay"/>
-                <text>公里</text>
+              <image wx:if="{{imageUri}}"
+                     src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
+            </view>
+            <view class="acti-item" @tap="isChioce(way)">
+              签到范围
+              <text>{{value}}</text>
+              <image wx:if="{{imageUri}}"
+                     src="{{imageUri + '/defaults/b-image/page/icon-pressed.png'}}"></image>
+            </view>
+          </view>
+        </view>
+        <view class="rules">
+          <view class="eva-title">签到规则</view>
+          <view class="acts">
+            <view class="acti-item" wx:for="{{paizrList}}" wx:key="{{index}}">
+              {{item.title}}
+              <view class="bo-tip" @tap="isChioce({{index}})">
+                <image
+                  src="{{imageUri + '/defaults/b-image/page/icon-add20@2x.png'}}"
+                  wx:if="{{imageUri && item.promotion_title === '添加奖品'}}"></image>
+                {{item.promotion_title}}
+              </view>
+            </view>
+            <view class="acti-item">
+              活动说明
+            </view>
+            <!--<textarea name="" id="" placeholder="请输入"-->
+            <!--placeholder-style="color:#9b9b9b" maxlength="30"-->
+            <!--value="{{textares}}"-->
+            <!--bindinput="textinp" wx:if="{{showText}}">-->
+            <!--<text class="num">{{textarinp}}/30</text>-->
+            <repeat>
+            <Textarea :height.sync="75" :maxLength.sync="30"
+                      :value.sync="textares"></Textarea>
+            </repeat>
+          </view>
+        </view>
+        <view class="order-detail" wx:if="{{showChioce}}">
+          <view class="order-box">
+            <view>{{chioceTitle}}</view>
+            <view wx:if="{{way && !showTimes}}">
+              <scroll-view scroll-y>
+                <view class="ways" wx:for="{{wayList}}" wx:key="{{index}}">
+                  {{item.title}}
+                  <view class="sel" @tap="chioceWay({{index}})">
+                    <image wx:if="{{imageUri}}"
+                           src="{{item.sel? imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
+                  </view>
+                </view>
+                <view class="ways" style="border:none">
+                  <input type="number" placeholder="请输入公里数"
+                         placeholder-style="color:#9b9b9b" bindinput="setWay"/>
+                  <text>公里</text>
+                </view>
+              </scroll-view>
+              <view class="ways submit">
+                <view @tap="hideDetail('way')">取消</view>
+                <view @tap="sureWays">确定</view>
+              </view>
+            </view>
+          </view>
+          <view class="prize" wx:if="{{!way && !showTimes}}">
+            <view>{{chioceTitle}}</view>
+            <scroll-view scroll-y>
+              <view class="ways wachs" wx:for="{{redPack}}" wx:key="{{index}}">
+                <view>{{item.promotion_title}}</view>
+                <text>剩余{{item.promotion_stock}}个</text>
+                <view class="sel" @tap="selRed({{index}})">
+                  <image wx:if="{{imageUri}}"
+                         src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
+                </view>
               </view>
             </scroll-view>
-            <view class="ways submit">
-              <view @tap="hideDetail('way')">取消</view>
-              <view @tap="sureWays">确定</view>
+            <view class="add-weight ways">
+              <view>添加数量</view>
+              <image wx:if="{{imageUri}}"
+                     src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
+                     @tap="subtract"></image>
+              <input class="add-input" value="{{addNum}}" type="number"
+                     bindinput="setNum"/>
+              <image wx:if="{{imageUri}}"
+                     src="{{imageUri + '/defaults/b-image/page/add.png'}}"
+                     @tap="addReds"></image>
+            </view>
+            <view class="ways">
+              <view @tap="hideDetail">取消</view>
+              <view @tap="save">确定</view>
             </view>
           </view>
         </view>
-        <view class="prize" wx:if="{{!way && !showTimes}}">
-          <view>{{chioceTitle}}</view>
-          <scroll-view scroll-y>
-            <view class="ways wachs" wx:for="{{redPack}}" wx:key="{{index}}">
-              <view>{{item.promotion_title}}</view>
-              <text>剩余{{item.promotion_stock}}个</text>
-              <view class="sel" @tap="selRed({{index}})">
-                <image wx:if="{{imageUri}}"
-                       src="{{item.sel?imageUri + '/defaults/b-image/page/icon-selected@2x.png': imageUri + '/defaults/b-image/page/icon-selected.png'}}"></image>
-              </view>
-            </view>
-          </scroll-view>
-          <view class="add-weight ways">
-            <view>添加数量</view>
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/jian.png'}}"
-                   @tap="subtract"></image>
-            <input class="add-input" value="{{addNum}}" type="number"
-                   bindinput="setNum"/>
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/add.png'}}"
-                   @tap="addReds"></image>
-          </view>
-          <view class="ways">
-            <view @tap="hideDetail">取消</view>
-            <view @tap="save">确定</view>
-          </view>
+      </view>
+      <view class="con-submit" @tap="submitOk">
+        <view>
+          保存
         </view>
       </view>
+      <Toast></Toast>
     </view>
-    <view class="con-submit" @tap="submitOk">
-      <view>
-        保存
-      </view>
-    </view>
-    <Toast></Toast>
-  </view>
-
+  </marketing-switch>
 </template>
 
 <script>
@@ -174,14 +175,16 @@
   import Toast from '@/base/toast/toast'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
-  import { ERR_OK } from 'api/base'
+  import {ERR_OK} from 'api/base'
+  import MarketingSwitch from '@/base/marketing-switch/marketing-switch'
+
   //  红包图片
   const img1 = URIS.image + '/defaults/b-image/page/icon-1_money.png'
   const img2 = URIS.image + '/defaults/b-image/page/icon_notchecked.png'
   export default class Registration extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       this.ShareAppMessage()
     }
 
@@ -192,9 +195,11 @@
     }
     components = {
       Toast: Toast,
-      Textarea: Textarea
+      Textarea: Textarea,
+      'marketing-switch': MarketingSwitch
     }
     data = {
+      isChecked: 0,
       imageUri: URIS.image,
       shop: [],
       markers: [],
@@ -546,8 +551,9 @@
         }
       }
     }
+
 //  判断该活动是编辑还是新建状态
-    async load () {
+    async load() {
       let now = new Date()
       this.btime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
       let res = this.infoRes(await regist.seeRegist())
@@ -617,13 +623,16 @@
     }
 
 //  初始化数据
-    infoRes (res) {
+    infoRes(res) {
       if (res.error === ERR_OK) {
         return res.data
       }
     }
 
-    async onLoad () {
+    async onLoad(option) {
+      // 接受是否选中
+      this.isChecked = option.isChecked * 1
+      // last
       let data = this.infoRes(await regist.Redpack())
       let shop = this.infoRes(await regist.getData())
       this.loaded()
@@ -657,6 +666,7 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+
   .reghide
     position: relative
     top: -72vw
@@ -1027,7 +1037,7 @@
               width: 16px
       .add-weight
         position: absolute
-        width :100%
+        width: 100%
         bottom: 46px
         padding: 0px
         margin-top: 15px
@@ -1043,9 +1053,9 @@
           border: 0.5px solid #E6E6E6
           font-size: $font-size-medium
           min-height: 20px !important
-          height:20px
-          display :flex
-          align-items :center
+          height: 20px
+          display: flex
+          align-items: center
           text-align: center
           width: 40px
           margin-left: 3px

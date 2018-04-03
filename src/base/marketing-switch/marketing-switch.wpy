@@ -1,0 +1,192 @@
+<template>
+  <view class="marketing-switch-component">
+    <view class="marketing-switch" wx:if="{{serviceDue}}">
+      <view>{{title}}</view>
+      <view
+        class="switchbox {{isChecked?'checked':''}}"
+        @tap="switchChange"
+      >
+        <view class="switch-circle {{isChecked?'checked':''}}"></view>
+      </view>
+    </view>
+    <view hidden="{{isChecked===1}}">
+      <slot></slot>
+    </view>
+    <Toast></Toast>
+    <ServiceDue></ServiceDue>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Activity from '@/api/activitys'
+  import Tips from '@/common/js/tips'
+  import {ERR_OK} from '@/api/base'
+  import Toast from '@/base/toast/toast'
+  import base from '@/common/mixins/base'
+  import Merchant from '@/api/merchants'
+  import ServiceDue from '@/base/service-due/service-due'
+
+  export default class MarketingSwitch extends wepy.component {
+    mixins = [base]
+    props = {
+      title: {
+        type: String,
+        default: ''
+      }
+    }
+    data = {
+      serviceDue: true,
+      isChecked: 0 // 0 开启 1 关闭
+    }
+
+    async onLoad() {
+
+    }
+    async onReady() {
+      // await this._checkService()
+      this.isChecked = await this._getAllActivityInfo(this.title)
+      this.$apply()
+    }
+    // 查询商户信息是否过期
+    async _checkService() {
+      let resData = await Merchant.getService(false)
+      if (resData.error !== ERR_OK) {
+        this.serviceDue = wepy.getStorageSync('serviceDue')
+        return
+      }
+      this.serviceDue = resData.data.is_expiration
+      wepy.setStorageSync('serviceDue', this.serviceDue)
+      this.$apply()
+    }
+
+    // 查询所有活动信息
+    async _getAllActivityInfo(title) {
+      let Json = await Activity.getAllActivity()
+      let res = Json.data
+      let checked
+      if (Json.error !== ERR_OK) {
+        return
+      }
+      switch (title) {
+        case '大转盘':
+          checked = res.lucky_draw
+          break
+        case '签到红包':
+          checked = res.sign
+          break
+        case '分享有礼':
+          checked = res.share
+          break
+        case '直播优惠':
+          checked = res.video_live
+          break
+      }
+      this.$apply()
+      this.loaded()
+      return checked * 1
+    }
+
+    async _executeSwitch(title, isChecked) {
+      if (this.serviceDue) {
+        this.$invoke('ServiceDue', 'show')
+        return
+      }
+      let type
+      switch (title.trim()) {
+        case '大转盘':
+          type = 'lucky_draw'
+          break
+        case '签到红包':
+          type = 'sign'
+          break
+        case '分享有礼':
+          type = 'share'
+          break
+        case '直播优惠':
+          type = 'video_live'
+          break
+        default :
+          return
+      }
+      let data = {
+        activity_type: type,
+        is_paused: isChecked
+      }
+      const res = await Activity.switchActivity(data)
+      this.loaded()
+      if (res.error === ERR_OK) {
+        let msg = isChecked * 1 === 0 ? '开启成功' : '关闭成功'
+        this.$apply()
+        Tips.success(msg)
+        console.log(msg, isChecked)
+        return isChecked
+      } else {
+        this.$invoke('Toast', 'show', res.message)
+        return isChecked * 1 === 0 ? 1 : 0
+      }
+    }
+
+    methods = {
+      async switchChange() {
+        // 执行开关动作
+        // 关闭1 ,开启0
+        let isChecked = this.isChecked === 1 ? 0 : 1
+        // isChecked = await this._executeSwitch(this.title, isChecked)
+        this.isChecked = isChecked
+        this.$emit('switchChange', this.isChecked)
+        this.$apply()
+      }
+    }
+    components = {
+      Toast,
+      ServiceDue
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import '../../common/stylus/variable'
+
+  .marketing-switch
+    display: flex
+    flex-flow: row no-wrap
+    align-items: center
+    justify-content: space-between
+    height: 50px
+    background-color: $color-white
+    font-size: $font-size-medium-x
+    color: $color-text-td
+    box-sizing: border-box
+    margin-bottom: 9px
+    padding: 0 12px
+    .switchbox
+      width: 44px
+      height: 24px
+      border-radius: 12px
+      background: #eaeaea
+      display: flex
+      align-items: center
+      position: relative
+      transition: .3s all
+
+      .switch-circle
+        width: 20px
+        height: 20px
+        background: $color-text-d
+        border-radius: 10px
+        position: absolute
+        left: 2px
+        top: 2px
+        transition: .3s all
+
+    .switchbox.checked
+      background: $color-assist-f
+      transition: .3s all
+
+      .switch-circle.checked
+        background: $color-white
+        left: 22px
+        top: 2px
+        transition: .3s all
+</style>
