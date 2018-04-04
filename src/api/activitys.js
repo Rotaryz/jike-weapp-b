@@ -2,6 +2,16 @@ import base from './base'
 
 export default class Activitys extends base {
   /**
+   * 获取活动类型信息
+   * @type 活动类型
+   * @returns {Promise.<*>}
+   */
+  static async getActivityInfo(type) {
+    const url = `${this.baseUrl}/api/activity/${type}`
+    return await this.get(url)
+  }
+
+  /**
    * 获取奖品池列表
    * @returns {Promise.<*>}
    */

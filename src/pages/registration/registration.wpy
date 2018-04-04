@@ -1,5 +1,10 @@
 <template>
-  <marketing-switch class="registration-page" title="签到红包">
+  <marketing-switch
+    class="registration-page"
+    title="签到红包"
+    :isChecked.sync="isChecked"
+    :activityStatus.sync="activityStatus"
+  >
     <view class="page">
       <view class="registration {{hidePage ? 'reghide' : ''}}">
         <view class="map">
@@ -177,6 +182,7 @@
   import URIS from 'common/js/config'
   import {ERR_OK} from 'api/base'
   import MarketingSwitch from '@/base/marketing-switch/marketing-switch'
+  import Activity from '@/api/activitys'
 
   //  红包图片
   const img1 = URIS.image + '/defaults/b-image/page/icon-1_money.png'
@@ -199,7 +205,8 @@
       'marketing-switch': MarketingSwitch
     }
     data = {
-      isChecked: 0,
+      isChecked: '',
+      activityStatus: 'failed',
       imageUri: URIS.image,
       shop: [],
       markers: [],
@@ -214,13 +221,13 @@
         showTitle: 1,
         ispacket: 1
       }, {
-        title: '第二天',
+        title: '第2天',
         image: img2,
         showTitle: 0,
         ispacket: 0
 
       }, {
-        title: '第三天',
+        title: '第3天',
         image: img2,
         showTitle: 0,
         ispacket: 0
@@ -230,12 +237,12 @@
         showTitle: 1,
         ispacket: 2
       }, {
-        title: '第五天',
+        title: '第5天',
         image: img2,
         showTitle: 0,
         ispacket: 0
       }, {
-        title: '第六天',
+        title: '第6天',
         image: img2,
         showTitle: 0,
         ispacket: 0
@@ -629,13 +636,21 @@
       }
     }
 
+    async _getActivityInfo(type) {
+      let json = await Activity.getActivityInfo(type)
+      return json.status
+    }
+
     async onLoad(option) {
       // 接受是否选中
-      this.isChecked = option.isChecked * 1
+      this.options = option
+      this.isChecked = option.isChecked.toString()
+      this.activityStatus = await this._getActivityInfo('sign')
       // last
       let data = this.infoRes(await regist.Redpack())
       let shop = this.infoRes(await regist.getData())
       this.loaded()
+      console.log(shop)
       if (shop.industry) {
         const marker = {
           iconPath: `./icon-s_${shop.industry.code_name}@2x.png`,
@@ -673,11 +688,11 @@
 
   .map-box
     width: 100%
-    height: 64vw
+    height: 63.9vw
 
   .map
     padding: 0 $padding
-    background: $color-theme
+    background: $color-white
     .map-title
       font-size: $font-size-small
       line-height: 26px
@@ -858,26 +873,6 @@
       .bo-tip
         line-height: 16.5px
         font-size: $font-size-small
-
-  .con-submit
-    position: fixed
-    width: 100%
-    bottom: 0px
-    height: 14.93vw
-    background: $color-background
-    z-index: 200
-    view
-      position: absolute
-      bottom: 12px
-      left: 12px
-      width: 93.6%
-      height: 11.73vw
-      line-height: 11.73vw
-      background: $color-theme
-      color: $color-white
-      text-align: center
-      font-size: $font-size-medium
-      border-radius: 4px
 
   .order-detail
     position: fixed
@@ -1104,5 +1099,26 @@
           color: $color-text
           justify-content: space-between
           font-size: $font-size-small
+
+  .con-submit
+    position: fixed
+    width: 100%
+    bottom: 0
+    height: 14.93vw
+    background: $color-background
+    z-index: 200
+    view
+      position: absolute
+      bottom: 12px
+      left: 12px
+      width: 93.6%
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-theme
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+
 
 </style>

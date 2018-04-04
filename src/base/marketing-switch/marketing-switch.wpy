@@ -1,19 +1,18 @@
 <template>
   <view class="marketing-switch-component">
-    <view class="marketing-switch" wx:if="{{serviceDue}}">
+    <view class="marketing-switch" wx:if="{{isShowBtn}}">
       <view>{{title}}</view>
       <view
-        class="switchbox {{isChecked?'checked':''}}"
+        class="switchbox {{switchStyle}}"
         @tap="switchChange"
       >
-        <view class="switch-circle {{isChecked?'checked':''}}"></view>
+        <view class="switch-circle {{switchStyle}}"></view>
       </view>
     </view>
-    <view hidden="{{isChecked===1}}">
+    <view hidden="{{isShowContent}}">
       <slot></slot>
     </view>
     <Toast></Toast>
-    <ServiceDue></ServiceDue>
   </view>
 </template>
 
@@ -24,8 +23,6 @@
   import {ERR_OK} from '@/api/base'
   import Toast from '@/base/toast/toast'
   import base from '@/common/mixins/base'
-  import Merchant from '@/api/merchants'
-  import ServiceDue from '@/base/service-due/service-due'
 
   export default class MarketingSwitch extends wepy.component {
     mixins = [base]
@@ -33,65 +30,41 @@
       title: {
         type: String,
         default: ''
+      },
+      isChecked: {
+        type: String, // 0 开启 1 关闭
+        default: ''
+      },
+      activityStatus: {
+        type: String,
+        default: ''
       }
-    }
-    data = {
-      serviceDue: true,
-      isChecked: 0 // 0 开启 1 关闭
     }
 
-    async onLoad() {
-
-    }
-    async onReady() {
-      // await this._checkService()
-      this.isChecked = await this._getAllActivityInfo(this.title)
-      this.$apply()
-    }
-    // 查询商户信息是否过期
-    async _checkService() {
-      let resData = await Merchant.getService(false)
-      if (resData.error !== ERR_OK) {
-        this.serviceDue = wepy.getStorageSync('serviceDue')
-        return
+    computed = {
+      switchStyle() {
+        return this.isChecked * 1 ? '' : 'checked'
+      },
+      isShowBtn() {
+        return this.activityStatus.trim() === 'success'
+      },
+      isShowContent() {
+        if (this.isShowBtn) {
+          return this.isChecked * 1
+        } else {
+          // 不隐藏
+          return false
+        }
       }
-      this.serviceDue = resData.data.is_expiration
-      wepy.setStorageSync('serviceDue', this.serviceDue)
-      this.$apply()
-    }
-
-    // 查询所有活动信息
-    async _getAllActivityInfo(title) {
-      let Json = await Activity.getAllActivity()
-      let res = Json.data
-      let checked
-      if (Json.error !== ERR_OK) {
-        return
-      }
-      switch (title) {
-        case '大转盘':
-          checked = res.lucky_draw
-          break
-        case '签到红包':
-          checked = res.sign
-          break
-        case '分享有礼':
-          checked = res.share
-          break
-        case '直播优惠':
-          checked = res.video_live
-          break
-      }
-      this.$apply()
-      this.loaded()
-      return checked * 1
+      // ,isShowBtn() {
+      //   return true
+      // },
+      // isShowContent() {
+      //   return false
+      // }
     }
 
     async _executeSwitch(title, isChecked) {
-      if (this.serviceDue) {
-        this.$invoke('ServiceDue', 'show')
-        return
-      }
       let type
       switch (title.trim()) {
         case '大转盘':
@@ -116,14 +89,13 @@
       const res = await Activity.switchActivity(data)
       this.loaded()
       if (res.error === ERR_OK) {
-        let msg = isChecked * 1 === 0 ? '开启成功' : '关闭成功'
+        let msg = isChecked ? '关闭成功' : '开启成功'
         this.$apply()
         Tips.success(msg)
-        console.log(msg, isChecked)
         return isChecked
       } else {
         this.$invoke('Toast', 'show', res.message)
-        return isChecked * 1 === 0 ? 1 : 0
+        return isChecked ? 1 : 0
       }
     }
 
@@ -131,16 +103,14 @@
       async switchChange() {
         // 执行开关动作
         // 关闭1 ,开启0
-        let isChecked = this.isChecked === 1 ? 0 : 1
-        // isChecked = await this._executeSwitch(this.title, isChecked)
+        let isChecked = this.isChecked * 1 ? 0 : 1
+        isChecked = await this._executeSwitch(this.title, isChecked)
         this.isChecked = isChecked
-        this.$emit('switchChange', this.isChecked)
         this.$apply()
       }
     }
     components = {
-      Toast,
-      ServiceDue
+      Toast
     }
   }
 </script>
@@ -160,6 +130,8 @@
     box-sizing: border-box
     margin-bottom: 9px
     padding: 0 12px
+    font-family: PingFangSC-Light;
+    letter-spacing: 0;
     .switchbox
       width: 44px
       height: 24px

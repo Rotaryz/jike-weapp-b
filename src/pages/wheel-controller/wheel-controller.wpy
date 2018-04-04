@@ -1,211 +1,219 @@
 <template>
-  <view class="wheel-controller">
-    <view class="wheel-wrapper">
-      <view class="header-wrapper">
-        <!--<view class="switch-wrapper">-->
-        <!--<view class="switch">-->
-        <!--<view class="switch-ball"></view>-->
-        <!--</view>-->
-        <!--<view class="text">-->
-        <!--开启活动-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--<view class="edit-wrapper">-->
-        <!--<view class="btn">编辑</view>-->
-        <!--</view>-->
-      </view>
-      <view class="content-wrapper">
-        <view class="wheel">
-          <view class="wheel-pointer">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}"
-                   class="full-image"></image>
+  <marketing-switch
+    class="registration-page"
+    title="大转盘"
+    :isChecked.sync="isChecked"
+    :activityStatus.sync="activityStatus"
+  >
+    <view class="wheel-controller">
+      <view class="wheel-wrapper">
+        <view class="header-wrapper">
+          <!--<view class="switch-wrapper">-->
+          <!--<view class="switch">-->
+          <!--<view class="switch-ball"></view>-->
+          <!--</view>-->
+          <!--<view class="text">-->
+          <!--开启活动-->
+          <!--</view>-->
+          <!--</view>-->
+          <!--<view class="edit-wrapper">-->
+          <!--<view class="btn">编辑</view>-->
+          <!--</view>-->
+        </view>
+        <view class="content-wrapper">
+          <view class="wheel">
+            <view class="wheel-pointer">
+              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-pointer@2x.png'}}"
+                     class="full-image"></image>
+            </view>
+            <view class="wheel-content" ref="wheel">
+              <view class="wheel-relative">
+                <view class="wheel-image">
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}"
+                         class="full-image"></image>
+                </view>
+                <view class="wheel-prize-wrapper">
+                  <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
+                    <view class="prize prize-{{index}}">
+                      <view class="name">{{item.promotion_title}}</view>
+                      <view class="img-wrapper">
+                        <image src="{{item.promotion_img}}" mode="aspectFit"></image>
+                      </view>
+                    </view>
+                  </repeat>
+                  <view class="prize prize-5">
+                    <view class="name">谢谢惠顾</view>
+                    <view class="img-wrapper">
+                      <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}"
+                             mode="aspectFit"></image>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
           </view>
-          <view class="wheel-content" ref="wheel">
-            <view class="wheel-relative">
-              <view class="wheel-image">
-                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-zp@2x.png'}}"
+          <view class="pan-wrapper">
+            <view class="pan"></view>
+          </view>
+        </view>
+      </view>
+      <view class="detail-wrapper border-bottom-1px">
+        <view class="block-title border-bottom-1px">
+          活动信息
+        </view>
+        <view class="container">
+          <view class="title input-wrapper border-bottom-1px">
+            <view class="label">活动名称</view>
+            <input type="text"
+                   value="{{name}}"
+                   maxlength="10"
+                   @input="handleInput('name')"
+                   placeholder="请输入"
+                   placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+            <view class="lenth-wrapper">{{nameLength}}/10</view>
+          </view>
+          <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
+            <view class="label">活动时间</view>
+            <view class="content">
+              <!--<picker mode="date" class="sell-date" @change="setFromDate">-->
+              <!--<view class="date">-->
+              <!--<view>{{fromDate === '' ? '开始时间' : fromDate}}</view>-->
+              <!--<view class="arrow-right">-->
+              <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+              <!--class="full-image"></image>-->
+              <!--</view>-->
+              <!--</view>-->
+              <!--</picker>-->
+              <view class="start">当日</view>
+              <view class="to">至</view>
+              <picker mode="date" class="sell-date" @change="setToDate">
+                <view class="date">
+                  <view>{{toDate === '' ? '结束时间' : toDate}}</view>
+                  <view class="arrow-right">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                </view>
+              </picker>
+            </view>
+          </view>
+          <view class="join input-wrapper border-bottom-1px">
+            <view class="label">参与次数</view>
+            <view class="select-wrapper">
+              <view class="select-box" @tap="selectJoinTime(1)">
+                <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
+                  <image wx:if="{{joinTimes === 1 && imageUri}}"
+                         src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
+                </view>
+                <view class="text">一天一次</view>
+              </view>
+              <view class="select-box" @tap="selectJoinTime(0)">
+                <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
+                  <image wx:if="{{joinTimes === 0 && imageUri}}"
+                         src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
+                </view>
+                <view class="text">一人一次</view>
+              </view>
+            </view>
+          </view>
+          <!--<view class="add input-wrapper border-bottom-1px">-->
+          <!--<view class="label">增加次数</view>-->
+          <!--<view class="select-wrapper">-->
+          <!--<view class="select-box">-->
+          <!--<view class="select unselect">-->
+          <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
+          <!--</view>-->
+          <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
+          <!--</view>-->
+          <!--</view>-->
+          <!--</view>-->
+          <view class="explain">
+            <view class="title">活动说明</view>
+            <view class="text-wrapper">
+              <text-area :value.sync="activityDesc"
+                         height="75"
+                         maxLength="30"
+                         @input.user="handleActivityDesc"
+                         placeHolder="请输入"></text-area>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="prize-wrapper border-bottom-1px">
+        <view class="block-title border-bottom-1px">添加奖品</view>
+        <view class="container">
+          <view class="chance-wrapper">
+            设置总中奖概率
+            <view class="chance-input">
+              <input type="number"
+                     value="{{percentage}}"
+                     maxlength="3"
+                     @input="handleInput('percentage')"/>
+            </view>
+            %
+          </view>
+          <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
+            <view class="item-wrapper">
+              <view class="name">{{item.promotion_title}}</view>
+              <view class="quantity">{{item.promotion_stock}}个</view>
+              <view class="del" @tap="delectPrize({{index}}, {{item}})">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_delete@2x.png'}}"></image>
+              </view>
+            </view>
+          </repeat>
+          <view class="add-wrapper">
+            <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
+              <view class="add-image">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}"
                        class="full-image"></image>
               </view>
-              <view class="wheel-prize-wrapper">
-                <repeat for="{{activityPromotions}}" key="index" index="index" item="item">
-                  <view class="prize prize-{{index}}">
+              添加奖品
+            </view>
+          </view>
+          <prize-pool-modal title="添加奖品" type="big" @cancel.user="cancelSelectPrize" @confirm.user="saveSelectPrize">
+            <view class="prize-pool-modal" slot="content">
+              <view class="prize-poll-list">
+                <repeat for="{{prizePool}}" index="index" key="key" item="item">
+                  <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
                     <view class="name">{{item.promotion_title}}</view>
-                    <view class="img-wrapper">
-                      <image src="{{item.promotion_img}}" mode="aspectFit"></image>
+                    <view class="stock">剩余{{item.promotion_stock}}个</view>
+                    <view class="check-box-wrapper">
+                      <view
+                        class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
+                        <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}"
+                               src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                               class="full-image"></image>
+                      </view>
                     </view>
                   </view>
                 </repeat>
-                <view class="prize prize-5">
-                  <view class="name">谢谢惠顾</view>
-                  <view class="img-wrapper">
-                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-face@2x.png'}}"
-                           mode="aspectFit"></image>
-                  </view>
+              </view>
+              <view class="number-control border-top-1px">
+                <view class="text">添加数量</view>
+                <view class="dec" @tap.stop="decSelectStock">-</view>
+                <view class="number">
+                  <input type="number"
+                         maxlength="10"
+                         value="{{selectStock}}"
+                         @input="inputSelectStock"/>
                 </view>
+                <view class="add" @tap.stop="addSelectStock">+</view>
               </view>
+              <!--<view class="save-wrapper">-->
+              <!--<view class="btn" @tap.stop="saveSelectPrize()">保存</view>-->
+              <!--</view>-->
             </view>
-          </view>
-        </view>
-        <view class="pan-wrapper">
-          <view class="pan"></view>
+          </prize-pool-modal>
         </view>
       </view>
-    </view>
-    <view class="detail-wrapper border-bottom-1px">
-      <view class="block-title border-bottom-1px">
-        活动信息
+      <view class="btn-wrapper border-top-1px">
+        <!--<view class="btn-cancel">取消</view>-->
+        <!--<view class="split"></view>-->
+        <view class="btn-save" @tap="submitForm">保存</view>
       </view>
-      <view class="container">
-        <view class="title input-wrapper border-bottom-1px">
-          <view class="label">活动名称</view>
-          <input type="text"
-                 value="{{name}}"
-                 maxlength="10"
-                 @input="handleInput('name')"
-                 placeholder="请输入"
-                 placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
-          <view class="lenth-wrapper">{{nameLength}}/10</view>
-        </view>
-        <view class="time input-wrapper border-bottom-1px" @tap="showActivityTimeModal">
-          <view class="label">活动时间</view>
-          <view class="content">
-            <!--<picker mode="date" class="sell-date" @change="setFromDate">-->
-            <!--<view class="date">-->
-            <!--<view>{{fromDate === '' ? '开始时间' : fromDate}}</view>-->
-            <!--<view class="arrow-right">-->
-            <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
-            <!--class="full-image"></image>-->
-            <!--</view>-->
-            <!--</view>-->
-            <!--</picker>-->
-            <view class="start">当日</view>
-            <view class="to">至</view>
-            <picker mode="date" class="sell-date" @change="setToDate">
-              <view class="date">
-                <view>{{toDate === '' ? '结束时间' : toDate}}</view>
-                <view class="arrow-right">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-              </view>
-            </picker>
-          </view>
-        </view>
-        <view class="join input-wrapper border-bottom-1px">
-          <view class="label">参与次数</view>
-          <view class="select-wrapper">
-            <view class="select-box" @tap="selectJoinTime(1)">
-              <view class="select {{joinTimes === 1 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 1 && imageUri}}"
-                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
-              </view>
-              <view class="text">一天一次</view>
-            </view>
-            <view class="select-box" @tap="selectJoinTime(0)">
-              <view class="select {{joinTimes === 0 ? 'unselect' : ''}}">
-                <image wx:if="{{joinTimes === 0 && imageUri}}"
-                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
-              </view>
-              <view class="text">一人一次</view>
-            </view>
-          </view>
-        </view>
-        <!--<view class="add input-wrapper border-bottom-1px">-->
-        <!--<view class="label">增加次数</view>-->
-        <!--<view class="select-wrapper">-->
-        <!--<view class="select-box">-->
-        <!--<view class="select unselect">-->
-        <!--<image wx:if={{imageUri}} src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>-->
-        <!--</view>-->
-        <!--<view class="text">未中奖后分享成功再抽一次(选填)</view>-->
-        <!--</view>-->
-        <!--</view>-->
-        <!--</view>-->
-        <view class="explain">
-          <view class="title">活动说明</view>
-          <view class="text-wrapper">
-            <text-area :value.sync="activityDesc"
-                       height="75"
-                       maxLength="30"
-                       @input.user="handleActivityDesc"
-                       placeHolder="请输入"></text-area>
-          </view>
-        </view>
-      </view>
+      <toast></toast>
     </view>
-    <view class="prize-wrapper border-bottom-1px">
-      <view class="block-title border-bottom-1px">添加奖品</view>
-      <view class="container">
-        <view class="chance-wrapper">
-          设置总中奖概率
-          <view class="chance-input">
-            <input type="number"
-                   value="{{percentage}}"
-                   maxlength="3"
-                   @input="handleInput('percentage')"/>
-          </view>
-          %
-        </view>
-        <repeat for="{{activityPromotions}}" index="index" key="index" item="item">
-          <view class="item-wrapper">
-            <view class="name">{{item.promotion_title}}</view>
-            <view class="quantity">{{item.promotion_stock}}个</view>
-            <view class="del" @tap="delectPrize({{index}}, {{item}})">
-              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_delete@2x.png'}}"></image>
-            </view>
-          </view>
-        </repeat>
-        <view class="add-wrapper">
-          <view class="btn" @tap="showPrizePoolModal" wx:if="{{activityPromotions.length < 5}}">
-            <view class="add-image">
-              <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-yx_add@2x.png'}}"
-                     class="full-image"></image>
-            </view>
-            添加奖品
-          </view>
-        </view>
-        <prize-pool-modal title="添加奖品" type="big" @cancel.user="cancelSelectPrize" @confirm.user="saveSelectPrize">
-          <view class="prize-pool-modal" slot="content">
-            <view class="prize-poll-list">
-              <repeat for="{{prizePool}}" index="index" key="key" item="item">
-                <view class="prize border-bottom-1px" @tap.stop="changePrize({{item}})">
-                  <view class="name">{{item.promotion_title}}</view>
-                  <view class="stock">剩余{{item.promotion_stock}}个</view>
-                  <view class="check-box-wrapper">
-                    <view class="check-box {{selectPromotion.promotion_id === item.promotion_id ? 'unselected' : ''}}">
-                      <image wx:if="{{imageUri && selectPromotion.promotion_id === item.promotion_id}}"
-                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                             class="full-image"></image>
-                    </view>
-                  </view>
-                </view>
-              </repeat>
-            </view>
-            <view class="number-control border-top-1px">
-              <view class="text">添加数量</view>
-              <view class="dec" @tap.stop="decSelectStock">-</view>
-              <view class="number">
-                <input type="number"
-                       maxlength="10"
-                       value="{{selectStock}}"
-                       @input="inputSelectStock"/>
-              </view>
-              <view class="add" @tap.stop="addSelectStock">+</view>
-            </view>
-            <!--<view class="save-wrapper">-->
-            <!--<view class="btn" @tap.stop="saveSelectPrize()">保存</view>-->
-            <!--</view>-->
-          </view>
-        </prize-pool-modal>
-      </view>
-    </view>
-    <view class="btn-wrapper border-top-1px">
-      <!--<view class="btn-cancel">取消</view>-->
-      <!--<view class="split"></view>-->
-      <view class="btn-save" @tap="submitForm">保存</view>
-    </view>
-    <toast></toast>
-  </view>
+  </marketing-switch>
 </template>
 
 <script>
@@ -219,6 +227,7 @@
   import base from 'common/mixins/base'
   import Textarea from '@/base/textarea/textarea'
   import URIS from 'common/js/config'
+  import MarketingSwitch from '@/base/marketing-switch/marketing-switch'
 
   const ADD_TYPE = 0
   const UPDATE_TYPE = 1
@@ -227,6 +236,8 @@
     mixins = [base]
 
     data = {
+      isChecked: '',
+      activityStatus: 'failed',
       imageUri: URIS.image,
       type: ADD_TYPE,
       id: 0,
@@ -249,8 +260,11 @@
       caculating: false
     }
 
-    async onLoad() {
+    async onLoad(option) {
+      this.options = option
+      this.isChecked = option.isChecked.toString()
       await this.load()
+      console.log(this.isChecked, 'wheel')
     }
 
     async load() {
@@ -261,6 +275,8 @@
 
     async _getLucky(loading) {
       const json = await Activitys.getLucky(loading)
+      // 查询是否有该活动
+      this.activityStatus = json.status.toString()
       if (json.error === ERR_OK) {
         const res = json.data
         this.id = res.id
@@ -476,7 +492,8 @@
       'activity-time-picker': DatePicker,
       'prize-pool-modal': BaseModal,
       'toast': Toast,
-      'text-area': Textarea
+      'text-area': Textarea,
+      'marketing-switch': MarketingSwitch
     }
 
     config = {
@@ -511,7 +528,7 @@
       position: relative
       width: 100%
       padding-bottom: 17.5px
-      background-color: $color-theme
+      background-color: $color-white
       .header-wrapper
         display: flex
         align-items: center
@@ -627,7 +644,7 @@
             width: 100%
             height: 100%
             border-radius: 100%
-            background-color: $color-black
+            background-color: $color-background
     .detail-wrapper
       background-color: $color-white
       .block-title
