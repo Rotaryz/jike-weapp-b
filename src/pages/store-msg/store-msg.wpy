@@ -544,7 +544,7 @@
             logo_image_id: this.logoId,
             shop_images: this.storeImgs,
             qrcode_id: this.serviceCode[0].image_id,
-            particular_address: this.region[0] + this.region[1] + this.region[2] + this.site,
+            particular_address: this.region[0] + this.region[1] + this.region[2] + this.site
           }
           let upRes = await Store.setStoreMsg(data)
           this.loaded()
