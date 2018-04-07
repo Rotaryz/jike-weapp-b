@@ -265,7 +265,8 @@
                  class="full-image"></image>
         </view>
       </view>
-      <view class="know">1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
+      <view class="know">
+        1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
         2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
         3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
         4.备注：{{knowRemark}}
@@ -1139,7 +1140,7 @@
         justify-content: space-between
       .know
         display: block
-        padding-left: 27px
+        /*padding-left: 27px*/
         padding-bottom: 18px
         line-height: 16.5px
         white-space: pre-wrap

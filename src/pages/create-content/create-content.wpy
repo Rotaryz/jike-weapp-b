@@ -29,7 +29,7 @@
                  @tap="delItemIn({{index}})"></image>
           <view class="con-item">
             <image class="cantainer" @tap="upVideo({{index}})"
-                   src="{{item.detail[0].url +'?second=1&width=259&height=60'}}"></image>
+                   src="{{item.detail[0].cover_url}}"></image>
             <image wx:if="{{imageUri}}"
                    src="{{imageUri + '/defaults/b-image/page/icon-video@2x.png'}}"
                    class="video-ico"
@@ -46,7 +46,8 @@
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
+                   @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -77,7 +78,8 @@
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
+                   @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -94,9 +96,13 @@
                  @tap="delItemIn({{index}})"></image>
           <view class="con-item">
             <view class="cantainer">
-              <image class="cantainer-img" @tap="upImage({{index}})" src="{{item.detail[0].url}}" mode="widthFix"></image>
+              <image class="cantainer-img" @tap="upImage({{index}})"
+                     src="{{item.detail[0].url}}" mode="widthFix"></image>
             </view>
-            <image class="up" src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}" wx:if="{{imageUri && index > 0}}" @tap.stop="up({{index}})"></image>
+            <image class="up"
+                   src="{{imageUri + '/defaults/b-image/page/icon-up@2x.png'}}"
+                   wx:if="{{imageUri && index > 0}}"
+                   @tap.stop="up({{index}})"></image>
             <image class="down"
                    src="{{imageUri + '/defaults/b-image/page/icon-down@2x.png'}}"
                    wx:if="{{imageUri && index < contentList.length - 1}}"
@@ -105,7 +111,8 @@
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
+                   @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -139,7 +146,8 @@
           </view>
           <view class="add">
             <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}" @tap.stop="showMore({{index}})"></image>
+                   src="{{imageUri + '/defaults/b-image/page/icon-nr_add@2x.png'}}"
+                   @tap.stop="showMore({{index}})"></image>
           </view>
           <view class="add">
             <view class="options" wx:if="{{item.showAdds}}">
@@ -247,7 +255,10 @@
           } else {
             if (imageId) {
               if (num !== -1) {
-                this.contentList[num].detail[0] = {url: imageId.url, id: imageId.id}
+                this.contentList[num].detail[0] = {
+                  url: imageId.url,
+                  id: imageId.id
+                }
                 this.contentList[num]['detail_id'] = imageId.id
               } else {
                 this.imgSrc = imageId.url
@@ -278,6 +289,7 @@
       const res = await wepy.chooseVideo({sourceType: ['album']})
       let file = res.tempFilePath
       const videoId = await Uploads.uploadVideo(file)
+//      console.log(videoId)
       this.loaded()
       const DATA = {
         'id': 0,
@@ -291,7 +303,14 @@
       if (res.size <= 50 * 1024 * 1024) {
         if (status === 'add') {
           DATA.type = type
-          DATA.detail[0] = {url: videoId.url, id: videoId.id}
+          let coverUrl = videoId.cover_url.replace(/.jpg$/, '_314x75.jpg')
+          console.log(coverUrl)
+          DATA.detail[0] = {
+            url: videoId.url,
+            id: videoId.id,
+            cover_url: coverUrl
+          }
+//          console.log(DATA)
           DATA['detail_id'] = videoId.id
           if (num === -1) {
             this.contentList.unshift(DATA)
@@ -303,7 +322,11 @@
           this.upDateList(this.contentList[num + 1])
         } else {
           if (videoId) {
-            this.contentList[num].detail[0] = {url: videoId.url, id: videoId.id}
+            this.contentList[num].detail[0] = {
+              url: videoId.url,
+              id: videoId.id,
+              cover_url: videoId.cover_url
+            }
             this.contentList[num]['detail_id'] = videoId.id
             this.upDateList(this.contentList[num])
             this.$apply()
@@ -520,7 +543,7 @@
     }
 
     async onLoad (options) {
-      this.conId = options.id
+      this.conId = options.id || this.conId
       if (options.status) {
         this.addType = options.status
 //       编辑
@@ -541,7 +564,7 @@
       this.$apply()
     }
 
-    _upListComputed() {
+    _upListComputed () {
       return this.contentList.map((item) => {
         let copyItem = Object.assign({}, item)
         copyItem.detail = item.detail[0] || ''

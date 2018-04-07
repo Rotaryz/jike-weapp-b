@@ -114,7 +114,7 @@
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '订单',
-        image: URIS.image + '/defaults/b-image/page/icon-asset@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-order@2x.png',
         src: '/pages/order/order'
       }, {
         text: '客户',

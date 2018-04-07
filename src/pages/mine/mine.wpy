@@ -200,7 +200,7 @@
           path: this.path,
           extraData: {
           },
-          envVersion: 'develop',
+          envVersion: URIS.jumpVersion,
           success(res) {
             // 打开成功
             console.log(res)
