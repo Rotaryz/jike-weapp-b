@@ -1,0 +1,164 @@
+<template>
+  <view class="marketing-switch-component">
+    <view class="marketing-switch" wx:if="{{isShowBtn}}">
+      <view>{{title}}</view>
+      <view
+        class="switchbox {{switchStyle}}"
+        @tap="switchChange"
+      >
+        <view class="switch-circle {{switchStyle}}"></view>
+      </view>
+    </view>
+    <view hidden="{{isShowContent}}">
+      <slot></slot>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Activity from '@/api/activitys'
+  import Tips from '@/common/js/tips'
+  import {ERR_OK} from '@/api/base'
+  import Toast from '@/base/toast/toast'
+  import base from '@/common/mixins/base'
+
+  export default class MarketingSwitch extends wepy.component {
+    mixins = [base]
+    props = {
+      title: {
+        type: String,
+        default: ''
+      },
+      isChecked: {
+        type: String, // 0 开启 1 关闭
+        default: ''
+      },
+      activityStatus: {
+        type: String,
+        default: ''
+      }
+    }
+
+    computed = {
+      switchStyle() {
+        return this.isChecked * 1 ? '' : 'checked'
+      },
+      isShowBtn() {
+        return this.activityStatus.trim() === 'success'
+      },
+      isShowContent() {
+        if (this.isShowBtn) {
+          return this.isChecked * 1
+        } else {
+          // 不隐藏
+          return false
+        }
+      }
+      // ,isShowBtn() {
+      //   return true
+      // },
+      // isShowContent() {
+      //   return false
+      // }
+    }
+
+    async _executeSwitch(title, isChecked) {
+      let type
+      switch (title.trim()) {
+        case '大转盘':
+          type = 'lucky_draw'
+          break
+        case '签到红包':
+          type = 'sign'
+          break
+        case '分享有礼':
+          type = 'share'
+          break
+        case '直播优惠':
+          type = 'video_live'
+          break
+        default :
+          return
+      }
+      let data = {
+        activity_type: type,
+        is_paused: isChecked
+      }
+      const res = await Activity.switchActivity(data)
+      this.loaded()
+      if (res.error === ERR_OK) {
+        let msg = isChecked ? '关闭成功' : '开启成功'
+        this.$apply()
+        Tips.success(msg)
+        return isChecked
+      } else {
+        this.$invoke('Toast', 'show', res.message)
+        return isChecked ? 1 : 0
+      }
+    }
+
+    methods = {
+      async switchChange() {
+        // 执行开关动作
+        // 关闭1 ,开启0
+        let isChecked = this.isChecked * 1 ? 0 : 1
+        isChecked = await this._executeSwitch(this.title, isChecked)
+        this.isChecked = isChecked
+        this.$apply()
+      }
+    }
+    components = {
+      Toast
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import '../../common/stylus/variable'
+
+  .marketing-switch
+    display: flex
+    flex-flow: row no-wrap
+    align-items: center
+    justify-content: space-between
+    height: 50px
+    background-color: $color-white
+    font-size: $font-size-medium-x
+    color: $color-text-td
+    box-sizing: border-box
+    margin-bottom: 9px
+    padding: 0 12px
+    font-family: PingFangSC-Light;
+    letter-spacing: 0;
+    .switchbox
+      width: 44px
+      height: 24px
+      border-radius: 12px
+      background: #eaeaea
+      display: flex
+      align-items: center
+      position: relative
+      transition: .3s all
+
+      .switch-circle
+        width: 20px
+        height: 20px
+        background: $color-text-d
+        border-radius: 10px
+        position: absolute
+        left: 2px
+        top: 2px
+        transition: .3s all
+
+    .switchbox.checked
+      background: $color-assist-f
+      transition: .3s all
+
+      .switch-circle.checked
+        background: $color-white
+        left: 22px
+        top: 2px
+        transition: .3s all
+</style>
