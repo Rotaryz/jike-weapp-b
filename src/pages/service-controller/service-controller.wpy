@@ -1,6 +1,7 @@
 <template>
   <view class="create-service">
     <view class="detail-wrapper">
+      <!--品类-->
       <view class="catelog input-wrapper border-bottom-1px">
         <view class="label">品类</view>
         <view class="arrow-content-wrapper">
@@ -11,26 +12,27 @@
           </view>
         </view>
       </view>
+      <!--类型-->
       <view class="type input-wrapper border-bottom-1px" @tap="showMealModal">
         <view class="label">类型</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{category}}</view>
           <view class="arrow-right">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+            <image wx:if="{{imageUri}}"
+                   src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                    class="full-image"></image>
           </view>
         </view>
         <meal-modal title="选择类型" @confirm.user="setType">
           <view slot="content" class="meal-modal">
             <repeat for="{{categories}}" index="index" key="index" item="item">
-              <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{item.id}})">
+              <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{index}},{{item.id}})">
                 <view class="desc-wrapper">
                   <view class="name">{{item.name}}</view>
-                  <view class="desc">{{item.describe}}
-                  </view>
+                  <view class="desc">{{item.describe}}</view>
                 </view>
-                <view class="radio {{item.id !== categoryId ? 'unselected' : ''}}">
-                  <image wx:if="{{item.id === categoryId && imageUri}}" class="full-image"
+                <view class="radio {{index !== ticketFlag ? 'unselected' : ''}}">
+                  <image wx:if="{{index === ticketFlag && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
                 </view>
               </view>
@@ -38,7 +40,8 @@
           </view>
         </meal-modal>
       </view>
-      <view class="picture-wrapper border-bottom-1px">
+      <!--优惠券服务项目图片-->
+      <view wx:if="{{categoryId !== 3 && categoryId !== 4}}" class="picture-wrapper border-bottom-1px">
         <view class="label">优惠券服务项目图片</view>
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
@@ -59,7 +62,30 @@
         <view class="tip-wrapper">点击图片预览实际展示效果</view>
         <view class="tip-wrapper">添加1-3张服务项目图片(尺寸:750x400,大小2M以下)</view>
       </view>
-      <view class="title input-wrapper border-bottom-1px">
+      <!--售价-->
+      <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
+        <view class="label">售价</view>
+        <input type="number"
+               value="{{sellingPrice}}"
+               maxlength="10"
+               @input="handleInput('sellingPrice')"
+               @change="changeInput('sellingPrice')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+      </view>
+      <!--代金额-->
+      <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
+        <view class="label">代金额</view>
+        <input type="number"
+               value="{{replacePrice}}"
+               maxlength="10"
+               @input="handleInput('replacePrice')"
+               @change="changeInput('replacePrice')"
+               placeholder="请输入"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+      </view>
+      <!--标题-->
+      <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">标题</view>
         <input type="text"
                value="{{title}}"
@@ -69,7 +95,8 @@
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
         <view class="lenth-wrapper">{{titleLength}}/10</view>
       </view>
-      <view class="title input-wrapper border-bottom-1px">
+      <!--副标题-->
+      <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">副标题</view>
         <input type="text"
                value="{{subTitle}}"
@@ -79,25 +106,30 @@
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
         <view class="lenth-wrapper">{{subTitleLength}}/10</view>
       </view>
-      <view class="title input-wrapper border-bottom-1px">
+      <!--平台价-->
+      <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">平台价</view>
         <input type="number"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
+               @change="changeInput('platformPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
-      <view class="title input-wrapper border-bottom-1px">
+      <!--门市价-->
+      <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">门市价</view>
         <input type="number"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
+               @change="changeInput('shopPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
-      <view class="type input-wrapper" @tap="showServiceModal">
+      <!--服务详情-->
+      <view wx:if="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
         <view class="label">服务详情</view>
         <view class="arrow-content-wrapper">
           <view class="content"></view>
@@ -155,10 +187,145 @@
           </view>
         </service-modal>
       </view>
+      <!-- 服务详情图片 -->
+      <view wx:if="{{categoryId === 1}}" class="picture-wrapper ">
+        <view class="label">服务详情图片</view>
+        <view class="picture-content">
+          <repeat for="{{detailsPictures}}" key="index" index="index" item="item">
+            <view class="picture">
+              <view class="delete" wx:if="{{item.image_url}}" @tap="detailsDeleteImage({{index}})">
+                <image class="full-image"
+                       wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
+              </view>
+              <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image"
+                     @tap="showPicDetail({{item.image_url}})"></image>
+              <view class="add" wx:if="{{!item.image_url}}" @tap="detailsChooseImage({{index}})">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="tip-wrapper">点击图片预览实际展示效果</view>
+        <view class="tip-wrapper">添加1-5张服务项目图片(尺寸:750x400,大小2M以下)</view>
+      </view>
     </view>
-    <view class="time-wrapper">
+    <view class="time-wrapper detail-wrapper">
+      <!--折扣力度-->
+      <view wx:if="{{categoryId === 4}}" class="title input-wrapper border-bottom-1px">
+        <view class="label">折扣力度</view>
+        <input type="text"
+               value="{{discount}}"
+               maxlength="10"
+               @input="handleInput('discount')"
+               placeholder="请输入,如8.5"
+               placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+        <view class="lenth-wrapper">折</view>
+      </view>
+      <!--最高优惠-->
+      <view class="count-limit input-wrapper border-bottom-1px" @tap="showDiscountsMax">
+        <view class="label">最高优惠</view>
+        <view class="arrow-content-wrapper">
+          <view class="content">不限制</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+        <discounts-max title="最高优惠" @confirm.user="setSellCount" @cancel.user="resetSellCount">
+          <view class="count-modal" slot="content">
+            <view class="item-wrapper border-bottom-1px" @tap="selectCountType(-1)">
+              <view class="desc-wrapper">
+                <view class="name">无上限</view>
+              </view>
+              <view class="radio {{tempSellCount !== -1 ? 'unselected' : ''}}">
+                <image wx:if="{{imageUri && tempSellCount === -1}}" class="full-image"
+                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+              </view>
+            </view>
+            <view class="item-wrapper border-bottom-1px" @tap="selectCountType('')">
+              <view class="desc-wrapper">
+                <view class="name">最高优惠</view>
+              </view>
+              <view class="input-wrapper {{tempSellCount === -1 ? 'disabled' : ''}}">
+                <input type="number" value="{{tempSellCount === -1 ? '' : tempSellCount}}"
+                       disabled="{{tempSellCount === -1}}" maxlength="10" @input="handleInput('tempSellCount')"/>
+
+              </view>
+              <view class="max-unit">元</view>
+              <view class="radio {{tempSellCount === -1 ? 'unselected' : ''}}">
+                <image wx:if="{{imageUri && tempSellCount !== -1}}" class="full-image"
+                       src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+              </view>
+            </view>
+          </view>
+        </discounts-max>
+      </view>
+
+      <!--<view wx:if="{{categoryId === 4}}" class="not-allow-time input-wrapper border-bottom-1px" @tap="showDiscountsMax">-->
+        <!--<view class="label">最高优惠</view>-->
+        <!--<view class="content">{{notAllowTime}}</view>-->
+        <!--<view class="arrow-right">-->
+          <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+                 <!--class="full-image"></image>-->
+        <!--</view>-->
+        <!--<discounts-max title="最高优惠" @confirm.user="setDiscountsMax" @cancel.user="resetDiscountsMax">-->
+          <!--<view class="target-population" slot="content">-->
+            <!--<repeat for="{{discountsMax}}" index="index" key="index" item="item">-->
+              <!--<view class="item-wrapper border-bottom-1px" @tap.stop="selecteDiscountsMax({{index}},{{item.id}})">-->
+                <!--<view class="desc-wrapper">-->
+                  <!--<view class="name">{{item.title}}</view>-->
+                <!--</view>-->
+                <!--<view class="radio {{index !== discountsMaxFlag ? 'unselected' : ''}}">-->
+                  <!--<image wx:if="{{index === discountsMaxFlag && imageUri}}" class="full-image"-->
+                         <!--src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>-->
+                <!--</view>-->
+              <!--</view>-->
+            <!--</repeat>-->
+          <!--</view>-->
+        <!--</discounts-max>-->
+      <!--</view>-->
+
+      <!--使用条件-->
+
+      <!--满减设置 -->
+      <view wx:if="{{categoryId === 3}}" class="time input-wrapper border-bottom-1px">
+        <view class="label">满减设置</view>
+        <view class="content">
+          <view class="sell-date">
+            <view class="date">
+              满
+              <input class="fullMin" type="number"
+                     value="{{fullMax}}"
+                     maxlength="10"
+                     @input="handleInput('fullMax')"
+                     @change="changeInput('fullMax')"
+                     placeholder="请输入"
+                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>元
+            </view>
+          </view>
+          <view class="tos">可减</view>
+          <view class="sell-date">
+            <view class="date">
+              <input class="fullMin" type="number"
+                     value="{{fullMin}}"
+                     maxlength="10"
+                     @input="handleInput('fullMin')"
+                     @change="changeInput('fullMin')"
+                     placeholder="请输入"
+                     placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>元
+
+              <!--<view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>-->
+              <!--<view class="arrow-right">-->
+                <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+                       <!--class="full-image"></image>-->
+              <!--</view>-->
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- 售卖时间 / 领取时间 -->
       <view class="time input-wrapper border-bottom-1px">
-        <view class="label">售卖时间</view>
+        <view class="label">{{categoryId === 3 || categoryId === 4?'领取时间':'售卖时间'}}</view>
         <view class="content">
           <picker mode="date" class="sell-date" @change="setSellStartDate">
             <view class="date">
@@ -181,6 +348,7 @@
           </picker>
         </view>
       </view>
+      <!-- 券有效期 -->
       <view class="time input-wrapper border-bottom-1px">
         <view class="label">券有效期</view>
         <view class="content">
@@ -197,6 +365,31 @@
           </picker>
         </view>
       </view>
+      <!-- 目标人群 -->
+      <view class="not-allow-time input-wrapper border-bottom-1px" @tap="showTargetPopulation">
+        <view class="label">目标人群</view>
+        <view class="content">{{notAllowTime}}</view>
+        <view class="arrow-right">
+          <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                 class="full-image"></image>
+        </view>
+        <target-population title="目标人群" @confirm.user="setTargetPopulation" @cancel.user="resetTargetPopulation">
+          <view class="target-population" slot="content">
+            <repeat for="{{targetPopulation}}" index="index" key="index" item="item">
+              <view class="item-wrapper border-bottom-1px" @tap.stop="selecteTarget({{index}},{{item.id}})">
+                <view class="desc-wrapper">
+                  <view class="name">{{item.title}}</view>
+                </view>
+                <view class="radio {{index !== targetFlag ? 'unselected' : ''}}">
+                  <image wx:if="{{index === targetFlag && imageUri}}" class="full-image"
+                         src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </target-population>
+      </view>
+      <!-- 不可用期 -->
       <view class="not-allow-time input-wrapper border-bottom-1px" @tap="showNotAllowTimeModal">
         <view class="label">不可用期
           <text class="no-require">(选填)</text>
@@ -220,8 +413,9 @@
           </view>
         </not-allow-time-modal>
       </view>
+      <!-- 最大可售数量 -->
       <view class="count-limit input-wrapper border-bottom-1px" @tap="showCountModal">
-        <view class="label">最大可售数量</view>
+        <view class="label">{{categoryId === 3?'最大发放数量':'最大可售数量'}}</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{sellCount === -1 ? '不限制' : sellCount}}</view>
           <view class="arrow-right">
@@ -256,7 +450,9 @@
           </view>
         </count-modal>
       </view>
+
     </view>
+    <!--购买须知-->
     <view class="know-wrapper" @tap="showKnowModal">
       <view class="know-content input-wrapper">
         <view class="label">购买须知</view>
@@ -265,15 +461,22 @@
                  class="full-image"></image>
         </view>
       </view>
-      <view class="know">
+      <view wx:if="{{categoryId === 1}}" class="know">
         1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
         2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
         3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
         4.备注：{{knowRemark}}
       </view>
-      <know-modal title="购买须知" type="big" @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
+      <view wx:if="{{categoryId !== 1}}" class="know">
+        1.无限制
+        2.全场通用
+        3.备注：{{knowRemark}}
+      </view>
+      <know-modal title="购买须知" type="big"
+                  @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
         <view class="know-modal" slot="content">
-          <view class="card-wrapper border-bottom-1px">
+          <!--是否需要预约-->
+          <view wx:if="{{categoryId === 1}}" class="card-wrapper border-bottom-1px" >
             <view class="item-wrapper">
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showSubscribe')">
                 <view class="title">是否需要预约</view>
@@ -302,7 +505,9 @@
               </view>
             </view>
           </view>
+
           <view class="card-wrapper border-top-1px border-bottom-1px">
+            <!--单人购买上限-->
             <view class="item-wrapper border-top-1px border-bottom-1px pb20">
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showBuyLimit')">
                 <view class="title">单人购买上限</view>
@@ -312,22 +517,23 @@
                 </view>
               </view>
               <view class="select-wrapper {{showBuyLimit ? '' : 'hide'}}">
-                <view class="radio-wrapper">
-                  <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(-1)">
+                <view wx:if="{{categoryId !== 3}}" class="radio-wrapper">
+                  <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}"
+                        @tap.stop="selectBuyLimit(-1)">
                     <image wx:if="{{imageUri && tempBuyLimit === -1}}"
                            src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
                            class="full-image"></image>
                   </view>
                   无上限
                 </view>
-                <view class="radio-wrapper">
+                <view wx:if="{{categoryId !== 3}}" class="radio-wrapper">
                   <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(1)">
-                    <image wx:if="{{imageUri && tempBuyLimit !== -1}}"
+                    <image wx:if="{{imageUri && tempBuyLimit === -1}}"
                            src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
                            class="full-image"></image>
                   </view>
                   限制数量
-                  <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
+                  <view class="input-wrapper {{tempBuyLimit !== -1 ? 'disabled' : ''}}">
                     <input type="number"
                            value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}"
                            disabled="{{tempBuyLimit === -1}}"
@@ -335,9 +541,24 @@
                            @input="handleInput('tempBuyLimit')"/>
                   </view>
                 </view>
+                <view wx:if="{{categoryId === 3 || categoryId === 4}}" class="radio-wrapper">
+                  <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri}}"
+                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  限制数量
+                  <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
+                    <input type="number"
+                           value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}"
+                           maxlength="10"
+                           @input="handleInput('tempBuyLimit')"/>
+                  </view>
+                </view>
               </view>
             </view>
-            <view class="item-wrapper pb20">
+            <!--使用人数-->
+            <view wx:if="{{categoryId === 1}}" class="item-wrapper pb20">
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showUseLimit')">
                 <view class="title">使用人数</view>
                 <view class="icon-arrow {{showUseLimit ? '' : 'up'}}">
@@ -372,6 +593,47 @@
               </view>
             </view>
           </view>
+
+          <view wx:if="{{categoryId === 2 || categoryId === 3}}" class="card-wrapper border-top-1px border-bottom-1px">
+            <!--适用范围-->
+            <view class="item-wrapper border-top-1px border-bottom-1px pb20">
+              <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showRange')">
+                <view class="title">适用范围</view>
+                <view class="icon-arrow {{showRange ? '' : 'up'}}">
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
+                         class="full-image"></image>
+                </view>
+              </view>
+              <view class="select-wrapper {{showRange ? '' : 'hide'}}">
+                <view class="radio-wrapper">
+                  <view class="radio {{tempRange !== -1 ? 'unselected' : ''}}"
+                        @tap.stop="selectRange(-1)">
+                    <image wx:if="{{imageUri && tempRange === -1}}"
+                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  全场通用
+                </view>
+                <view class="radio-wrapper">
+                  <view class="radio {{tempRange === -1 ? 'unselected' : ''}}"
+                        @tap.stop="selectRange(1)">
+                    <image wx:if="{{imageUri && tempRange !== -1}}"
+                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  指定商品
+                  <view class="input-wrapper {{tempRange === -1 ? 'disabled' : ''}}">
+                    <input type="text"
+                           value="{{tempRange === -1 ? '' : tempRange}}"
+                           disabled="{{tempRange === -1}}"
+                           maxlength="10"
+                           @input="handleInput('tempRange')"/>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+          <!--备注-->
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
               <text-area height="50"
@@ -384,6 +646,7 @@
         </view>
       </know-modal>
     </view>
+    <!--提交-->
     <view class="btn-wrapper">
       <button class="btn" @tap="submitForm">提交</button>
     </view>
@@ -407,6 +670,7 @@
   import URIS from 'common/js/config'
   import Picture from '@/base/picture-detail/picture-detail'
 
+  const _MONEY = /^[1-9]{1}\d*(\.\d{1,2})?$/
   const IMAGE_INIT = {
     id: 0,
     image_id: 0
@@ -427,6 +691,12 @@
       categoryId: 1,
       categories: [],
       pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
+      detailsPictures: [
+        Object.assign({}, IMAGE_INIT),
+        Object.assign({}, IMAGE_INIT),
+        Object.assign({}, IMAGE_INIT),
+        Object.assign({}, IMAGE_INIT),
+        Object.assign({}, IMAGE_INIT)],
       title: '',
       titleLength: 0,
       subTitle: '',
@@ -453,7 +723,22 @@
       useLimit: -1,
       tempUseLimit: -1,
       knowRemark: '',
-      tempKnowRemark: ''
+      tempKnowRemark: '',
+
+      ticketFlag: 0,
+      targetPopulation: [{id: 0, title: '无限制'}, {id: 1, title: '新人首单(新手券)'}],
+      targetFlag: 0,
+      targetId: 0,  // 目标人群
+      sellingPrice: '', // 售价
+      replacePrice: '', // 代金额
+      showRange: true, // 适用范围
+      tempRange: -1,  // 适用范围
+      fullMax: '',    // 满
+      fullMin: '',    // 减
+      discount: '',
+      discountsMax: [{id: 0, title: '无限制'}, {id: 1, title: '最高优惠'}], // 最高优惠
+      discountsMaxId: 0,
+      discountsMaxFlag: 0,
     }
 
     async onLoad(option) {
@@ -481,6 +766,9 @@
       this.category = res.promotion_category.name
       this.categoryId = res.promotion_category.id
       this.pictures = res.promotion_image_data
+      if (res.promotion_detail_image_data.length > 0) {
+        this.detailsPictures = res.promotion_detail_image_data
+      }
       this.title = res.title
       this.titleLength = this.title.length
       this.subTitle = res.subhead
@@ -518,8 +806,9 @@
       this.$apply()
     }
 
-    async _getCouponCategories() {
+    async _getCouponCategories() { // 获取优惠卷
       const json = await Coupons.getCouponsCategories()
+      console.log(json)
       if (json.error !== ERR_OK) {
         return
       }
@@ -542,7 +831,9 @@
         this.$apply()
         return
       }
+      // if (!isNaN(value)) {}
       this[name] = value
+
       if (name === 'title') {
         this.titleLength = value.length
       } else if (name === 'subTitle') {
@@ -553,12 +844,16 @@
 
     _validForm() {
       const validPicture = this.pictures.findIndex((item) => item.image_url)
+      const validDetails = this.detailsPictures.findIndex((item) => item.image_url)
       const validServices = this.services.findIndex((item) => item.servie && item.number && item.price)
       if (!this.categoryId) {
         this._toast('请选择类型')
         return false
       } else if (validPicture === -1) {
         this._toast('请选择一张图片')
+        return false
+      } else if (validDetails === -1) {
+        this._toast('请选择一张服务详情图片')
         return false
       } else if (!this.title) {
         this._toast('请输入标题')
@@ -611,7 +906,8 @@
         }
         this.$invoke('catelog-modal', 'hide')
       },
-      selecteType(typeId) {
+      selecteType(index, typeId) { // 选择套餐
+        this.ticketFlag = index
         this.selectCategoryId = Math.floor(typeId)
       },
       setType() {
@@ -625,9 +921,22 @@
         this.$apply()
         this.loaded()
       },
+      async detailsChooseImage(pictureIndex) {
+        const details = await wepy.chooseImage()
+        const res = await Uploads.uploadImages(details.tempFilePaths[0])
+        this.detailsPictures[pictureIndex].image_id = res.id
+        this.detailsPictures[pictureIndex].image_url = res.url
+        this.$apply()
+        this.loaded()
+      },
       deleteImage(pictureIndex) {
         this.pictures[pictureIndex].image_id = 0
         this.pictures[pictureIndex].image_url = 0
+        this.$apply()
+      },
+      detailsDeleteImage(pictureIndex) {
+        this.detailsPictures[pictureIndex].image_id = 0
+        this.detailsPictures[pictureIndex].image_url = 0
         this.$apply()
       },
       handleInput(name, e) {
@@ -675,6 +984,24 @@
       setValidDate(e) {
         this.validDate = e.detail.value
       },
+      setDiscountsMax() {
+        this.discountsMaxId = this.discountsMaxFlag // targetId
+      },
+      resetDiscountsMax() {
+        this.discountsMaxFlag = this.discountsMaxId  // targetId
+      },
+      selecteDiscountsMax(index, id) {
+        this.discountsMaxFlag = index // targetId
+      },
+      selecteTarget(index, id) {
+        this.targetFlag = index // targetId
+      },
+      setTargetPopulation() {
+        this.targetId = this.targetFlag
+      },
+      resetTargetPopulation() {
+        this.targetFlag = this.targetId
+      },
       selecteNotAllowTime() {
         if (this.tempNotAllowTime) {
           this.tempNotAllowTime = ''
@@ -683,9 +1010,11 @@
         }
       },
       setNotAllowTime() {
+        console.log('....')
         this.notAllowTime = this.tempNotAllowTime
       },
       resetNotAllowTime() {
+        console.log('>>>')
         this.tempNotAllowTime = this.notAllowTime
       },
       selectCountType(type) {
@@ -713,6 +1042,9 @@
       },
       selectBuyLimit(buyLimit) {
         this.tempBuyLimit = Math.floor(buyLimit)
+      },
+      selectRange(range) {
+        this.tempRange = Math.floor(range)
       },
       selectUseLimit(useLimit) {
         this.tempUseLimit = Math.floor(useLimit)
@@ -755,7 +1087,8 @@
             buy_upper_limit: this.buyLimit,
             can_use_number: this.useLimit,
             remarks: this.knowRemark
-          }
+          },
+          promotion_detail_image: this.detailsPictures
         }
         if (this.industry) {
           data.industry_name = this.industry
@@ -784,6 +1117,12 @@
       showValidDateModal() {
         this.$invoke('valid-date-modal', 'show')
       },
+      showDiscountsMax() {
+        this.$invoke('discounts-max', 'show')
+      },
+      showTargetPopulation() {
+        this.$invoke('target-population', 'show')
+      },
       showNotAllowTimeModal() {
         this.$invoke('not-allow-time-modal', 'show')
       },
@@ -805,20 +1144,42 @@
         }
       },
       cancelValidDatePicker() {
+        console.log('cancelValidDatePicker')
         this.$invoke('valid-date-modal', 'hide')
       },
       confirmValidDatePicker(date) {
+        console.log('confirmValidDatePicker')
         this.validDate = date
         this.$invoke('valid-date-modal', 'hide')
       },
       showPicDetail(url) {
         this.$invoke('Picture', 'showPic', url, 400 / 750)
+      },
+      changeInput(name, e) {
+        let value = e.detail.value
+        if (!_MONEY.test(value)) {
+          value = value * 1
+          this[name] = value.toFixed(2)
+          console.log(this[name])
+        }
       }
     }
-
+    events = {
+      cancel() {
+        this.ticketFlag = this.categoryId - 1
+        console.log('取消')
+      },
+      confirmTicket() {
+        this.categoryId = this.ticketFlag + 1
+        this.category = this.categories[this.categoryId - 1].name
+        console.log('确定')
+      }
+    }
     components = {
       'meal-modal': BaseModal,
       'service-modal': BaseModal,
+      'discounts-max': BaseModal,
+      'target-population': BaseModal,
       'not-allow-time-modal': BaseModal,
       'count-modal': BaseModal,
       'know-modal': BaseModal,
@@ -883,7 +1244,7 @@
             justify-content: center
             width: 55px
             height: 55px
-            margin-right: 20px
+            margin-right: 10px
             text-align: center
             line-height 55px
             border-radius: 4px
@@ -978,6 +1339,9 @@
             &.unselected
               border-radius: 50%
               border-1px($color-text-d, 50%)
+          .max-unit
+            font-size: $font-size-small
+
       .type .service-modal
         padding: 10px
         .item-wrapper
@@ -1043,6 +1407,8 @@
               justify-content: center
               .arrow-right
                 margin-left: 1px
+              .fullMin
+                width: 60px
       .not-allow-time .content
         justify-content: flex-end
       .count-limit
@@ -1087,7 +1453,7 @@
               background-color: $color-assist-f
         .picker-time-wrapper
           height: 227px
-      .not-allow-time-modal
+      .not-allow-time-modal,.target-population
         padding: 0 10px
         .item-wrapper
           display: flex

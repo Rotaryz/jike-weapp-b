@@ -4,10 +4,12 @@
       <view class="modal">
         <view class="content-wrapper">
           <view class="content">
-            <view class="danger-wrapper">
-              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
+            <view class="danger-wrapper" wx:if="{{imgFlag}}">
+              <image wx:if="{{imageUrlHead}}"
+                     src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
             </view>
-            <view class="font">确定要删除？</view>
+            <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
+            <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
           </view>
         </view>
         <view class="btn-group border-top-1px">
@@ -26,7 +28,10 @@
   export default class Confirm extends wepy.component {
     data = {
       imageUrlHead: URIS.image,
-      show: false
+      imgFlag: true,
+      show: false,
+      title: '',
+      msg: ''
     }
 
     methods = {
@@ -42,8 +47,12 @@
         this.show = false
         this.$emit('close')
       },
-      show() {
+      show(data) {
+        this.title = data.title || ''
+        this.msg = data.msg || ''
+        this.imgFlag = data.imgFlag
         this.show = true
+        this.$apply()
       }
     }
   }
@@ -71,6 +80,7 @@
       min-height: 240px
       transform: translate(-50%, -50%)
       background-color: $color-white
+      border-radius: 4px
       .modal
         height: 240px
         .content-wrapper
@@ -88,6 +98,7 @@
             .font
               text-align: center
               font-size: $font-size-medium
+              line-height: 28px
         .btn-group
           display: flex
           height: 40px
@@ -96,6 +107,7 @@
             line-height: 40px
             text-align: center
             font-size: $font-size-medium
+            color: $color-assist-f
           .btn-left
-            color: $color-text-d
+            color: $color-text
 </style>

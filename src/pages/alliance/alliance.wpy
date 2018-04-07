@@ -1,38 +1,70 @@
 <template>
   <view>
-    <view class="client-head-box">
+    <view class="client-nav">
+      <view class="client-head-nav">
+        <view class="client-head-nav-txt {{ navInadex === 0 ?'action':''}}" @tap="topNav(0)">附近门店</view>
+        <view class="client-head-nav-txt {{ navInadex === 1 ?'action':''}}" @tap="topNav(1)">开通/投放</view>
+      </view>
+    </view>
+
+    <view class="client-head-box" wx:if="{{navInadex === 0}}">
       <view class="client-head">
         <view class="cover"></view>
-        <view wx:for="{{navList}}" class="item {{navNum === index ? 'choice' : ''}}"
+        <view wx:for="{{navList}}" class="item {{navNum === index ? 'choice' : ''}} {{index ===0?'first':''}}"
               wx:key="{{index}}" @tap="showType({{item.id}},{{index}})">
           <text>{{item.name}}</text>
         </view>
         <view class="last"></view>
       </view>
     </view>
+    <view class="client-head-box" wx:if="{{navInadex === 1}}">
+      <view class="client-head-box-nav">
+        <view wx:for="{{navListDredge}}" class="item {{twoNavNum === index ? 'choice' : ''}}"
+              wx:key="{{index}}" @tap="showType({{item.id}},{{index}})">
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
     <Blank></Blank>
-    <scroll-view scroll-y class="business" bindscrolltolower="showMore">
+    <scroll-view scroll-y class="business" bindscrolltolower="showMore" wx:if="{{navInadex === 0}}">
       <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
         <view>
-          <image class="header-logo" src="{{item.logo_image}}"
-                 wx:if="{{index !== 0}}" mode="aspectFill"></image>
-          {{item.shop_name}}
+          <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
+          <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
+            <view class="bus-item-txt-shop">{{item.shop_name}}</view>
+            <view class="bus-item-txt-site">{{item.particular_address || '广州市白云区黄石路国际单位二期…'}}</view>
+            <view class="bus-item-txt-info">
+              <text>用户数: {{item.user_count || 0}}</text>
+              <text>距离: {{item.distance || 0}}米</text>
+              <text>用户匹配度: {{item.match_degree || 0}}</text>
+            </view>
+          </viwe>
+          <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
         </view>
-        <view class="bus-tt"
-              @tap="checkboxChange({{index}},{{item.merchant_id}})">
-          {{item.start_showed_at}}{{item.start_showed_at !== '' ? '至' : ''}}{{
-          item.end_showed_at}}
-        </view>
-        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})"
-                        id="checkboxs">
+        <checkbox-group @change="checkboxChange({{index}},{{item.merchant_id}})" id="checkboxs">
           <label class="radioLabel {{item.checked?'active':''}}">
-            <checkbox value="{{item.shop_name}}" checked="{{item.is_check}}"
-                      hidden="true"/>
+            <checkbox value="{{item.shop_name}}" checked="{{item.is_check}}" hidden="true"/>
             {{item.txt}}
             <image class="radio-Icon" wx:if="{{imageUri}}"
                    src="{{item.is_check ? imageUri + '/defaults/b-image/page/icon-select@2x.png' : imageUri + '/defaults/b-image/page/icon-checkbox@2x.png'}}"></image>
           </label>
         </checkbox-group>
+      </view>
+    </scroll-view>
+    <scroll-view scroll-y class="business" bindscrolltolower="showMore" wx:if="{{navInadex === 1}}">
+      <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
+        <view>
+          <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
+          <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
+            <view class="bus-item-txt-shop">{{item.shop_name}}</view>
+            <view class="bus-item-txt-site">{{item.particular_address}}</view>
+            <view class="bus-item-txt-shop">
+              <text class="{{txtColor * 1 === 1 ? 'pay' : 'green'}}">{{ txtColor * 1 === 1 ? '付' : '收'}}</text>
+              <text>{{item.end_showed_at}}到期</text>
+            </view>
+          </viwe>
+          <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
+        </view>
       </view>
     </scroll-view>
     <view class="con-submit" @tap="navSetTime" wx:if="{{showNext}}">
@@ -73,18 +105,23 @@
     }
     data = {
       imageUri: URIS.image,
-      industryParentId: '',
+      industryParentId: {},
+      twoIndustryParentId: {type: 1},
       navNum: 0,
-      navList: [{
-        name: '全部',
-        id: ''
-      }],
+      twoNavNum: 0,
+      navList: [],
+      navListDredge: [
+        {
+          name: '已开通',
+          id: 1
+        },
+        {
+          name: '已投放',
+          id: 2
+        }
+      ],
       merchantId: [],
-      conList: [{
-        'shop_name': '全部',
-        'merchant_id': '',
-        'start_showed_at': ''
-      }],
+      conList: [],
       showTime: false,
       animation: {},
       time: '',
@@ -98,12 +135,19 @@
       pageTitle: '',
       allNum: 0,
       page: 1,
-      nothing: false
+      nothing: false,
+      navInadex: 0,
+      txtColor: 0
     }
 
     async _checkBusiness (data) {
-      // let res = await shop.checkBusiness(data)
-      let res = await circle.getShopList(data)
+      let res = ''
+      console.log(data)
+      if (this.navInadex === 0) {
+        res = await circle.getShopList(data)
+      } else {
+        res = await circle.dredgeList(data)
+      }
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].current_merchant) {
           this.pageTitle = res.data[i].business_circle.alias
@@ -134,24 +178,21 @@
     }
     methods = {
       async showType(id, index) {
+        if (this.navInadex * 1 === 1) {
+          this.txtColor = index
+          this.$apply()
+        }
         this.page = 1
         this.nothing = false
-        this.navNum = index
-        this.industryParentId = {industry_parent_id: id}
-        let res = await this._checkBusiness(this.industryParentId)
-        res = this.infoRes(res)
-        if (res.length === 0) {
-          this.conList = []
+        if (this.navInadex * 1 === 0) {
+          this.navNum = index
+          this.industryParentId = {industry_parent_id: id, topNav: this.navNum}
         } else {
-          this.conList = [{
-            'shop_name': '全部',
-            'merchant_id': '',
-            'start_showed_at': ''
-          }]
-          this.conList = this.conList.concat(res)
+          this.twoNavNum = index
+          this.twoIndustryParentId = {type: id, topNav: this.twoNavNum}
         }
-        this.showBlank(this.conList)
         this.$apply()
+        this.getList()
       },
       async showMore() {
         if (!this.nothing) {
@@ -170,47 +211,25 @@
       },
 //      选择框
       async checkboxChange(e, id) {
-        if (e !== 0) {
-          this.conList[e]['is_check'] = !this.conList[e]['is_check']
-          if (!this.conList[e]['is_check']) {
-            this.conList[0]['is_check'] = false
-          }
-          let resNum = 0
-          this.merchantId = []
-          this.conList.forEach((item, idx) => {
-            if (idx > 0) {
-              if (item['is_check']) {
-                this.merchantId.push(item.merchant_id)
-                resNum++
-              }
-            }
-            return item
-          })
-          this.allNum = resNum
-          if (resNum === this.conList.length - 1) {
-            this.conList[0]['is_check'] = true
-          }
-          if (resNum > 0) {
-            this.showNext = true
+        this.conList[e]['is_check'] = !this.conList[e]['is_check']
+        let resNum = 0
+        this.merchantId = []
+        this.conList.forEach((item, idx) => {
+          if (this.conList[e].merchant_id !== item.merchant_id) {
+            this.conList[idx]['is_check'] = false
           } else {
-            this.showNext = false
-          }
-        } else {
-          let status = !this.conList[0]['is_check']
-          if (status) {
-            this.showNext = true
-          } else {
-            this.showNext = false
-          }
-          this.merchantId = []
-          this.allNum = this.conList.length - 1
-          this.conList.map((item, idx) => {
-            if (idx !== 0) {
+            if (item['is_check']) {
               this.merchantId.push(item.merchant_id)
+              resNum++
             }
-            item['is_check'] = status
-            return item
-          })
+          }
+          return item
+        })
+        this.allNum = resNum
+        if (resNum > 0) {
+          this.showNext = true
+        } else {
+          this.showNext = false
         }
         this.$apply()
       },
@@ -220,15 +239,10 @@
         if (this.merchantId.length === 1) {
           this.conList.forEach((item) => {
             if (item['is_check']) {
-              this.btime = item.start_showed_at === '' ? '开始时间' : item.start_showed_at
-              this.etime = item.end_showed_at === '' ? '结束时间' : item.end_showed_at
+              urls =
+                `/pages/cir-times/cir-times?image=${item.logo_image}&shopName=${item.shop_name}&site=${item.particular_address || ''}`
             }
           })
-          urls =
-            `/pages/cir-times/cir-times?title=${this.pageTitle}&allNum=${this.allNum}&begTime=${this.btime}&endTime=${this.etime}`
-        } else {
-          urls =
-            `/pages/cir-times/cir-times?title=${this.pageTitle}&allNum=${this.allNum}`
         }
         await wepy.navigateTo({
           url: urls
@@ -239,6 +253,11 @@
       },
       cancel() {
         this.showChioce = false
+      },
+      topNav(id, e) {
+        this.navInadex = id * 1
+        this.$apply()
+        this.getList()
       }
     }
 
@@ -247,53 +266,53 @@
         return res.data
       }
     }
-    async onShow() {
-      let statusAlliance = wepy.getStorageSync('statusAlliance')
-      if (statusAlliance) {
-        this.$invoke('Toast', 'show', '设置成功')
-        wepy.setStorageSync('statusAlliance', 0)
-        let res = await this._checkBusiness(this.industryParentId)
-        res = this.infoRes(res)
-        if (res.length === 0) {
-          this.conList = []
-        } else {
-          this.conList = [{
-            'shop_name': '全部',
-            'merchant_id': '',
-            'start_showed_at': ''
+    async getList() {
+      let topNav = this.navInadex
+      let twoNav = this.twoIndustryParentId
+      this.conList = []
+      if (topNav === 0) {
+        twoNav = this.industryParentId
+        if (this.navList.length <= 0) {
+          this.navList = [{
+            name: '全部',
+            id: ''
           }]
-          this.conList = this.conList.concat(res)
+          let res = await shop.industries()
+          res = this.infoRes(res)
+          this.navList = this.navList.concat(res)
         }
-        this.showBlank(this.conList)
-        this.$apply()
       }
-    }
-    async onLoad (options) {
-      this.conList = [{
-        'shop_name': '全部',
-        'merchant_id': '',
-        'start_showed_at': ''
-      }]
-      this.navList = [{
-        name: '全部',
-        id: ''
-      }]
-      let data = await this._checkBusiness({})
+      let data = await this._checkBusiness(twoNav)
       data = this.infoRes(data)
-      let res = await shop.industries()
-      res = this.infoRes(res)
       this.loaded()
       if (data.length === 0) {
         this.conList = []
       } else {
         this.conList = this.conList.concat(data)
       }
-      this.showBlank(this.conList)
-      this.navList = this.navList.concat(res)
-      await wepy.setNavigationBarTitle({
-        title: `${this.pageTitle}联盟`
-      })
       this.$apply()
+      this.showBlank(this.conList)
+    }
+    async onShow() {
+      let statusAlliance = wepy.getStorageSync('statusAlliance')
+      if (statusAlliance) {
+        this.$invoke('Toast', 'show', '设置成功')
+        this.navInadex = 0
+        this.twoNavNum = 0
+        wepy.setStorageSync('statusAlliance', 0)
+        this.$apply()
+        this.getList()
+      } else {
+        this.conList.forEach((item, idx) => {
+          this.conList[idx]['is_check'] = false
+        })
+      }
+    }
+    async onLoad (options) {
+      this.getList()
+      await wepy.setNavigationBarTitle({
+        title: `${this.pageTitle}联盟流量`
+      })
     }
   }
 </script>
@@ -308,55 +327,134 @@
 
   view
     box-sizing: border-box
+  .client-nav
+    background-color: $color-white
+    padding: 15px
+    .client-head-nav
+      height: 26px
+      border-radius: 4px
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      display: flex
+      border: 0.5px solid $color-theme
+      .client-head-nav-txt
+        line-height: 26px
+        text-align: center
+        width 50%
+      .action
+        background-color:$color-theme
+        color: $color-white
 
   .client-head-box
     position: relative
     width: 100%
-    height: 38.5px
+    height: 44.5px
 
     .client-head
-      height: 38.5px
-      background: $color-theme
+      height: 44.5px
+      background: $color-white
       overflow-x: auto
       overflow-y: hidden
       align-items: center
       display: flex
-      padding-top: 10.5px
+      border-bottom: 0.5px solid $color-split-line
       .cover
         height: 36.5px
         width: 20px
         position: absolute
         right: 0
         top: 0
-        background: linear-gradient(to left, rgba(54, 53, 71, .9) , rgba(54, 53, 71, .5))
+      // background: linear-gradient(to left, rgba(54, 53, 71, .9) , rgba(54, 53, 71, .5))
 
       .item
         font-family: $font-family-light
-        color: $color-white
+        color: $color-theme
         font-size: $font-size-medium
-        min-width: 44px
+        min-width: 54px
         text-align: center
-        line-height: 26px
+        line-height: 43px
+        position: relative
         text
           text-align: center
           display: inline-block
           margin: 0 auto
-          width: 110%
           white-space: nowrap
-          border-bottom: 2px solid $color-theme
+      .first:after
+        content: ''
+        position: absolute
+        height: 17px
+        border-right:1px solid $color-row-line
+        right: -2px
+        top: 0px
+        margin: auto
+        bottom: 0px
+        left: 0px
       .item.choice
         text
           color: $color-assist-f
-          border-bottom: 2px solid $color-assist-f
+        &:before
+          content: ''
+          position: absolute
+          width: 34px
+          border-bottom:2px solid $color-assist-f
+          right: 0px
+          top: 0px
+          margin: auto
+          bottom: -1px
+          left: 0px
       .last
         min-width: 20px
         height: 36px
 
+    .client-head-box-nav
+      height: 44.5px
+      background: $color-white
+      overflow-x: auto
+      overflow-y: hidden
+      align-items: center
+      display: flex
+      border-bottom: 0.5px solid $color-split-line
+      .cover
+        height: 36.5px
+        width: 20px
+        position: absolute
+        right: 0
+        top: 0
+
+      .item
+        font-family: $font-family-light
+        color: $color-theme
+        font-size: $font-size-medium
+        min-width: 50%
+        text-align: center
+        line-height: 43px
+        position: relative
+        text
+          text-align: center
+          display: inline-block
+          margin: 0 auto
+          white-space: nowrap
+      .item.choice
+        text
+          color: $color-assist-f
+        &:before
+          content: ''
+          position: absolute
+          width: 34px
+          border-bottom:2px solid $color-assist-f
+          right: 0px
+          top: 0px
+          margin: auto
+          bottom: -1px
+          left: 0px
   .business
     font-size: $font-size-small
     height: 93vh
     padding-bottom: 50px
     box-sizing: border-box
+    .business-bus
+      height: 100px
     .wx-checkbox-input
       height: 16px
       width: 16px
@@ -378,28 +476,98 @@
         width: 20px
     .bus-item
       display: flex
-      height: 43px
+      height: 90px
       background: $color-white
       padding: 0 $padding
       border-bottom: 0.5px solid $color-split-line
+      border-top: 0.5px solid $color-split-line
+      margin-top:10px
       .bus-tt
         min-width: 50vw
       .header-logo
-        height: 24px
-        width: 24px
-        border-radius: 50%
+        height: 48px
+        width: 48px
+        border-radius: 4px
         margin-bottom: 0
         border: 0.5px solid $color-split-line
         transform: translateY(6px)
-      view
-        no-wrap()
+        margin-top: 2px
+      >view
+        display: flex
         color: $color-theme
-        line-height: 43px
+        line-height: 70px
         text-indent: 6px
-        width: 38.46vw
+        width: 88.46vw
         text-align: left
         transform: translateY(2px)
+        .bus-item-all
+          line-height: 46px
+        .bus-item-txt
+          padding: 6px 0px
+          width: 65vw
+          >view
+            line-height: 26px
+            font-size: $font-size-medium
+          .bus-item-txt-shop
+            font-family: $font-family-meddle
+            color: $color-text
+            letter-spacing: 0
+            no-wrap()
+            .green
+              display: inline-block
+              text-indent: 0px
+              border-radius: 2px
+              width: 12px
+              height: 12px
+              line-height: 15px
+              text-align: center
+              background-color: $color-pic-green
+              color: $color-white
+              font-size: $font-size-small-s
+            .pay
+              display: inline-block
+              text-indent: 0px
+              border-radius: 2px
+              width: 12px
+              height: 12px
+              line-height: 15px
+              text-align: center
+              background-color: $color-assist-f
+              color: $color-white
+              font-size: $font-size-small-s
 
+          .bus-item-txt-site
+            font-family: $font-family-light
+            color: $color-text-d
+            letter-spacing: 0
+            no-wrap()
+          .bus-item-txt-info
+            no-wrap()
+            text
+              margin-right: 18px
+              font-family: $font-family-light
+              font-size: $font-size-small
+              position: relative
+            text:nth-child(2)
+              :after
+                content: ''
+                position: absolute
+                height: 11px
+                border-right:1px solid $color-row-line
+                right: -11px
+                top: 0px
+                margin: auto
+                bottom: 0px
+                left: 0px
+              :before
+                content: ''
+                position: absolute
+                height: 11px
+                border-left: 1px solid $color-row-line
+                top: 0px
+                left: -11px
+                bottom: 0px
+                margin: auto
   .times
     position: fixed
     height 100%

@@ -130,7 +130,7 @@
         src: '/pages/asset/asset'
       }, {
         text: '联盟',
-        image: URIS.image + '/defaults/b-image/page/icon-tradingarea@2x.png',
+        image: URIS.image + '/defaults/b-image/page/icon-union@2x.png',
         src: '/pages/alliance/alliance'
       }, {
         text: '',

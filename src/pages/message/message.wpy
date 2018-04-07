@@ -1,42 +1,5 @@
 <template>
   <view class="order-box">
-    <view class="or-header" wx:if="{{!showInput}}">
-      <!--<text>服务订单</text>-->
-      <view class="{{showOrder ? 'active' : ''}}" @tap="showOrders">
-        <text>{{orders[orderPage].title}}</text>
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
-        <view class="day-select first" wx:if="{{showOrder}}">
-          <view wx:for="{{orders}}" wx:key="{{index}}"
-                class="{{orderPage === index? 'tactive' : ''}}"
-                @tap="orderPage({{index}})">{{item.title}}
-          </view>
-        </view>
-      </view>
-      <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
-        <text>{{days[dayPage].title}}</text>
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
-        <view class="day-select" wx:if="{{showDay}}">
-          <view wx:for="{{days}}" wx:key="{{index}}"
-                class="{{dayPage === index? 'tactive' : ''}}"
-                @tap="showPage({{index}})">{{item.title}}
-          </view>
-        </view>
-      </view>
-      <view @tap="isInput">
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
-        <text>搜索</text>
-      </view>
-    </view>
-    <view class="inputs" wx:if="{{showInput}}">
-      <image
-        src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
-      <input type="number" placeholder="手机号搜索" bindinput="sreaching"
-             focus="{{showInput}}"
-             value="{{searchValue}}" bindblur="bindblurs"/>
-    </view>
     <NavHeader>
       <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
             wx:key="{{index}}" @tap="showMsg({{index}})" id="nav-order">
@@ -44,55 +7,59 @@
       </view>
     </NavHeader>
     <Blank></Blank>
+
     <scroll-view scroll-y="true" bindscrolltolower="loadMore">
       <view class="order-conpon">
         <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-          <image wx:if="{{imageUrlHead}}"
-                 src="{{imageUrlHead+'/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
+          <image src="{{item.logo_image}}"></image>
           <view class="order-top">
-            <view>
-              <view class="order-title">服务名称: {{item.title}}</view>
-              <view class="order-title">手机号码: {{item.customer_phone}}</view>
+            <view class="order-title" wx:if="{{item.my_payed === 1}}">{{'向' + item.shop_name + '申请投放异业联盟'}}</view>
+            <view class="order-title" wx:if="{{item.my_payed === 0}}">{{item.shop_name + '向您申请开通异业联盟'}}</view>
+            <view class="order-time">
+              时间：{{item.days}}天({{item.start_showed_at + '-' +item.start_showed_at}})
+              <text class="order-right-ok" wx:if="{{item.examine_waiting === 0}}">{{item.status_str}}</text>
             </view>
-            <text>
-              {{statusTxt[item.status]}}
-            </text>
-          </view>
-          <view class="order-bottom">
-            <view>订单号: {{item.order_sn}}</view>
-            <text @tap="showDetail({{item.id}})">
-              查看详情
-            </text>
+            <view class="order-money">金额：{{item.total}}元({{item.price}}元/日)</view>
+            <view class="order-bth" wx:if="{{item.examine_waiting === 1}}">
+              <view class="refuse" @tap="refuse({{item.order_id}})">不差钱</view>
+              <view class="consent" @tap="consent({{item.order_id}})">收钱(确定开通)</view>
+            </view>
           </view>
         </view>
       </view>
     </scroll-view>
-    <view class="order-detail" wx:if="{{isDetail}}">
-      <view class="order-box">
-        <view>订单详情</view>
-        <view>订单号：{{datail.order_sn}}</view>
-        <view>下单时间：{{datail.created_at}}</view>
-        <view>手机号码：{{datail.customer_phone}}</view>
-        <view>用户ID：{{datail.customer_id}}</view>
-        <view>数量：{{datail.count}}</view>
-        <view>总价：
-          <text>¥{{datail.total}}</text>
-        </view>
-        <view @tap="hideDetail">确定</view>
-      </view>
-    </view>
+    <!--<view class="order-detail" wx:if="{{isDetail}}">-->
+      <!--<view class="order-box">-->
+        <!--<view>订单详情</view>-->
+        <!--<view>订单号：{{datail.order_sn}}</view>-->
+        <!--<view>下单时间：{{datail.created_at}}</view>-->
+        <!--<view>手机号码：{{datail.customer_phone}}</view>-->
+        <!--<view>用户ID：{{datail.customer_id}}</view>-->
+        <!--<view>数量：{{datail.count}}</view>-->
+        <!--<view>总价：-->
+          <!--<text>¥{{datail.total}}</text>-->
+        <!--</view>-->
+        <!--<view @tap="hideDetail">确定</view>-->
+      <!--</view>-->
+    <!--</view>-->
+    <Confirm></Confirm>
+    <Toast></Toast>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import shop from 'api/shop'
+  // import shop from 'api/shop'
+  import circle from 'api/circle'
   import NavHeader from '@/base/nav-header/nav-header'
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
-  export default class order extends wepy.page {
+  import Confirm from '@/base/confirm-msg/confirm-msg'
+  import Toast from '@/base/toast/toast'
+
+  export default class message extends wepy.page {
     mixins = [base]
 
     onShareAppMessage () {
@@ -100,13 +67,15 @@
     }
 
     config = {
-      navigationBarTitleText: '订单管理',
+      navigationBarTitleText: '我的消息',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white'
     }
     components = {
       NavHeader: NavHeader,
-      Blank: Blank
+      Blank: Blank,
+      Confirm: Confirm,
+      Toast: Toast
     }
     data = {
       imageUrlHead: URIS.image,
@@ -116,51 +85,33 @@
       orderPage: 0,
       isDetail: false,
       navNum: 0,
-      orders: [{
-        title: '服务订单',
-        type: 'serve'
-      }, {
-        title: '买单订单',
-        type: 'buy'
-      }],
       navList: [{
-        title: '待使用'
+        title: '全部'
       }, {
-        title: '已使用'
+        title: '系统'
       }, {
-        title: '退款'
+        title: '联盟商家'
       }],
-      days: [{
-        title: '今天',
-        type: 'today'
-      }, {
-        title: '昨天',
-        type: 'yesterday'
-      }, {
-        title: '7天',
-        type: 'week'
-      }, {
-        title: '30天',
-        type: 'month'
-      }, {
-        title: '全部',
-        type: 'all'
-      }],
+
       showInput: false,
-      couponList: [],
+      couponList: [
+        {title: '国颐堂(白云店)向您申请开通异业联盟', time: '时间: 10天(01/10-01/20)', money: '金额: 10元(1元/日)'},
+        {title: '国颐堂(白云店)向您申请开通异业联盟', time: '时间: 10天(01/10-01/20)', money: '金额: 10元(1元/日)'}
+      ],
       dayType: 'today',
       searchValue: '',
       datail: {},
       page: 1,
       nothing: false,
-      statusTxt: ['待付款', '待使用', '待评价', '退款中', '退款成功', '已评价', '已关闭', '退款失败', '退款失败', '已关闭']
+      orderId: 1,
+      orderType: ''
     }
 
     _showBlank (res) {
       if (res.length === 0) {
         this.$invoke('Blank',
           'show', this.imageUrlHead +
-          '/defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
+          '/defaults/b-image/common/pic-empty_customer@2x.png', '暂无消息', '15.2')
       } else {
         this.$invoke('Blank', 'hide')
       }
@@ -170,68 +121,94 @@
       hideDetail() {
         this.isDetail = false
       },
-      async showDetail(id) {
-        this.isDetail = true
-        let data = await shop.Orders(id)
-        this.datail = data.data
-        this.loaded()
-        this.$apply()
-      },
-      showDays() {
-        this.showDay = !this.showDay
-      },
-      showOrders() {
-        this.showOrder = !this.showOrder
-      },
-      showPage(num) {
-        this.dayPage = num
-        this.dayType = this.days[num].type
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      orderPage(num) {
-        this.orderPage = num
-        this.orderType = this.orders[num].type
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      showMsg(index) {
+      showMsg(index) { //  导航事件
         this.nothing = false
         this.navNum = index
         this.page = 1
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      isInput() {
-        this.showInput = true
-      },
-      sreaching(e) {
-        this.searchValue = e.detail.value
-        this.page = 1
-        this.dayType = 'all'
-        this.dayPage = 4
-        setTimeout(() => {
-          this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page)
-        }, 1000)
-      },
-      bindblurs() {
-        this.showInput = false
-        this.searchValue = ''
+        this.load(this.navNum, this.page)
       },
       async loadMore(e) {
         if (!this.nothing) {
           this.page++
-          let res = await this.load(this.orderType, this.navNum, this.dayType,
-            this.searchValue, this.page, 2)
+          let res = await this.load(this.navNum, this.page, 2)
           if (res.length === 0) {
             this.nothing = true
           }
         }
+      },
+      async refuse(id) {
+        let data = {msg: '确定不差钱么？', imgFlag: false}
+        this.$invoke('Confirm', 'show', data)
+        this.orderId = id
+        this.orderType = 'refund'
+        this.$apply()
+      },
+      async consent(id) {
+        let data = {msg: '确定收钱么？', imgFlag: false}
+        this.$invoke('Confirm', 'show', data)
+        this.orderId = id
+        this.orderType = 'pass'
+        this.$apply()
       }
     }
-
-    async load (order = 'serve', status = 0, date = 'today', mobile = '', page = 1, type) {
-      let data = {order, status, mobile, date, page}
-      let res = await shop.wechatOrders(data)
+    events = {
+      cancel() {
+        console.log('取消')
+      },
+      async confirm() {
+        let data = {
+          order_id: this.orderId,
+          operation: this.orderType
+        }
+        let res = await circle.merchantAudit(data)
+        this.loaded()
+        if (res.error === ERR_OK) {
+          this.$invoke('Toast', 'show', res.message)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+      }
+    }
+    async load (type = 1, page = 1, key) {
+      // let _res = [
+      //   {
+      //     'id': 1,
+      //     'from_merchant_id': 100000,
+      //     'to_merchant_id': 100003,
+      //     'type': 1,
+      //     'examine_waiting': 0,
+      //     'status_str': '待商家审核',
+      //     'days': 1,
+      //     'price': '1.00',
+      //     'total': '1.00',
+      //     'shop_name': '非常完美',
+      //     'logo_image': 'https://img.jerryf.cn/static_files/uploads/merchantImages/2018/01/17/10/1516155048QwAcuVDi.jpg',
+      //     'my_payed': 1,
+      //     'start_showed_at': '01/01',
+      //     'end_showed_at': '03/01'
+      //   },
+      //   {
+      //     'id': 2,
+      //     'from_merchant_id': 100003,
+      //     'to_merchant_id': 100000,
+      //     'type': 1,
+      //     'examine_waiting': 1,
+      //     'status_str': '待我审核',
+      //     'days': 1,
+      //     'price': '1.00',
+      //     'total': '1.00',
+      //     'shop_name': '非常完美',
+      //     'logo_image': 'https://img.jerryf.cn/static_files/uploads/merchantImages/2018/01/17/10/1516155048QwAcuVDi.jpg',
+      //     'my_payed': 0,
+      //     'start_showed_at': '01/01',
+      //     'end_showed_at': '03/01'
+      //   }
+      // ]
+      let data = {type: 1, page: page}
+      let res = await circle.merchantList(data)
+      console.log(res)
       if (res.error === ERR_OK) {
-        if (type === 2) {
+        if (key === 2) {
           this.couponList = this.couponList.concat(res.data)
         } else {
           this.couponList = res.data
@@ -342,32 +319,74 @@
     padding: 0 $padding 60px
     .order-item
       margin-top: 10px
-      position: relative
-      height: 25.34vw
+      max-height: 130px
       display: flex
-      flex-direction: column
+      border: 1px solid $color-split-line
+      padding: 10px
       image
-        position: absolute
-        width: 100%
-        height: 100%
-      view
+        width: 13vw
+        height: 12vw
+        border: 1px solid $color-split-line
+        border-radius: 4px
+      .order-top
         font-size: $font-size-small
         line-height: 16.5px
-        position: relative
         z-index: 100
-        text-indent: 12.5px
+        padding-left: 12px
         align-items: center
-      > view
-        display: flex
-        justify-content: space-between
+        width: 80vw
         text
           transform: translate(-14.5px, -25%)
-      .order-top
-        height: 57.89%
         .order-title
-          margin-top: 2px
-        text
-          color: $color-text-d
+          font-family: $font-family-meddle
+          font-size: $font-size-medium
+          color: $color-text
+          letter-spacing: 0
+          line-height: 22px
+          no-wrap()
+        .order-time
+          font-family: $font-family-light
+          font-size: $font-size-medium
+          color: $color-text
+          letter-spacing: 0
+          line-height: 22px
+          position: relative
+          no-wrap()
+        .order-money
+          font-family: $font-family-light
+          font-size: $font-size-medium
+          color: $color-text
+          letter-spacing: 0
+          line-height: 22px
+          no-wrap()
+        .order-bth
+          display: flex
+          margin-top: 10px
+          view
+            height: 31px
+            font-family: $font-family-light
+            font-size: $font-size-medium
+            color: $color-white
+            letter-spacing: 0
+            line-height: 31px
+            border-radius: 4px
+            text-align: center
+          .refuse
+            width: 30%
+            background-color: $color-theme
+            margin-right: 10px
+          .consent
+            width: 70%
+            background-color: $color-assist-f
+      .order-right-ok
+        ont-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-d
+        letter-spacing: 0
+        position: absolute
+        line-height: 50px
+        right: -16px
+
       .order-bottom
         height: 42.11%
         text

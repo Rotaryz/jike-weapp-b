@@ -1,21 +1,25 @@
 <template>
-  <view class="confirm" wx:if="{{show}}" @tap.stop="cancel">
-    <view class="modal-wrapper" @tap.stop="">
-      <view class="modal">
-        <view class="content-wrapper">
-          <view class="content">
-            <view class="danger-wrapper" wx:if="{{imgFlag}}">
-              <image wx:if="{{imageUrlHead}}"
-                     src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
-            </view>
-            <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
-            <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
-          </view>
+  <view class="popup-model-bac" wx:if="{{showFlag}}">
+    <view class="popup-model">
+      <view class="popup-model-img">
+        <image  wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-mine_banner01@2x.png'}}"></image>
+      </view>
+      <view class="popup-model-info">
+        <view class="popup-model-info-title">为了给您提供更好的服务请先完善资料</view>
+        <view class="popup-model-info-index">
+          <text>1</text>
+          <text>2</text>
+          <text>3</text>
         </view>
-        <view class="btn-group border-top-1px">
-          <view class="btn-left border-right-1px" @tap.stop="cancel">取消</view>
-          <view class="btn-right" @tap.stop="confirm">确定</view>
+        <view class="popup-model-info-txt">
+          <text>门店信息</text>
+          <text>门店证照</text>
+          <text>使用产品</text>
         </view>
+        <view class="popup-model-btn" @tap="confirm">马上去完善</view>
+      </view>
+      <view class="popup-model-close" @tap="close">
+        <image  wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/icon-delet@2x.png'}}"></image>
       </view>
     </view>
   </view>
@@ -29,29 +33,20 @@
     data = {
       imageUrlHead: URIS.image,
       imgFlag: true,
-      show: false,
-      title: '',
-      msg: ''
+      showFlag: false
     }
 
     methods = {
-      cancel() {
-        this.show = false
-        this.$emit('cancel')
-      },
       confirm() {
-        this.show = false
+        this.showFlag = false
         this.$emit('confirm')
       },
       close() {
-        this.show = false
+        this.showFlag = false
         this.$emit('close')
       },
-      show(data) {
-        this.title = data.title || ''
-        this.msg = data.msg || ''
-        this.imgFlag = data.imgFlag
-        this.show = true
+      show() {
+        this.showFlag = true
         this.$apply()
       }
     }
@@ -62,52 +57,111 @@
   @import '../../common/stylus/variable.styl'
   @import '../../common/stylus/mixin.styl'
 
-  .confirm
+  .popup-model-bac
     position: fixed
-    top: 0
-    left: 0
-    z-index: 100
-    width: 100%
-    height: 100%
-    over-flow: hidden
-    background: $color-mask-bgc
-    z-index: 1500
-    .modal-wrapper
-      position: absolute
-      top: 50%
-      left: 50%
+    top: 0px
+    width: 100vw
+    height: 100vh
+    z-index: 9999
+    background-color: $color-mask-bgc
+    .popup-model
       width: 265px
-      min-height: 240px
-      transform: translate(-50%, -50%)
-      background-color: $color-white
+      height: 280px
       border-radius: 4px
-      .modal
-        height: 240px
-        .content-wrapper
-          display: flex
-          align-items: center
-          justify-content: center
-          height: 200px
-          .content
+      position: absolute
+      margin: auto
+      top: 0px
+      right: 0px
+      bottom: 0px
+      left: 0px
+      background: #fff
+      .popup-model-img
+        height: 115px
+        width: 100%
+        image
+          width: 100%
+          height: 100%
+      .popup-model-info
+        padding: 10px
+        >view
+          margin: 5px 0px
+        .popup-model-info-title
+          font-family: $font-family-light
+          font-size: $font-size-small
+          color: $color-text
+          width: 132px
+          height: 36px
+          line-height: 16px
+          text-align: center
+          margin: 0 auto
+        .popup-model-info-index
+          text-align: center
+          position: relative
+          &:after
+            content: ''
+            width: 60px
+            border-top: 1px solid $color-row-line-s
+            top: 48%
+            left: 53px
+            position: absolute
+          &:before
+            content: ''
+            width: 60px
+            border-top: 1px solid $color-row-line-s
+            top: 48%
+            left: 131px
+            position: absolute
+          text
+            color: #fff
+            background-color: $color-text
+            display: inline-block
+            width: 18px
+            height: 18px
+            border-radius: 50%
+            font-size: $font-size-small
             text-align: center
-            .danger-wrapper
-              margin: 0 auto
-              margin-bottom: 20px
-              width: 51px
-              height: 43px
-            .font
-              text-align: center
-              font-size: $font-size-medium
-              line-height: 28px
-        .btn-group
-          display: flex
-          height: 40px
-          .btn-left, .btn-right
-            flex: 1
-            line-height: 40px
-            text-align: center
-            font-size: $font-size-medium
-            color: $color-assist-f
-          .btn-left
+            line-height: 18px
+            margin: 0px 30px
+        .popup-model-info-txt
+          text-align: center
+          text
             color: $color-text
+            font-family: $font-family-light
+            display: inline-block
+            width: 48px
+            height: 12px
+            font-size: $font-size-small
+            text-align: center
+            line-height: 12px
+            margin: 0px 15px
+        .popup-model-btn
+          width: 240px
+          height: 40px
+          line-height: 40px
+          background-color: $color-bth-bac
+          border-radius: 4px
+          text-align: center
+          color: $color-white
+          font-family: $font-family-light
+          font-size: $font-size-medium
+          margin: 15px auto 0px
+
+
+      .popup-model-close
+        position: absolute
+        bottom: -50px
+        width: 26px
+        height: 26px
+        border-radius: 50%
+        text-align: center
+        color: #fff
+        left: 0px
+        right: 0px
+        margin: auto
+        image
+          width: 100%
+          height: 100%
+
+
+
 </style>

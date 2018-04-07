@@ -48,6 +48,7 @@
       confirm() {
         this.show = false
         this.$emit('confirm')
+        this.$emit('confirmTicket')
       },
       show() {
         if (this.type === 'big') {

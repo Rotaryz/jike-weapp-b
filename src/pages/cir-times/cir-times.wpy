@@ -1,12 +1,19 @@
 <template>
   <view class="busTimes">
+    <view class="bus-item top">
+        <image class="header-logo" src="{{shopImage}}"  mode="aspectFill"></image>
+        <viwe class="bus-item-txt">
+          <view class="bus-item-txt-shop">{{shopName || '我是店家'}}</view>
+          <view class="bus-item-txt-site">{{shopSite || '我是地址'}}</view>
+        </viwe>
+    </view>
     <view class="bus-item">
-      <view>开启周期</view>
+      <view>周期</view>
       <view class="times">
         <image wx:if="{{mageUrlHead}}" src="{{mageUrlHead+'/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{begTime}}" start="{{startTime}}"
                 end="{{endTime === '结束时间' ? '' : endTime}}"
-                bindchange="startDateChange">
+                bindchange="startDateChange" disabled="{{startAbled}}">
           <view>{{begTime}}</view>
         </picker>
       </view>
@@ -16,61 +23,74 @@
                src="{{mageUrlHead + '/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{endTime}}"
                 start="{{begTime === '开始时间' ? startTime : begTime}}"
-                bindchange="endDateChange">
+                bindchange="endDateChange"  >
           <view>{{endTime}}</view>
         </picker>
       </view>
       <view class="clear" @tap="clear">清除</view>
     </view>
     <view class="bus-item">
-      <view>开启时长</view>
-      <view>{{days}}天</view>
+      <view>单价</view>
+      <view class="days">{{days}}元/天</view>
     </view>
     <view class="bus-item">
-      <view>已选门店</view>
-      <view>{{allNums}}家</view>
+      <view>总金额</view>
+      <view class="allMoney">{{allMoney}}元</view>
     </view>
-    <view class="con-submit" @tap="submitSave">
-      <view>
-        {{subText}}
+    <view class="con-submit" >
+      <view class="resText" @tap="resSubmit">
+        {{resText}}
+      </view>
+      <view class="subText" @tap="submitSave">去支付({{allMoney}}元)
       </view>
     </view>
     <Toast></Toast>
+    <Confirm></Confirm>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   // import shop from 'api/shop'
+  import {ERR_OK} from 'api/base'
   import circle from 'api/circle'
   import base from 'common/mixins/base'
+  import Confirm from '@/base/confirm-msg/confirm-msg'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  // import Tips from 'common/js/tips'
+
   export default class busTimes extends wepy.page {
     mixins = [base]
     data = {
-      allNums: 0,
+      allMoney: 0,
       begTime: '开始时间',
       endTime: '结束时间',
       startTime: '',
       days: 0,
       merchantId: [],
       isClaer: false,
-      subText: '提交',
-      mageUrlHead: URIS.image
+      resText: '重新选择',
+      subText: 0,
+      mageUrlHead: URIS.image,
+      shopImage: '',
+      shopName: '',
+      shopSite: '',
+      paymentMoneying: false,
+      startAbled: true,
+      confirmData: {title: '点击确定', msg: '会清空当前已选的门店'}
     }
     components = {
-      Toast: Toast
+      Toast: Toast,
+      Confirm: Confirm
     }
     methods = {
       startDateChange(e) {
         this.begTime = e.detail.value
-        this.subText = '提交'
         this.sum()
       },
       endDateChange(e) {
         this.endTime = e.detail.value
-        this.subText = '提交'
         this.sum()
       },
       clear() {
@@ -80,82 +100,130 @@
         this.subText = '关闭商圈'
         this.isClaer = true
       },
+      async resSubmit () {
+        this.$invoke('Confirm', 'show', this.confirmData)
+      },
       async submitSave() {
-        let data = {}
-        if (!this.isClaer) {
-          if (this.begTime === '开始时间') {
-            this.$invoke('Toast', 'show', '请选择开始时间')
-            return false
-          } else if (this.endTime === '结束时间') {
-            this.$invoke('Toast', 'show', '请选择结束时间')
-            return false
-          }
-          data = {
-            merchant_ids: this.merchantId,
-            start_showed_at: this.begTime,
-            end_showed_at: this.endTime
-          }
-        } else {
-          if (this.begTime !== '开始时间' && this.endTime === '结束时间') {
-            this.$invoke('Toast', 'show', '请选择结束时间')
-            return false
-          } else if (this.endTime !== '结束时间' && this.begTime === '开始时间') {
-            this.$invoke('Toast', 'show', '请选择开始时间')
-            return false
-          } else if (this.begTime === '开始时间' && this.endTime === '结束时间') {
-            data = {
-              merchant_ids: this.merchantId,
-              start_showed_at: null,
-              end_showed_at: null
-            }
-          } else {
-            data = {
-              merchant_ids: this.merchantId,
-              start_showed_at: this.begTime,
-              end_showed_at: this.endTime
-            }
-          }
+        if (this.paymentMoneying) {
+          this.$invoke('Toast', 'show', '发起支付中，请勿重复提交')
+          return
         }
-        // let res = await shop.setMapShowed(data)
-        let res = await circle.setMapShowed(data)
+        let data = {}
+        if (!this.verify()) return
+        this.paymentMoneying = true
+        let codeRes = await wepy.login() // codeRes.code
+        data = {
+          to_merchant_id: this.merchantId,
+          start_showed_at: this.begTime,
+          end_showed_at: this.endTime,
+          total_amount: this.allMoney,
+          code: codeRes.code
+        }
+        // let Json = {}
+        // try {
+        let Json = await circle.createPutPay(data)
+        // }catch (e) {
+        //   console.log(e)
+        // }
         this.loaded()
-        if (res.error === 0) {
-          wepy.setStorageSync('statusAlliance', 1)
-          await wepy.navigateBack({
-            delta: 1
+        this.paymentMoneying = false
+        let res = Json.data
+        this.paymentMoneying = false
+        if (Json.error === ERR_OK && !res) {
+          this.paymentSuccess = true
+          setTimeout(() => {
+            this.$back()
+          }, 1500)
+        } else if (Json.error === ERR_OK && res) {
+          const {timestamp, nonceStr, signType, paySign} = res.payInfo
+          const pay = await wepy.requestPayment({
+            timeStamp: timestamp,
+            nonceStr,
+            package: res.payInfo.package,
+            signType,
+            paySign
           })
+          if (pay.errMsg === 'requestPayment:ok') {
+            this.paymentSuccess = true
+            setTimeout(() => {
+              // this.$back()
+              wepy.setStorageSync('statusAlliance', 1)
+              wepy.navigateBack({
+                delta: 1
+              })
+            }, 1500)
+          }
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
       }
     }
 
+    async verify() {
+      if (!this.isClaer) {
+        if (this.begTime === '开始时间') {
+          this.$invoke('Toast', 'show', '请选择开始时间')
+          return false
+        } else if (this.endTime === '结束时间') {
+          this.$invoke('Toast', 'show', '请选择结束时间')
+          return false
+        } else {
+          return true
+        }
+      }
+    }
     sum () {
       if (this.begTime !== '开始时间' && this.endTime !== '结束时间') {
         let begin = new Date(this.begTime)
         let end = new Date(this.endTime)
         let ms = end.getTime() - begin.getTime()
-        this.days = ms / 1000 / 60 / 60 / 24
+        let day = ms / 1000 / 60 / 60 / 24
+        this.allMoney = (day + 1) * this.days // 包含结束当天
+        this.isClaer = false
+        this.$apply()
       }
     }
-
-    info () {
-      let now = new Date()
-      this.startTime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-    }
-
     async onLoad (options) {
-      this.info()
-      this.merchantId = this.$parent.globalData.merchantId
-      this.allNums = options.allNum
-      if (options.begTime) {
-        this.begTime = options.begTime
-        this.endTime = options.endTime
-        this.sum()
-      }
+      await this.getUrlInfo(options)
+      await this.getShopSetting()
       await wepy.setNavigationBarTitle({
-        title: `${options.title}商圈`
+        title: `投放店铺`
       })
+    }
+    async getUrlInfo(options) {
+      this.merchantId = this.$parent.globalData.merchantId[0]
+      this.shopImage = options.image
+      this.shopName = options.shopName
+      this.shopSite = options.site
+      this.$apply()
+    }
+    async getShopSetting() {
+      let data = {to_merchant_id: this.merchantId}
+      let Json = await circle.getShopSetting(data)
+      this.loaded()
+      if (Json.error === ERR_OK) {
+        this.startTime = Json.data.start_date
+        this.begTime = Json.data.start_date
+        this.days = Json.data.price
+        if (Json.start_abled === 0) {
+          this.startAbled = true
+        } else {
+          this.startAbled = false
+        }
+        this.$apply()
+      }
+    }
+    events = {
+      cancel() {
+        console.log('取消')
+      },
+      confirm() {
+        setTimeout(() => {
+          wepy.navigateBack({
+            delta: 1
+          })
+        }, 500)
+      }
     }
   }
 </script>
@@ -163,11 +231,15 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+
   .busTimes
     background: $color-white
+    .bus-item.top
+      height: 66px
+      justify-content: left
     .bus-item
       border-bottom: 0.5px solid $color-split-line
-      font-size: $font-size-small
+      font-size: $font-size-medium
       color: $color-theme
       display: flex
       height: 39px
@@ -178,6 +250,29 @@
         line-height: 39px
         &:first-child
           width: 48px
+      .header-logo
+        height: 48px
+        width: 48px
+        border-radius: 4px
+        margin-bottom: 0
+        border: 0.5px solid $color-split-line
+        transform: translateY(6px)
+        margin-top: 2px
+        margin-right: 12px
+      .bus-item-txt
+        padding: 6px 0px
+        width: 78vw
+        >view
+          line-height: 26px
+          font-size: $font-size-medium
+        .bus-item-txt-shop
+          font-family: $font-family-meddle
+          color: $color-text
+          letter-spacing: 0
+        .bus-item-txt-site
+          font-family: $font-family-light
+          color: $color-text-d
+          letter-spacing: 0
       .clear
         text-decoration: underline
       .times
@@ -192,17 +287,23 @@
           position: absolute
           top: 13px
 
+      .days
+        font-family: $font-family-light
+        font-size: $font-size-medium
+      .allMoney
+        font-family: $font-family-meddle
+        font-size: $font-size-medium
+        color: $color-assist-f
   .con-submit
     position: fixed
     width: 100%
     bottom: 0px
     height: 14.93vw
     background: $color-background
-    view
-      position: absolute
-      bottom: 12px
-      left: 12px
-      width: 93.6%
+    display: flex
+    .resText
+      width: 50%
+      margin-left:15px
       height: 11.73vw
       line-height: 11.73vw
       background: $color-theme
@@ -210,6 +311,20 @@
       text-align: center
       font-size: $font-size-medium
       border-radius: 4px
+      font-family: $font-family-regular
+    .subText
+      width: 50%
+      margin-left:15px
+      margin-right:15px
+      height: 11.73vw
+      line-height: 11.73vw
+      background: $color-assist-f
+      color: $color-white
+      text-align: center
+      font-size: $font-size-medium
+      border-radius: 4px
+      font-family: $font-family-regular
+
 
 
 </style>

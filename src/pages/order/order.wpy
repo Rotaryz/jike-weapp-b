@@ -118,10 +118,10 @@
       navNum: 0,
       orders: [{
         title: '服务订单',
-        type: 'serve'
+        type: 1
       }, {
-        title: '买单订单',
-        type: 'buy'
+        title: '异业联盟',
+        type: 2
       }],
       navList: [{
         title: '待使用'
@@ -227,11 +227,11 @@
       }
     }
 
-    async load (order = 'serve', status = 0, date = 'today', mobile = '', page = 1, type) {
-      let data = {order, status, mobile, date, page}
+    async load (type = 1, status = 0, date = 'today', mobile = '', page = 1, key) {
+      let data = {type, status, mobile, date, page}
       let res = await shop.wechatOrders(data)
       if (res.error === ERR_OK) {
-        if (type === 2) {
+        if (key === 2) {
           this.couponList = this.couponList.concat(res.data)
         } else {
           this.couponList = res.data

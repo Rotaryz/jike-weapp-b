@@ -104,7 +104,8 @@
         'pages/mine/mine',
         'pages/open-server/open-server',
         'pages/my-codes/my-codes',
-        'pages/shop-qrcode/shop-qrcode'
+        'pages/shop-qrcode/shop-qrcode',
+        'pages/message/message'
       ],
       window: {
         backgroundColor: '#363547',
