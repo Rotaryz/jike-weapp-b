@@ -738,7 +738,7 @@
       discount: '',
       discountsMax: [{id: 0, title: '无限制'}, {id: 1, title: '最高优惠'}], // 最高优惠
       discountsMaxId: 0,
-      discountsMaxFlag: 0,
+      discountsMaxFlag: 0
     }
 
     async onLoad(option) {
@@ -1010,11 +1010,9 @@
         }
       },
       setNotAllowTime() {
-        console.log('....')
         this.notAllowTime = this.tempNotAllowTime
       },
       resetNotAllowTime() {
-        console.log('>>>')
         this.tempNotAllowTime = this.notAllowTime
       },
       selectCountType(type) {
@@ -1067,6 +1065,56 @@
       async submitForm() {
         if (!this._validForm()) {
           return
+        }
+        // cash:代金券，discount:折扣券，voucher:服务券， exchange:兑换券，reduction:满减券
+        let datas = {
+          promotion_type: "voucher",
+          promotion_category_id: 1,
+          promotion_images: [
+            {
+              id: 0,
+              image_id: 1,
+              sort: 1
+            }
+          ],
+          title: "圣诞美发套餐券",
+          "subhead": "优惠券副标题",
+          "platform_price": "20",
+          "shop_price": "100",
+          "detail": [
+            {
+              "servie": "洗发",
+              "number": "1",
+              "price": "20"
+            }
+          ],
+          "sell_start_at": "2017-12-12",
+          "sell_end_at": "2018-12-12",
+          "start_at": "2017-12-12",
+          "end_at": "2019-12-12",
+          "not_allow_time": "不限制使用时间",
+          "stock": "-1",
+          "note": {
+            "need_subscribe": "0",
+            "buy_upper_limit": "1",
+            "can_use_number": "2",
+            "remarks": "备注备注",
+            "everyday_buy_limit": "",
+            "scope_application": ""
+          },
+          "use_type": "0",
+          "promotion_detail_image": [
+            {
+              "id": "",
+              "image_id": ""
+            }
+          ],
+          "config": {
+            "role": "",
+            "discount": "",
+            "max_reduction": "",
+            "meet_money": ""
+          }
         }
         let data = {
           promotion_type: 'coupon',

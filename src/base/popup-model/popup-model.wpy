@@ -20,6 +20,7 @@
       </view>
       <view class="popup-model-close" @tap="close">
         <image  wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/icon-delet@2x.png'}}"></image>
+
       </view>
     </view>
   </view>
