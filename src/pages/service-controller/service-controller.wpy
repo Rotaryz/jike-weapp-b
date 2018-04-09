@@ -781,11 +781,21 @@
         return
       }
       const res = json.data
+      let configs = res.config
       this.category = res.promotion_category.name
       this.categoryId = res.promotion_category.id
       this.pictures = res.promotion_image_data
       if (res.promotion_detail_image_data.length > 0) {
         this.detailsPictures = res.promotion_detail_image_data
+      }
+      if (!configs) {
+        configs = {
+          discount: '',
+          meet_money: '',
+          reduction: '',
+          role: 0,
+          max_reduction: ''
+        }
       }
       this.title = res.title
       this.titleLength = this.title.length
@@ -811,14 +821,14 @@
       this.knowRemark = res.note.remarks ? res.note.remarks : ''
       this.tempKnowRemark = this.knowRemark
 
-      this.discount = res.config.discount // 折扣
+      this.discount = configs.discount // 折扣
       this.tempRange = res.note.scope_application  // 适用范围
-      this.fullMax = res.config.meet_money
-      this.fullMin = res.config.reduction
+      this.fullMax = configs.meet_money
+      this.fullMin = configs.reduction
 
       // 目标人群
       for (let i = 0; i < this.targetPopulationData.targetPopulation.length; i++) {
-        if (this.targetPopulationData.targetPopulation[i].id === res.config.role) {
+        if (this.targetPopulationData.targetPopulation[i].id === configs.role) {
           this.targetPopulationData.flag = i
           this.targetPopulationData.tmp = i
           break
@@ -838,10 +848,10 @@
       // 最大优惠 discountsMaxData
       for (let j = 0; j < this.discountsMaxData.discountsMax.length; j++) {
         if (this.discountsMaxData.discountsMax[j].id !== -1) {
-          if (res.config.max_reduction !== this.discountsMaxData.discountsMax[j].id && res.config.max_reduction > 0) {
+          if (configs.max_reduction !== this.discountsMaxData.discountsMax[j].id && configs.max_reduction > 0) {
             this.discountsMaxData.flag = j
             this.discountsMaxData.tmp = j
-            this.discountsMaxData.discountsMax[j].id = res.config.max_reduction
+            this.discountsMaxData.discountsMax[j].id = configs.max_reduction
             break
           }
         }
@@ -849,10 +859,10 @@
       // 使用条件 conditionsData
       for (let j = 0; j < this.conditionsData.conditions.length; j++) {
         if (this.conditionsData.conditions[j].id !== -1) {
-          if (res.config.meet_money !== this.conditionsData.conditions[j].id && res.config.meet_money > 0) {
+          if (configs.meet_money !== this.conditionsData.conditions[j].id && configs.meet_money > 0) {
             this.conditionsData.flag = j
             this.conditionsData.tmp = j
-            this.conditionsData.conditions[j].id = res.config.meet_money
+            this.conditionsData.conditions[j].id = configs.meet_money
             break
           }
         }

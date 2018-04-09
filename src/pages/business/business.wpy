@@ -94,6 +94,10 @@
 
     async _checkBusiness (data) {
       let res = await shop.checkBusiness(data)
+      this.loaded()
+      if (!res.data) {
+        return
+      }
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].current_merchant) {
           this.pageTitle = res.data[i].business_circle.alias
@@ -102,7 +106,6 @@
         }
       }
       this.allNumber = res.meta.total || 0   // 所有商家数
-      this.loaded()
       return res
     }
 

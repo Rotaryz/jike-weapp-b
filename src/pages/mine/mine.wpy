@@ -137,7 +137,7 @@
       appID: '',
       path: '',
       sessionFrom: '',
-      messageFlag: true,
+      messageFlag: false,
       modelBtn: false,
       dataFinish: false
     }
