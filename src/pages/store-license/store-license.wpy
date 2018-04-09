@@ -1,17 +1,19 @@
 <template>
   <view class="store-license">
+    <view class="store-top-msg" wx:if="{{storeTxt}}">审核不通过：{{storeTxt}}</view>
     <view class="store-license-head">
-      <view class="store-license-txt">
-        <view class="store-license-txt-title">证件类型</view>
-        <view class="store-license-txt-right">
-          <view class="store-license-txt-msg">{{credentialType}}</view>
-        </view>
-      </view>
 
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
           <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}" disabled="{{userName}}"/>
+        </view>
+      </view>
+
+      <view class="store-license-txt">
+        <view class="store-license-txt-title">证件类型</view>
+        <view class="store-license-txt-right">
+          <view class="store-license-txt-msg">{{credentialType}}</view>
         </view>
       </view>
 
@@ -37,8 +39,8 @@
       </view>
     </view>
 
-    <view class="store-licenseBtn {{images.length?'':'disab'}}" @tap="submitMsg">保存</view>
-
+    <view class="store-licenseBtn {{submit && images.length>3?'':'disab'}}" @tap="submitMsg">{{submitTxt[submitIndex]}}</view>
+    <view class="store-time">我们将于3个工作日内完成处理。</view>
     <Toast></Toast>
   </view>
 </template>
@@ -70,6 +72,7 @@
     data = {
       imageUrlHead: URIS.image,
       storeMsg: null,
+      storeTxt: '',
       credentialType: '身份证',
       credentialNumber: '',
       userName: '',
@@ -78,11 +81,15 @@
         {title: '上传身份证反面'},
         {title: '手持证件照'},
         {title: '商户承诺函证明'}],
-      nothing: true
+      nothing: true,
+      submitTxt: ['提交审核', '审核中...', '已认证', '审核拒绝'],
+      submitIndex: 0,
+      submit: true
     }
 
     methods = {
       async uploadImg(idx) {
+        if (this.submitIndex === 1 || this.submitIndex === 2) return
         let res = await wepy.chooseImage()
         if (!res) {
           return
@@ -91,9 +98,11 @@
         this.loaded()
         this.images[idx].image_url = upRes.url
         this.images[idx].image_id = upRes.id
+        if (this.submitIndex !== 1) this.submit = true
         this.$apply()
       },
       async submitMsg() {
+        if (!this.submit) return
         let res = this._testEmperty()
         if (!this.userName) {
           this.$invoke('Toast', 'show', '请输入姓名')
@@ -121,12 +130,14 @@
         this.loaded()
         if (upRes.error === ERR_OK) {
           Tips.success('保存成功')
+          this.submitIndex = 1
           setTimeout(() => {
             this.$back(1)
           }, 1000)
         } else {
           this.$invoke('Toast', 'show', upRes.message)
         }
+        this.$apply()
       },
       nameChange(e) {
         this.userName = e.detail.value
@@ -158,9 +169,18 @@
       if (res.credential_images && res.credential_images.length > 0) {
         this.nothing = false
       }
+      this.verifyAudit(res.is_checked)
       this.$apply()
     }
-
+    async verifyAudit(key) {
+      // 0提交审核，1审核中，2已审核，3审核拒绝
+      this.submitIndex = key
+      if (this.submitIndex === 3) {
+        this.storeTxt = '您的姓名和身份证号码不匹配，请修改'
+      }
+      this.submit = false
+      this.$apply()
+    }
     _computedImg(arr, Msg) {
       return arr.map((item, index) => {
         item = Object.assign({}, item, Msg[index])
@@ -184,6 +204,14 @@
   @import "../../common/stylus/variable"
 
   .store-license
+    .store-top-msg
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      padding-left: 12px
+      background-color: $color-assist-tf
+      height 40px
+      line-height: 40px
+      color: $color-white
 
     .store-license-head
       margin-top: 10px
@@ -282,4 +310,10 @@
 
     .store-licenseBtn.disab
       background:  $color-btn-dis
+    .store-time
+      font-family: $font-family-light
+      font-size: $font-size-small
+      color: $color-text-d
+      letter-spacing: 0.48px
+      margin: 0px 12px
 </style>

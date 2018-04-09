@@ -1,5 +1,12 @@
 <template>
   <view class="client">
+    <view class="client-nav">
+      <view class="client-head-nav">
+        <view class="client-head-nav-txt {{ navIndex === 0 ?'action':''}}" @tap="topNav(0)">订单客户</view>
+        <view class="client-head-nav-txt {{ navIndex === 1 ?'action':''}}" @tap="topNav(1)">微信用户</view>
+      </view>
+    </view>
+
     <view class="client-head">
       <NavHeader>
         <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
@@ -127,6 +134,8 @@
     }
     data = {
       imageUri: URIS.image,
+      navIndex: 0,
+      navState: ['general', 'wechant_user'],
       navNum: 0,
       showTime: 0,
       impBlank: false,
@@ -180,28 +189,29 @@
       }
     }
 
-    async _showMsg (num, time = 'yesterday') {
-      this.navNum = num
+    async _showMsg (time = 'yesterday') {
       this.nothing = false
       this.page = 1
-      if (num === 0) {
-        let data = {time: time}
+      if (this.navNum === 0) {
+        let data = {time: time, type: this.navState[this.navIndex]}
         let res = this.infoRes(await shop.customerTrend(data))
         this.customerTrend = res
         // 统一用 $invoke
         this.$invoke('AeraChart', 'infoArea', this.customerTrend)
-      } else if (num === 1) {
-        let res = this.infoRes(await shop.customerList())
+      } else if (this.navNum === 1) {
+        let data = {type: this.navState[this.navIndex]}
+        let res = this.infoRes(await shop.customerList(data))
         this.customerList = res
         if (this.customerList.length === 0) {
           this.comBlank = true
         }
-      } else if (num === 2) {
-        let res = this.infoRes(await shop.customerSex())
+      } else if (this.navNum === 2) {
+        let data = {type: this.navState[this.navIndex]}
+        let res = this.infoRes(await shop.customerSex(data))
         if (res.length > 0) {
           this.customerSex = res
         }
-        let city = this.infoRes(await shop.customerCity())
+        let city = this.infoRes(await shop.customerCity(data))
         this.customerCity = city
         if (this.customerCity.length === 0) {
           this.impBlank = true
@@ -217,10 +227,12 @@
     methods = {
       async checkTime(index, time) {
         this.showTime = index
-        await this._showMsg(0, time)
+        await this._showMsg(time)
       },
       showMsg(num) {
-        this._showMsg(num)
+        this.navNum = num
+        this.$apply()
+        this._showMsg()
       },
       async showMore() {
         if (!this.nothing) {
@@ -234,11 +246,16 @@
             }
           }
         }
+      },
+      topNav(id, e) {
+        this.navIndex = id * 1
+        this.$apply()
+        this._showMsg()
       }
     }
 
     async onLoad () {
-      await this._showMsg(0)
+      await this._showMsg()
     }
   }
 
@@ -250,7 +267,24 @@
   page
     width: 100%
     overflow-x: hidden
-
+  .client-nav
+    background-color: $color-white
+    padding: 15px
+    .client-head-nav
+      height: 26px
+      border-radius: 4px
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      display: flex
+      border: 0.5px solid $color-theme
+      .client-head-nav-txt
+        line-height: 26px
+        text-align: center
+        width 50%
+      .action
+        background-color:$color-theme
+        color: $color-white
   scroll-view
     height: 93vh
     margin-top: 6px
@@ -265,6 +299,7 @@
       height: 145vw
       overflow-y: hidden
       background: $color-white
+      margin-top: 10px
       .choice-time
         display: flex
         justify-content: center

@@ -17,6 +17,11 @@
               <view class="leader-txt">我是盟主</view>
             </view>
           </view>
+          <navigator class="message-nav" url="/pages/message/message" hover-class="none">
+            <image class="mine-head-message " mode="aspectFill" wx:if="{{imageUrlHead}}"
+                 src="{{imageUrlHead + '/defaults/b-image/page/icon-information@2x.png'}}"></image>
+            <view class="mine-head-message-Flag" wx:if="{{messageFlag}}"></view>
+          </navigator>
         </view>
         <view class="mine-head-tabBox">
           <view class="item" @tap="showQRcode">
@@ -37,7 +42,10 @@
           <image src="{{item.url}}" class="mine-list-item-img"></image>
           <view class="mine-list-item-txt">{{item.txt}}</view>
         </view>
-        <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
+        <view class="mine-list-item-right">
+          <view class="mine-list-item-txt">{{item.msg[item.index]}}</view>
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="mine-list-item-arrow"></image>
+        </view>
       </view>
       <view class="mine-list-item" @tap="skip('开通服务', '/pages/open-server/open-server')">
         <view class="mine-list-item-left">
@@ -76,6 +84,13 @@
       <!--<view class="mine-logo-txt">赞播提供技术支持</view>-->
     <!--</view>-->
     <Toast></Toast>
+    <popup-model></popup-model>
+    <view class="customer-service">
+      <button class="customer-service-btn" open-type="contact" session-from="{{sessionFrom}}"></button>
+      <div class="customer-service-icon">
+        <image class="customer-service-icon-img" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-chat@2x.png'}}"></image>
+      </div>
+    </view>
   </view>
 </template>
 
@@ -87,6 +102,7 @@
   import Account from '@/api/account'
   import URIS from 'common/js/config'
   import Toast from '@/base/toast/toast'
+  import Popup from '@/base/popup-model/popup-model'
   import Tips from 'common/js/tips'
   import {ERR_OK} from '@/api/base'
 
@@ -101,14 +117,15 @@
     }
 
     components = {
-      Toast
+      Toast,
+      'popup-model': Popup
     }
 
     data = {
       imageUrlHead: URIS.image,
       listItems: [
-        {url: URIS.image + '/defaults/b-image/page/icon-sp_info@2x.png', txt: '门店信息', skipUrl: '/pages/store-msg/store-msg'},
-        {url: URIS.image + '/defaults/b-image/page/icon-sp_certificate@2x.png', txt: '门店证照', skipUrl: '/pages/store-license/store-license'},
+        {url: URIS.image + '/defaults/b-image/page/icon-sp_info@2x.png', txt: '门店信息', skipUrl: '/pages/store-msg/store-msg', index: 0, msg: ['请完善门店信息', '已完善']},
+        {url: URIS.image + '/defaults/b-image/page/icon-sp_certificate@2x.png', txt: '门店证照', skipUrl: '/pages/store-license/store-license', index: 0, msg: ['未填写资料', '审核中', '已审核', '审核拒绝']},
         {url: URIS.image + '/defaults/b-image/page/icon-sp_account@2x.png', txt: '账号管理', skipUrl: '/pages/account-management/account-management'},
         {url: URIS.image + '/defaults/b-image/page/icon-sp_phone@2x.png', txt: '联系销售', skipUrl: '/pages/contact-sales/contact-sales'}
       ],
@@ -118,13 +135,37 @@
       serviceDue: false,
       serviceType: '',
       appID: '',
-      path: ''
+      path: '',
+      sessionFrom: '',
+      messageFlag: false,
+      modelBtn: false
     }
 
     async onShow() {
       await this.load()
     }
-
+    async verify(shopImg, shopInfo) {
+      // 0未审核未填写资料，1审核中，2已审核，3审核拒绝
+      if (!shopInfo) {
+        this.$invoke('popup-model', 'show')
+      }
+      this.listItems[0].index = shopInfo ? 1 : 0
+      this.listItems[1].index = shopImg
+      this.$apply()
+    }
+    async _getMessage() {
+      let data = {type: 1}
+      let resData = await Store.getMessage(data)
+      this.loaded()
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      this.loaded()
+      if (resData.data.is_has === 1) {
+        this.messageFlag = true
+      }
+      this.$apply()
+    }
     async load() {
       let resData = await Store.getMsgList()
       if (resData.error !== ERR_OK) {
@@ -142,7 +183,11 @@
         account: res.account,
         shopName: res.shop_name
       })
+      this.sessionFrom = res.merchant_id
+      this.$apply()
       this.loaded()
+      await this.verify(res.is_checked, res.is_data)
+      await this._getMessage()
     }
 
     methods = {
@@ -187,7 +232,7 @@
           path: this.path,
           extraData: {
           },
-          envVersion: 'release',
+          envVersion: URIS.jumpVersion,
           success(res) {
             // 打开成功
             console.log(res)
@@ -196,6 +241,10 @@
       },
       showQRcode() {
         this.$navigate('/pages/shop-qrcode/shop-qrcode')
+      },
+      service() {
+        // 跳转微信小程序的客服
+        console.log('跳转微信小程序的客服')
       }
     }
   }
@@ -242,6 +291,7 @@
           height: 64%
           display: flex
           align-items: center
+          position: relative
 
           .mine-head-avatar
             border: 0.5px solid #E7EAF1
@@ -284,6 +334,23 @@
                 font-size: $font-size-small
                 color: $color-text-d
                 font-family: PingFangSC-Regular
+          .message-nav
+            right: 12px
+            position: absolute
+            .mine-head-message
+              width: 32px
+              height: 32px
+              border-radius: 50%
+            .mine-head-message-Flag:after
+              content: ''
+              width: 7px
+              height: 7px
+              background-color: $color-assist-f
+              border-radius: 50%
+              position: absolute
+              right: 0px
+              top: 0px
+              z-index: 4
 
         .mine-head-tabBox
           border-top: 0.5px solid #E7EAF1
@@ -454,5 +521,32 @@
       .hint-img
         width: 100%
         height: 100%
-
+  .customer-service
+    position: fixed
+    height: 60px
+    width: 60px
+    border-radius: 100%
+    bottom: 30px
+    right: 15px
+    // background: rgba(0, 0, 0, .42)
+    display: flex
+    justify-content: center
+    align-items: center
+    .customer-service-btn
+      position: absolute
+      width: 100%
+      height: 100%
+      text-align: center
+      padding: 0px
+      border-radius: 50%
+      z-index: 2
+      opacity:0.01
+    .customer-service-icon
+      position: absolute
+      width: 100%
+      height: 100%
+      z-index: 1
+      .customer-service-icon-img
+        width: 100%
+        height: 100%
 </style>

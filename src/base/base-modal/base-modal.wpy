@@ -1,7 +1,7 @@
 <template>
   <view class="base-modal" wx:if="{{show}}">
     <view class="modal" @tap.stop="">
-      <view class="title-wrapper">
+      <view class="title-wrapper" name="{{name}}">
         {{title}}
       </view>
       <view class="content-wrapper" style="height: {{contentHeight}}px; padding-bottom: {{paddingBottom}}px">
@@ -30,6 +30,10 @@
       title: {
         type: String,
         default: ''
+      },
+      name: {
+        type: String,
+        default: ''
       }
     }
 
@@ -48,6 +52,7 @@
       confirm() {
         this.show = false
         this.$emit('confirm')
+        this.$emit('confirmTicket')
       },
       show() {
         if (this.type === 'big') {

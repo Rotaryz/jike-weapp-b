@@ -107,7 +107,6 @@
         this.$apply()
       },
       passwordChange(e) {
-        console.log(e.detail.value)
         let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
         this.passTest = reg.test(e.detail.value)
         if (!this.passTest) {
