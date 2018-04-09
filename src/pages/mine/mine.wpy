@@ -137,8 +137,9 @@
       appID: '',
       path: '',
       sessionFrom: '',
-      messageFlag: false,
-      modelBtn: false
+      messageFlag: true,
+      modelBtn: false,
+      dataFinish: false
     }
 
     async onShow() {
@@ -184,6 +185,7 @@
         shopName: res.shop_name
       })
       this.sessionFrom = res.merchant_id
+      this.dataFinish = res.is_data
       this.$apply()
       this.loaded()
       await this.verify(res.is_checked, res.is_data)
@@ -227,6 +229,10 @@
         }
       },
       previewShop() {
+        if (!this.dataFinish) {
+          this.$invoke('popup-model', 'show')
+          return
+        }
         wx.navigateToMiniProgram({
           appId: this.appId,
           path: this.path,
@@ -240,6 +246,10 @@
         })
       },
       showQRcode() {
+        if (!this.dataFinish) {
+          this.$invoke('popup-model', 'show')
+          return
+        }
         this.$navigate('/pages/shop-qrcode/shop-qrcode')
       },
       service() {

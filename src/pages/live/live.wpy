@@ -1,74 +1,81 @@
 <template>
-  <view class="lives" enable-back-to-top="true">
-    <view class="live" id="lis">
-      <scroll-view class="live_conpon" scroll-y>
-        <view class="con-item" wx:for="{{activityPromotion}}"
-              wx:key="index">
-          <image class="con_bk"
-                 src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}"
-                 wx:if="{{showBk !== index && imageUrlHead}}"></image>
-          <image class="con_bk"
-                 src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
-                 wx:if="{{showBk  === index && imageUrlHead}}"></image>
-          <view class="con-title">
-            <view></view>
-            <view class="monlogo">{{item.promotion_platform_price}}</view>
-            <view>{{item.promotion_title}}</view>
-          </view>
-        </view>
-      </scroll-view>
-      <view class="live_video video-bk" wx:if="{{!showVideo}}">
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
-      </view>
-      <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
-      </video>
-    </view>
-    <view>
-      <view class="upVideo">
-        <view class="eva-title">视频</view>
-        <view class="upload">
-          <image class="video-box {{showError?'no-border':''}}"
-                 @tap="upVideo" src="{{videoImage}}" binderror="binderror">
-            <image wx:if="{{imageUrlHead}}"
-                   src="{{imageUrlHead+'/defaults/b-image/page/icon-add28@2x.png'}}"></image>
-            <view></view>
-          </image>
-          <!--<video class="video-box no-border" src="{{videoSrc}}"-->
-          <!--wx:if="{{showVideo}}" controls="false" muted="false">-->
-          <!--<cover-view class="video-gen" @tap="upVideo"></cover-view>-->
-          <!--</video>-->
-          <view class="tip">上传25M以内的视频</view>
-        </view>
-      </view>
-      <view class="upCoupon">
-        <view class="eva-title">优惠券</view>
-        <view class="de-all">
-          <view class="de-item" wx:for="{{activityPromotion}}"
-                wx:key="{{index}}">
-            {{item.promotion_title}}
-            <view class="close-box" @tap="delCou({{index}})">
-              <image wx:if="{{imageUrlHead}}"
-                     src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
+  <marketing-switch
+    class="registration-page"
+    title="直播优惠"
+    :isChecked.sync="isChecked"
+    :activityStatus.sync="activityStatus"
+  >
+    <view class="lives" enable-back-to-top="true" hidden="{{!isChecked}}">
+      <view class="live" id="lis">
+        <scroll-view class="live_conpon" scroll-y>
+          <view class="con-item" wx:for="{{activityPromotion}}"
+                wx:key="index">
+            <image class="con_bk"
+                   src="{{imageUrlHead + '/defaults/c-image/live/pic-r_couponbg1@2x.png'}}"
+                   wx:if="{{showBk !== index && imageUrlHead}}"></image>
+            <image class="con_bk"
+                   src="{{imageUrlHead +'/defaults/b-image/page/pic-play_couponbg1.png'}}"
+                   wx:if="{{showBk  === index && imageUrlHead}}"></image>
+            <view class="con-title">
+              <view></view>
+              <view class="monlogo">{{item.promotion_platform_price}}</view>
+              <view>{{item.promotion_title}}</view>
             </view>
           </view>
-          <view class="add-cou" @tap="choice">
-            <image wx:if="{{imageUrlHead}}"
-                   src="{{imageUrlHead + '/defaults/b-image/page/icon-add20@2x.png'}}"></image>
-            添加服务
+        </scroll-view>
+        <view class="live_video video-bk" wx:if="{{!showVideo}}">
+          <image wx:if="{{imageUrlHead}}"
+                 src="{{imageUrlHead + '/defaults/b-image/page/pic-livenone@2x.png'}}"></image>
+        </view>
+        <video class="live_video" src="{{videoSrc}}" wx:if="{{showVideo}}">
+        </video>
+      </view>
+      <view>
+        <view class="upVideo">
+          <view class="eva-title">视频</view>
+          <view class="upload">
+            <image class="video-box {{showError?'no-border':''}}"
+                   @tap="upVideo" src="{{videoImage}}" binderror="binderror">
+              <image wx:if="{{imageUrlHead}}"
+                     src="{{imageUrlHead+'/defaults/b-image/page/pic-livebg@2x.png'}}"></image>
+              <view></view>
+            </image>
+            <!--<video class="video-box no-border" src="{{videoSrc}}"-->
+            <!--wx:if="{{showVideo}}" controls="false" muted="false">-->
+            <!--<cover-view class="video-gen" @tap="upVideo"></cover-view>-->
+            <!--</video>-->
+            <view class="tip">上传10分钟内视频</view>
           </view>
         </view>
+        <view class="upCoupon">
+          <view class="eva-title">优惠券</view>
+          <view class="de-all">
+            <view class="de-item" wx:for="{{activityPromotion}}"
+                  wx:key="{{index}}">
+              {{item.promotion_title}}
+              <view class="close-box" @tap="delCou({{index}})">
+                <image wx:if="{{imageUrlHead}}"
+                       src="{{imageUrlHead + '/defaults/b-image/page/close.png'}}"></image>
+              </view>
+            </view>
+            <view class="add-cou" @tap="choice">
+              <image wx:if="{{imageUrlHead}}"
+                     src="{{imageUrlHead + '/defaults/b-image/page/icon-add28@2x.png'}}"></image>
+              添加服务
+            </view>
+          </view>
+        </view>
+        <!--<view class="beginPush" @tap="beginLive">开始直播</view>-->
       </view>
-      <!--<view class="beginPush" @tap="beginLive">开始直播</view>-->
-    </view>
-    <view class="con-submit" @tap="submitOk">
-      <view>
-        保存
+      <view class="con-submit" @tap="submitOk">
+        <view>
+          保存
+        </view>
       </view>
     </view>
-  </view>
-  <Toast></Toast>
-  <Confirm></Confirm>
+    <Toast></Toast>
+    <Confirm></Confirm>
+  </marketing-switch>
 </template>
 
 <script>
@@ -79,23 +86,15 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
-  import { ERR_OK } from 'api/base'
+  import {ERR_OK} from 'api/base'
   import Confirm from '@/base/confirm/confirm'
+  import MarketingSwitch from '@/base/marketing-switch/marketing-switch'
+
   export default class Live extends wepy.page {
     mixins = [base]
-    components = {
-      Toast: Toast,
-      Confirm: Confirm
-    }
-
-    onShareAppMessage () {
-      this.ShareAppMessage()
-    }
-
-    config = {
-      navigationBarTitleText: '直播优惠'
-    }
     data = {
+      isChecked: '',
+      activityStatus: 'failed',
       videoImage: '',
       showVideo: false,
       videoSrc: '',
@@ -111,7 +110,56 @@
       delIndex: 0
     }
 
+    async onShow() {
+      if (this.$parent.globalData.coupon &&
+        this.$parent.globalData.coupon !== '') {
+        for (let item of this.activityPromotion) {
+          if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
+            this.$invoke('Toast', 'show', '不可选择重复优惠券')
+            return false
+          }
+        }
+        this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
+        this.$parent.globalData.coupon = ''
+        this.$apply()
+      }
+    }
+
+    onShareAppMessage() {
+      this.ShareAppMessage()
+    }
+
+    async load() {
+      let res = await live.watchlive()
+      // 保存状态
+      this.activityStatus = res.status.toString()
+      if (res.error === ERR_OK) {
+        res = res.data
+        this.isPaused = res.is_paused
+        this.id = res.id
+        this.videoSrc = res.file_url
+        this.showVideo = true
+        this.videoImage = res.file_url + '?second=1&height=80&width=80'
+        this.fileId = res.file_id
+        this.imageId = res.file_id
+        this.activityPromotion = res.activity_promotion
+      }
+      this.loaded()
+      this.$apply()
+    }
+
+    async onLoad(option) {
+      this.options = option
+      this.isChecked = option.isChecked.toString()
+      await this.load()
+    }
+
     methods = {
+      async switchChange() {
+        // 执行开关动作
+        this.isChecked = !this.isChecked
+        this.$apply()
+      },
       async upVideo() {
         const res = await wepy.chooseVideo({sourceType: ['album']})
 //      需要限制大小，待确定！
@@ -189,41 +237,13 @@
         this.activityPromotion.splice(this.delIndex, 1)
       }
     }
-
-    onShow () {
-      if (this.$parent.globalData.coupon &&
-        this.$parent.globalData.coupon !== '') {
-        for (let item of this.activityPromotion) {
-          if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
-            this.$invoke('Toast', 'show', '不可选择重复优惠券')
-            return false
-          }
-        }
-        this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
-        this.$parent.globalData.coupon = ''
-        this.$apply()
-      }
+    components = {
+      Toast: Toast,
+      Confirm: Confirm,
+      'marketing-switch': MarketingSwitch
     }
-
-    async load () {
-      let res = await live.watchlive()
-      if (res.error === ERR_OK) {
-        res = res.data
-        this.isPaused = res.is_paused
-        this.id = res.id
-        this.videoSrc = res.file_url
-        this.showVideo = true
-        this.videoImage = res.file_url + '?second=1&height=80&width=80'
-        this.fileId = res.file_id
-        this.imageId = res.file_id
-        this.activityPromotion = res.activity_promotion
-      }
-      this.loaded()
-      this.$apply()
-    }
-
-    async onLoad () {
-      await this.load()
+    config = {
+      navigationBarTitleText: '直播优惠'
     }
   }
 </script>
@@ -231,6 +251,7 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+
   .submit
     position: fixed
     bottom: 0px
@@ -291,6 +312,8 @@
       bottom: 16px
       left: 126px
       color: $color-text-d
+      font-family: PingFangSC-Light;
+      letter-spacing: 0
     .video-box
       height: 80px
       width: 80px
@@ -305,8 +328,8 @@
         top: 0px
         bottom: 0
       image
-        width: 24px
-        height: 24px
+        width: 32px
+        height: 22px
         z-index: 100
         all-center()
     .no-border
@@ -489,13 +512,13 @@
       view
         color: #5D5D5D
         padding-left: 10px
-        width :60px
+        width: 60px
         &:first-child
           padding-top: 10px
       .monlogo
         padding-bottom: 3px
         font-size: 17px
-        font-weight :600
+        font-weight: 600
         color: #5D5D5D
         position: relative
         text-indent: 6px

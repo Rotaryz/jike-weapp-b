@@ -1,87 +1,105 @@
 <template>
-  <view class="share-prize">
-    <view class="share-item-box">
-      <view class="share-item">
-        <view class="share-item-title">
-          <view class="red-block"></view>
-          <view class="title-txt">分享有礼</view>
-        </view>
-        <view class="share-item-body">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_11@2x.png'}}" class="share-main-item-body-img"></image>
-          <view class="share-main-item-body-center">
-            <view class="share-main-item-body-txt">分享</view>
-            <view class="share-main-item-body-txt">成功后</view>
-            <view class="share-main-item-body-dotBog">
-              <view class="dot" wx:for="12345678" wx:key="{{item}}"></view>
-              <image class="share-main-item-body-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-whitearrow@2x.png'}}"></image>
-            </view>
-          </view>
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_12@2x.png'}}" class="share-main-item-body-img"></image>
-        </view>
-      </view>
-    </view>
-
-    <view class="detail-list">
-      <view class="activityMsg-title">
-        <view class="activityMsg-title-chunk"></view>
-        分享有礼活动信息
-      </view>
-      <view class="activityMsg-list">
-        <view class="activityMsg-txt">
-          <view class="activityMsg-txt-left">活动名称</view>
-          <view class="activityMsg-txt-right">分享后有礼</view>
-        </view>
-        <view class="activityMsg-txt">
-          <view class="activityMsg-txt-left">活动时间</view>
-          <view class="activityMsg-txt-right">
-            <picker mode="date" value="{{shareEndTime}}" start="{{nowDate}}" bindchange="bindDateChange" class="activityMsg-txt-right-picker">
-              <view class="picker-txt">
-                <view>当天<text class="activityMsg-txt-right-gray">至</text>{{shareEndTime}}</view>
-                <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="activityMsg-txt-right-arrow"></image>
+  <marketing-switch
+    class="registration-page"
+    title="分享有礼"
+    :isChecked.sync="isChecked"
+    :activityStatus.sync="activityStatus"
+  >
+    <view class="share-prize">
+      <view class="share-item-box">
+        <view class="share-item">
+          <!--<view class="share-item-title">-->
+          <!--<view class="red-block"></view>-->
+          <!--<view class="title-txt">分享有礼</view>-->
+          <!--</view>-->
+          <view class="share-item-body">
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_11@2x.png'}}"
+                   class="share-main-item-body-img"></image>
+            <view class="share-main-item-body-center">
+              <view class="share-main-item-body-txt">分享</view>
+              <view class="share-main-item-body-txt">成功后</view>
+              <view class="share-main-item-body-dotBog">
+                <view class="dot" wx:for="12345678" wx:key="{{item}}"></view>
+                <image class="share-main-item-body-arrow" wx:if="{{imageUrlHead}}"
+                       src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
               </view>
-            </picker>
+            </view>
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/pic-r_12@2x.png'}}"
+                   class="share-main-item-body-img"></image>
           </view>
         </view>
-        <view class="activityMsg-txt">
-          <view class="activityMsg-txt-left">参与次数</view>
-          <view class="activityMsg-txt-right">
-            <view class="activityMsg-txt-right-leftTxt">
-              <image class="activityMsg-txt-right-checked" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
-              一天一次
+      </view>
+
+      <view class="detail-list">
+        <view class="activityMsg-title">
+          <view class="activityMsg-title-chunk"></view>
+          分享有礼活动信息
+        </view>
+        <view class="activityMsg-list">
+          <view class="activityMsg-txt">
+            <view class="activityMsg-txt-left">活动名称</view>
+            <view class="activityMsg-txt-right">分享后有礼</view>
+          </view>
+          <view class="activityMsg-txt">
+            <view class="activityMsg-txt-left">活动时间</view>
+            <view class="activityMsg-txt-right">
+              <picker mode="date" value="{{shareEndTime}}" start="{{nowDate}}" bindchange="bindDateChange"
+                      class="activityMsg-txt-right-picker">
+                <view class="picker-txt">
+                  <view>当天
+                    <text class="activityMsg-txt-right-gray">至</text>
+                    {{shareEndTime}}
+                  </view>
+                  <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"
+                         class="activityMsg-txt-right-arrow"></image>
+                </view>
+              </picker>
+            </view>
+          </view>
+          <view class="activityMsg-txt">
+            <view class="activityMsg-txt-left">参与次数</view>
+            <view class="activityMsg-txt-right">
+              <view class="activityMsg-txt-right-leftTxt">
+                <image class="activityMsg-txt-right-checked" wx:if="{{imageUrlHead}}"
+                       src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+                一天一次
+              </view>
             </view>
           </view>
         </view>
-      </view>
-      <view class="activityMsg-title">
-        <view class="activityMsg-title-chunk"></view>
-        <view class="activityMsg-title-txt">添加奖品</view>
-        <view class="activityMsg-title-txt-gray">多个奖品随机发放</view>
-      </view>
+        <view class="activityMsg-title">
+          <view class="activityMsg-title-chunk"></view>
+          <view class="activityMsg-title-txt">添加奖品</view>
+          <view class="activityMsg-title-txt-gray">多个奖品随机发放</view>
+        </view>
 
-      <view class="prizeList">
-        <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.type !== 'delete'}}">
-          <view class="prizeList-item-left">
-            <view class="prizeList-item-name">{{item.promotion_title}}</view>
-            <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
+        <view class="prizeList">
+          <view class="prizeList-item" wx:for="{{prizeListArr}}" wx:key="{{item}}" wx:if="{{item.type !== 'delete'}}">
+            <view class="prizeList-item-left">
+              <view class="prizeList-item-name">{{item.promotion_title}}</view>
+              <view class="prizeList-item-count">{{item.promotion_stock}}个</view>
+            </view>
+            <view class="prizeList-item-right" @tap="delectPrize({{item}})">
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-close20@2x.png'}}"
+                     class="prizeList-item-right-del"></image>
+            </view>
           </view>
-          <view class="prizeList-item-right" @tap="delectPrize({{item}})">
-            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-close20@2x.png'}}" class="prizeList-item-right-del"></image>
+          <view class="prizeList-addItem" @tap="showAddPrize">
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-add24@2x.png'}}"
+                   class="prizeList-addItem-plus"></image>
+            添加奖品
           </view>
         </view>
-        <view class="prizeList-addItem" @tap="showAddPrize">
-          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-add24@2x.png'}}" class="prizeList-addItem-plus"></image>
-          添加奖品
-        </view>
       </view>
-    </view>
-    <view class="footBtn border-top-1px">
-      <view class="submitBtn dis" @tap="submitChange">保存</view>
-    </view>
+      <view class="footBtn border-top-1px">
+        <view class="submitBtn dis" @tap="submitChange">保存</view>
+      </view>
 
-    <AddPrize></AddPrize>
-    <Confirm></Confirm>
-    <Toast></Toast>
-  </view>
+      <AddPrize></AddPrize>
+      <Confirm></Confirm>
+      <Toast></Toast>
+    </view>
+  </marketing-switch>
 </template>
 
 <script>
@@ -95,6 +113,7 @@
   import Tips from '@/common/js/tips'
   import URIS from 'common/js/config'
   import {ERR_OK} from '@/api/base'
+  import MarketingSwitch from '@/base/marketing-switch/marketing-switch'
 
   export default class SharePrize extends wepy.page {
     mixins = [base]
@@ -109,10 +128,13 @@
     components = {
       AddPrize,
       Confirm,
-      Toast
+      Toast,
+      'marketing-switch': MarketingSwitch
     }
 
     data = {
+      isChecked: '',
+      activityStatus: 'failed',
       imageUrlHead: URIS.image,
       shareMsg: null,
       nowDate: '',
@@ -175,8 +197,16 @@
       }
     }
 
-    async onLoad() {
-      this.load()
+    async _getActivityInfo(type) {
+      let json = await Activity.getActivityInfo(type)
+      return json.status.toString()
+    }
+
+    async onLoad(option) {
+      this.options = option
+      this.isChecked = option.isChecked.toString()
+      this.activityStatus = await this._getActivityInfo('share')
+      await this.load()
     }
 
     async load() {
@@ -246,9 +276,7 @@
   @import "../../common/stylus/variable"
 
   page
-    background: $color-theme
-    width: 100%
-    height: 100%
+    background: $color-background
 
     .share-prize
       width: 100%
@@ -256,16 +284,17 @@
       overflow-y: auto
 
       .share-item-box
-        margin: 0 auto 20px
-        width: 93.6vw
-        height: 78.4vw
+        box-sizing: border-box
+        height: 273.5px
+        width: 100vw
         position: relative
+        background-color: $color-white
 
         .share-item
           position: absolute
           width: 100%
           height: 100%
-          background: #4A495C
+          background: $color-white
           border-radius: 4px
 
           .share-item-title
@@ -284,13 +313,17 @@
               color: $color-white
 
           .share-item-body
+            width: 100%
+            height: 100%
             display: flex
             align-items: center
             justify-content: center
 
             .share-main-item-body-img
-              width: 38vw
-              height: 60.4069vw
+              width: 125px
+              height: 222.35px
+              &:nth-child(1)
+                width: 134.5px
 
             .share-main-item-body-center
               display: flex
@@ -301,7 +334,7 @@
 
               .share-main-item-body-txt
                 font-size: $font-size-small
-                color: $color-white
+                color: $color-pic-bac
                 line-height: 16px
 
               .share-main-item-body-dotBog
@@ -312,7 +345,7 @@
                   width: 2px
                   height: 2px
                   border-radius: 50%
-                  background: $color-white
+                  background: $color-pic-bac
                   margin-left: 3px
 
                 .share-main-item-body-arrow
@@ -453,9 +486,9 @@
               margin-right: 3px
 
       .footBtn
+        position: fixed
         height: 40px
         padding: 10px 12px
-        position: absolute
         left: 0
         bottom: 0
         right: 0

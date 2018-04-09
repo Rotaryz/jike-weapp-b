@@ -55,6 +55,7 @@
     </view>
     <Toast></Toast>
     <ServiceDue></ServiceDue>
+    <msg-window></msg-window>
   </view>
 </template>
 
@@ -67,6 +68,7 @@
   import { ERR_OK } from 'api/base'
   import ServiceDue from '@/base/service-due/service-due'
   import Merchant from '@/api/merchants'
+  import msgWindow from '@/base/popup-model/popup-model'
 
   const IS_LEADER = wepy.getStorage({key: 'is_leader'})
   const BUS = {
@@ -88,7 +90,8 @@
     }
     components = {
       Toast: Toast,
-      ServiceDue
+      ServiceDue,
+      'msg-window': msgWindow
     }
     data = {
       imageUri: URIS.image,
@@ -138,7 +141,8 @@
       }],
       dataList: [],
       leader: 0,
-      serviceDue: false
+      serviceDue: false,
+      dataFinish: false
     }
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
@@ -174,16 +178,23 @@
       let resData = await Merchant.getService(false)
       if (resData.error !== ERR_OK) {
         this.serviceDue = wepy.getStorageSync('serviceDue')
+        this.dataFinish = wepy.getStorageSync('dataFinish')
         return
       }
       this.serviceDue = resData.data.is_expiration
       wepy.setStorageSync('serviceDue', this.serviceDue)
+      this.dataFinish = resData.data.is_finish
+      wepy.setStorageSync('dataFinish', this.dataFinish)
       this.$apply()
     }
 
     async scanCodes (e) {
       if (this.serviceDue) {
         this.$invoke('ServiceDue', 'show')
+        return
+      }
+      if (!this.dataFinish) {
+        this.$invoke('msg-window', 'show')
         return
       }
       let res = await wepy.scanCode({onlyFromCamera: false})
@@ -216,8 +227,12 @@
         })
       },
       skipTo(url, txt) {
-        if ((txt === '礼包' || txt === '输码核销') && this.serviceDue) {
+        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
           this.$invoke('ServiceDue', 'show')
+          return
+        }
+        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
+          this.$invoke('msg-window', 'show')
           return
         }
         this.$navigate(url)
@@ -245,9 +260,6 @@
   .shop
     height: 100vh
     overflow: hidden
-
-  image
-    position: absolute
 
   .shop-header
     display: flex
@@ -281,6 +293,7 @@
         width: 25.6%
         bottom: 52.5px
         row-center()
+        position: absolute
 
   .shop-father
     padding: 0 5px
