@@ -119,12 +119,7 @@
           total_amount: this.allMoney,
           code: codeRes.code
         }
-        // let Json = {}
-        // try {
         let Json = await circle.createPutPay(data)
-        // }catch (e) {
-        //   console.log(e)
-        // }
         this.loaded()
         this.paymentMoneying = false
         let res = Json.data
@@ -214,9 +209,6 @@
       }
     }
     events = {
-      cancel() {
-        console.log('取消')
-      },
       confirm() {
         setTimeout(() => {
           wepy.navigateBack({

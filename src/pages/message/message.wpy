@@ -152,9 +152,6 @@
       }
     }
     events = {
-      cancel() {
-        console.log('取消')
-      },
       async confirm() {
         let data = {
           order_id: this.orderId,
@@ -170,43 +167,8 @@
       }
     }
     async load (type = 1, page = 1, key) {
-      // let _res = [
-      //   {
-      //     'id': 1,
-      //     'from_merchant_id': 100000,
-      //     'to_merchant_id': 100003,
-      //     'type': 1,
-      //     'examine_waiting': 0,
-      //     'status_str': '待商家审核',
-      //     'days': 1,
-      //     'price': '1.00',
-      //     'total': '1.00',
-      //     'shop_name': '非常完美',
-      //     'logo_image': 'https://img.jerryf.cn/static_files/uploads/merchantImages/2018/01/17/10/1516155048QwAcuVDi.jpg',
-      //     'my_payed': 1,
-      //     'start_showed_at': '01/01',
-      //     'end_showed_at': '03/01'
-      //   },
-      //   {
-      //     'id': 2,
-      //     'from_merchant_id': 100003,
-      //     'to_merchant_id': 100000,
-      //     'type': 1,
-      //     'examine_waiting': 1,
-      //     'status_str': '待我审核',
-      //     'days': 1,
-      //     'price': '1.00',
-      //     'total': '1.00',
-      //     'shop_name': '非常完美',
-      //     'logo_image': 'https://img.jerryf.cn/static_files/uploads/merchantImages/2018/01/17/10/1516155048QwAcuVDi.jpg',
-      //     'my_payed': 0,
-      //     'start_showed_at': '01/01',
-      //     'end_showed_at': '03/01'
-      //   }
-      // ]
       let data = {type: 1, page: page}
       let res = await circle.merchantList(data)
-      console.log(res)
       if (res.error === ERR_OK) {
         if (key === 2) {
           this.couponList = this.couponList.concat(res.data)

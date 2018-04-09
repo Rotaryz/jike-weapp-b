@@ -137,7 +137,7 @@
       appID: '',
       path: '',
       sessionFrom: '',
-      messageFlag: true,
+      messageFlag: false,
       modelBtn: false
     }
 
@@ -151,6 +151,19 @@
       }
       this.listItems[0].index = shopInfo ? 1 : 0
       this.listItems[1].index = shopImg
+      this.$apply()
+    }
+    async _getMessage() {
+      let data = {type: 1}
+      let resData = await Store.getMessage(data)
+      this.loaded()
+      if (resData.error !== ERR_OK) {
+        return
+      }
+      this.loaded()
+      if (resData.data.is_has === 1) {
+        this.messageFlag = true
+      }
       this.$apply()
     }
     async load() {
@@ -174,6 +187,7 @@
       this.$apply()
       this.loaded()
       await this.verify(res.is_checked, res.is_data)
+      await this._getMessage()
     }
 
     methods = {
@@ -236,7 +250,6 @@
     events = {
       confirm() {
         this.$navigate('/pages/store-msg/store-msg')
-        console.log('确定')
       }
     }
   }

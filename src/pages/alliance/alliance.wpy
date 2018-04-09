@@ -142,7 +142,6 @@
 
     async _checkBusiness (data) {
       let res = ''
-      console.log(data)
       if (this.navInadex === 0) {
         res = await circle.getShopList(data)
       } else {

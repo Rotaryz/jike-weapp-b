@@ -161,7 +161,6 @@
       }
       let res = Json.data
       this.storeMsg = res
-      console.log(res)
       this.credentialType = res.credential_type || '身份证'
       this.credentialNumber = res.credential_number || ''
       this.userName = res.user_name || ''

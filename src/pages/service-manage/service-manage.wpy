@@ -28,13 +28,16 @@
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text>
-                  <text class="number">{{item.platform_price}}</text>
+                  <text wx:if="{{item.promotion_type !== 'discount'}}" class="yuan">¥</text>
+                  <text class="number">{{item.platform_price || item.shop_price}}</text>
+                  <text wx:if="{{item.promotion_type === 'discount'}}" class="discount">折</text>
                 </view>
               </view>
               <view class="desc">
-                <view class="name">{{item.title}}</view>
-                <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
+                <view class="name">
+                  <text class="type-icon">{{item.promotion_type_cn}}</text>
+                  {{item.title}}</view>
+                <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
                   ID:{{item.id}}
@@ -74,13 +77,16 @@
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text>
-                  <text class="number">{{item.platform_price}}</text>
+                  <text wx:if="{{item.promotion_type !== 'discount'}}" class="yuan">¥</text>
+                  <text class="number">{{item.platform_price || item.shop_price}}</text>
+                  <text wx:if="{{item.promotion_type === 'discount'}}" class="discount">折</text>
                 </view>
               </view>
               <view class="desc">
-                <view class="name">{{item.title}}</view>
-                <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
+                <view class="name">
+                  <text class="type-icon">{{item.promotion_type_cn}}</text>
+                  {{item.title}}</view>
+                <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
                   ID:{{item.id}}
@@ -120,13 +126,16 @@
             <view class="desc-wrapper">
               <view class="price border-right-1px">
                 <view class="font">
-                  <text class="yuan">¥</text>
-                  <text class="number">{{item.platform_price}}</text>
+                  <text wx:if="{{item.promotion_type !== 'discount'}}" class="yuan">¥</text>
+                  <text class="number">{{item.platform_price || item.shop_price}}</text>
+                  <text wx:if="{{item.promotion_type === 'discount'}}" class="discount">折</text>
                 </view>
               </view>
               <view class="desc">
-                <view class="name">{{item.title}}</view>
-                <view class="subdesc">售卖结束日期:{{item.sell_end_at}}</view>
+                <view class="name">
+                  <text class="type-icon">{{item.promotion_type_cn}}</text>
+                  {{item.title}}</view>
+                <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
                   ID:{{item.id}}
@@ -175,6 +184,12 @@
       tabs: TABS,
       tabIndex: 1,
       tabTranslateX: '100%',
+      txtArray: {
+        voucher: '售卖',
+        cash: '售卖',
+        discount: '可领取',
+        reduction: '可领取'
+      },
       willOnLines: [],
       hasWill: false,
       willPage: 1,
@@ -382,10 +397,14 @@
               .font
                 color: $color-orange
                 .yuan
+                  font-family: $font-family-meddle
                   font-size: $font-size-small
                 .number
-                  font-family: $font-family-impact
-                  font-size: 30px
+                  font-family: $font-family-regular
+                  font-size: 22px
+                .discount
+                  font-family: $font-family-regular
+                  font-size: 22px
             .desc
               flex: 1
               padding-left: 10px
@@ -394,6 +413,15 @@
                 margin-bottom: 4.5px
                 font-size: $font-size-medium
                 color: $color-text-dark
+                .type-icon
+                  font-size: $font-size-small-m
+                  color: $color-text-dark
+                  border: 1px solid $color-text-light
+                  padding: 1px
+                  border-radius: 2px
+                  font-family: $font-family-regular
+                  letter-spacing: 0
+
               .subdesc
                 margin-bottom: 13px
                 font-size: $font-size-small-s

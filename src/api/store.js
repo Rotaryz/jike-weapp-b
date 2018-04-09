@@ -11,6 +11,16 @@ export default class Store extends base {
     return await this.get(url)
   }
   /**
+   * 获取待审核的消息
+   * @param
+   * @returns {Promise.<*>}
+   */
+  static async getMessage(data) {
+    const url = `${this.baseUrl}/api/circle/is-has-message`
+    return await this.get(url, data)
+  }
+
+  /**
    * 获取地区对应商圈
    * @param district 地区
    * @returns {Promise.<*>}

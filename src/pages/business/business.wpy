@@ -3,7 +3,7 @@
     <view class="client-head-img">
       <image wx:if="{{imageUri}}"
              src="{{imageUri + '/defaults/b-image/page/pic-square_bg@2x.png'}}"></image>
-      <view class="client-head-img-txt">全部(254家)门店</view>
+      <view class="client-head-img-txt">全部({{allNumber}}家)门店</view>
     </view>
     <view class="client-head-box">
       <view class="client-head">
@@ -67,6 +67,7 @@
     data = {
       imageUri: URIS.image,
       industryParentId: '',
+      allNumber: 0,
       navNum: 0,
       navList: [{
         name: '全部',
@@ -100,6 +101,7 @@
           break
         }
       }
+      this.allNumber = res.meta.total || 0   // 所有商家数
       this.loaded()
       return res
     }

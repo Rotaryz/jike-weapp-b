@@ -1,7 +1,7 @@
 <template>
   <view class="base-modal" wx:if="{{show}}">
     <view class="modal" @tap.stop="">
-      <view class="title-wrapper">
+      <view class="title-wrapper" name="{{name}}">
         {{title}}
       </view>
       <view class="content-wrapper" style="height: {{contentHeight}}px; padding-bottom: {{paddingBottom}}px">
@@ -28,6 +28,10 @@
         default: ''
       },
       title: {
+        type: String,
+        default: ''
+      },
+      name: {
         type: String,
         default: ''
       }
