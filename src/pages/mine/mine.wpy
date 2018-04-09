@@ -147,6 +147,7 @@
     async verify(shopImg, shopInfo) {
       // 0未审核未填写资料，1审核中，2已审核，3审核拒绝
       if (!shopInfo) {
+
         this.$invoke('popup-model', 'show')
       }
       this.listItems[0].index = shopInfo ? 1 : 0
