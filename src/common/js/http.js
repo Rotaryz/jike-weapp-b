@@ -3,7 +3,7 @@ import Tips from './tips'
 
 // HTTP工具类
 export default class http {
-  static async request(method, url, data, loading = true) {
+  static async request (method, url, data, loading = true) {
     const param = {
       url: url,
       method: method,
@@ -23,6 +23,9 @@ export default class http {
         url: '/pages/logIn/logIn'
       })
       throw res.data
+    } else if (this.isError(res)) {
+      let status = this.isError(res)
+      wepy.redirectTo({url: `/pages/error/error?status=${status}`})
     } else if (this.isSuccess(res)) {
       const result = res.data
       return result
@@ -31,7 +34,7 @@ export default class http {
     }
   }
 
-  static async upload(url, data, name = 'file', loading = true) {
+  static async upload (url, data, name = 'file', loading = true) {
     const param = {
       url: url,
       filePath: data,
@@ -55,7 +58,7 @@ export default class http {
   /**
    * 判断请求是否成功
    */
-  static isSuccess(res) {
+  static isSuccess (res) {
     const wxCode = res.statusCode
     // 微信请求错误
     if ((wxCode === 200 && res.data.code === 0) || wxCode === 422) {
@@ -64,7 +67,7 @@ export default class http {
     return false
   }
 
-  static isLoseEfficacy(res) {
+  static isLoseEfficacy (res) {
     const wxCode = res.statusCode
     if (wxCode === 200) {
       const json = res.data
@@ -74,9 +77,23 @@ export default class http {
   }
 
   /**
+   * 异常页面
+   * @param res
+   */
+  static isError (res) {
+    const wxCode = res.statusCode
+    if (wxCode === 404) {
+      return 1
+    } else if (wxCode >= 500) {
+      return 2
+    }
+    return 0
+  }
+
+  /**
    * 异常
    */
-  static requestException(res) {
+  static requestException (res) {
     const error = {}
     error.statusCode = res.statusCode
     const wxData = res.data
@@ -90,23 +107,23 @@ export default class http {
     return error
   }
 
-  static get(url, data, loading = true) {
+  static get (url, data, loading = true) {
     return this.request('GET', url, data, loading)
   }
 
-  static put(url, data, loading = true) {
+  static put (url, data, loading = true) {
     return this.request('PUT', url, data, loading)
   }
 
-  static post(url, data, loading = true) {
+  static post (url, data, loading = true) {
     return this.request('POST', url, data, loading)
   }
 
-  static patch(url, data, loading = true) {
+  static patch (url, data, loading = true) {
     return this.request('PATCH', url, data, loading)
   }
 
-  static delete(url, data, loading = true) {
+  static delete (url, data, loading = true) {
     return this.request('DELETE', url, data, loading)
   }
 }
