@@ -16,7 +16,9 @@
           <text>门店证照</text>
           <text>使用产品</text>
         </view>
-        <view class="popup-model-btn" @tap="confirm">马上去完善</view>
+        <navigator hover-class="none" url="/pages/store-msg/store-msg" hover-class="navigator-hover">
+          <view class="popup-model-btn">马上去完善</view>
+        </navigator>
       </view>
       <view class="popup-model-close" @tap="close">
         <image  wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/mine/icon-delet@2x.png'}}"></image>
