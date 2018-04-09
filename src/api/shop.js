@@ -86,18 +86,18 @@ export default class shop extends base {
    * 性别分布
    * @returns {Promise.<*>}
    */
-  static async customerSex () {
+  static async customerSex (data) {
     const url = `${this.baseUrl}/api/merchants/customer-sex`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**
    * 城市分布ity
    * @returns {Promise.<*>}
    */
-  static async customerCity () {
+  static async customerCity (data) {
     const url = `${this.baseUrl}/api/merchants/customer-city`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**
@@ -132,9 +132,10 @@ export default class shop extends base {
    * @param data
    * @returns {Promise.<*>}
    */
-  static async Orders (id) {
+  static async Orders (data) {
+    let id = data.id
     const url = `${this.baseUrl}/api/orders/wechat-orders/${id}`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**
