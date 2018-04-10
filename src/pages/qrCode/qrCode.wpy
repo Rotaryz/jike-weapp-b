@@ -9,10 +9,8 @@
       <view class="qr-input-txt">请输入10位券码</view>
     </view>
     <view class="qR-num">
-      <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}"
-            @touchstart="oncap({{index}},{{item.text}})"
-            @touchend="endTap">
-        <view class="nums">
+      <view class="num-item" wx:for="{{codeNum}}" wx:key="{{index}}">
+        <view class="nums" @touchstart="oncap({{index}},{{item.text}})" @touchend="endTap">
           <text>{{item.text}}</text>
           <image src="{{item.image}}"></image>
         </view>
@@ -25,9 +23,8 @@
           </view>
         </button>
       </form>
-      <view class="num-item" @touchstart="oncap(11)" @touchend="endTap"
-            wx:if="{{code.length>0}}">
-        <view class="nums">
+      <view class="num-item" wx:if="{{code.length>0}}">
+        <view class="nums" @touchstart="oncap(11)" @touchend="endTap">
           <image src="{{delectImg}}" class="delect-btn"></image>
         </view>
       </view>
