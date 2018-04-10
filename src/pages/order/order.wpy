@@ -270,10 +270,10 @@
     box-sizing: border-box
 
   .or-header
-    height: 51.5px
+    // height: 51.5px
     display: flex
     background-color: $color-theme
-    padding: 18.5px 20px 0
+    padding: 18px 20px
     justify-content: space-between
     .active
       border: 0.5px solid  $color-white
@@ -323,7 +323,7 @@
   .inputs
     background: $color-theme
     position: relative
-    padding: 14.5px 23px 0
+    padding: 13px 23px
     image
       position: absolute
       left: 35px

@@ -5,16 +5,18 @@
       <image class="mine-head-BC" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/bg-champions@2x.png'}}"></image>
       <view class="mine-head-content">
         <view class="mine-head-avtarBox">
-          <image class="mine-head-avatar" mode="aspectFill" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
-          <view class="mine-head-nameBox">
-            <view class="name-box">
-              <view class="icon-box" wx:if="{{isLeader}}">
-                <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-leader@2x.png'}}" class="leader-icon"></image>
+          <view class="mine-head-avtarBox-s">
+            <image class="mine-head-avatar" mode="aspectFill" wx:if="{{imageUrlHead}}" src="{{avatarUrl?avatarUrl:imageUrlHead + '/defaults/b-image/page/pic-shoplogo@2x.png'}}"></image>
+            <view class="mine-head-nameBox">
+              <view class="name-box">
+                <view class="icon-box" wx:if="{{isLeader}}">
+                  <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-leader@2x.png'}}" class="leader-icon"></image>
+                </view>
+                <view class="mine-head-name">{{storeMsg.shop_name}}</view>
               </view>
-              <view class="mine-head-name">{{storeMsg.shop_name}}</view>
-            </view>
-            <view class="leader-box" wx:if="{{isLeader}}">
-              <view class="leader-txt">我是盟主</view>
+              <view class="leader-box" wx:if="{{isLeader}}">
+                <view class="leader-txt">我是盟主</view>
+              </view>
             </view>
           </view>
           <navigator class="message-nav" url="/pages/message/message" hover-class="none">
@@ -263,9 +265,6 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
 
-  page
-    width: 100%
-    height: 100%
   .mine-wrapper
     width: 100%
     height: 100%
@@ -296,20 +295,24 @@
         position: absolute
         left: 0
         top: 0
-
+        .mine-head-avtarBox-s
+          height: 64%
+          display: flex
+          align-items: center
+          position: relative
+          justify-content: space-between
         .mine-head-avtarBox
           height: 64%
           display: flex
           align-items: center
           position: relative
-
+          justify-content: space-between
           .mine-head-avatar
             border: 0.5px solid #E7EAF1
             width: 48px
             height: 48px
             border-radius: 50%
             margin-left: 12px
-
           .mine-head-nameBox
             display: flex
             height: 100%
@@ -345,8 +348,7 @@
                 color: $color-text-d
                 font-family: PingFangSC-Regular
           .message-nav
-            right: 12px
-            position: absolute
+            margin-right: 15px
             .mine-head-message
               width: 32px
               height: 32px
@@ -390,7 +392,6 @@
             transform: translate(-50%, -50%)
 
     .mine-list
-
       .mine-list-item
         height: 59px
         display: flex
@@ -536,12 +537,10 @@
     height: 60px
     width: 60px
     border-radius: 100%
-    bottom: 30px
-    right: 15px
+    bottom: 20px
+    right: 20px
     // background: rgba(0, 0, 0, .42)
-    display: flex
-    justify-content: center
-    align-items: center
+
     .customer-service-btn
       position: absolute
       width: 100%
