@@ -1,7 +1,7 @@
 <template>
   <view class="marketing-wrapper">
     <view class="header">
-      <view class="title">营销活动</view>
+      <view class="title">营销奖品</view>
     </view>
     <view class="container jackpot">
       <view class="marketing-item" wx:for="{{jackpotList}}" wx:key="{{item}}" @tap="showDetail({{item.url}})">

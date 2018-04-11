@@ -65,22 +65,22 @@
       <!--售价-->
       <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
         <view class="label">售价</view>
-        <input type="number"
+        <input type="digit"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
-               @change="changeInput('platformPrice')"
+               @change="_regInput('platformPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
       <!--代金额-->
       <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
         <view class="label">代金额</view>
-        <input type="number"
+        <input type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
-               @change="changeInput('shopPrice')"
+               @change="_regInput('shopPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
@@ -108,22 +108,22 @@
       <!--平台价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">平台价</view>
-        <input type="number"
+        <input type="digit"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
-               @change="changeInput('platformPrice')"
+               @change="_regInput('platformPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
       <!--门市价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">门市价</view>
-        <input type="number"
+        <input type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
-               @change="changeInput('shopPrice')"
+               @change="_regInput('shopPrice')"
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
@@ -165,6 +165,7 @@
                          value="{{item.price}}"
                          maxlength="10"
                          @input="handleInput('priceservice{{index}}')"
+                         @change="_regInput('priceservice{{index}}')"
                          placeholder="请输入"
                          placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
                 </view>
@@ -212,10 +213,11 @@
       <!--折扣力度-->
       <view wx:if="{{categoryId === 4}}" class="title input-wrapper border-bottom-1px">
         <view class="label">折扣力度</view>
-        <input type="text"
+        <input type="digit"
                value="{{discount}}"
-               maxlength="10"
+               maxlength="3"
                @input="handleInput('discount')"
+               @change="_regInput('discount')"
                placeholder="请输入,如8.5"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
         <view class="content">折</view>
@@ -238,11 +240,16 @@
                   <view class="name">{{item.title}}</view>
                 </view>
                 <view wx:if="{{item.title==='最高优惠'}}"  class="input-wrapper {{discountsMaxData.tmp !== index ? 'disabled' : ''}}">
-                  <input type="number" value="{{discountsMaxData.tmp !== index ? '' : item.id}}"
-                         disabled="{{discountsMaxData.tmp !== index}}" maxlength="10" @input="handleInput('discountsMaxData')"/>
+                  <input type="digit"
+                         value="{{discountsMaxData.tmp !== index ? '' : item.id}}"
+                         disabled="{{discountsMaxData.tmp !== index}}"
+                         maxlength="10"
+                         @input="handleInput('discountsMaxData')"
+                         @change="_regInput('discountsMaxData')"
+                  />
 
                 </view>
-                <view wx:if="{{item.title==='最高优惠'}}"  class="max-unit">元</view>
+                <view wx:if="{{item.title==='最高优惠'}}"  class="max-unit"> 元</view>
                 <view class="radio {{index !== discountsMaxData.tmp ? 'unselected' : ''}}">
                   <image wx:if="{{index === discountsMaxData.tmp && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
@@ -270,11 +277,16 @@
                   <view class="name">{{item.title}}</view>
                 </view>
                 <view wx:if="{{item.title==='指定金额'}}"  class="input-wrapper {{conditionsData.tmp !== index ? 'disabled' : ''}}">
-                  <input type="number" value="{{conditionsData.tmp !== index ? '' : item.id}}"
-                         disabled="{{conditionsData.tmp !== index}}" maxlength="10" @input="handleInput('conditionsData')"/>
+                  <input type="digit"
+                         value="{{conditionsData.tmp !== index ? '' : item.id}}"
+                         disabled="{{conditionsData.tmp !== index}}"
+                         maxlength="10"
+                         @input="handleInput('conditionsData')"
+                         @change="_regInput('conditionsData')"
+                  />
 
                 </view>
-                <view wx:if="{{item.title==='指定金额'}}"  class="max-unit">元</view>
+                <view wx:if="{{item.title==='指定金额'}}"  class="max-unit"> 元</view>
                 <view class="radio {{index !== conditionsData.tmp ? 'unselected' : ''}}">
                   <image wx:if="{{index === conditionsData.tmp && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
@@ -294,11 +306,12 @@
           <view class="sell-date">
             <view class="date">
               满
-              <input class="fullMin" type="number"
+              <input class="fullMin"
+                     type="digit"
                      value="{{fullMax}}"
                      maxlength="10"
                      @input="handleInput('fullMax')"
-                     @change="changeInput('fullMax')"
+                     @change="_regInput('fullMax')"
                      placeholder="请输入"
                      placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>元
             </view>
@@ -306,11 +319,12 @@
           <view class="tos">可减</view>
           <view class="sell-date">
             <view class="date">
-              <input class="fullMin" type="number"
+              <input class="fullMin"
+                     type="digit"
                      value="{{fullMin}}"
                      maxlength="10"
                      @input="handleInput('fullMin')"
-                     @change="changeInput('fullMin')"
+                     @change="_regInput('fullMin')"
                      placeholder="请输入"
                      placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>元
             </view>
@@ -430,7 +444,7 @@
                          disabled="{{sellCountData.tmp !== index}}" maxlength="10" @input="handleInput('sellCountData')"/>
 
                 </view>
-                <view wx:if="{{item.title==='限制数量'}}"  class="max-unit">元</view>
+                <!--<view wx:if="{{item.title==='限制数量'}}"  class="max-unit">个</view>-->
                 <view class="radio {{index !== sellCountData.tmp ? 'unselected' : ''}}">
                   <image wx:if="{{index === sellCountData.tmp && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
@@ -662,7 +676,6 @@
   import URIS from 'common/js/config'
   import Picture from '@/base/picture-detail/picture-detail'
 
-  // const _MONEY = /^[1-9]{1}\d*(\.\d{1,2})?$/
   const IMAGE_INIT = {
     id: 0,
     image_id: 0
@@ -783,7 +796,8 @@
       const res = json.data
       let configs = res.config
       this.category = res.promotion_category.name
-      this.categoryId = res.promotion_category.id
+      // this.categoryId = res.promotion_category.id
+      this._setTicketState(res.promotion_category.id)
       this.pictures = res.promotion_image_data
       if (res.promotion_detail_image_data.length > 0) {
         this.detailsPictures = res.promotion_detail_image_data
@@ -898,9 +912,13 @@
     }
     async _setTicketState(id) {
       this.categoryId = id
+      if (id === 4) {
+        this.buyLimit = this.buyLimitMin
+      }
       this.$apply()
     }
-    _handleInput(name, value) {
+    async _handleInput(name, e) {
+      let value = e.detail.value
       if (name.indexOf('service') > -1) {
         name = name.split('service')
         const type = name[0]
@@ -915,7 +933,7 @@
       if (name.indexOf('Data') > -1) {
         let str = name.split('Data')[0]
         let key = this[name]
-        key[str][key.tmp].id = value * 1
+        key[str][key.tmp].id = value
         this.$apply()
       } else {
         this[name] = value
@@ -1089,13 +1107,13 @@
         this.$apply()
       },
       handleInput(name, e) {
-        this._handleInput(name, e.detail.value)
+        this._handleInput(name, e)
       },
       handleBlur(name, e) {
-        this._handleInput(name, e.detail.value)
+        this._handleInput(name, e)
       },
       handleConfirm(name, e) {
-        this._handleInput(name, e.detail.value)
+        this._handleInput(name, e)
       },
       addService() {
         this.tempServices.push({})
@@ -1252,18 +1270,71 @@
       showPicDetail(url) {
         this.$invoke('Picture', 'showPic', url, 400 / 750)
       },
-      changeInput(name, e) {
+      _regInput(name, e) { // 价格处理
+        // let arr = [
+        //   'platformPrice',
+        //   'shopPrice',
+        //   'discount',
+        //   'fullMin',
+        //   'fullMax',
+        //   'conditionsData',
+        //   'discountsMaxData'
+        // ]
         let value = e.detail.value
-        if (value !== '') {
-          value = value * 1
-          if (value < 0) {
-            this._toast('金额不能是负数')
-            this[name] = 0
-          } else {
-            this[name] = value.toFixed(1)
+        if (name.indexOf('Data') > -1) {
+          let str = name.split('Data')[0]
+          let key = this[name]
+          key[str][key.tmp].id = this.numberString(value)
+        } else {
+          if (name === 'discount') {
+            if (value * 1 > 9.9) {
+              this[name] = 9.9
+            } else if (value * 1 < 1) {
+              this[name] = 1
+            } else {
+              this[name] = this.numberString(value)
+            }
+          } else if (name === 'platformPrice' || name === 'shopPrice') {
+            if (this.categoryId === 2) {
+              this[name] = this.numberString(value)
+              if (this.shopPrice !== '' && this.platformPrice !== '') {
+                if (this.shopPrice * 1 >= this.platformPrice * 1) {
+                  this.shopPrice = 0 // this.platformPrice * 1 - 0.1
+                  this.$apply()
+                  this._toast('代金额不能大于等于售价')
+                }
+              }
+            } else {
+              this[name] = this.numberString(value)
+            }
+          } else if (name === 'fullMin' || name === 'fullMax') {
+            if (this.categoryId === 3) {
+              this[name] = this.numberString(value)
+              if (this.fullMin !== '' && this.fullMax !== '') {
+                if (this.fullMin * 1 >= this.fullMax * 1) {
+                  this.fullMin = 0 // this.platformPrice * 1 - 0.1
+                  this.$apply()
+                  this._toast('减值不能大于等于满值')
+                }
+              }
+            } else {
+              this[name] = this.numberString(value)
+            }
+            this.$apply()
           }
         }
       }
+    }
+    numberString (number) { // 1位小数
+      let num = number.split('.')
+      let newNum = Math.round(num[0])
+      if (num[1]) {
+        newNum = newNum + '.' + num[1].substring(0, 1)
+      }
+      if (newNum <= 0) {
+        newNum = 1
+      }
+      return newNum
     }
     components = {
       'meal-modal': BaseModal,

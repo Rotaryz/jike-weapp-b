@@ -9,7 +9,7 @@
 
     <view class="client-head">
       <NavHeader>
-        <view wx:for="{{navList}}" class="{{navNum === index ? 'choice' : ''}}"
+        <view wx:for="{{navIndex === 0 ?navList[0]:navList[1]}}" class="{{navNum === index ? 'choice' : ''}}"
               wx:key="{{index}}" @tap="showMsg({{index}})">
           <text>{{item.title}}</text>
         </view>
@@ -114,11 +114,12 @@
   import shop from 'api/shop'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
-  import { ERR_OK } from 'api/base'
+  import {ERR_OK} from 'api/base'
+
   export default class client extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       this.ShareAppMessage()
     }
 
@@ -154,13 +155,22 @@
         title: '最近30天',
         time: 'month'
       }],
-      navList: [{
-        title: '客户概括'
-      }, {
-        title: '客户列表'
-      }, {
-        title: '客户画像'
-      }],
+      navList: [
+        [{
+          title: '客户概括'
+        }, {
+          title: '客户列表'
+        }, {
+          title: '客户画像'
+        }],
+        [{
+          title: '用户概括'
+        }, {
+          title: '用户列表'
+        }, {
+          title: '用户画像'
+        }]
+      ],
       color: ['#00C4E2', '#FF4E00', '#363547'],
       customerTrend: [],
       customerList: [],
@@ -183,13 +193,13 @@
       cityIcon: [URIS.image + '/defaults/b-image/page/icon-first.png', URIS.image + '/defaults/b-image/page/icon-second@2x.png', URIS.image + '/defaults/b-image/page/icon-no3@2x.png']
     }
 
-    infoRes (res) {
+    infoRes(res) {
       if (res.error === ERR_OK) {
         return res.data
       }
     }
 
-    async _showMsg (time = 'yesterday') {
+    async _showMsg(time = 'yesterday') {
       this.nothing = false
       this.page = 1
       if (this.navNum === 0) {
@@ -254,7 +264,7 @@
       }
     }
 
-    async onLoad () {
+    async onLoad() {
       await this._showMsg()
     }
   }
@@ -267,6 +277,7 @@
   page
     width: 100%
     overflow-x: hidden
+
   .client-nav
     background-color: $color-white
     padding: 15px
@@ -283,8 +294,9 @@
         text-align: center
         width 50%
       .action
-        background-color:$color-theme
+        background-color: $color-theme
         color: $color-white
+
   scroll-view
     height: 93vh
     margin-top: 6px
@@ -358,7 +370,7 @@
         font-size: $font-size-small
         padding: 0 12px
         border-bottom: 0.5px solid $color-split-line
-        >view
+        > view
           &:first-child
             position: relative
             text
