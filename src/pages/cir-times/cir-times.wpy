@@ -27,7 +27,7 @@
           <view>{{endTime}}</view>
         </picker>
       </view>
-      <view class="clear" @tap="clear">清除</view>
+      <view class="clear" ></view>
     </view>
     <view class="bus-item">
       <view>单价</view>
@@ -104,12 +104,13 @@
         this.$invoke('Confirm', 'show', this.confirmData)
       },
       async submitSave() {
+        let flag = this._verify()
+        if (!flag) return
         if (this.paymentMoneying) {
           this.$invoke('Toast', 'show', '发起支付中，请勿重复提交')
           return
         }
         let data = {}
-        if (!this.verify()) return
         this.paymentMoneying = true
         let codeRes = await wepy.login() // codeRes.code
         data = {
@@ -153,19 +154,18 @@
         }
       }
     }
-
-    async verify() {
-      if (!this.isClaer) {
-        if (this.begTime === '开始时间') {
-          this.$invoke('Toast', 'show', '请选择开始时间')
-          return false
-        } else if (this.endTime === '结束时间') {
-          this.$invoke('Toast', 'show', '请选择结束时间')
-          return false
-        } else {
-          return true
-        }
+    _verify() {
+      let flag = true
+      if (this.begTime === '开始时间') {
+        this.$invoke('Toast', 'show', '请选择开始时间')
+        flag = false
+      } else if (this.endTime === '结束时间') {
+        this.$invoke('Toast', 'show', '请选择结束时间')
+        flag = false
+      } else {
+        flag = true
       }
+      return flag
     }
     sum () {
       if (this.begTime !== '开始时间' && this.endTime !== '结束时间') {

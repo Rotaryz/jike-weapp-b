@@ -26,14 +26,9 @@
           </viwe>
           <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
         </view>
-        <switch color="#EF705D" id="checkboxs" checked="{{item.is_showed}}" bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>
+        <switch wx:if="{{!item.current_merchant}}" color="#EF705D" id="checkboxs" checked="{{item.is_showed}}" bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>
       </view>
     </scroll-view>
-    <view class="con-submit" @tap="navSetTime" wx:if="{{showNext}}">
-      <view>
-        下一步，设置时间
-      </view>
-    </view>
     <Toast></Toast>
   </view>
 </template>
@@ -98,13 +93,13 @@
       if (!res.data) {
         return
       }
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].current_merchant) {
-          this.pageTitle = res.data[i].business_circle.alias
-          res.data.splice(i, 1)
-          break
-        }
-      }
+      // for (let i = 0; i < res.data.length; i++) {
+      //   if (res.data[i].current_merchant) {
+      //     this.pageTitle = res.data[i].business_circle.alias
+      //     res.data.splice(i, 1)
+      //     break
+      //   }
+      // }
       this.allNumber = res.meta.total || 0   // 所有商家数
       return res
     }
@@ -169,7 +164,7 @@
         this.merchantId.push(this.conList[e].merchant_id)
         let data = {
           merchant_ids: this.merchantId,
-          is_showed: this.conList[e]['is_check'] ? 1 : 0
+          is_showed: this.conList[e]['is_showed'] ? 1 : 0
         }
         let res = await shop.setMapShowed(data)
         if (res.error === ERR_OK) {

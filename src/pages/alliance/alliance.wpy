@@ -26,17 +26,17 @@
       </view>
     </view>
     <Blank></Blank>
-    <scroll-view scroll-y class="business" bindscrolltolower="showMore" wx:if="{{navInadex === 0}}">
+    <scroll-view scroll-y class="{{showNext?'businessBtn':'businessBty'}} business" bindscrolltolower="showMore" wx:if="{{navInadex === 0}}">
       <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
         <view>
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
             <view class="bus-item-txt-shop">{{item.shop_name}}</view>
-            <view class="bus-item-txt-site">{{item.particular_address || '广州市白云区黄石路国际单位二期…'}}</view>
+            <view class="bus-item-txt-site">{{item.particular_address || '广州国际'}}</view>
             <view class="bus-item-txt-info">
               <text>用户数: {{item.user_count || 0}}</text>
-              <text>距离: {{item.distance || 0}}米</text>
-              <text>用户匹配度: {{item.match_degree || 0}}</text>
+              <text>距离: {{item.distance < 1000 ? item.distance+'米':item.distance+ 'km'}}</text>
+              <text>匹配度: {{item.match_degree || 3}}</text>
             </view>
           </viwe>
           <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
@@ -57,7 +57,7 @@
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
             <view class="bus-item-txt-shop">{{item.shop_name}}</view>
-            <view class="bus-item-txt-site">{{item.particular_address}}</view>
+            <view class="bus-item-txt-site">{{item.particular_address }}</view>
             <view class="bus-item-txt-shop">
               <text class="{{txtColor * 1 === 1 ? 'pay' : 'green'}}">{{ txtColor * 1 === 1 ? '付' : '收'}}</text>
               <text>{{item.end_showed_at}}到期</text>
@@ -151,8 +151,10 @@
         if (res.data[i].current_merchant) {
           this.pageTitle = res.data[i].business_circle.alias
           res.data.splice(i, 1)
-          break
+          // break
         }
+        let tmp = res.data[i].distance / 1000
+        res.data[i].distance = tmp.toFixed(1)
       }
       this.loaded()
       return res
@@ -255,6 +257,7 @@
       },
       topNav(id, e) {
         this.navInadex = id * 1
+        this.showNext = false
         this.$apply()
         this.getList()
       }
@@ -447,10 +450,13 @@
           margin: auto
           bottom: -1px
           left: 0px
+  .businessBtn
+    padding-bottom: 50px
+  .businessBty
+    padding-bottom: 10px
   .business
     font-size: $font-size-small
     height: 93vh
-    padding-bottom: 50px
     box-sizing: border-box
     .business-bus
       height: 100px
@@ -539,15 +545,19 @@
             font-family: $font-family-light
             color: $color-text-d
             letter-spacing: 0
+            height: 20px
+            line-height: 20px
             no-wrap()
           .bus-item-txt-info
-            no-wrap()
+            white-space:nowrap
             text
-              margin-right: 18px
               font-family: $font-family-light
               font-size: $font-size-small
               position: relative
+            text:nth-child(1)
+              margin-right: 18px
             text:nth-child(2)
+              margin-right: 18px
               :after
                 content: ''
                 position: absolute
@@ -567,6 +577,7 @@
                 left: -11px
                 bottom: 0px
                 margin: auto
+
   .times
     position: fixed
     height 100%

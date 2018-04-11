@@ -18,8 +18,8 @@ export default class circle extends base {
    * @returns {Promise.<*>}
    */
   static async getShopList(data) {
-    // const url = `${this.baseUrl}/api/circle/circle-share-merchant-list`
-    const url = `${this.baseUrl}/api/circle/circle-share-merchants`
+    const url = `${this.baseUrl}/api/circle/circle-share-merchant-list`
+    // const url = `${this.baseUrl}/api/circle/circle-share-merchants`
     return await this.get(url, data)
   }
   /**
