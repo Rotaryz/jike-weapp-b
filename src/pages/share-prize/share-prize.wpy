@@ -1,7 +1,7 @@
 <template>
   <marketing-switch
     class="registration-page"
-    title="分享有礼"
+    title="{{title}}"
     :isChecked.sync="isChecked"
     :activityStatus.sync="activityStatus"
   >
@@ -133,6 +133,7 @@
     }
 
     data = {
+      title: '分享有礼',
       isChecked: '',
       activityStatus: 'failed',
       imageUrlHead: URIS.image,
@@ -175,6 +176,8 @@
             setTimeout(() => {
               this.$switch({url: '/pages/marketing/marketing'})
             }, 1000)
+            // 保存成功调用按钮
+            this.$invoke('marketing-switch', 'switchChange', this.title, 1)
           } else {
             this.$invoke('Toast', 'show', sqlRes.message)
           }
