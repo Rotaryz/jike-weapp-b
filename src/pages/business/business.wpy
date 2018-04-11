@@ -22,7 +22,7 @@
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
             <view class="bus-item-txt-shop">店家：{{item.shop_name}}</view>
-            <view class="bus-item-txt-site">地址：{{item.shop_name}}</view>
+            <view class="bus-item-txt-site">地址：{{item.address}}</view>
           </viwe>
           <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
         </view>

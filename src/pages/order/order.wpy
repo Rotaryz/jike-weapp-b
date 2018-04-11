@@ -126,6 +126,7 @@
         title: '买单订单',
         type: 3
       }],
+      orderType: 1,
       navList: [{
         title: '支付成功'
       }, {

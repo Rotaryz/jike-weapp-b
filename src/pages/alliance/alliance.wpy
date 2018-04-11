@@ -35,7 +35,7 @@
             <view class="bus-item-txt-site">{{item.particular_address || '广州国际'}}</view>
             <view class="bus-item-txt-info">
               <text>用户数: {{item.user_count || 0}}</text>
-              <text>距离: {{item.distance < 1000 ? item.distance+'米':item.distance+ 'km'}}</text>
+              <text>距离: {{item.distance+ 'km'}}</text>
               <text>匹配度: {{item.match_degree || 3}}</text>
             </view>
           </viwe>

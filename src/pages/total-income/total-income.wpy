@@ -14,7 +14,7 @@
       <view class="select-wrapper border-bottom-1px">
         <picker mode="selector" range="{{types}}" range-key="name" @change="changeType">
           <view class="type-wrapper">
-            <view class="content">优惠券</view>
+            <view class="content">{{selectType.name}}</view>
             <view class="arrow-down"></view>
           </view>
         </picker>
@@ -128,10 +128,12 @@
         this.$invoke('base-modal', 'show')
       },
       changeType(e) {
+        console.log(e)
         const newType = this.types[e.detail.value]
         if (this.selectType === newType) {
           return
         }
+        this.typeName = newType.name
         this.selectType = this.types[e.detail.value]
         this.page = 1
         this._getSaleLogs()
