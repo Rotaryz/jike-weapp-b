@@ -322,7 +322,7 @@
   .business
     font-size: $font-size-small
     height: 93vh
-    padding-bottom: 50px
+    padding-bottom: 10px
     box-sizing: border-box
     .wx-checkbox-input
       height: 16px
