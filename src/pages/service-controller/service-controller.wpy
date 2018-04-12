@@ -6,10 +6,10 @@
         <view class="label">品类</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{industry}}</view>
-          <view class="arrow-right">
+          <!--<view class="arrow-right">-->
             <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
                    <!--class="full-image"></image>-->
-          </view>
+          <!--</view>-->
         </view>
       </view>
       <!--类型-->
@@ -1393,7 +1393,7 @@
         justify-content: space-between
         padding-right: 12px
       .picture-wrapper
-        height: 135px
+        height: 140px
         padding-top: 12.5px
         padding-bottom: 12.5px
         box-sizing: border-box
@@ -1501,7 +1501,7 @@
           .radio
             width: 16px
             height: 16px
-            margin-left: 74px
+            margin-left: 37px
             &.unselected
               border-radius: 50%
               border-1px($color-text-d, 50%)
@@ -1635,7 +1635,7 @@
           .radio
             width: 16px
             height: 16px
-            margin-left: 74px
+            margin-left: 37px
             &.unselected
               border-radius: 50%
               border-1px($color-text-d, 50%)
@@ -1663,7 +1663,7 @@
           .radio
             width: 16px
             height: 16px
-            margin-left: 65px
+            margin-left: 37px
             &.unselected
               border-radius: 50%
               border-1px($color-text-d, 50%)
