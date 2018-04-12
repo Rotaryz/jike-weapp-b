@@ -1,7 +1,7 @@
 <template>
   <marketing-switch
     class="registration-page"
-    title="{{title}}"
+    :title.sync="title"
     :isChecked.sync="isChecked"
     :activityStatus.sync="activityStatus"
   >
