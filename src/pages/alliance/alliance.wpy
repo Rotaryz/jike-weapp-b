@@ -452,7 +452,7 @@
           bottom: -1px
           left: 0px
   .businessBtn
-    padding-bottom: 50px
+    padding-bottom: 64px
   .businessBty
     padding-bottom: 10px
   .business
@@ -667,18 +667,17 @@
     position: fixed
     width: 100%
     bottom: 0px
-    height: 14.93vw
-    background: $color-background
+    height: 64px
+    background: $color-white
+    padding: 10px 12px
     view
-      position: absolute
-      bottom: 12px
-      left: 12px
-      width: 93.6%
-      height: 11.73vw
-      line-height: 11.73vw
+      width: 100%
+      height: 44px
+      line-height: 44px
       background: $color-theme
       color: $color-white
       text-align: center
       font-size: $font-size-medium
       border-radius: 4px
+      margin: 0 auto
 </style>
