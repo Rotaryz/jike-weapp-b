@@ -145,7 +145,6 @@
       modelBtn: false,
       dataFinish: false
     }
-
     async onShow() {
       await this.load()
     }
