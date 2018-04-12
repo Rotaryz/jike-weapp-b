@@ -510,7 +510,7 @@
           line-height: 46px
         .bus-item-txt
           padding: 6px 5px
-          width: 65vw
+          width: 67vw
           >view
             line-height: 26px
             font-size: $font-size-medium
@@ -520,6 +520,7 @@
             letter-spacing: 0
             no-wrap()
             .green
+              margin-right: 6px
               display: inline-block
               text-indent: 0px
               border-radius: 2px
@@ -531,6 +532,7 @@
               color: $color-white
               font-size: $font-size-small-s
             .pay
+              margin-right: 6px
               display: inline-block
               text-indent: 0px
               border-radius: 2px
@@ -551,34 +553,28 @@
             no-wrap()
           .bus-item-txt-info
             white-space:nowrap
+
             text
-              width: 33%
+              text-indent: 0px
+              display: inline-block
+              width: 30%
+              height: 11px
+              line-height: 11px
+              // border: 1px solid red
               font-family: $font-family-light
               font-size: $font-size-small
               position: relative
+              text-align: center
             text:nth-child(1)
-              margin-right: 18px
+              text-align: left
+            text:nth-child(3)
+              width: 32%
+              // margin-right: 18px
             text:nth-child(2)
-              margin-right: 18px
-              :after
-                content: ''
-                position: absolute
-                height: 11px
-                border-right:1px solid $color-row-line
-                right: -11px
-                top: 0px
-                margin: auto
-                bottom: 0px
-                left: 0px
-              :before
-                content: ''
-                position: absolute
-                height: 11px
-                border-left: 1px solid $color-row-line
-                top: 0px
-                left: -11px
-                bottom: 0px
-                margin: auto
+              width: 38%
+              // margin-right: 18px
+              border-left: 1px solid $color-row-line
+              border-right: 1px solid $color-row-line
 
   .times
     position: fixed
