@@ -1,7 +1,7 @@
 <template>
   <marketing-switch
     class="registration-page"
-    title="签到红包"
+    :title.sync="title"
     :isChecked.sync="isChecked"
     :activityStatus.sync="activityStatus"
   >
@@ -205,6 +205,7 @@
       'marketing-switch': MarketingSwitch
     }
     data = {
+      title: '签到红包',
       isChecked: '',
       activityStatus: 'failed',
       imageUri: URIS.image,
@@ -553,6 +554,8 @@
           setTimeout(() => {
             this.$back()
           }, 1000)
+          // 保存成功调用按钮
+          this.$invoke('marketing-switch', 'switchChange', this.title, 1)
         } else {
           this.$invoke('Toast', 'show', res.message)
         }

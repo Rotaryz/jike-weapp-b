@@ -128,10 +128,12 @@
         this.$invoke('base-modal', 'show')
       },
       changeType(e) {
+        console.log(e)
         const newType = this.types[e.detail.value]
         if (this.selectType === newType) {
           return
         }
+        this.typeName = newType.name
         this.selectType = this.types[e.detail.value]
         this.page = 1
         this._getSaleLogs()

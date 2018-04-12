@@ -4,7 +4,7 @@
       <view>{{title}}</view>
       <view
         class="switchbox {{switchStyle}}"
-        @tap="switchChange"
+        @tap="switchChange({{title}},{{isChecked}})"
       >
         <view class="switch-circle {{switchStyle}}"></view>
       </view>
@@ -100,11 +100,11 @@
     }
 
     methods = {
-      async switchChange() {
+      async switchChange(title, check) {
         // 执行开关动作
         // 关闭1 ,开启0
-        let isChecked = this.isChecked * 1 ? 0 : 1
-        isChecked = await this._executeSwitch(this.title, isChecked)
+        let isChecked = check * 1 ? 0 : 1
+        isChecked = await this._executeSwitch(title, isChecked)
         this.isChecked = isChecked
         this.$apply()
       }

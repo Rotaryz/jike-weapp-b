@@ -1,7 +1,7 @@
 <template>
   <marketing-switch
     class="registration-page"
-    title="大转盘"
+    :title.sync="title"
     :isChecked.sync="isChecked"
     :activityStatus.sync="activityStatus"
   >
@@ -236,6 +236,7 @@
     mixins = [base]
 
     data = {
+      title: '大转盘',
       isChecked: '',
       activityStatus: 'failed',
       imageUri: URIS.image,
@@ -450,6 +451,8 @@
           setTimeout(() => {
             this.$back()
           }, 1000)
+          // 保存成功调用按钮
+          this.$invoke('marketing-switch', 'switchChange', this.title, 1)
         } else {
           this._toast(res.message)
         }
