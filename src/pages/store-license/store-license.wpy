@@ -18,7 +18,7 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">证件类型</view>
         <view class="store-license-txt-right">
-          <view class="store-license-txt-msg">{{credentialType}}</view>
+          <view class="store-license-txt-msg disabled">{{credentialType}}</view>
         </view>
       </view>
 
@@ -246,10 +246,12 @@
           margin-right: 15px
           color: $color-text-title
 
+        .store-license-txt-right
+          .disabled
+            color: $color-btn-dis
+
         .store-license-txt-input
           height: 38px
-          &.disableds
-            background-color: $color-background
 
         .store-license-txt-holder
           color: $color-text-d

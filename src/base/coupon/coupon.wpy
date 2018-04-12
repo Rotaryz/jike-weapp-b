@@ -8,10 +8,12 @@
         <view class="border-line" wx:if="{{border!=='no'}}"></view>
         <view class="couponList-itemPay">
           <view class="couponList-desc">
-            <view class="couponList-midMoney">¥</view>
+            <!--<view class="couponList-midMoney">¥</view>-->
+            <text wx:if="{{coupon.promotion_type !== 'discount'}}" class="couponList-midMoney">¥</text>
             <view class="couponList-bigMoney">
               {{coupon.platform_price ? coupon.platform_price : coupon.promotion_platform_price ? coupon.promotion_platform_price : coupon.promotion.platform_price}}
             </view>
+            <text wx:if="{{coupon.promotion_type === 'discount'}}" class="discount">折</text>
           </view>
         </view>
         <view class="couponList-itemMsg">
@@ -137,6 +139,10 @@
           .couponList-midMoney
             font-size: $font-size-small-s
             font-family: PingFangSC-Semibold
+            color: $color-orange
+          .discount
+            font-family: $font-family-regular
+            font-size: $font-size-large-m
             color: $color-orange
 
           .couponList-bigMoney

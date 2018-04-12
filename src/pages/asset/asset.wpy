@@ -66,7 +66,7 @@
                   <view class="t-content">{{item.title}}</view>
                   <view class="b-content">{{item.created_at}}</view>
                 </view>
-                <view class="right-content">-{{item.money}}</view>
+                <view class="right-content">{{item.money}}</view>
               </view>
             </repeat>
           </view>
