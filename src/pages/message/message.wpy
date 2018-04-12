@@ -274,7 +274,7 @@
 
   #nav-order
     text
-      width: 40%
+      // width: 40%
 
   .order-conpon
     box-sizing: border-box
@@ -296,7 +296,7 @@
         z-index: 100
         padding-left: 12px
         align-items: center
-        width: 80vw
+        min-width: 73vw
         text
           transform: translate(-14.5px, -25%)
         .order-title

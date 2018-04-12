@@ -7,8 +7,8 @@
         <view class="arrow-content-wrapper">
           <view class="content">{{industry}}</view>
           <view class="arrow-right">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                   class="full-image"></image>
+            <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+                   <!--class="full-image"></image>-->
           </view>
         </view>
       </view>
@@ -23,7 +23,7 @@
                    class="full-image"></image>
           </view>
         </view>
-        <meal-modal title="选择类型" name="categoryData" @confirm.user="setSelect" @cancel.user="resetSelect">
+        <meal-modal type="big" title="选择类型" name="categoryData" @confirm.user="setSelect" @cancel.user="resetSelect">
           <view slot="content" class="meal-modal">
             <repeat for="{{categoryData.categories}}" index="index" key="index" item="item">
               <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{index}},'categoryData')">
@@ -466,18 +466,17 @@
         </view>
       </view>
       <view wx:if="{{categoryId === 1}}" class="know">
-        1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
-        2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
-        3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
-        4.备注：{{knowRemark}}
+      1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
+      2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
+      3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
+      4.备注：{{knowRemark}}
       </view>
       <view wx:else class="know">
         1.{{buyLimit === -1 ? '不限' : '限' + buyLimit}}人使用
         2.{{tempRange === -1 ? '全场通用' : '限' + tempRange + '商品使用'}}
         3.备注：{{knowRemark}}
       </view>
-      <know-modal title="使用须知" type="big"
-                  @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
+      <know-modal title="使用须知" type="big" @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
         <view class="know-modal" slot="content">
           <!--是否需要预约-->
           <view wx:if="{{categoryId === 1}}" class="card-wrapper border-bottom-1px" >
@@ -910,10 +909,12 @@
       }
       this.$apply()
     }
-    async _setTicketState(id) {
+    async _setTicketState(id, sta) {
       this.categoryId = id
-      if (id === 4) {
-        this.buyLimit = this.buyLimitMin
+      if (sta === 'add') {
+        if (id === 4 || id === 3) {
+          this.buyLimit = this.buyLimitMin
+        }
       }
       this.$apply()
     }
@@ -1072,7 +1073,7 @@
         this[key].flag = this[key].tmp
         this.$apply()
         if (key === 'categoryData') {
-          this._setTicketState(this[key].flag + 1)
+          this._setTicketState(this[key].flag + 1, 'add')
         }
       },
       resetSelect(e) {
@@ -1181,7 +1182,9 @@
         this.tempUseLimit = Math.floor(useLimit)
       },
       handleTextarea(value) {
-        this._handleInput('tempKnowRemark', value)
+        console.log('>>>' + value)
+        // this._handleInput('tempKnowRemark', value)
+        this.tempKnowRemark = value
       },
       setBuyKnow() {
         this.subscribe = this.tempSubscribe
@@ -1298,10 +1301,10 @@
             if (this.categoryId === 2) {
               this[name] = this.numberString(value)
               if (this.shopPrice !== '' && this.platformPrice !== '') {
-                if (this.shopPrice * 1 >= this.platformPrice * 1) {
+                if (this.shopPrice * 1 <= this.platformPrice * 1) {
                   this.shopPrice = 0 // this.platformPrice * 1 - 0.1
                   this.$apply()
-                  this._toast('代金额不能大于等于售价')
+                  this._toast('售价不能大于等于代金额')
                 }
               }
             } else {
@@ -1399,6 +1402,7 @@
         .picture-content
           display: flex
           align-items: center
+          margin-bottom:5px
           .picture
             position: relative
             display: flex
@@ -1567,8 +1571,10 @@
               display: flex
               align-items: center
               justify-content: center
+              text-align: right
               .arrow-right
                 margin-left: 1px
+                justify-content: right
               .fullMin
                 width: 60px
       .not-allow-time .content
@@ -1672,12 +1678,14 @@
       .know-content
         justify-content: space-between
       .know
-        display: block
-        /*padding-left: 27px*/
-        padding-bottom: 18px
-        line-height: 16.5px
-        white-space: pre-wrap
+        font-family: $font-family-light;
         font-size: $font-size-small
+        color: $color-text-d
+        display: block
+        white-space: pre-wrap //
+        line-height: 16.5px
+        padding: 0 5px
+        margin-top: -15px
       .know-modal
         background: $color-background
         .card-wrapper

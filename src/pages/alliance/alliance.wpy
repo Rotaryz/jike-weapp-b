@@ -35,7 +35,7 @@
             <view class="bus-item-txt-site">{{item.particular_address || '广州国际'}}</view>
             <view class="bus-item-txt-info">
               <text>用户数: {{item.user_count || 0}}</text>
-              <text>距离: {{item.distance < 1000 ? item.distance+'米':item.distance+ 'km'}}</text>
+              <text>距离: {{item.distance+ 'km'}}</text>
               <text>匹配度: {{item.match_degree || 3}}</text>
             </view>
           </viwe>
@@ -362,13 +362,14 @@
       display: flex
       border-bottom: 0.5px solid $color-split-line
       .cover
-        height: 36.5px
+        height: 42px
         width: 20px
         position: absolute
         right: 0
         top: 0
-      // background: linear-gradient(to left, rgba(54, 53, 71, .9) , rgba(54, 53, 71, .5))
-
+        background-image: linear-gradient(to left, #f1f1f1, #FFFFFF)
+        opacity: 0.6
+        z-index: 1
       .item
         font-family: $font-family-light
         color: $color-theme
@@ -508,7 +509,7 @@
         .bus-item-all
           line-height: 46px
         .bus-item-txt
-          padding: 6px 0px
+          padding: 6px 5px
           width: 65vw
           >view
             line-height: 26px
@@ -551,6 +552,7 @@
           .bus-item-txt-info
             white-space:nowrap
             text
+              width: 33%
               font-family: $font-family-light
               font-size: $font-size-small
               position: relative

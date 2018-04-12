@@ -18,15 +18,21 @@
     <Blank></Blank>
     <scroll-view scroll-y class="business" bindscrolltolower="showMore">
       <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
-        <view>
+        <view class="bus-item-v">
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
             <view class="bus-item-txt-shop">店家：{{item.shop_name}}</view>
-            <view class="bus-item-txt-site">地址：{{item.shop_name}}</view>
+            <view class="bus-item-txt-site">地址：{{item.address}}</view>
           </viwe>
           <view class="bus-item-all" wx:else>{{item.shop_name}}</view>
         </view>
-        <switch wx:if="{{!item.current_merchant}}" color="#EF705D" id="checkboxs" checked="{{item.is_showed}}" bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>
+
+        <view  wx:if="{{!item.current_merchant}}" class="switchbox {{item.is_showed ? 'checked' : ''}}" @tap="checkboxChange({{index}},{{item.merchant_id}})">
+          <view class="switch-circle {{item.is_showed ? 'checked' : ''}}"></view>
+        </view>
+
+        <!--<switch wx:if="{{!item.current_merchant}}" color="#EF705D" id="checkboxs" checked="{{item.is_showed}}" bindchange="checkboxChange({{index}},{{item.merchant_id}})"/>-->
+
       </view>
     </scroll-view>
     <Toast></Toast>
@@ -263,13 +269,14 @@
       display: flex
       border-bottom: 0.5px solid $color-split-line
       .cover
-        height: 36.5px
+        height: 42px
         width: 20px
         position: absolute
         right: 0
         top: 0
-        // background: linear-gradient(to left, rgba(54, 53, 71, .9) , rgba(54, 53, 71, .5))
-
+        background-image: linear-gradient(to left, #f1f1f1, #FFFFFF)
+        opacity: 0.6
+        z-index: 1
       .item
         font-family: $font-family-light
         color: $color-theme
@@ -354,7 +361,7 @@
         border: 0.5px solid $color-split-line
         transform: translateY(6px)
         margin-top: 1px
-      >view
+      .bus-item-v
         display: flex
         no-wrap()
         color: $color-theme
@@ -371,13 +378,46 @@
             line-height: 26px
             font-size: $font-size-medium
           .bus-item-txt-shop
+            no-wrap()
             font-family: $font-family-meddle
             color: $color-text
             letter-spacing: 0
           .bus-item-txt-site
+            no-wrap()
             font-family: $font-family-light
             color: $color-text-d
             letter-spacing: 0
+
+      .switchbox
+        width: 50px
+        height: 24px
+        border-radius: 12px
+        background: #eaeaea
+        display: flex
+        align-items: center
+        position: relative
+        transition: .3s all
+        justify-content: center
+        margin-top: 22px
+        .switch-circle
+         width: 20px
+         height: 20px
+         background: $color-text-d
+         border-radius: 10px
+         position: absolute
+         left: 2px
+         top: 2px
+         transition: .3s all
+
+      .switchbox.checked
+        background: $color-assist-f
+        transition: .3s all
+
+        .switch-circle.checked
+          background: $color-white
+          left: 22px
+          top: 2px
+          transition: .3s all
 
   .times
     position: fixed
@@ -480,4 +520,5 @@
       text-align: center
       font-size: $font-size-medium
       border-radius: 4px
+
 </style>

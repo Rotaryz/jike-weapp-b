@@ -36,7 +36,8 @@
               <view class="desc">
                 <view class="name">
                   <text class="type-icon">{{item.promotion_type_cn}}</text>
-                  {{item.title}}</view>
+                  <text class="type-title">{{item.title}}</text>
+                </view>
                 <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
@@ -85,7 +86,8 @@
               <view class="desc">
                 <view class="name">
                   <text class="type-icon">{{item.promotion_type_cn}}</text>
-                  {{item.title}}</view>
+                  <text class="type-title">{{item.title}}</text>
+                </view>
                 <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
@@ -134,7 +136,8 @@
               <view class="desc">
                 <view class="name">
                   <text class="type-icon">{{item.promotion_type_cn}}</text>
-                  {{item.title}}</view>
+                  <text class="type-title">{{item.title}}</text>
+                </view>
                 <view class="subdesc">{{txtArray[item.promotion_type]}}结束日期:{{item.sell_end_at}}</view>
                 <view class="sell-wrapper">销量:{{item.collected}}
                   <view class="split"></view>
@@ -401,27 +404,39 @@
                   font-size: $font-size-small
                 .number
                   font-family: $font-family-regular
-                  font-size: 22px
+                  font-size: $font-size-large-m
                 .discount
                   font-family: $font-family-regular
-                  font-size: 22px
+                  font-size: $font-size-large-m
             .desc
               flex: 1
               padding-left: 10px
               padding-top: 10px
               .name
                 margin-bottom: 4.5px
-                font-size: $font-size-medium
-                color: $color-text-dark
+                height: 20px
+                line-height: 20px
+                position: relative
                 .type-icon
                   font-size: $font-size-small-m
                   color: $color-text-dark
                   border: 1px solid $color-text-light
-                  padding: 1px
                   border-radius: 2px
                   font-family: $font-family-regular
                   letter-spacing: 0
-
+                  display: inline-block
+                  position: absolute
+                  top: 2px
+                  width: 30px
+                  height 14px
+                  line-height: 16px
+                  text-align: center
+                .type-title
+                  font-size: $font-size-medium
+                  color: $color-text-dark
+                  position: absolute
+                  top: 0px
+                  left: 35px
               .subdesc
                 margin-bottom: 13px
                 font-size: $font-size-small-s

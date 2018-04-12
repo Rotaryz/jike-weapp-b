@@ -136,7 +136,7 @@
     data = {
       imageUri: URIS.image,
       navIndex: 0,
-      navState: ['general', 'wechant_user'],
+      navState: ['order_user', 'wechant_user'],
       navNum: 0,
       showTime: 0,
       impBlank: false,

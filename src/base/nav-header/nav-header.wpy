@@ -23,7 +23,7 @@
 
   .client-head
     width: 100%
-    height: 36px
+    height: 40px
     background: $color-white
     display: flex
     align-items: center
@@ -33,7 +33,7 @@
       color: $color-white
       font-size: $font-size-medium
       flex: 1
-      line-height: 34px
+      line-height: 40px
       text
         display: inline-block
         margin: 0 auto
@@ -49,5 +49,18 @@
     .choice
       text
         color: $color-assist-f
-        border-bottom: 2px solid $color-assist-f
+        // border-bottom: 2px solid $color-assist-f
+        position: relative
+      text:after
+        content: ""
+        display: block
+        position: absolute
+        height: 2px
+        width: 30px
+        background: $color-assist-f
+        bottom: -2px
+        left: 0px
+        right: 0px
+        margin: auto
+
 </style>

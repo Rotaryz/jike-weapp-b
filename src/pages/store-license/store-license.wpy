@@ -6,7 +6,12 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">姓名</view>
         <view class="store-license-txt-right">
-          <input type="text" placeholder="输入姓名" bindblur="nameChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" value="{{userName}}" disabled="{{userName}}"/>
+          <input type="text" placeholder="输入姓名"
+                 bindblur="nameChange"
+                 placeholder-class="store-license-txt-holder"
+                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 value="{{userName}}"
+                 disabled="{{submitIndex === 1}}"/>
         </view>
       </view>
 
@@ -20,7 +25,14 @@
       <view class="store-license-txt">
         <view class="store-license-txt-title">证件号码</view>
         <view class="store-license-txt-right">
-          <input type="idcard" placeholder="输入身份证" bindblur="idChange" placeholder-class="store-license-txt-holder" class="store-license-txt-input" maxlength="20" value="{{credentialNumber}}"/>
+          <input type="idcard"
+                 placeholder="输入身份证"
+                 bindblur="idChange"
+                 placeholder-class="store-license-txt-holder"
+                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 maxlength="20"
+                 disabled="{{submitIndex === 1}}"
+                 value="{{credentialNumber}}"/>
         </view>
       </view>
     </view>
@@ -220,6 +232,7 @@
 
       view:last-child
         border-bottom: 0 none
+        width: 100%
 
       .store-license-txt
         display: flex
@@ -229,12 +242,14 @@
         align-items: center
 
         .store-license-txt-title
-          width: 60px
-          margin-right: 48px
+          width: 100px
+          margin-right: 15px
           color: $color-text-title
 
         .store-license-txt-input
           height: 38px
+          &.disableds
+            background-color: $color-background
 
         .store-license-txt-holder
           color: $color-text-d
