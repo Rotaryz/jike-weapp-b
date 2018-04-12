@@ -4,9 +4,9 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeName" class="store-msg-txt-left-title">门店名称</label>
-          <input type="text" id="storeName"  maxlength="10" class="store-msg-txt-left-input" value="{{name}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
+          <input type="text" id="storeName"  maxlength="15" class="store-msg-txt-left-input" value="{{name}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
         </view>
-        <view class="wordNum">{{name.length}}/10</view>
+        <view class="wordNum">{{name.length}}/15</view>
       </view>
 
       <view class="store-msg-txt">
