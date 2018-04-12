@@ -9,11 +9,12 @@
         <view class="couponList-itemPay">
           <view class="couponList-desc">
             <!--<view class="couponList-midMoney">¥</view>-->
-            <text wx:if="{{coupon.promotion_type !== 'discount'}}" class="couponList-midMoney">¥</text>
+            <text class="couponList-midMoney">
+              {{coupon.promotion_type === 'discount' || coupon.promotion.promotion_type === 'discount' ? '' : '¥'}}</text>
             <view class="couponList-bigMoney">
               {{coupon.platform_price ? coupon.platform_price : coupon.promotion_platform_price ? coupon.promotion_platform_price : coupon.promotion.platform_price}}
             </view>
-            <text wx:if="{{coupon.promotion_type === 'discount'}}" class="discount">折</text>
+            <text wx:if="{{coupon.promotion_type === 'discount' || coupon.promotion.promotion_type === 'discount'}}" class="discount">折</text>
           </view>
         </view>
         <view class="couponList-itemMsg">
