@@ -59,8 +59,12 @@
         </view>
         <view class="item-wrapper">
           <view class="l-content">订单状态</view>
-          <view class="r-content" wx:if="{{type === 1}}">{{info.status === 0 ? '处理中' : info.status === 1 ? '提现成功' : info.status === 2 ? '提现失败' : ''}}</view>
-          <view class="r-content" wx:if="{{type === 2}}">{{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}</view>
+          <view class="r-content" wx:if="{{type === 1}}">
+            {{info.status === 0 ? '处理中' : info.status === 1 ? '提现成功' : info.status === 2 ? '提现失败' : ''}}
+          </view>
+          <view class="r-content" wx:if="{{type === 2}}">
+            {{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}
+          </view>
         </view>
       </view>
     </view>

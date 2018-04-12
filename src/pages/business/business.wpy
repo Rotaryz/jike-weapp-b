@@ -184,7 +184,6 @@
           this.$invoke('Toast', 'show', res.message)
           this.check = true
         }
-
       },
       bindChange(e) {
         this.value = e.detail.value
