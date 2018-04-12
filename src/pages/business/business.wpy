@@ -165,12 +165,11 @@
         if (!this.check) return
         this.check = false
         this.merchantId = []
-        this.conList[e]['is_showed'] = !this.conList[e]['is_showed']
-        this.$apply()
+        let isShowed = !this.conList[e]['is_showed']
         this.merchantId.push(this.conList[e].merchant_id)
         let data = {
           merchant_ids: this.merchantId,
-          is_showed: this.conList[e]['is_showed'] ? 1 : 0
+          is_showed: isShowed ? 1 : 0
         }
         let res = await shop.setMapShowed(data)
         if (res.error === ERR_OK) {
@@ -178,11 +177,14 @@
             this.loaded()
             this.$invoke('Toast', 'show', '设置成功')
             this.check = true
+            this.conList[e]['is_showed'] = isShowed
+            this.$apply()
           }, 500)
         } else {
           this.$invoke('Toast', 'show', res.message)
           this.check = true
         }
+
       },
       bindChange(e) {
         this.value = e.detail.value
