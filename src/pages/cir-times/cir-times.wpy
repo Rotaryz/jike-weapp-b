@@ -9,7 +9,7 @@
     </view>
     <view class="bus-item">
       <view>周期</view>
-      <view class="times">
+      <view class="times times-a">
         <image wx:if="{{mageUrlHead}}" src="{{mageUrlHead+'/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{begTime}}" start="{{startTime}}"
                 end="{{endTime === '结束时间' ? '' : endTime}}"
@@ -18,7 +18,7 @@
         </picker>
       </view>
       <view>至</view>
-      <view class="times">
+      <view class="times times-b">
         <image wx:if="{{mageUrlHead}}"
                src="{{mageUrlHead + '/defaults/b-image/page/icon-pressed@2x.png'}}"></image>
         <picker mode="date" value="{{endTime}}"
@@ -272,13 +272,17 @@
         view
           line-height: 39px
           min-width: 60.5px
+          margin-left: -12px
         image
           height: 11px
           width: 11px
           right: -14px
           position: absolute
           top: 13px
-
+      .times-a
+        margin-right: -22px
+      .times-b
+        margin-left: -22px
       .days
         font-family: $font-family-light
         font-size: $font-size-medium
