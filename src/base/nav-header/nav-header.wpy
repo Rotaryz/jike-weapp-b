@@ -41,7 +41,7 @@
         white-space: nowrap
         color: $color-theme
         font-size: $font-size-medium
-        border-bottom: 2px solid $color-white
+        // border-bottom: 2px solid $color-white
     .choiceTxt
       color: $color-assist-f
       border-bottom: 2px solid $color-assist-f
@@ -58,7 +58,7 @@
         height: 2px
         width: 30px
         background: $color-assist-f
-        bottom: -2px
+        bottom: 0px
         left: 0px
         right: 0px
         margin: auto
