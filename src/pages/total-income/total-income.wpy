@@ -34,8 +34,6 @@
             </view>
             <view class="content-wrapper">
               <view class="t-content">{{item.money}}</view>
-              <view class="b-content">
-                {{item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 5 ? '已评价' : (item.status === 7 || item.status === 8) ? '退款失败' : item.status === 9 ? '已关闭' : ''}}</view>
             </view>
           </navigator>
         </repeat>
