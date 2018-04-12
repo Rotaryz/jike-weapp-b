@@ -3,8 +3,8 @@
     <view class="bus-item top">
         <image class="header-logo" src="{{shopImage}}"  mode="aspectFill"></image>
         <viwe class="bus-item-txt">
-          <view class="bus-item-txt-shop">{{shopName || '我是店家'}}</view>
-          <view class="bus-item-txt-site">{{shopSite || '我是地址'}}</view>
+          <view class="bus-item-txt-shop">{{shopName }}</view>
+          <view class="bus-item-txt-site">{{shopSite }}</view>
         </viwe>
     </view>
     <view class="bus-item">
@@ -225,21 +225,24 @@
   @import '../../common/stylus/mixin'
 
   .busTimes
-    background: $color-white
     .bus-item.top
       height: 66px
       justify-content: left
+      margin-bottom: 10px
+    .bus-item:nth-child(2)
+      border-top: 0.5px solid $color-split-line
     .bus-item
       border-bottom: 0.5px solid $color-split-line
       font-size: $font-size-medium
       color: $color-theme
       display: flex
-      height: 39px
+      height: 45px
       padding: 0 $padding
       justify-content: space-between
+      background: $color-white
       > view
         height: 100%
-        line-height: 39px
+        line-height: 45px
         &:first-child
           width: 48px
       .header-logo
@@ -270,7 +273,7 @@
       .times
         position: relative
         view
-          line-height: 39px
+          line-height: 45px
           min-width: 60.5px
           margin-left: -12px
         image
@@ -278,7 +281,7 @@
           width: 11px
           right: -14px
           position: absolute
-          top: 13px
+          top: 17px
       .times-a
         margin-right: -22px
       .times-b
