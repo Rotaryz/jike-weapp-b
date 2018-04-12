@@ -324,9 +324,7 @@
 
             .share-main-item-body-img
               width: 125px
-              height: 222.35px
-              &:nth-child(1)
-                width: 134.5px
+              height: 198.7px
 
             .share-main-item-body-center
               display: flex
