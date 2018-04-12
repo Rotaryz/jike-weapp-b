@@ -162,8 +162,9 @@
         </view>
       </view>
     </view>
-
-    <view class="store-msgBtn" @tap="storeMsgSubmit">提交</view>
+    <view class="store-msgBtn">
+      <view @tap="storeMsgSubmit">提交</view>
+    </view>
 
     <view class="store-timeCover" wx:if="{{timeCover}}">
       <view class="store-time-center">
@@ -762,15 +763,17 @@
         border-bottom: 0 none
 
     .store-msgBtn
-      margin: 10px 12px
-      background: $color-theme
       height: 44px
-      line-height: 44px
-      text-align: center
-      color: $color-white
-      font-size: $font-size-medium
-      border-radius: 2px
-
+      padding: 10px 12px
+      view
+        background: $color-theme
+        color: $color-white
+        font-size: $font-size-medium
+        border-radius: 2px
+        line-height: 44px
+        height: 100%
+        text-align: center
+        width: 100%
     .store-msg-txt
       padding-right: 12px
       display: flex
