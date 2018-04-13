@@ -31,7 +31,7 @@
 
     <Blank></Blank>
     <scroll-view scroll-y class="business" bindscrolltolower="showMore">
-      <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}" @tap="checkboxChange({{index}},{{item.merchant_id}})">
+      <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}" >
         <view class="bus-item-v">
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
