@@ -9,7 +9,7 @@
 
     <view class="client-head-box" wx:if="{{navInadex === 0}}">
       <view class="cover"></view>
-      <scroll-view scroll-x  class="client-head" scrollLeft="{{leftIndex}}" scroll-with-animation="true">
+      <scroll-view scroll-x  class="client-head" scrollLeft="{{leftIndex}}" scroll-with-animation="true" bindscroll="setScroll">
         <view wx:for="{{navList}}" class="item {{navNum === index ? 'choice' : ''}} {{index ===0?'first':''}}"
         wx:key="{{index}}" @tap="showType({{item.id}},{{index}},'top',{{navList.length}})">
         <text>{{item.name}}</text>
@@ -181,15 +181,25 @@
       }
     }
     methods = {
-      async showType(id, index, type, size) {
-        if (index > this.leftTmp && index > 3 && index < size) {
-          this.leftIndex = this.leftIndex + 54
+      async setScroll(e) {
+        this.leftTmp = e.detail.scrollLeft
+        console.log(e)
+      },
+      async showType(id, index, type, size, e) {
+        if (type === 'top') {
+          let w = wepy.getSystemInfoSync().windowWidth
+          let x = e.detail.x
+          let num = w - x
+
+          if (num < 108 && index < size - 1) {
+            this.leftIndex = this.leftTmp + 54
+          }
+          if (x < 108 && index > 0) {
+            this.leftIndex = this.leftTmp - 54
+          }
+          this.leftTmp = this.leftIndex
+          this.$apply()
         }
-        if (index < this.leftTmp && index > 0) {
-          this.leftIndex = this.leftIndex + -54
-        }
-        this.leftTmp = index
-        this.$apply()
 
         if (this.navInadex * 1 === 1) {
           this.txtColor = index
