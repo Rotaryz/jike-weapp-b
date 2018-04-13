@@ -8,15 +8,16 @@
     </view>
 
     <view class="client-head-box" wx:if="{{navInadex === 0}}">
-      <view class="client-head">
-        <view class="cover"></view>
+      <view class="cover"></view>
+      <scroll-view scroll-x  class="client-head" scrollLeft="{{leftIndex}}" scroll-with-animation="true">
         <view wx:for="{{navList}}" class="item {{navNum === index ? 'choice' : ''}} {{index ===0?'first':''}}"
-              wx:key="{{index}}" @tap="showType({{item.id}},{{index}})">
-          <text>{{item.name}}</text>
+        wx:key="{{index}}" @tap="showType({{item.id}},{{index}},'top',{{navList.length}})">
+        <text>{{item.name}}</text>
         </view>
-        <view class="last"></view>
-      </view>
+      </scroll-view>
+      <view class="last"></view>
     </view>
+
     <view class="client-head-box" wx:if="{{navInadex === 1}}">
       <view class="client-head-box-nav">
         <view wx:for="{{navListDredge}}" class="item {{twoNavNum === index ? 'choice' : ''}}"
@@ -28,7 +29,7 @@
     <Blank></Blank>
     <scroll-view scroll-y class="{{showNext?'businessBtn':'businessBty'}} business" bindscrolltolower="showMore" wx:if="{{navInadex === 0}}">
       <view class="bus-item" wx:for="{{conList}}" wx:key="{{index}}">
-        <view>
+        <view @tap="checkboxChange({{index}},{{item.merchant_id}})">
           <image class="header-logo" src="{{item.logo_image}}" wx:if="{{index !== -1}}"  mode="aspectFill"></image>
           <viwe class="bus-item-txt" wx:if="{{index !== -1}}">
             <view class="bus-item-txt-shop">{{item.shop_name}}</view>
@@ -137,7 +138,9 @@
       page: 1,
       nothing: false,
       navInadex: 0,
-      txtColor: 0
+      txtColor: 0,
+      leftIndex: 0,
+      leftTmp: 0
     }
 
     async _checkBusiness (data) {
@@ -178,7 +181,16 @@
       }
     }
     methods = {
-      async showType(id, index) {
+      async showType(id, index, type, size) {
+        if (index > this.leftTmp && index > 3 && index < size) {
+          this.leftIndex = this.leftIndex + 54
+        }
+        if (index < this.leftTmp && index > 0) {
+          this.leftIndex = this.leftIndex + -54
+        }
+        this.leftTmp = index
+        this.$apply()
+
         if (this.navInadex * 1 === 1) {
           this.txtColor = index
           this.$apply()
@@ -352,25 +364,31 @@
     position: relative
     width: 100%
     height: 44.5px
-
+    .cover
+      height: 40px
+      width: 20px
+      position: absolute
+      right: 0
+      top: 0
+      background-image: linear-gradient(to left, #f1f1f1, #FFFFFF)
+      opacity: 0.6
+      z-index: 1
+    .last
+      min-width: 20px
+      height: 36px
     .client-head
+      white-space: nowrap
       height: 44.5px
       background: $color-white
-      overflow-x: auto
-      overflow-y: hidden
+      //overflow-x: auto
+      //overflow-y: hidden
       align-items: center
       display: flex
+      flex-wrap: nowrap
       border-bottom: 0.5px solid $color-split-line
-      .cover
-        height: 40px
-        width: 20px
-        position: absolute
-        right: 0
-        top: 0
-        background-image: linear-gradient(to left, #f1f1f1, #FFFFFF)
-        opacity: 0.6
-        z-index: 1
+
       .item
+        display: inline-block
         font-family: $font-family-light
         color: $color-theme
         font-size: $font-size-medium
@@ -406,9 +424,7 @@
           margin: auto
           bottom: -1px
           left: 0px
-      .last
-        min-width: 20px
-        height: 36px
+
 
     .client-head-box-nav
       height: 44.5px
