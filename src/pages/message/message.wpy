@@ -163,6 +163,7 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
+        this.load()
       }
     }
     async load (type = 0, page = 1, key) {

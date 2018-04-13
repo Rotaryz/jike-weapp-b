@@ -164,10 +164,12 @@
       if (resData.error !== ERR_OK) {
         return
       }
-      this.loaded()
       if (resData.data.is_has === 1) {
         this.messageFlag = true
+      } else {
+        this.messageFlag = false
       }
+      console.log(this.messageFlag)
       this.$apply()
     }
     async load() {
