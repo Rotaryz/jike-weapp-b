@@ -45,8 +45,8 @@
         <view class="label">优惠券服务项目图片</view>
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
-            <view class="picture">
-              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
+            <view class="picture {{picturesOn[index] ? 'on': 'off'}}">
+              <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}},{{index}})">
                 <image class="full-image"
                        wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
               </view>
@@ -192,7 +192,7 @@
         <view class="label">服务详情图片</view>
         <view class="picture-content">
           <repeat for="{{detailsPictures}}" key="index" index="index" item="item">
-            <view class="picture">
+            <view class="picture {{detailsOn[index] ? 'on': 'off'}}">
               <view class="delete" wx:if="{{item.image_url}}" @tap="detailsDeleteImage({{index}})">
                 <image class="full-image"
                        wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
@@ -440,8 +440,12 @@
                   <view class="name">{{item.title}}</view>
                 </view>
                 <view wx:if="{{item.title==='限制数量'}}"  class="input-wrapper {{sellCountData.tmp !== index ? 'disabled' : ''}}">
-                  <input type="number" value="{{sellCountData.tmp !== index ? '' : item.id}}"
-                         disabled="{{sellCountData.tmp !== index}}" maxlength="10" @input="handleInput('sellCountData')"/>
+                  <input type="number"
+                         value="{{sellCountData.tmp !== index ? '' : item.id}}"
+                         disabled="{{sellCountData.tmp !== index}}"
+                         maxlength="10"
+                         @input="handleInput('sellCountData')"
+                  />
 
                 </view>
                 <!--<view wx:if="{{item.title==='限制数量'}}"  class="max-unit">个</view>-->
@@ -698,12 +702,14 @@
       discountsMaxData: { // 最高优惠
         discountsMax: [{id: -1, title: '无限制'}, {id: 0, title: '最高优惠'}],
         flag: 0,
-        tmp: 0
+        tmp: 0,
+        tmpValue: 1
       },
       conditionsData: {   // 使用条件
         conditions: [{id: -1, title: '无限制'}, {id: 0, title: '指定金额'}],
         flag: 0,
-        tmp: 0
+        tmp: 0,
+        tmpValue: 1
       },
       // 满减设置
       fullMax: '',
@@ -713,11 +719,11 @@
         flag: 0,
         tmp: 0
       },
-
       sellCountData: {   // 最大可售数量
         sellCount: [{id: -1, title: '无限制'}, {id: 0, title: '限制数量'}],
         flag: 0,
-        tmp: 0
+        tmp: 0,
+        tmpValue: 1
       },
       discount: '',
       // 购买或使用须知
@@ -743,12 +749,14 @@
       categoryId: 1,
       categories: [],
       pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
+      picturesOn: [true, false, false],
       detailsPictures: [
         Object.assign({}, IMAGE_INIT),
         Object.assign({}, IMAGE_INIT),
         Object.assign({}, IMAGE_INIT),
         Object.assign({}, IMAGE_INIT),
         Object.assign({}, IMAGE_INIT)],
+      detailsOn: [true, false, false, false, false],
       title: '',
       titleLength: 0,
       subTitle: '',
@@ -765,9 +773,9 @@
       tempNotAllowTime: '',
       sellCount: -1,
       tempSellCount: -1,
-
-      tempKnowRemark: ''
-
+      tempKnowRemark: '',
+      imageDis: true,
+      ban: 0
     }
 
     async onLoad(option) {
@@ -854,6 +862,7 @@
             this.sellCountData.flag = j
             this.sellCountData.tmp = j
             this.sellCountData.sellCount[j].id = res.stock
+            this.sellCountData.tmpValue = res.stock
             break
           }
         }
@@ -865,6 +874,7 @@
             this.discountsMaxData.flag = j
             this.discountsMaxData.tmp = j
             this.discountsMaxData.discountsMax[j].id = configs.max_reduction
+            this.discountsMaxData.tmpValue = configs.max_reduction
             break
           }
         }
@@ -876,6 +886,7 @@
             this.conditionsData.flag = j
             this.conditionsData.tmp = j
             this.conditionsData.conditions[j].id = configs.meet_money
+            this.conditionsData.tmpValue = configs.meet_money
             break
           }
         }
@@ -949,6 +960,7 @@
 
     _validForm(type) {
       let testArr = this._dataArray(type)
+      console.log(testArr)
       let data = {}
       let flag = true
       for (let i = 0; i < testArr.length; i++) {
@@ -992,14 +1004,20 @@
         {type: '3', title: '', valid: this.fullMax, txt: '请设置满减金额'},
         {type: '3', title: '', valid: this.fullMin, txt: '请设置满减金额'},
         {type: '4', title: '', valid: this.discount, txt: '请输入折扣'},
-        {type: '4', title: '', valid: this.discountsMaxData.discountsMax[this.discountsMaxData.flag].id, txt: '最高优惠不可为0', standard: 0},
-        {type: '4', title: '', valid: this.conditionsData.conditions[this.conditionsData.flag].id, txt: '使用条件不可为0', standard: 0},
+        {type: '4', title: '', valid: this.discountsMaxData.discountsMax[this.discountsMaxData.flag].id * 1, txt: '最高优惠不可为0', standard: 0},
+        {type: '4', title: '', valid: this.conditionsData.conditions[this.conditionsData.flag].id * 1, txt: '使用条件不可为0', standard: 0},
         {type: '1', title: 'detail', value: this.services, valid: validServices, txt: '请输入一个服务', standard: -1},
         {type: '1', title: 'promotion_detail_image', value: this.detailsPictures, valid: validDetails, txt: '请选择一张服务详情图片', standard: -1},
         {type: '1234', title: 'sell_start_at', value: this.sellStartTime, valid: this.sellStartTime, txt: type === 3 ? '请选择领取开始时间' : '请选择售卖开始时间'},
         {type: '1234', title: 'sell_end_at', value: this.sellEndTime, valid: this.sellEndTime, txt: type === 3 ? '请选择领取结束时间' : '请选择售卖结束时间'},
         {type: '1234', title: 'end_at', value: this.validDate, valid: this.validDate, txt: '请选择券有效期结束时间'},
-        {type: '1234', title: 'stock', value: this.sellCountData.sellCount[this.sellCountData.flag].id, valid: this.sellCountData.sellCount[this.sellCountData.flag].id, txt: type === 3 || type === 4 ? '最大发放数量不可为0' : '最大可售数量不可为0', standard: 0},
+        {type: '1234',
+          title: 'stock',
+          value: this.sellCountData.sellCount[this.sellCountData.flag].id * 1,
+          valid: this.sellCountData.sellCount[this.sellCountData.flag].id * 1,
+          txt: type === 3 || type === 4 ? '最大发放数量不可为0' : '最大可售数量不可为0',
+          standard: 0
+        },
         {type: '1234', title: 'not_allow_time', value: this.notAllowTime},
         {type: '4',
           title: 'config',
@@ -1064,47 +1082,99 @@
         }
         this.$invoke('catelog-modal', 'hide')
       },
-      selecteType(index, key) {
+      async selecteType(index, key) {
         this[key].tmp = index
         this.$apply()
       },
-      setSelect(e) {
-        let key = e.source.name
-        this[key].flag = this[key].tmp
-        this.$apply()
-        if (key === 'categoryData') {
-          this._setTicketState(this[key].flag + 1, 'add')
+      async setSelect(e) {
+        let key = this[e.source.name]
+        key.flag = key.tmp
+        if (e.source.name === 'categoryData') {
+          this._setTicketState(key.flag + 1, 'add')
         }
+        if (key.tmpValue) { // 如果弹窗中有输入框
+          let children = e.source.name.split('Data')[0]
+          key.tmpValue = key[children][1].id
+        }
+        this.$apply()
       },
-      resetSelect(e) {
-        let key = e.source.name
-        this[key].tmp = this[key].flag
+      async resetSelect(e) {
+        let key = this[e.source.name]
+        key.tmp = key.flag
+        if (key.tmpValue) { // 如果弹窗中有输入框
+          let children = e.source.name.split('Data')[0]
+          key[children][1].id = key.tmpValue
+        }
         this.$apply()
       },
       async chooseImage(pictureIndex) {
-        const picture = await wepy.chooseImage()
-        const res = await Uploads.uploadImages(picture.tempFilePaths[0])
-        this.pictures[pictureIndex].image_id = res.id
-        this.pictures[pictureIndex].image_url = res.url
-        this.$apply()
-        this.loaded()
+        if (this.picturesOn[pictureIndex]) {
+          const picture = await wepy.chooseImage()
+          if (picture.errMsg === 'chooseImage:ok') {
+            this.picturesOn[pictureIndex + 1] = true
+          }
+          const res = await Uploads.uploadImages(picture.tempFilePaths[0])
+          this.pictures[pictureIndex].image_id = res.id
+          this.pictures[pictureIndex].image_url = res.url
+          this.$apply()
+          this.loaded()
+        }
       },
       async detailsChooseImage(pictureIndex) {
-        const details = await wepy.chooseImage()
-        const res = await Uploads.uploadImages(details.tempFilePaths[0])
-        this.detailsPictures[pictureIndex].image_id = res.id
-        this.detailsPictures[pictureIndex].image_url = res.url
-        this.$apply()
-        this.loaded()
+        if (this.detailsOn[pictureIndex]) {
+          const details = await wepy.chooseImage()
+          if (details.errMsg === 'chooseImage:ok') {
+            this.detailsOn[pictureIndex + 1] = true
+          }
+          const res = await Uploads.uploadImages(details.tempFilePaths[0])
+          this.detailsPictures[pictureIndex].image_id = res.id
+          this.detailsPictures[pictureIndex].image_url = res.url
+          this.$apply()
+          this.loaded()
+        }
       },
       deleteImage(pictureIndex) {
-        this.pictures[pictureIndex].image_id = 0
-        this.pictures[pictureIndex].image_url = 0
+        for (let i = 0; i < this.pictures.length; i++) {
+          if (pictureIndex <= i) {
+            if (this.pictures[i + 1]) {
+              this.pictures[i].image_id = this.pictures[i + 1].image_id
+              this.pictures[i].image_url = this.pictures[i + 1].image_url
+            } else {
+              this.pictures[i].image_id = 0
+              this.pictures[i].image_url = 0
+            }
+          }
+        }
+        this.$apply()
+        for (let i = 0; i < this.pictures.length; i++) {
+          if (this.pictures[i + 1]) {
+            if (this.pictures[i].image_id === 0 && this.pictures[i + 1].image_id === 0) {
+              this.picturesOn[i + 1] = false
+            }
+          }
+        }
         this.$apply()
       },
       detailsDeleteImage(pictureIndex) {
-        this.detailsPictures[pictureIndex].image_id = 0
-        this.detailsPictures[pictureIndex].image_url = 0
+        for (let i = 0; i < this.detailsPictures.length; i++) {
+          if (pictureIndex <= i) {
+            if (this.detailsPictures[i + 1]) {
+              this.detailsPictures[i].image_id = this.detailsPictures[i + 1].image_id
+              this.detailsPictures[i].image_url = this.detailsPictures[i + 1].image_url
+            } else {
+              this.detailsPictures[i].image_id = 0
+              this.detailsPictures[i].image_url = 0
+            }
+          }
+        }
+        this.$apply()
+        for (let i = 0; i < this.detailsPictures.length; i++) {
+          if (this.detailsPictures[i + 1]) {
+            if (this.detailsPictures[i].image_id === 0 && this.detailsPictures[i + 1].image_id === 0) {
+              this.detailsOn[i + 1] = false
+            }
+          }
+        }
         this.$apply()
       },
       handleInput(name, e) {
@@ -1182,7 +1252,6 @@
         this.tempUseLimit = Math.floor(useLimit)
       },
       handleTextarea(value) {
-        console.log('>>>' + value)
         // this._handleInput('tempKnowRemark', value)
         this.tempKnowRemark = value
       },
@@ -1210,6 +1279,8 @@
         if (this.industry) {
           data.industry_name = this.industry
         }
+        console.log(data)
+        // return
         const res = this.promotionId ? await Coupons.editCoupon(this.promotionId, data) : await Coupons.createCoupon(data)
         this.loaded()
         if (res.error === 0) {
@@ -1274,15 +1345,6 @@
         this.$invoke('Picture', 'showPic', url, 400 / 750)
       },
       _regInput(name, e) { // 价格处理
-        // let arr = [
-        //   'platformPrice',
-        //   'shopPrice',
-        //   'discount',
-        //   'fullMin',
-        //   'fullMax',
-        //   'conditionsData',
-        //   'discountsMaxData'
-        // ]
         let value = e.detail.value
         if (name.indexOf('Data') > -1) {
           let str = name.split('Data')[0]
@@ -1428,6 +1490,10 @@
               padding: 10px
             .image
               border-radius: 4px
+          .picture.on
+            border: 1px solid $color-btn-dis
+          .picture.off
+            border: 1px solid $color-col-line
         .tip-wrapper
           line-height: 16px
           color: $color-text-d
