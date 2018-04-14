@@ -203,7 +203,6 @@
 
     .choiceTxt
       color: $color-assist-f
-      border-bottom: 2px solid $color-assist-f
 
   .content-coupon
     padding: 0 3.2vw 70px

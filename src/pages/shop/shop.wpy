@@ -142,7 +142,8 @@
       dataList: [],
       leader: 0,
       serviceDue: false,
-      dataFinish: false
+      dataFinish: false,
+      showWindow: true
     }
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
@@ -172,6 +173,15 @@
 
     async onShow() {
       await this.showLoad()
+      if (this.serviceDue && this.showWindow) {
+        this.$invoke('ServiceDue', 'show')
+        this.showWindow = false
+        return
+      }
+      if (!this.dataFinish && this.showWindow) {
+        this.$invoke('msg-window', 'show')
+        this.showWindow = false
+      }
     }
 
     async showLoad() {
@@ -231,7 +241,7 @@
           this.$invoke('ServiceDue', 'show')
           return
         }
-        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
+        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && !this.dataFinish) {
           this.$invoke('msg-window', 'show')
           return
         }
@@ -242,10 +252,6 @@
     async onLoad () {
       this.showTime = 0
       await this.load()
-      await this.showLoad()
-      if (this.serviceDue) {
-        this.$invoke('ServiceDue', 'show')
-      }
       this.$apply()
     }
   }
