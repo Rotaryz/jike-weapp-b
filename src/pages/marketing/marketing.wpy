@@ -241,6 +241,8 @@
   .marketing-wrapper
     .header
       position: relative
+      display: flex
+      align-items: center
       padding: 15.5px 0 14.5px 21.5px
       font-size: $font-size-medium
       color: $color-text-title
