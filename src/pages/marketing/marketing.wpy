@@ -25,10 +25,10 @@
           <view class="item-left-txt">{{item.name}}</view>
         </view>
         <view class="item-right">
+          <view class="status">{{item.checked?'关闭':''}}</view>
           <image src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="item-right-arrow"
                  wx:if="{{imageUrlHead}}"></image>
         </view>
-        <view class="status">{{item.checked?'关闭':''}}</view>
       </view>
     </view>
     <Toast></Toast>
@@ -252,9 +252,9 @@
       &:after
         content: ""
         position: absolute
-        left: 11px
+        right: 0
         bottom: 0
-        width: 100vw
+        width: 97.1%
         height: 1px
         border-bottom: 0.5px solid $color-col-line-f
       .title:before
@@ -273,6 +273,7 @@
         margin-bottom: 9.5px
       .marketing-item
         position: relative
+        padding: 0 12px 0 15px
         height: 50px
         display: flex
         justify-content: space-between
@@ -280,38 +281,35 @@
         &::after
           content: ""
           position: absolute
-          left: 51px
+          right: 0
           bottom: 0
-          width: 100vw
+          width: 86.53617%
           height: 10px
           border-bottom: 0.5px solid $color-col-line-f
         &:last-child:after
-          left: 0
-        .status
-          position: absolute
-          right: 28px
-          font-size: $font-size-medium
-          color: $color-text-d
+          width: 100%
         .item-left
           display: flex
           align-items: center
-
           .item-left-img
             width: 24px
             height: 24px
-            margin: 0 10px 0 15.5px
-
+            margin-right: 10px
           .item-left-txt
             font-size: $font-size-medium
             color: $color-text-title
-
         .item-right
-          padding-right: 0px
-
+          display: flex
+          align-items: center
+          .status
+            right: 28px
+            height: 14px
+            font-size: $font-size-medium
+            color: $color-text-d
           .item-right-arrow
             width: 10px
             height: 10px
-            margin-right: 13px
+            margin-left: 13px
 
           .switchbox
             width: 44px
