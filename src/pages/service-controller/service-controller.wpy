@@ -805,9 +805,13 @@
       this.category = res.promotion_category.name
       // this.categoryId = res.promotion_category.id
       this._setTicketState(res.promotion_category.id)
-      this.pictures = res.promotion_image_data
+      if (res.promotion_image_data.length > 0) {
+        this.pictures = res.promotion_image_data
+        this._imageOnOff(this.pictures, this.picturesOn)
+      }
       if (res.promotion_detail_image_data.length > 0) {
         this.detailsPictures = res.promotion_detail_image_data
+        this._imageOnOff(this.detailsPictures, this.detailsOn)
       }
       if (!configs) {
         configs = {
@@ -1400,6 +1404,19 @@
         newNum = 1
       }
       return newNum
+    }
+    async _imageOnOff (obj, f) {
+      for (let i = 0; i < obj.length; i++) {
+        if (obj[i + 1]) {
+          if (obj[i].image_id === 0 && obj[i + 1].image_id === 0) {
+            f[i + 1] = false
+          } else {
+            f[i + 1] = true
+          }
+        }
+      }
+
+      this.$apply()
     }
     components = {
       'meal-modal': BaseModal,
