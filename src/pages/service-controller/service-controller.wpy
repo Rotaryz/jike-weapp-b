@@ -198,7 +198,7 @@
                        wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
               </view>
               <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image"
-                     @tap="showPicDetail({{item.image_url}})"></image>
+                     @tap="showBigImgDetail({{item.image_url}})"></image>
               <view class="add" wx:if="{{!item.image_url}}" @tap="detailsChooseImage({{index}})">
                 <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
               </view>
@@ -1272,6 +1272,12 @@
       },
       showPicDetail(url) {
         this.$invoke('Picture', 'showPic', url, 400 / 750)
+      },
+      showBigImgDetail(url) {
+        wepy.previewImage({
+          current: url, // 当前显示图片的http链接
+          urls: [url] // 需要预览的图片http链接列表
+        })
       },
       _regInput(name, e) { // 价格处理
         // let arr = [
