@@ -53,8 +53,8 @@
               <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image"
                      @tap="showPicDetail({{item.image_url}})"></image>
               <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
-                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}"
-                       class="full-image"></image>
+                <image wx:if="{{imageUri && picturesOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{imageUri && !picturesOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-img_add2@2x.png'}}" class="full-image"></image>
               </view>
             </view>
           </repeat>
@@ -200,7 +200,10 @@
               <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image"
                      @tap="showBigImgDetail({{item.image_url}})"></image>
               <view class="add" wx:if="{{!item.image_url}}" @tap="detailsChooseImage({{index}})">
-                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
+                <!--// icon-img_add@2x-->
+                <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/' + detailsOn[index]?'icon-img_add@2x.png':'icon-add@2x.png'}}" class="full-image"></image>-->
+                <image wx:if="{{imageUri && detailsOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{imageUri && !detailsOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-img_add2@2x.png'}}" class="full-image"></image>
               </view>
             </view>
           </repeat>
