@@ -865,7 +865,7 @@
       // 最大可售
       for (let j = 0; j < this.sellCountData.sellCount.length; j++) {
         if (this.sellCountData.sellCount[j].id !== -1) {
-          if (res.stock !== this.sellCountData.sellCount[j].id && res.stock > 0) {
+          if (res.stock >= 0) {
             this.sellCountData.flag = j
             this.sellCountData.tmp = j
             this.sellCountData.sellCount[j].id = res.stock
