@@ -964,7 +964,6 @@
 
     _validForm(type) {
       let testArr = this._dataArray(type)
-      console.log(testArr)
       let data = {}
       let flag = true
       for (let i = 0; i < testArr.length; i++) {
@@ -1283,8 +1282,6 @@
         if (this.industry) {
           data.industry_name = this.industry
         }
-        console.log(data)
-        // return
         const res = this.promotionId ? await Coupons.editCoupon(this.promotionId, data) : await Coupons.createCoupon(data)
         this.loaded()
         if (res.error === 0) {
