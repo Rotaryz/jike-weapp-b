@@ -74,25 +74,25 @@
       list: [
         {
           name: '直播优惠',
-          img: URIS.image + '/defaults/b-image/page/icon-livetv@2x.png',
+          img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
           url: '/pages/live/live',
           checked: 1
         },
         {
           name: '签到红包',
-          img: URIS.image + '/defaults/b-image/page/icon-sign@2x.png',
+          img: URIS.image + '/defaults/b-image/marketing/icon-sign@2x.png',
           url: '/pages/registration/registration',
           checked: 1
         },
         {
           name: '分享有礼',
-          img: URIS.image + '/defaults/b-image/page/icon-share@2x.png',
+          img: URIS.image + '/defaults/b-image/marketing/icon-share@2x.png',
           url: '/pages/share-prize/share-prize',
           checked: 1
         },
         {
           name: '大转盘',
-          img: URIS.image + '/defaults/b-image/page/icon-turntable@2x.png',
+          img: URIS.image + '/defaults/b-image/marketing/icon-turntable@2x.png',
           url: '/pages/wheel-controller/wheel-controller',
           checked: 1
         }
