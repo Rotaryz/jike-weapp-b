@@ -218,11 +218,13 @@
         this.showOrder = !this.showOrder
       },
       showPage(num) {
+        this.page = 1
         this.dayPage = num
         this.dayType = this.days[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
       },
       orderPage(num) {
+        this.page = 1
         this.orderPage = num
         this.orderType = this.orders[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
