@@ -102,19 +102,36 @@ no-wrap()
 //  水平居中
 row-center()
   position: absolute
-  left:50%
-  transform :translateX(-50%)
+  left: 50%
+  transform: translateX(-50%)
 
 //垂直居中
 col-center()
-  position :absolute
-  top:50%
-  transform :translateY(-50%)
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
 
 //  全居中
 all-center()
-  position :absolute
-  top:50%
-  left:50%
-  transform :translate(-50%,-50%)
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
 
+//布局
+layout($direction = column, $inline = block, $wrap = wrap)
+  display: $inline == block ? flex:inline-flex
+  flex-direction: $direction
+  flex-wrap: $wrap
+
+// 底部线条
+border-bottom-line($color = #E6E6E6, $width = 96.8%)
+  position: relative
+  &:after
+    content: ""
+    position: absolute
+    bottom: 0
+    right: 0
+    height: 1px
+    width: $width
+    border-bottom: 1px solid $color
