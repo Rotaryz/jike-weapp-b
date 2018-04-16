@@ -1004,6 +1004,7 @@
         {type: '1234', title: 'promotion_category_id', value: this.categoryData.categories[this.categoryData.flag].id},
         {type: '12', title: 'promotion_images', value: this.pictures, valid: validPicture, txt: '请选择一张图片', standard: -1},
         {type: '1', title: 'title', value: this.title, valid: this.title, txt: '请输入标题'},
+        {type: '2', title: 'title', value: this.shopPrice + '元代金券'},
         {type: '1', title: 'subhead', value: this.subTitle, valid: this.subTitle, txt: '请输入副标题'},
         {type: '12', title: 'platform_price', value: this.platformPrice, valid: this.platformPrice, txt: type === 1 ? '请输入平台价' : '请输入售价'},
         {type: '12', title: 'shop_price', value: this.shopPrice, valid: this.shopPrice, txt: type === 1 ? '请输入门市价' : '请输入代金额'},
