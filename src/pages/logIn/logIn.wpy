@@ -1,7 +1,7 @@
 <template>
   <view class="logn">
     <image class="lg-header" wx:if="{{imageUri}}"
-           src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
+           src="{{imageUri + '/defaults/b-image/page/icon-login_logo@2x.png'}}"></image>
     <image class="guidance" src="icon-login-logo@2x.png"
            wx:if="{{guidance}}"></image>
     <view class="lg-from">

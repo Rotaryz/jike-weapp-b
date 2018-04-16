@@ -147,7 +147,6 @@
     methods = {
       async setScroll(e) {
         this.leftTmp = e.detail.scrollLeft
-        console.log(e)
       },
       async showType(id, index, type, size, e) {
         if (type === 'top') {

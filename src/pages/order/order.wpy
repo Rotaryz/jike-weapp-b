@@ -100,9 +100,9 @@
         <view>手机号：{{datail.customer_phone}}</view>
         <view>用户ID：{{datail.customer_id}}</view>
         <view>数量：{{datail.count}}</view>
-        <view>总价：¥{{datail.total}}</view>
+        <view>总价：¥{{datail.offline_total}}</view>
         <view>优惠价格：¥{{datail.preferential_price}}</view>
-        <view>实付价格：<text>¥{{datail.offline_total}}</text></view>
+        <view>实付价格：<text>¥{{datail.total}}</text></view>
         <view @tap="hideDetail">确定</view>
       </view>
     </view>
@@ -218,11 +218,13 @@
         this.showOrder = !this.showOrder
       },
       showPage(num) {
+        this.page = 1
         this.dayPage = num
         this.dayType = this.days[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
       },
       orderPage(num) {
+        this.page = 1
         this.orderPage = num
         this.orderType = this.orders[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
