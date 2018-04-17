@@ -1,7 +1,7 @@
 <template>
   <view class="choiceCoupon">
     <view class="eva-title">可添加优惠券</view>
-    <scroll-view class="cou-all" scroll-y>
+    <scroll-view class="cou-all" scroll-y @scrolltolower="scrollToLower">
       <repeat for="{{couponList}}" key="index" index="index"
               item="item">
         <view class="coupon-box">
@@ -28,7 +28,7 @@
   export default class choiceCoupon extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       this.ShareAppMessage()
     }
 
@@ -45,9 +45,25 @@
       couponList: [],
       num: -1,
       index: -1,
-      moreList: []
+      moreList: [],
+      page: 1,
+      nothing: false
     }
     methods = {
+      async scrollToLower() {
+        if (this.nothing) {
+          return
+        }
+        this.page++
+        if (this.page > 1) {
+          let res = await this.load(this.page)
+          this.couponList = this.couponList.concat(res)
+          if (res.length === 0 && res) {
+            this.nothing = true
+          }
+        }
+        this.$apply()
+      },
       async submitOk() {
         if (this.index !== -1) {
           this.$parent.updateGlobalData('coupon', this.couponList[this.num])
@@ -87,25 +103,27 @@
       }
     }
 
-    async load () {
+    async load() {
       let res = []
       if (this.index !== -1) {
-        let data = {status: 1}
+        let data = {status: 1, page: this.page}
         res = await content.coupon(data)
       } else {
-        let data = {use_status: 1, use_type: 0}
+        let data = {use_status: 1, use_type: 0, page: this.page}
         res = await live.prizePool(data)
       }
-      this.couponList = res.data
       this.loaded()
       this.$apply()
+      return res.data
     }
 
-    async onLoad (options) {
+    async onLoad(options) {
+      this.page = 1
+      this.nothing = false
       if (options.index) {
         this.index = options.index * 1
       }
-      await this.load()
+      this.couponList = await this.load()
       this.$apply()
     }
   }
