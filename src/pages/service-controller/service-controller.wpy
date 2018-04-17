@@ -628,7 +628,7 @@
                 </view>
                 <view class="radio-wrapper">
                   <view class="radio {{tempRange === -1 ? 'unselected' : ''}}"
-                        @tap.stop="selectRange(1)">
+                        @tap.stop="selectRanges('')">
                     <image wx:if="{{imageUri && tempRange !== -1}}"
                            src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
                            class="full-image"></image>
@@ -1018,6 +1018,7 @@
         {type: '1234', title: 'sell_start_at', value: this.sellStartTime, valid: this.sellStartTime, txt: type === 3 ? '请选择领取开始时间' : '请选择售卖开始时间'},
         {type: '1234', title: 'sell_end_at', value: this.sellEndTime, valid: this.sellEndTime, txt: type === 3 ? '请选择领取结束时间' : '请选择售卖结束时间'},
         {type: '1234', title: 'end_at', value: this.validDate, valid: this.validDate, txt: '请选择券有效期结束时间'},
+        {type: '1234', title: '', valid: this.buyLimit, txt: '单人限购上限不能为0', standard: 0},
         {type: '1234',
           title: 'stock',
           value: this.sellCountData.sellCount[this.sellCountData.flag].id * 1,
@@ -1254,6 +1255,9 @@
       },
       selectRange(range) {
         this.tempRange = Math.floor(range)
+      },
+      selectRanges(range) {
+        this.tempRange = range
       },
       selectUseLimit(useLimit) {
         this.tempUseLimit = Math.floor(useLimit)
