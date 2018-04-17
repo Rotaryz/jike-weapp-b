@@ -106,7 +106,8 @@
         'pages/open-server/open-server',
         'pages/my-codes/my-codes',
         'pages/shop-qrcode/shop-qrcode',
-        'pages/message/message'
+        'pages/message/message',
+        'pages/new-share-activity/new-share-activity'
       ],
       window: {
         backgroundColor: '#363547',
