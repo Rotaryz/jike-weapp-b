@@ -1,3 +1,5 @@
+import wepy from 'wepy'
+// 团购编辑页面
 const PICKERDEFAUFT = '请选择'
 const INPUTDEFAULT = ''
 const HOTENDDEFAULT = '结束时间'
@@ -24,6 +26,25 @@ function createPeople() {
   return arr
 }
 
+// 团购活动列表页面 和 header-switch组件
+const UP = '1'
+const DOWN = '2'
+const ON = 'on'
+const OFF = 'off'
+
+/**
+ * 获取设备尺寸
+ * @returns {{width: *, height: *}}
+ */
+function getDeviceInfo() {
+  const res = wepy.getSystemInfoSync()
+  const width = res.windowWidth
+  const height = res.windowHeight
+  return {width, height}
+}
+
+const DEVICEINFO = getDeviceInfo()
+
 export {
   PICKERDEFAUFT,
   INPUTDEFAULT,
@@ -31,5 +52,10 @@ export {
   TPLTIME,
   TPLPEOPLE,
   NEW,
-  EDITOR
+  EDITOR,
+  UP,
+  DOWN,
+  ON,
+  OFF,
+  DEVICEINFO
 }

@@ -1,53 +1,39 @@
 <template>
-  <view class="group-active-list-box">
-    <view class="g-a-l-nav" @tap="chooseStatus">
-      <view class="g-a-l-n-item {{upStatus}}" id="1">已经上</view>
-      <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
-    </view>
-    <view class="g-a-l-article" hidden="{{!upStatus}}">
-      <view class="g-a-l-a-item">
-        <view class="component-group-item">
-          <view class="up">
-            <view class="up-box">
-              <view class="u-pic">
-                <image class="u-p-image" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-popup@2x.png'}}"></image>
-                <view class="u-p-people">2人团</view>
-              </view>
-              <view class="u-title">尊宝披萨周年庆套餐</view>
-              <view class="u-price">现价 ¥100</view>
-              <view class="u-hot-price">团购价
-                <text class="u-hot-price-em">¥80</text>
-              </view>
+  <view class="group-active-list">
+    <header-switch title="团购" :isChecked.sync="switchStatus">
+      <view class="group-active-list-box">
+        <view class="g-a-l-nav" @tap="chooseStatus">
+          <view class="g-a-l-n-item {{upStatus}}" id="1">已经上</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
+        </view>
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}">
+          <repeat for="{{onlineList}}" key="index" index="index" item="item">
+            <view class="g-a-l-a-item">
+              <activity-item :activeType.sync="type"></activity-item>
+            </view>
+          </repeat>
+          <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+            <view class="e-box">
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <view class="e-txt">暂无数据</view>
             </view>
           </view>
-          <view class="down">
-            <view class="down-box">
-              <view class="d-status">已过期</view>
-              <view class="d-on-off d-btn">上线</view>
-              <view class="d-delete d-btn">删除</view>
-              <view class="d-editor d-btn">编辑</view>
+        </scroll-view>
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}">
+          <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+            <view class="e-box">
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <view class="e-txt">暂无数据</view>
             </view>
           </view>
+        </scroll-view>
+        <view class="g-a-l-btn-box">
+          <view class="g-a-l-submit" @tap="test">新建</view>
         </view>
       </view>
-      <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
-        <view class="e-box">
-          <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
-          <view class="e-txt">暂无数据</view>
-        </view>
-      </view>
-    </view>
-    <view class="g-a-l-article" hidden="{{!downStatus}}">
-      <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
-        <view class="e-box">
-          <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
-          <view class="e-txt">暂无数据</view>
-        </view>
-      </view>
-    </view>
-    <view class="g-a-l-btn-box">
-      <view class="g-a-l-submit" @tap="test">新建</view>
-    </view>
+    </header-switch>
+    <toast></toast>
+    <base-modal title="确定要删除？"></base-modal>
   </view>
 </template>
 
@@ -55,21 +41,26 @@
   import wepy from 'wepy'
   import base from '@/common/mixins/base'
   import URIS from 'common/js/config'
-
-  const UP = '1'
-  const DOWN = '2'
+  import HeaderSwitch from '@/base/header-switch/header-switch'
+  import ActivityItem from '@/base/activity-item/activity-item'
+  import BaseModal from '@/base/base-modal/base-modal'
+  import Toast from '@/base/toast/toast'
+  import {UP, DOWN, ON, OFF, DEVICEINFO} from 'api/group-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
 
     data = {
       imageUrlHead: URIS.image,
-      status: '1',
-      isEmpty: true
+      status: UP,
+      onlineList: [3],
+      offlineList: [],
+      isChecked: ON,
+      type: 'group'
     }
 
     onLoad() {
-
+      console.log(this.isChecked)
     }
 
     onShow() {
@@ -85,9 +76,15 @@
         this.status = id
         this.$apply()
       },
-      test() {
+      toEditor() {
         let url = `/pages/group-active-editor/group-active-editor`
         this.$navigate(url)
+      }
+    }
+    events = {
+      headerSwitchChange() {
+        this.isChecked = this.isChecked === ON ? OFF : ON
+        this.$apply()
       }
     }
     computed = {
@@ -96,7 +93,45 @@
       },
       downStatus() {
         return this.status === DOWN ? 'active' : ''
+      },
+      isEmpty() {
+        if (this.status === UP) {
+          return this.onlineList.length === 0
+        } else {
+          return this.offlineList.length === 0
+        }
+      },
+      switchStatus() {
+        return this.isChecked
+      },
+      heightStyle() {
+        return (DEVICEINFO.height - 83 - 103) + 'px'
       }
+    }
+    events = {
+      headerSwitchChange() {
+        this.isChecked = this.isChecked === ON ? OFF : ON
+        this.$apply()
+      },
+      activeBtnOne() {
+        console.log(22)
+      },
+      activeBtnTwo() {
+        this.$invoke('base-modal', 'show')
+        console.log(22233)
+      },
+      activeBtnThree() {
+        console.log(22444)
+      },
+      confirmTicket() {
+        console.log(666)
+      }
+    }
+    components = {
+      'header-switch': HeaderSwitch,
+      'activity-item': ActivityItem,
+      'base-modal': BaseModal,
+      'toast': Toast
     }
     config = {
       navigationBarTitleText: '团购',
@@ -112,7 +147,7 @@
 
   .g-a-c-s-empty
     background-color: $color-white
-    height: 93vh
+    height: 69vh
     layout()
     justify-content: center
     align-items: center
@@ -120,7 +155,7 @@
       layout()
       justify-content: center
       align-items: center
-      margin-top: -78.5%
+      margin-top: -50.5%
       .e-pic
         width: 95.5px
         height: 75.5px
@@ -132,7 +167,6 @@
 
   .group-active-list-box
     position: relative
-    min-height: 93vh
     background-color: $color-background
     .g-a-l-nav
       layout(row)
@@ -157,119 +191,11 @@
         color: $color-assist-f
         border-bottom-line($color-assist-f, 100%, 2px)
     .g-a-l-article
-      min-height: 93vh
       background-color: $color-white
+      padding-bottom: 82px
       .g-a-l-a-item
-        padding: 10px 12px
-        .component-group-item
-          background-color: $color-white
-          position: relative
-          padding-bottom: 31.34%
-          height: 0
-          border-radius: 2px
-          border: .5px solid $color-row-line
-          .up
-            position: absolute
-            top: 0
-            left: 0
-            right: 0
-            height: 0
-            padding-bottom: 19.945%
-            .up-box
-              layout()
-              justify-content: space-around
-              position: absolute
-              top: 0
-              right: 0
-              left: 0
-              bottom: 0
-              padding: 8px 0px 12px
-              margin: 0 10px
-              overflow: hidden
-              border-bottom: .5px dotted $color-row-line
-              .u-pic
-                position: relative
-                height: 100%
-                width: 27.195%
-                overflow: hidden
-                border-radius: 2px
-                margin-right: 10px
-                .u-p-image
-                  width: 100%
-                  height: 100%
-                .u-p-people
-                  position: absolute
-                  padding-left: 7.5px
-                  bottom: 0
-                  border-radius: 2px
-                  line-height: 17px
-                  height: 17px
-                  width: 100%
-                  opacity: .6
-                  background-color: #000
-                  font-family: $font-family-light
-                  font-size: $font-size-small-s
-                  color: $color-white
-              .u-title
-                no-wrap()
-                font-family: $font-family-regular
-                font-size: $font-size-medium
-                color: $color-text-dark
-                width: 70%
-              .u-price
-                font-family: $font-family-light
-                font-size: $font-size-small-s
-                color: $color-text-light
-              .u-hot-price
-                font-family: $font-family-light
-                font-size: $font-size-small-s
-                color: $color-text-light
-                .u-hot-price-em
-                  font-family: $font-family-meddle
-                  font-size: $font-size-small
-                  color: #2D2B2F
-
-          .down
-            position: absolute
-            bottom: 0
-            left: 0
-            right: 0
-            height: 0
-            padding-bottom: 11.465%
-            .down-box
-              layout(row)
-              align-items: center
-              position: absolute
-              top: 0
-              right: 0
-              left: 0
-              bottom: 0
-              margin: 0 10px
-              overflow: hidden
-              .d-status
-                margin-left: 2px
-                ont-family: $font-family-light
-                font-size: $font-size-medium
-                color: $color-text-td
-                flex: 1
-              .d-btn
-                layout()
-                justify-content: center
-                align-items: center
-                box-sizing: border-box
-                margin-left: 5px
-                width: 60px
-                height: 24px
-                border: .5px solid $color-row-line
-                border-radius: 2px
-                font-family: $font-family-light
-                font-size: $font-size-small-s
-                color: $color-text
-              .d-editor
-                color: $color-assist-f
-                border-color: $color-assist-f
-                margin-right: 5px
-
+        padding: 0 12px
+        margin: 10px 0
     .g-a-l-btn-box
       position: fixed
       bottom: 0

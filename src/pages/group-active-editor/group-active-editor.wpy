@@ -91,7 +91,7 @@
     TPLPEOPLE,
     NEW,
     EDITOR
-  } from 'api/group-ative-config'
+  } from 'api/group-active-config'
 
   console.info(NEW, EDITOR)
 
