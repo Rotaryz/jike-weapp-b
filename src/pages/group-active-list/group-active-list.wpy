@@ -15,10 +15,19 @@
               </view>
               <view class="u-title">尊宝披萨周年庆套餐</view>
               <view class="u-price">现价 ¥100</view>
-              <view class="u-hot-price">团购价 ¥80</view>
+              <view class="u-hot-price">团购价
+                <text class="u-hot-price-em">¥80</text>
+              </view>
             </view>
           </view>
-          <view class="down"></view>
+          <view class="down">
+            <view class="down-box">
+              <view class="d-status">已过期</view>
+              <view class="d-on-off d-btn">上线</view>
+              <view class="d-delete d-btn">删除</view>
+              <view class="d-editor d-btn">编辑</view>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -104,12 +113,14 @@
     .g-a-l-article
       height: 50vh
       .g-a-l-a-item
-        padding: 0 12px
+        padding: 10px 12px
         .component-group-item
-          background-color: red
+          background-color: $color-white
           position: relative
           padding-bottom: 31.34%
           height: 0
+          border-radius: 2px
+          border: .5px solid $color-row-line
           .up
             position: absolute
             top: 0
@@ -117,35 +128,101 @@
             right: 0
             height: 0
             padding-bottom: 19.945%
-            background-color: yellow
             .up-box
               layout()
+              justify-content: space-around
               position: absolute
               top: 0
               right: 0
               left: 0
               bottom: 0
-              background-color: palegreen
-              padding: 8px 0 12px
+              padding: 8px 0px 12px
+              margin: 0 10px
+              overflow: hidden
+              border-bottom: .5px dotted $color-row-line
               .u-pic
                 position: relative
                 height: 100%
-                width: 25.645%
+                width: 27.195%
                 overflow: hidden
                 border-radius: 2px
+                margin-right: 10px
                 .u-p-image
                   width: 100%
                   height: 100%
                 .u-p-people
                   position: absolute
+                  padding-left: 7.5px
                   bottom: 0
                   border-radius: 2px
-                  height: 16px
+                  line-height: 17px
+                  height: 17px
                   width: 100%
-                  background-color: rgba(0, 0, 0, .6)
+                  opacity: .6
+                  background-color: #000
                   font-family: $font-family-light
                   font-size: $font-size-small-s
                   color: $color-white
+              .u-title
+                no-wrap()
+                font-family: $font-family-regular
+                font-size: $font-size-medium
+                color: $color-text-dark
+                width: 70%
+              .u-price
+                font-family: $font-family-light
+                font-size: $font-size-small-s
+                color: $color-text-light
+              .u-hot-price
+                font-family: $font-family-light
+                font-size: $font-size-small-s
+                color: $color-text-light
+                .u-hot-price-em
+                  font-family: $font-family-meddle
+                  font-size: $font-size-small
+                  color: #2D2B2F
+
+          .down
+            position: absolute
+            bottom: 0
+            left: 0
+            right: 0
+            height: 0
+            padding-bottom: 11.465%
+            .down-box
+              layout(row)
+              align-items: center
+              position: absolute
+              top: 0
+              right: 0
+              left: 0
+              bottom: 0
+              margin: 0 10px
+              overflow: hidden
+              .d-status
+                margin-left: 2px
+                ont-family: $font-family-light
+                font-size: $font-size-medium
+                color: $color-text-td
+                flex: 1
+              .d-btn
+                layout()
+                justify-content: center
+                align-items: center
+                box-sizing: border-box
+                margin-left: 5px
+                width: 60px
+                height: 24px
+                border: .5px solid $color-row-line
+                border-radius: 2px
+                font-family: $font-family-light
+                font-size: $font-size-small-s
+                color: $color-text
+              .d-editor
+                color: $color-assist-f
+                border-color: $color-assist-f
+                margin-right: 5px
+
     .g-a-l-submit
       position: fixed
       left: 0

@@ -94,8 +94,8 @@
   } from 'api/group-ative-config'
 
   console.info(NEW, EDITOR)
-  export default class GAEditor extends wepy.page {
 
+  export default class GAEditor extends wepy.page {
     mixins = [base]
 
     data = {
@@ -168,7 +168,7 @@
       hotPriceInput(e) {
         let val = e.detail.value
         let max = this.info.price
-        console.log(max,val)
+        console.log(max, val)
         max = parseInt(max)
         val = parseInt(val)
         if (isNaN(val)) {
