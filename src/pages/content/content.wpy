@@ -8,7 +8,7 @@
       </view>
     </NavHeader>
     <Blank></Blank>
-    <scroll-view scroll-y bindscrolltolower="showMore">
+    <scroll-view scroll-y @scrolltolower="showMore">
       <view class="content-coupon">
         <view class="con-cou-item" wx:for="{{contentList}}" wx:key="{{index}}">
           <view class="pic-item">
