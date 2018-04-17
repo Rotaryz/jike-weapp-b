@@ -13,16 +13,16 @@
         <view class="g-a-item-middle">{{info.price}}</view>
       </view>
       <view class="server-left g-a-item-box">
-        <view class="g-a-item-left">活动名称</view>
+        <view class="g-a-item-left {{hotName}}">活动名称</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="text" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
+          <input class="g-a-input" type="text" value="{{info.hotName}}" bindinput="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
         </view>
-        <view class="g-a-item-right g-a-i-max-num">0/15</view>
+        <view class="g-a-item-right g-a-i-max-num">{{hotNameLen}}/15</view>
       </view>
       <view class="server-add-number g-a-item-box">
-        <view class="g-a-item-left">添加数量</view>
+        <view class="g-a-item-left {{addNum}}">添加数量</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="number" placeholder="请输入" placeholder-class="p-h-style" maxlength="25"></input>
+          <input class="g-a-input" type="number" value="{{info.addNum}}" bindinput="addNumInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="25"></input>
         </view>
       </view>
       <view class="server-hot-date g-a-item-box">
@@ -31,7 +31,7 @@
           <view class="g-a-h-d-l">自今日起</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
-            <picker class="g-a-i-option {{hotEndDate}}" bindchange="bindPickerChangeHotEndDate" value="{{index}}" range="{{array}}">
+            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" bindchange="bindPickerChangeHotEndDate" value="{{index}}" range="{{arrayDate}}">
               {{info.hotEndDate}}
               <view class="picker">
                 {{array[index]}}
@@ -46,7 +46,7 @@
       <view class="hot-time-limit g-a-item-box">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{timeLimit}}" bindchange="bindPickerChangeTimeLimit" value="{{index}}" range="{{array}}">
+          <picker class="g-a-i-option {{timeLimit}}" bindchange="bindPickerChangeTimeLimit" value="{{index}}" range="{{arrayTime}}">
             {{info.timeLimit}}
             <view class="picker">
               {{array[index]}}
@@ -58,7 +58,7 @@
       <view class="hot-people-number g-a-item-box">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{peopleNum}}" bindchange="bindPickerChangePeopleNum" value="{{index}}" range="{{array}}">
+          <picker class="g-a-i-option {{peopleNum}}" bindchange="bindPickerChangePeopleNum" value="{{index}}" range="{{arrayPeople}}">
             {{info.peopleNum}}
             <view class="picker">
               {{array[index]}}
@@ -70,11 +70,11 @@
       <view class="hot-price g-a-item-box">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="number" placeholder="请输入" placeholder-class="p-h-style"></input>
+          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" bindinput="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style"></input>
         </view>
       </view>
     </view>
-    <view class="g-a-submit">保存</view>
+    <view class="g-a-submit" @tap="saveInfo">保存</view>
   </view>
 </template>
 
@@ -83,43 +83,104 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import {
+    PICKERDEFAUFT,
+    INPUTDEFAULT,
+    HOTENDDEFAULT,
+    TPLTIME,
+    TPLPEOPLE,
+    NEW,
+    EDITOR
+  } from 'api/group-ative-config'
 
-  const PICKERDEFAUFT = '请选择'
-  const INPUTDEFAULT = '请输入'
-  const HOTENDDEFAULT = '结束时间'
-
+  console.info(NEW, EDITOR)
   export default class GAEditor extends wepy.page {
+
     mixins = [base]
 
     data = {
       imageUrlHead: URIS.image,
       info: {
-        model: '',
+        model: NEW,
         serverType: '活动',
-        price: '0.00',
+        price: '100.00',
         hotName: INPUTDEFAULT,
         addNum: INPUTDEFAULT,
-        hotStartDate: '自上线之日起',
+        hotStartDate: new Date(),
         hotEndDate: HOTENDDEFAULT,
         timeLimit: PICKERDEFAUFT,
         peopleNum: PICKERDEFAUFT,
-        hotPrice: INPUTDEFAULT
+        hotPrice: INPUTDEFAULT,
+        addNumMax: 88
       },
-      array: [2, 3, 4, 5]
+      arrayPeople: TPLPEOPLE,
+      arrayTime: TPLTIME
+    }
+
+    onLoad() {
+      this._init()
+    }
+
+    onShow() {
+
+    }
+
+    onHide() {
+
+    }
+
+    _init() {
+      wepy.setNavigationBarTitle({title: NEW})
     }
 
     methods = {
       bindPickerChangePeopleNum(e) {
-        this.info.peopleNum = this.array[e.detail.value]
+        this.info.peopleNum = this.arrayPeople[e.detail.value]
         this.$apply()
       },
       bindPickerChangeTimeLimit(e) {
-        this.info.timeLimit = this.array[e.detail.value]
+        this.info.timeLimit = this.arrayTime[e.detail.value]
         this.$apply()
       },
       bindPickerChangeHotEndDate(e) {
-        this.info.hotEndDate = this.array[e.detail.value]
+        this.info.hotEndDate = e.detail.value
         this.$apply()
+      },
+      hotNameInput(e) {
+        this.info.hotName = e.detail.value
+        this.$apply()
+      },
+      addNumInput(e) {
+        let val = e.detail.value
+        let max = this.info.addNumMax
+        max = parseInt(max)
+        console.log(val, 'one')
+        val = parseInt(val)
+        if (isNaN(val)) {
+          return
+        }
+        val = Math.min(max, val)
+        val = Math.max(1, val)
+        console.log(val)
+        this.info.addNum = val
+        this.$apply()
+      },
+      hotPriceInput(e) {
+        let val = e.detail.value
+        let max = this.info.price
+        console.log(max,val)
+        max = parseInt(max)
+        val = parseInt(val)
+        if (isNaN(val)) {
+          return
+        }
+        val = Math.min(max, val)
+        val = Math.max(0.01, val)
+        this.info.hotPrice = val
+        this.$apply()
+      },
+      saveInfo(e) {
+        console.log(this.info)
       }
     }
     computed = {
@@ -133,13 +194,19 @@
         return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : ''
       },
       hotPrice() {
-        return this.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : ''
       },
       hotName() {
-        return this.hotName !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : ''
       },
       addNum() {
-        return this.addNum !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : ''
+      },
+      hotNameLen() {
+        return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
+      },
+      hotEndStartDate() {
+        return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24
       }
     }
     components = {
@@ -147,7 +214,7 @@
     }
 
     config = {
-      navigationBarTitleText: '新建',
+      navigationBarTitleText: '',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white',
       backgroundColor: '#F9F9F9'
@@ -234,21 +301,20 @@
           color: $color-text-d
           padding-right: 12px
           width: auto
-
     .g-a-submit
-      layout()
-      justify-content: center
-      align-items: center
       position: fixed
+      left: 0
+      right: 0
       bottom: 17.5px
-      left: 50%
-      transform: translateX(-50%)
-      width: 93.6vw
-      height: 11.73vw
+      margin: 0 12px
+      padding: 5.87%
+      height: 0
       background: $color-theme
-      border-radius: 2px
+      border-radius: 4px
+      line-height: 0
+      text-align: center;
       font-family: $font-family-regular
       font-size: $font-size-medium
       color: $color-white
-      letter-spacing: 0.56px
+      letter-spacing: 1.02px
 </style>

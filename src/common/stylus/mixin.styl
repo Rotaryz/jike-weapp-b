@@ -125,7 +125,7 @@ layout($direction = column, $inline = block, $wrap = wrap)
   flex-wrap: $wrap
 
 // 底部线条
-border-bottom-line($color = #E6E6E6, $width = 96.8%)
+border-bottom-line($color = #E6E6E6, $width = 96.8% ,$borderWidth = 0.5px)
   position: relative
   &:after
     content: ""
@@ -134,4 +134,4 @@ border-bottom-line($color = #E6E6E6, $width = 96.8%)
     right: 0
     height: 1px
     width: $width
-    border-bottom: 1px solid $color
+    border-bottom: $borderWidth solid $color

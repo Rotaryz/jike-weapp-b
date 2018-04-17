@@ -1,15 +1,119 @@
 <template>
-    <view></view>
+  <view class="group-active-list-box">
+    <view class="g-a-l-nav" @tap="chooseStatus">
+      <view class="g-a-l-n-item {{upStatus}}" id="1">已经上</view>
+      <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
+    </view>
+    <view class="g-a-l-article" hidden="{{!upStatus}}">
+      <view class="g-a-l-a-item">
+        <view class="component-group-item">
+          <view class="up">
+            <image class="u-pic"></image>
+          </view>
+          <view class="down"></view>
+        </view>
+      </view>
+    </view>
+    <view class="g-a-l-article" hidden="{{!downStatus}}">offline</view>
+    <view class="g-a-l-submit">新建</view>
+  </view>
 </template>
 
 <script>
-    import wepy from 'wepy'
+  import wepy from 'wepy'
+  import base from '@/common/mixins/base'
+  import URIS from 'common/js/config'
 
-    export default class GAList extends wepy.page {
+  const UP = '1'
+  const DOWN = '2'
+
+  export default class GAList extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrlHead: URIS.image,
+      status: '1'
+    }
+
+    onLoad() {
 
     }
+
+    onShow() {
+      console.log(this.status, UP, this.status === UP, this.status === DOWN)
+    }
+
+    methods = {
+      chooseStatus(e) {
+        let id = e.target.id
+        console.log(e)
+        this.status = id
+        this.$apply()
+      }
+    }
+    computed = {
+      upStatus() {
+        return this.status === UP ? 'active' : ''
+      },
+      downStatus() {
+        return this.status === DOWN ? 'active' : ''
+      }
+    }
+  }
 </script>
 
-<style lang='stylus' scoped>
+<style lang='stylus'>
+  @import "../../common/stylus/mixin.styl"
+  @import "../../common/stylus/variable.styl"
 
+  .group-active-list-box
+    position: relative
+    min-height: 100vh
+    background-color: $color-background
+    .g-a-l-nav
+      layout(row)
+      justify-content: space-around
+      align-items: center
+      height: 42.5px
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      border: 0.5px solid $color-split-line
+      border-right: none
+      border-left: none
+      .g-a-l-n-item
+        padding: 0 8px
+        height: 100%
+        line-height: 42.5px
+      .active
+        color: $color-assist-f
+        border-bottom-line($color-assist-f, 100%, 2px)
+    .g-a-l-article
+      height: 50vh
+      .g-a-l-a-item
+        padding: 0 12px
+        .component-group-item
+          background-color :red
+          position: relative
+          padding-bottom: 31.34%
+          height: 0
+          .up
+            background-color :yellow
+
+    .g-a-l-submit
+      position: fixed
+      left: 0
+      right: 0
+      bottom: 17.5px
+      margin: 0 12px
+      padding: 5.87%
+      height: 0
+      background: $color-theme
+      border-radius: 4px
+      line-height: 0
+      text-align: center;
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      color: $color-white
+      letter-spacing: 1.02px
 </style>
