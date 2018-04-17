@@ -134,6 +134,10 @@
     }
 
     methods = {
+      test() {
+        let url = `/pages/group-active-choose-server/group-active-choose-server`
+        this.$navigate(url)
+      },
       bindPickerChangePeopleNum(e) {
         this.info.peopleNum = this.arrayPeople[e.detail.value]
         this.$apply()
@@ -181,6 +185,8 @@
       },
       saveInfo(e) {
         console.log(this.info)
+        let url = `/pages/group-active-choose-server/group-active-choose-server`
+        this.$navigate(url)
       }
     }
     computed = {

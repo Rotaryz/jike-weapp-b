@@ -30,9 +30,24 @@
           </view>
         </view>
       </view>
+      <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+        <view class="e-box">
+          <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+          <view class="e-txt">暂无数据</view>
+        </view>
+      </view>
     </view>
-    <view class="g-a-l-article" hidden="{{!downStatus}}">offline</view>
-    <view class="g-a-l-submit">新建</view>
+    <view class="g-a-l-article" hidden="{{!downStatus}}">
+      <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+        <view class="e-box">
+          <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+          <view class="e-txt">暂无数据</view>
+        </view>
+      </view>
+    </view>
+    <view class="g-a-l-btn-box">
+      <view class="g-a-l-submit" @tap="test">新建</view>
+    </view>
   </view>
 </template>
 
@@ -49,7 +64,8 @@
 
     data = {
       imageUrlHead: URIS.image,
-      status: '1'
+      status: '1',
+      isEmpty: true
     }
 
     onLoad() {
@@ -68,6 +84,10 @@
         }
         this.status = id
         this.$apply()
+      },
+      test() {
+        let url = `/pages/group-active-editor/group-active-editor`
+        this.$navigate(url)
       }
     }
     computed = {
@@ -78,6 +98,11 @@
         return this.status === DOWN ? 'active' : ''
       }
     }
+    config = {
+      navigationBarTitleText: '团购',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
   }
 </script>
 
@@ -85,9 +110,29 @@
   @import "../../common/stylus/mixin.styl"
   @import "../../common/stylus/variable.styl"
 
+  .g-a-c-s-empty
+    background-color: $color-white
+    height: 93vh
+    layout()
+    justify-content: center
+    align-items: center
+    .e-box
+      layout()
+      justify-content: center
+      align-items: center
+      margin-top: -78.5%
+      .e-pic
+        width: 95.5px
+        height: 75.5px
+        margin-bottom: 13.5px
+      .e-txt
+        font-family: $font-family-light
+        font-size: $font-size-small
+        color: $color-text-d
+
   .group-active-list-box
     position: relative
-    min-height: 100vh
+    min-height: 93vh
     background-color: $color-background
     .g-a-l-nav
       layout(row)
@@ -100,6 +145,7 @@
       border: 0.5px solid $color-split-line
       border-right: none
       border-left: none
+      background-color: $color-white
       .g-a-l-n-item
         padding: 0 8px
         height: 100%
@@ -111,7 +157,8 @@
         color: $color-assist-f
         border-bottom-line($color-assist-f, 100%, 2px)
     .g-a-l-article
-      height: 50vh
+      min-height: 93vh
+      background-color: $color-white
       .g-a-l-a-item
         padding: 10px 12px
         .component-group-item
@@ -223,20 +270,29 @@
                 border-color: $color-assist-f
                 margin-right: 5px
 
-    .g-a-l-submit
+    .g-a-l-btn-box
       position: fixed
-      left: 0
-      right: 0
-      bottom: 17.5px
-      margin: 0 12px
-      padding: 5.87%
-      height: 0
-      background: $color-theme
-      border-radius: 4px
-      line-height: 0
-      text-align: center;
-      font-family: $font-family-regular
-      font-size: $font-size-medium
-      color: $color-white
-      letter-spacing: 1.02px
+      bottom: 0
+      width: 100%
+      height: 82px
+      box-sizing: border-box
+      padding: 18px 12px 20px
+      layout()
+      justify-content: center
+      align-items: center
+      background-color: $color-background
+      border-top: 0.5px solid $color-row-line
+      .g-a-l-submit
+        layout()
+        justify-content: center
+        align-items: center
+        width: 100%
+        height: 100%
+        background: $color-theme
+        border-radius: 4px
+        font-family: $font-family-regular
+        font-size: $font-size-medium
+        color: $color-white
+        letter-spacing: 1.02px
+
 </style>
