@@ -254,9 +254,7 @@
         this.searchValue = ''
       },
       async loadMore(e) {
-        console.log('>>111')
         if (!this.nothing) {
-          console.log('>>222')
           this.page++
           let res = await this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page, 2)
           if (res.length === 0) {
