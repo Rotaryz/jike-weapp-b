@@ -1,7 +1,7 @@
 <template>
   <view class="group-active-editor">
     <view class="g-a-article">
-      <view class="server-type g-a-item-box">
+      <view class="server-type g-a-item-box" @tap="toChooseServer">
         <view class="g-a-item-left">添加服务</view>
         <view class="g-a-item-middle g-a-has-content">{{info.serverType}}</view>
         <view class="g-a-item-right">
@@ -10,19 +10,19 @@
       </view>
       <view class="server-price g-a-item-box">
         <view class="g-a-item-left">现价</view>
-        <view class="g-a-item-middle">{{info.price}}</view>
+        <view class="g-a-item-middle {{price}}">{{info.price}}</view>
       </view>
       <view class="server-left g-a-item-box">
-        <view class="g-a-item-left {{hotName}}">活动名称</view>
+        <view class="g-a-item-left ">活动名称</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="text" value="{{info.hotName}}" bindinput="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
+          <input class="g-a-input {{hotName}}" type="text" value="{{info.hotName}}" bindinput="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
         </view>
         <view class="g-a-item-right g-a-i-max-num">{{hotNameLen}}/15</view>
       </view>
       <view class="server-add-number g-a-item-box">
-        <view class="g-a-item-left {{addNum}}">添加数量</view>
+        <view class="g-a-item-left ">添加数量</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="number" value="{{info.addNum}}" bindinput="addNumInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="25"></input>
+          <input class="g-a-input {{addNum}}" type="number" value="{{info.addNum}}" bindinput="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
       <view class="server-hot-date g-a-item-box">
@@ -31,7 +31,7 @@
           <view class="g-a-h-d-l">自今日起</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
-            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" bindchange="bindPickerChangeHotEndDate" value="{{index}}" range="{{arrayDate}}">
+            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" bindchange="bindPickerChangeHotEndDate" value="{{index}}">
               {{info.hotEndDate}}
               <view class="picker">
                 {{array[index]}}
@@ -70,11 +70,11 @@
       <view class="hot-price g-a-item-box">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" bindinput="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style"></input>
+          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" bindinput="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
-    <view class="g-a-submit" @tap="saveInfo">保存</view>
+    <view class="g-a-submit {{btnStausStyle}}" @tap="saveInfo">保存</view>
   </view>
 </template>
 
@@ -90,7 +90,8 @@
     TPLTIME,
     TPLPEOPLE,
     NEW,
-    EDITOR
+    EDITOR,
+    PRICEDEFAULT
   } from 'api/group-active-config'
 
   console.info(NEW, EDITOR)
@@ -100,10 +101,10 @@
 
     data = {
       imageUrlHead: URIS.image,
+      model: '',
       info: {
-        model: NEW,
-        serverType: '活动',
-        price: '100.00',
+        serverType: INPUTDEFAULT,
+        price: PRICEDEFAULT,
         hotName: INPUTDEFAULT,
         addNum: INPUTDEFAULT,
         hotStartDate: new Date(),
@@ -111,14 +112,14 @@
         timeLimit: PICKERDEFAUFT,
         peopleNum: PICKERDEFAUFT,
         hotPrice: INPUTDEFAULT,
-        addNumMax: 88
+        inventory: INPUTDEFAULT
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME
     }
 
-    onLoad() {
-      this._init()
+    onLoad(option) {
+      this._init(option)
     }
 
     onShow() {
@@ -129,12 +130,45 @@
 
     }
 
-    _init() {
-      wepy.setNavigationBarTitle({title: NEW})
+    _init(option) {
+      const obj = wepy.$instance.globalData.currentGroupActive
+      console.log(obj)
+      wepy.setNavigationBarTitle({title: option.model})
+      this.model = option.model
+      if (this.model === EDITOR) {
+        this.info.serverType = obj.serverType
+        this.info.price = obj.price.toFixed(1)
+        this.info.hotName = obj.hotName
+        this.info.addNum = obj.addNum
+        this.info.hotEndDate = obj.hotEndDate
+        this.info.timeLimit = obj.timeLimit + '小时'
+        this.info.peopleNum = obj.peopleNum + '人'
+        this.info.hotPrice = obj.hotPrice.toFixed(1)
+        this.info.inventory = obj.inventory
+      }
+      this.$apply()
+    }
+
+    // 检查信息是否完整
+    _checkInfoLegal() {
+      let price = parseInt(this.info.price)
+      let addNum = parseInt(this.info.addNum)
+      let hotPrice = parseInt(this.info.hotPrice)
+      let flag = (
+        this.info.serverType !== INPUTDEFAULT &&
+        price > 0 &&
+        this.info.hotName !== INPUTDEFAULT &&
+        addNum > 0 &&
+        this.info.hotEndDate !== HOTENDDEFAULT &&
+        this.info.timeLimit !== PICKERDEFAUFT &&
+        this.info.peopleNum !== PICKERDEFAUFT &&
+        (hotPrice > 0 && hotPrice < price)
+      )
+      return flag
     }
 
     methods = {
-      test() {
+      toChooseServer() {
         let url = `/pages/group-active-choose-server/group-active-choose-server`
         this.$navigate(url)
       },
@@ -156,40 +190,26 @@
       },
       addNumInput(e) {
         let val = e.detail.value
-        let max = this.info.addNumMax
-        max = parseInt(max)
-        console.log(val, 'one')
-        val = parseInt(val)
-        if (isNaN(val)) {
-          return
-        }
-        val = Math.min(max, val)
-        val = Math.max(1, val)
-        console.log(val)
         this.info.addNum = val
         this.$apply()
       },
       hotPriceInput(e) {
-        let val = e.detail.value
-        let max = this.info.price
-        console.log(max, val)
-        max = parseInt(max)
-        val = parseInt(val)
-        if (isNaN(val)) {
-          return
-        }
-        val = Math.min(max, val)
-        val = Math.max(0.01, val)
+        let val = parseInt(e.detail.value)
+        val = val.toFixed(1)
         this.info.hotPrice = val
         this.$apply()
+        return val
       },
       saveInfo(e) {
-        console.log(this.info)
-        let url = `/pages/group-active-choose-server/group-active-choose-server`
-        this.$navigate(url)
+        if (this._checkInfoLegal()) {
+          this.$back()
+        }
       }
     }
     computed = {
+      price() {
+        return this.info.price !== PRICEDEFAULT ? 'g-a-has-content' : ''
+      },
       peopleNum() {
         return this.info.peopleNum !== PICKERDEFAUFT ? 'g-a-has-content' : ''
       },
@@ -213,6 +233,13 @@
       },
       hotEndStartDate() {
         return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24
+      },
+      inventory() {
+        return this.info.inventory !== INPUTDEFAULT ? `库存：${this.info.inventory}` : '请输入'
+      },
+      btnStausStyle() {
+        let flag = this._checkInfoLegal()
+        return flag ? '' : 'disable'
       }
     }
     components = {
@@ -247,6 +274,7 @@
 
   .g-a-has-content
     color: $color-text !important
+    font-size: $font-size-medium !important
 
   .group-active-editor
     position: relative
@@ -266,10 +294,12 @@
         &:last-child:after
           width: 100%
       .g-a-item-left
+        font-family: $font-family-light
         width: 88px
         line-height: 43px
         text-indent: 12px
       .g-a-item-middle
+        font-family: $font-family-light
         flex: 1
         layout(row)
         justify-content: flex-start
@@ -297,6 +327,7 @@
             flex: 1
             color: $color-text-d
       .g-a-item-right
+        font-family: $font-family-light
         width: 65px
         layout(row)
         justify-content: flex-end
@@ -323,4 +354,6 @@
       font-size: $font-size-medium
       color: $color-white
       letter-spacing: 1.02px
+      &.disable
+        background: $color-mask-bgc
 </style>

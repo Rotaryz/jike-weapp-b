@@ -1,25 +1,47 @@
 <template>
   <view class="active-item-component">
-    <view class="component-group-item" wx:if="{{gType}}">
+    <view class="component-group-item" wx:if="{{activeType === 'group'}}">
       <view class="up">
         <view class="up-box">
           <view class="u-pic">
             <image class="u-p-image" wx:if="{{imageUrlHead}}" src="{{activeObj.src}}"></image>
-            <view class="u-p-people">{{activeObj.people}}人团</view>
+            <view class="u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
-          <view class="u-title">{{activeObj.title}}</view>
+          <view class="u-title">{{activeObj.hotName}}</view>
           <view class="u-price">现价 ¥{{activeObj.price}}</view>
           <view class="u-hot-price">团购价
-            <text class="u-hot-price-em">¥{{activeObj.hotPrice}}</text>
+            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
           </view>
         </view>
       </view>
       <view class="down">
         <view class="down-box">
           <view class="d-status">{{activeObj.status}}</view>
-          <view class="d-on-off d-btn" bindtap="handleClickOne">上线</view>
-          <view class="d-delete d-btn" bindtap="handleClickTwo">删除</view>
-          <view class="d-editor d-btn" bindtap="handleClickThree">编辑</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+      </view>
+    </view>
+    <view class="component-group-item" wx:if="{{activeType === 'share'}}">
+      <view class="up">
+        <view class="up-box">
+          <view class="u-pic">
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" src="{{activeObj.src}}"></image>
+          </view>
+          <view class="u-title">{{activeObj.hotName}}</view>
+          <view class="u-price">现价 ¥{{activeObj.price}}</view>
+          <view class="u-hot-price">团购价
+            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="down">
+        <view class="down-box">
+          <view class="d-status">{{activeObj.status}}</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
       </view>
     </view>
@@ -29,47 +51,33 @@
 <script>
   import wepy from 'wepy'
   import URIS from 'common/js/config'
-
-  const obj = {
-    src: URIS.image + '/defaults/b-image/mine/pic-popup@2x.png',
-    people: 2,
-    title: '尊宝披萨周年庆套餐',
-    price: 100,
-    hotPrice: 80,
-    status: '已下线'
-  }
+  import {UP} from 'api/group-active-config'
 
   export default class ActivityItem extends wepy.component {
     props = {
+      // group 团购活动 share 分享赚钱
       activeType: {
         type: String,
         default: ''
       },
       activeObj: {
         type: Object,
-        default: obj
+        default: {}
       }
     }
     data = {
-      imageUrlHead: URIS.image
-    }
-    computed = {
-      gType() {
-        return this.activeType === 'group'
-      },
-      sType() {
-        return this.activeType === 'share'
-      }
+      imageUrlHead: URIS.image,
+      upStatus: UP
     }
     methods = {
-      handleClickOne() {
-        this.$emit('activeBtnOne')
+      handleClickOne(obj) {
+        this.$emit('activeBtnOne', obj)
       },
-      handleClickTwo() {
-        this.$emit('activeBtnTwo')
+      handleClickTwo(obj) {
+        this.$emit('activeBtnTwo', obj)
       },
-      handleClickThree() {
-        this.$emit('activeBtnThree')
+      handleClickThree(obj) {
+        this.$emit('activeBtnThree', obj)
       }
     }
   }
@@ -139,11 +147,14 @@
             font-family: $font-family-light
             font-size: $font-size-small-s
             color: $color-text-light
+            width: 70%
           .u-hot-price
             font-family: $font-family-light
             font-size: $font-size-small-s
             color: $color-text-light
+            width: 70%
             .u-hot-price-em
+              display: inline-block
               font-family: $font-family-meddle
               font-size: $font-size-small
               color: #2D2B2F

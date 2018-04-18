@@ -14,9 +14,7 @@
 
 <script>
   import wepy from 'wepy'
-
-  const ON = 'on'
-  // const OFF = 'off'
+  import {ON, SUCCESS} from 'api/group-active-config'
 
   export default class HeaderSwitch extends wepy.component {
     props = {
@@ -30,7 +28,7 @@
       },
       activityStatus: {
         type: String,
-        default: 'success'
+        default: SUCCESS
       }
     }
 
@@ -39,13 +37,14 @@
         return this.isChecked === ON ? 'checked' : ''
       },
       isShowBtn() {
-        return this.activityStatus.trim() === 'success'
+        console.log(this.activityStatus)
+        return this.activityStatus.trim() === SUCCESS
       },
       isShowContent() {
         if (this.isShowBtn) {
           return this.isChecked === ON
         } else {
-          return false
+          return true
         }
       }
     }
@@ -72,6 +71,7 @@
       box-sizing: border-box
       margin-bottom: 9px
       padding: 0 12px
+      border-bottom: .5px solid $color-col-line
       .h-s-title
         font-family: $font-family-light
         font-size: $font-size-medium-x

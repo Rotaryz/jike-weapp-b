@@ -7,6 +7,7 @@ const TPLTIME = createTime()
 const TPLPEOPLE = createPeople()
 const NEW = '新建'
 const EDITOR = '编辑'
+const PRICEDEFAULT = '0.0'
 
 function createTime() {
   let arr = []
@@ -31,6 +32,9 @@ const UP = '1'
 const DOWN = '2'
 const ON = 'on'
 const OFF = 'off'
+const UPPAGELIMIT = 10
+const DOWNPAGELIMIT = 10
+const SUCCESS = 'success'
 
 /**
  * 获取设备尺寸
@@ -51,11 +55,15 @@ export {
   HOTENDDEFAULT,
   TPLTIME,
   TPLPEOPLE,
+  PRICEDEFAULT,
   NEW,
   EDITOR,
   UP,
   DOWN,
   ON,
   OFF,
-  DEVICEINFO
+  DEVICEINFO,
+  UPPAGELIMIT,
+  DOWNPAGELIMIT,
+  SUCCESS
 }
