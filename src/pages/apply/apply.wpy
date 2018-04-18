@@ -10,11 +10,22 @@
         </view>
         <view class="desc">无可用优惠券</view>
       </view>
-      <repeat for="{{tempCouponList}}" index="index" key="key">
-        <view class="coupon-wrapper">
-          <coupon :coupon.sync="item" :type="'checked'" @handleClick.user="selectCoupon"></coupon>
-        </view>
-      </repeat>
+
+      <scroll-view scroll-y="true" bindscrolltolower="loadMore" style="height:{{heightFlag}}px">
+        <repeat for="{{tempCouponList}}" index="index" key="key">
+          <view class="coupon-wrapper">
+            <coupon :coupon.sync="item" :type="'checked'" @handleClick.user="selectCoupon"></coupon>
+          </view>
+        </repeat>
+      </scroll-view>
+
+      <!--<repeat for="{{tempCouponList}}" index="index" key="key">-->
+        <!--<view class="coupon-wrapper">-->
+          <!--<coupon :coupon.sync="item" :type="'checked'" @handleClick.user="selectCoupon"></coupon>-->
+        <!--</view>-->
+      <!--</repeat>-->
+
+
     </view>
     <view class="apply-btn-wrapper" wx:if="{{couponList.length > 0}}">
       <view class="apply-btn" @tap="apply">提交审核</view>
@@ -41,24 +52,42 @@
       id: '',
       checkedId: '',
       couponList: [],
-      tempCouponList: []
+      tempCouponList: [],
+      heightFlag: 0,
+      page: 1,
+      nothing: false
     }
-
+    async onShow (e) {
+      let h = wepy.getSystemInfoSync().windowHeight
+      this.heightFlag = h * 1 - 108
+      this.$apply()
+    }
     async onLoad(option) {
       this.id = option.id
       await this._getMerchantPackages()
       this.loaded()
     }
 
-    async _getMerchantPackages() {
-      const json = await Coupons.getCouponList({status: 1, gift_bag_id: this.id})
+    async _getMerchantPackages(page = 1, key = 1) {
+      let data = {
+        page: page,
+        status: 1,
+        gift_bag_id: this.id
+      }
+      const json = await Coupons.getCouponList(data)
+      this.loaded()
       if (json.error !== ERR_OK) {
         return
       }
       const res = json.data
-      this.couponList = res
       if (res.length === 0) {
+        this.nothing = true
         return
+      }
+      if (key === 2) {
+        this.couponList = this.couponList.concat(res)
+      } else {
+        this.couponList = res
       }
       this.tempCouponList = this.couponList.map((item) => Object.assign({}, item))
       this.checkedId = res[0].id
@@ -90,6 +119,13 @@
             this.$back()
           }, 2000)
         }
+      },
+      async loadMore() {
+        if (!this.nothing) {
+          this.page++
+          await this._getMerchantPackages(this.page, 2)
+        }
+        this.$apply()
       }
     }
 
@@ -107,18 +143,27 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
-
+  page
+    overflow:hidden
+  scroll-view
+    height: 78vh
+    width: 100%
+    box-sizing: border-box
   .apply
     min-height: 100vh
     background-color: $color-white
+    overflow:hidden
     .header
       padding: 0 12px
       background-color: $color-background
     .coupons-wrapper
       padding-top: 10px
       padding-bottom: 68px
+      overflow:hidden
       .coupon-wrapper
         margin-bottom: 10px
+        display: flex
+        flex-direction: column
     .apply-btn-wrapper
       position: fixed
       bottom: 0

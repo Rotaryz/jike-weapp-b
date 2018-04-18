@@ -219,12 +219,14 @@
       },
       showPage(num) {
         this.page = 1
+        this.nothing = false
         this.dayPage = num
         this.dayType = this.days[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
       },
       orderPage(num) {
         this.page = 1
+        this.nothing = false
         this.orderPage = num
         this.orderType = this.orders[num].type
         this.load(this.orderType, this.navNum, this.dayType, '', this.page)
@@ -254,8 +256,7 @@
       async loadMore(e) {
         if (!this.nothing) {
           this.page++
-          let res = await this.load(this.orderType, this.navNum, this.dayType,
-            this.searchValue, this.page, 2)
+          let res = await this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page, 2)
           if (res.length === 0) {
             this.nothing = true
           }
