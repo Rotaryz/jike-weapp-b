@@ -79,15 +79,16 @@
         <view class="label">礼包图片</view>
         <view class="picture-content">
           <repeat for="{{pictures}}" key="index" index="index" item="item">
-            <view class="picture">
+            <view class="picture {{picturesOn[index] ? 'on': 'off'}}">
               <view class="delete" wx:if="{{item.image_url}}" @tap="deleteImage({{index}})">
                 <image class="full-image"
                        wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"></image>
               </view>
               <image wx:if="{{item.image_url}}" mode="aspectFill" src="{{item.image_url}}" class="image full-image" @tap="showPicDetail({{item.image_url}})"></image>
               <view class="add" wx:if="{{!item.image_url}}" @tap="chooseImage({{index}})">
-                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}"
-                       class="full-image"></image>
+                <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>-->
+                <image wx:if="{{imageUri && picturesOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-add@2x.png'}}" class="full-image"></image>
+                <image wx:if="{{imageUri && !picturesOn[index]}}" src="{{imageUri + '/defaults/b-image/page/icon-img_add2@2x.png'}}" class="full-image"></image>
               </view>
             </view>
           </repeat>
@@ -265,6 +266,7 @@
       tempStores: [],
       selectStoreIds: [],
       pictures: [Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT), Object.assign({}, IMAGE_INIT)],
+      picturesOn: [true, false, false, false, false],
       title: '',
       titleLength: 0,
       subTitle: '',
@@ -304,7 +306,18 @@
       this.business = `${district}${name}商圈`
       this.$apply()
     }
-
+    async _imageOnOff (obj, f) {
+      for (let i = 0; i < obj.length; i++) {
+        if (obj[i + 1]) {
+          if (obj[i].image_id === 0 && obj[i + 1].image_id === 0) {
+            f[i + 1] = false
+          } else {
+            f[i + 1] = true
+          }
+        }
+      }
+      this.$apply()
+    }
     async _getPackageDetail() {
       const json = await Packages.getPackage(this.packageId)
       if (json.error !== ERR_OK) {
@@ -315,6 +328,7 @@
       this.selectCategoryIds = res.industry_ids
       this.selectStoreIds = res.merchant_ids
       this.pictures = res.gift_bag_images
+      this._imageOnOff(this.pictures, this.picturesOn)
       this.title = res.title
       this.titleLength = this.title.length
       this.subTitle = res.subhead
@@ -518,15 +532,39 @@
         this.tempStores = this.stores.map((item) => Object.assign({}, item))
       },
       async chooseImage(pictureIndex) {
-        const picture = await wepy.chooseImage()
-        const res = await Uploads.uploadImages(picture.tempFilePaths[0])
-        this.pictures[pictureIndex].image_id = res.id
-        this.pictures[pictureIndex].image_url = res.url
-        this.$apply()
+        if (this.picturesOn[pictureIndex]) {
+          const picture = await wepy.chooseImage()
+          if (picture.errMsg === 'chooseImage:ok') {
+            this.picturesOn[pictureIndex + 1] = true
+          }
+          const res = await Uploads.uploadImages(picture.tempFilePaths[0])
+          this.pictures[pictureIndex].image_id = res.id
+          this.pictures[pictureIndex].image_url = res.url
+          this.$apply()
+        }
       },
       deleteImage(pictureIndex) {
-        this.pictures[pictureIndex].image_id = 0
-        this.pictures[pictureIndex].image_url = 0
+        for (let i = 0; i < this.pictures.length; i++) {
+          if (pictureIndex <= i) {
+            if (this.pictures[i + 1]) {
+              this.pictures[i].image_id = this.pictures[i + 1].image_id
+              this.pictures[i].image_url = this.pictures[i + 1].image_url
+            } else {
+              this.pictures[i].image_id = 0
+              this.pictures[i].image_url = 0
+            }
+          }
+        }
+        this.$apply()
+        for (let i = 0; i < this.pictures.length; i++) {
+          if (this.pictures[i + 1]) {
+            if (this.pictures[i].image_id === 0 && this.pictures[i + 1].image_id === 0) {
+              this.picturesOn[i + 1] = false
+            }
+          }
+        }
+//        this.pictures[pictureIndex].image_id = 0
+//        this.pictures[pictureIndex].image_url = 0
         this.$apply()
       },
       handleInput(name, e) {
@@ -668,6 +706,11 @@
               padding: 10px
             .image
               border-radius: 4px
+          .picture.on
+            border: 1px solid $color-btn-dis
+          .picture.off
+            border: 1px solid $color-col-line
+
         .tip-wrapper
           line-height: 16px
           color: $color-text-d
