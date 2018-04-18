@@ -466,7 +466,7 @@
             letter-spacing: 0
 
       .switchbox
-        width: 50px
+        width: 44px
         height: 24px
         border-radius: 12px
         background: #eaeaea
@@ -492,7 +492,7 @@
 
         .switch-circle.checked
           background: $color-white
-          left: 22px
+          left: 20px
           top: 2px
           transition: .3s all
 
