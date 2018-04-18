@@ -94,7 +94,7 @@
         {title: '手持证件照'},
         {title: '商户承诺函证明'}],
       nothing: true,
-      submitTxt: ['提交审核', '审核中...', '已认证', '审核拒绝'],
+      submitTxt: ['提交审核', '审核中...', '已认证', '提交审核'],
       submitIndex: 0,
       submit: true
     }
@@ -152,12 +152,20 @@
         this.$apply()
       },
       nameChange(e) {
-        this.userName = e.detail.value
-        this.$apply()
+        let value = e.detail.value
+        if (value !== this.userName) {
+          if (this.submitIndex !== 1) this.submit = true
+          this.userName = value
+          this.$apply()
+        }
       },
       idChange(e) {
-        this.credentialNumber = e.detail.value
-        this.$apply()
+        let value = e.detail.value
+        if (value !== this.credentialNumber) {
+          if (this.submitIndex !== 1) this.submit = true
+          this.credentialNumber = value
+          this.$apply()
+        }
       }
     }
 
