@@ -106,7 +106,7 @@
     async load() {
       let res = []
       if (this.index !== -1) {
-        let data = {status: 1, page: this.page}
+        let data = {status: 1, page: this.page, use_type: 0}
         res = await content.coupon(data)
       } else {
         let data = {use_status: 1, use_type: 0, page: this.page}
