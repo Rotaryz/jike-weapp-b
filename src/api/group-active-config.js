@@ -8,6 +8,7 @@ const TPLPEOPLE = createPeople()
 const NEW = '新建'
 const EDITOR = '编辑'
 const PRICEDEFAULT = '0.0'
+const MINSIZE = 0.1
 
 function createTime() {
   let arr = []
@@ -65,5 +66,6 @@ export {
   DEVICEINFO,
   UPPAGELIMIT,
   DOWNPAGELIMIT,
-  SUCCESS
+  SUCCESS,
+  MINSIZE
 }

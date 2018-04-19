@@ -91,7 +91,8 @@
     TPLPEOPLE,
     NEW,
     EDITOR,
-    PRICEDEFAULT
+    PRICEDEFAULT,
+    MINSIZE
   } from 'api/group-active-config'
 
   console.info(NEW, EDITOR)
@@ -115,7 +116,8 @@
         inventory: INPUTDEFAULT
       },
       arrayPeople: TPLPEOPLE,
-      arrayTime: TPLTIME
+      arrayTime: TPLTIME,
+      inputTimer: null
     }
 
     onLoad(option) {
@@ -151,9 +153,9 @@
 
     // 检查信息是否完整
     _checkInfoLegal() {
-      let price = parseInt(this.info.price)
+      let price = parseFloat(this.info.price)
       let addNum = parseInt(this.info.addNum)
-      let hotPrice = parseInt(this.info.hotPrice)
+      let hotPrice = parseFloat(this.info.hotPrice)
       let flag = (
         this.info.serverType !== INPUTDEFAULT &&
         price > 0 &&
@@ -194,11 +196,19 @@
         this.$apply()
       },
       hotPriceInput(e) {
-        let val = parseInt(e.detail.value)
-        val = val.toFixed(1)
-        this.info.hotPrice = val
-        this.$apply()
-        return val
+        let val = parseFloat(e.detail.value)
+        let max = parseFloat(this.info.price)
+        this.inputTimer && clearTimeout(this.inputTimer)
+        this.inputTimer = setTimeout(() => {
+          val = Math.max(MINSIZE, val)
+          val = Math.min(max, val)
+          val = val.toFixed(1)
+          this.info.hotPrice = val
+          console.log(this.info.hotPrice)
+          this.$apply()
+          return val
+        }, 50)
+        // return val
       },
       saveInfo(e) {
         if (this._checkInfoLegal()) {
