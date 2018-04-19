@@ -5,14 +5,14 @@ import base from './base'
 
 export default class GroupActive extends base {
   /**
-   *
+   * @param status 1 已上线 2已下线
    * @param data
    * @returns {Promise<void>}
    */
-  static async getGroupActiveList(data, type) {
-    // const url = `${this.baseUrl}/api/merchants/data-trend`
+  static async getGroupActiveList(data, status) {
+    // const url = `${this.baseUrl}/api/group/tuan-gou?status=${status}`
     // return await this.get(url, data)
-    return createWDM(data, type)
+    return createWDM(data, status)
   }
 }
 
@@ -27,7 +27,7 @@ async function createWDM(data, type) {
   sleep(200)
   let arr = []
   let len = data.limit
-  for (let i = 0; i < len; i++) {
+  for (let i = 1; i <= len; i++) {
     let id = (Math.random() * 100) >>> 0
     let peopleNum = (Math.random() * 4 + 2) >>> 0
     let price = (Math.random() * 250 + 20) >>> 0
@@ -48,7 +48,7 @@ async function createWDM(data, type) {
       serverType: '100元代120元代金券' + id,
       addNum,
       hotEndDate: `2018-${(Math.random() * 12 + 1) >>> 0}-10`,
-      timeLimit: (Math.random() * 25 + 1) >>> 0,
+      timeLimit: i % 2 === 0 ? i : 1,
       inventory: (Math.random() * 500 + 100) >>> 0
     })
   }

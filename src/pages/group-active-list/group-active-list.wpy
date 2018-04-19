@@ -194,11 +194,36 @@
     async _rqGetGroupActiveList(params, type) {
       const json = await GroupActiveAPI.getGroupActiveList(params, type)
       if (json.error === ERR_OK) {
+        console.log(json)
         return json
       } else {
         this.$invoke('toast', 'show', json.message)
         this.loaded()
       }
+    }
+
+    // 格式化服务器数据
+    _formatRqData(res) {
+      let arr = []
+      res.data.map(item => {
+        arr.push({
+          id: item.id,
+          src: item.image_url,
+          peopleNum: item.config.group_number,
+          hotName: item.activity_name,
+          price: item.platform_price,
+          hotPrice: item.config.group_price,
+          status: item.status === UP ? '已上线' : '已下线',
+          statusType: item.status,
+          serverType: item.promotion_title,
+          addNum: item.stock,
+          hotEndDate: item.end_at,
+          timeLimit: item.config.group_validity,
+          inventory: item.promotion_stock,
+          goodId: item.good_ids
+        })
+      })
+      return arr
     }
 
     // 检查下线栏的次数
@@ -210,6 +235,19 @@
         }
         return false
       }
+    }
+
+    // 上线或下线
+    _upOrDown(obj) {
+      // 请求服务器成功后
+      if (this.status === UP) {
+        this.onlineList.splice(this.onlineList.findIndex(val => val.id === obj.id), 1)
+        this.offlineList.unshift(obj)
+      } else {
+        this.offlineList.splice(this.offlineList.findIndex(val => val.id === obj.id), 1)
+        this.onlineList.unshift(obj)
+      }
+      this.$apply()
     }
 
     methods = {
@@ -263,12 +301,13 @@
         this.$apply()
       },
       activeBtnOne(obj) {
+        this._upOrDown(obj)
       },
       activeBtnTwo(obj) {
         this.$invoke('confirm', 'show')
       },
       activeBtnThree(obj) {
-        wepy.$instance.globalData.currentGroupActive = obj
+        this.$parent.globalData.currentGroupActive = obj
         let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
         this.$navigate(url)
       },

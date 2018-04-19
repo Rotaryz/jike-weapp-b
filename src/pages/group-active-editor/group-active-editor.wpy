@@ -15,14 +15,14 @@
       <view class="server-left g-a-item-box">
         <view class="g-a-item-left ">活动名称</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotName}}" type="text" value="{{info.hotName}}" bindinput="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
+          <input class="g-a-input {{hotName}}" type="text" value="{{info.hotName}}" @input="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
         </view>
         <view class="g-a-item-right g-a-i-max-num">{{hotNameLen}}/15</view>
       </view>
       <view class="server-add-number g-a-item-box">
         <view class="g-a-item-left ">添加数量</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{addNum}}" type="number" value="{{info.addNum}}" bindinput="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input {{addNum}}" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
       <view class="server-hot-date g-a-item-box">
@@ -31,12 +31,7 @@
           <view class="g-a-h-d-l">自今日起</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
-            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" bindchange="bindPickerChangeHotEndDate" value="{{index}}">
-              {{info.hotEndDate}}
-              <view class="picker">
-                {{array[index]}}
-              </view>
-            </picker>
+            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
             <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
           </view>
         </view>
@@ -46,31 +41,21 @@
       <view class="hot-time-limit g-a-item-box">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{timeLimit}}" bindchange="bindPickerChangeTimeLimit" value="{{index}}" range="{{arrayTime}}">
-            {{info.timeLimit}}
-            <view class="picker">
-              {{array[index]}}
-            </view>
-          </picker>
+          <picker class="g-a-i-option {{timeLimit}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-people-number g-a-item-box">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{peopleNum}}" bindchange="bindPickerChangePeopleNum" value="{{index}}" range="{{arrayPeople}}">
-            {{info.peopleNum}}
-            <view class="picker">
-              {{array[index]}}
-            </view>
-          </picker>
+          <picker class="g-a-i-option {{peopleNum}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
           <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-price g-a-item-box">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" bindinput="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
@@ -91,8 +76,7 @@
     TPLPEOPLE,
     NEW,
     EDITOR,
-    PRICEDEFAULT,
-    MINSIZE
+    PRICEDEFAULT
   } from 'api/group-active-config'
 
   console.info(NEW, EDITOR)
@@ -110,14 +94,16 @@
         addNum: INPUTDEFAULT,
         hotStartDate: new Date(),
         hotEndDate: HOTENDDEFAULT,
+        hotEndDateIndex: 0,
         timeLimit: PICKERDEFAUFT,
+        timeLimitIndex: 0,
         peopleNum: PICKERDEFAUFT,
+        peopleNumIndex: 0,
         hotPrice: INPUTDEFAULT,
         inventory: INPUTDEFAULT
       },
       arrayPeople: TPLPEOPLE,
-      arrayTime: TPLTIME,
-      inputTimer: null
+      arrayTime: TPLTIME
     }
 
     onLoad(option) {
@@ -125,16 +111,28 @@
     }
 
     onShow() {
-
+      console.log(this)
+      console.log(this.$parent.globalData.currentCouponGA, '--------------------------')
+      const currentCoupon = this.$parent.globalData.currentCouponGA
+      this._fromServerPageData(currentCoupon)
     }
 
     onHide() {
 
     }
 
+    _fromServerPageData(obj) {
+      if (obj) {
+        this.info.serverType = obj.title
+        this.info.price = obj.platform_price
+        this.info.inventory = obj.inventory
+        this.$apply()
+      }
+    }
+
+    // 初始化数据
     _init(option) {
-      const obj = wepy.$instance.globalData.currentGroupActive
-      console.log(obj)
+      const obj = this.$parent.globalData.currentGroupActive
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
@@ -147,6 +145,9 @@
         this.info.peopleNum = obj.peopleNum + '人'
         this.info.hotPrice = obj.hotPrice.toFixed(1)
         this.info.inventory = obj.inventory
+        this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
+        this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
+        this.$apply()
       }
       this.$apply()
     }
@@ -164,7 +165,8 @@
         this.info.hotEndDate !== HOTENDDEFAULT &&
         this.info.timeLimit !== PICKERDEFAUFT &&
         this.info.peopleNum !== PICKERDEFAUFT &&
-        (hotPrice > 0 && hotPrice < price)
+        (hotPrice > 0 && hotPrice < price) &&
+        !isNaN(this.info.hotPrice * 1)
       )
       return flag
     }
@@ -172,14 +174,17 @@
     methods = {
       toChooseServer() {
         let url = `/pages/group-active-choose-server/group-active-choose-server`
+        // url = `/pages/choice-coupon/choice-coupon`
         this.$navigate(url)
       },
       bindPickerChangePeopleNum(e) {
         this.info.peopleNum = this.arrayPeople[e.detail.value]
+        this.info.peopleNumIndex = e.detail.value
         this.$apply()
       },
       bindPickerChangeTimeLimit(e) {
         this.info.timeLimit = this.arrayTime[e.detail.value]
+        this.info.timeLimitIndex = e.detail.value
         this.$apply()
       },
       bindPickerChangeHotEndDate(e) {
@@ -196,19 +201,12 @@
         this.$apply()
       },
       hotPriceInput(e) {
-        let val = parseFloat(e.detail.value)
-        let max = parseFloat(this.info.price)
-        this.inputTimer && clearTimeout(this.inputTimer)
-        this.inputTimer = setTimeout(() => {
-          val = Math.max(MINSIZE, val)
-          val = Math.min(max, val)
-          val = val.toFixed(1)
-          this.info.hotPrice = val
-          console.log(this.info.hotPrice)
-          this.$apply()
-          return val
-        }, 50)
-        // return val
+        let value = e.detail.value
+        let re = /([0-9]+\.[0-9])[0-9]*/
+        value = value.replace(re, '$1')
+        this.info.hotPrice = value
+        this.$apply()
+        return value
       },
       saveInfo(e) {
         if (this._checkInfoLegal()) {
@@ -251,6 +249,7 @@
         let flag = this._checkInfoLegal()
         return flag ? '' : 'disable'
       }
+
     }
     components = {
       Toast

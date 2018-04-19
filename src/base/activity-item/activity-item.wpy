@@ -4,7 +4,7 @@
       <view class="up">
         <view class="up-box">
           <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" src="{{activeObj.src}}"></image>
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
             <view class="u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
           <view class="u-title">{{activeObj.hotName}}</view>
@@ -27,7 +27,7 @@
       <view class="up">
         <view class="up-box">
           <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" src="{{activeObj.src}}"></image>
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
           </view>
           <view class="u-title">{{activeObj.hotName}}</view>
           <view class="u-price">现价 ¥{{activeObj.price}}</view>
@@ -119,21 +119,23 @@
             height: 100%
             width: 27.195%
             overflow: hidden
+            border: 0.5px solid $color-col-line
             border-radius: 2px
             margin-right: 10px
             .u-p-image
               width: 100%
               height: 100%
+              border-radius: 2px
             .u-p-people
               position: absolute
-              padding-left: 7.5px
               bottom: 0
-              border-radius: 2px
               line-height: 17px
               height: 17px
               width: 100%
+              border-radius: 2px
               opacity: .6
               background-color: #000
+              text-indent: 7.5px
               font-family: $font-family-light
               font-size: $font-size-small-s
               color: $color-white
@@ -149,7 +151,7 @@
             color: $color-text-light
             width: 70%
           .u-hot-price
-            font-family: $font-family-light
+            font-family: $font-family-regular
             font-size: $font-size-small-s
             color: $color-text-light
             width: 70%

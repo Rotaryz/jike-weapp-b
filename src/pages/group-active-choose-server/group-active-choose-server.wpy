@@ -10,7 +10,7 @@
       </repeat>
     </view>
     <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
-      <view class="g-a-c-s-submit" @tap="done">完成</view>
+      <view class="g-a-c-s-submit {{btnStausStyle}}" @tap="done">完成</view>
     </view>
     <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
       <view class="e-box">
@@ -27,40 +27,70 @@
   import URIS from 'common/js/config'
   import base from 'common/mixins/base'
 
+  function test() {
+    let arr = []
+    for (let i = 0; i < 7; i++) {
+      arr.push({
+        id: i,
+        promotion_id: i,
+        platform_price: (Math.random() * 100 + 50) >>> 0,
+        title: '80代120代金券' + i,
+        end_at: '2018-5-1',
+        inventory: 888
+      })
+    }
+    return arr
+  }
+
+  const jj = test()
   export default class GACServer extends wepy.page {
     mixins = [base]
 
     data = {
       imageUrlHead: URIS.image,
-      couponList: new Array(7),
-      num: -1,
-      index: -1,
-      moreList: []
+      couponList: jj,
+      prevId: -1,
+      currentCoupon: {}
     }
 
-    events = {
-      handleClick(id, $event) {
-        console.log($event)
-        this.id = id
-        if (this.index !== -1) {
-          this.couponList.forEach((item, idx) => {
-            if (item.id === id) {
-              item.checked = !item.checked
-              if (item.checked) {
-                this.num = idx
-              }
-            } else {
-              item.checked = false
-            }
-          })
-        } else {
-          this.couponList.forEach((item, idx) => {
-            if (item.promotion_id === id) {
-              item.checked = !item.checked
-            }
-          })
-        }
+    onLoad() {
+      const currentCoupon = this.$parent.globalData.currentCouponGA
+      this._findCoupon(currentCoupon)
+    }
+
+    onShow() {
+
+    }
+
+    // 初始化
+    async _init() {
+
+    }
+
+    _findCoupon(obj) {
+      if (obj) {
+        this.prevId = this.couponList.findIndex(val => val.id === obj.id)
+        this.couponList[this.prevId].checked = true
+        this.$apply()
       }
+    }
+
+    _formatRqData(res) {
+      res.data.map(item => {
+        return {
+          id: item.id,
+          promotion_id: item.id,
+          platform_price: item.platform_price,
+          title: item.title,
+          end_at: item.sell_end_at,
+          checked: 0,
+          inventory: item.stock
+        }
+      })
+    }
+
+    _checkInfoLegal() {
+      return this.prevId !== -1
     }
 
     computed = {
@@ -69,10 +99,38 @@
       }
     }
 
+    events = {
+      handleClick(id) {
+        console.log(this.prevId, id)
+        let couponItem
+        if (this.prevId === id) return
+        if (this.prevId !== -1) {
+          couponItem = this.couponList.find(val => val.id === this.prevId)
+          couponItem.checked = !couponItem.checked
+        }
+        couponItem = this.couponList.find(val => val.id === id)
+        couponItem.checked = !couponItem.checked
+        this.prevId = id
+        this.currentCoupon = couponItem
+        this.$apply()
+      }
+    }
+
+    computed = {
+      btnStausStyle() {
+        let flag = this._checkInfoLegal()
+        return flag ? '' : 'disable'
+      }
+    }
+
     methods = {
       done() {
-        this.couponList = this.couponList.length ? [] : new Array(7)
-        this.$apply()
+        if (this._checkInfoLegal()) {
+          this.couponList = this.couponList.length ? [] : jj
+          this.$parent.globalData.currentCouponGA = this.currentCoupon
+          this.$apply()
+          this.$back()
+        }
       }
     }
 
@@ -138,6 +196,8 @@
         font-size: $font-size-medium
         color: $color-white
         letter-spacing: 1.02px
+        &.disable
+          background: $color-mask-bgc
 
     .g-a-c-s-empty
       margin-top: -40.5%
