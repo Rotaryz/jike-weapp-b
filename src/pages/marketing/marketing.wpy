@@ -163,7 +163,6 @@
       await this.load()
       await this._checkService()
       this.loaded()
-      console.log(this.list)
     }
 
     async load() {
