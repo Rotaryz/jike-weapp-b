@@ -2,27 +2,18 @@
   <view class="data-wrapper">
     <view class="herder-title">
       <view class="header">
-        <view wx:for="{{nacList}}"
-              class="{{showNac === index ? 'da-active':''}}"
-              wx:key="{{index}}" @tap="checkNac({{item.type}},{{index}})">{{
-          item.title}}
+        <view wx:for="{{nacList}}" class="{{showNac === index ? 'da-active':''}}" wx:key="{{index}}" @tap="checkNac({{item.type}},{{index}})">{{item.title}}
         </view>
       </view>
     </view>
     <view class="tips">
-      <view wx:for="{{typeList}}" wx:key="{{index}}"
-            class="tips-title {{showType === index ? 'tips-active':''}}"
-            @tap="showData({{index}})">
+      <view wx:for="{{typeList}}" wx:key="{{index}}" class="tips-title {{showType === index ? 'tips-active':''}}" @tap="showData({{index}})">
         <view>{{item.title}}</view>
         <view>{{item.count}}</view>
         <view>较{{nacList[showNac].day}}
           <text>{{item.percentage}}%</text>
-          <image
-            src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
-            wx:if="{{imageUri && item.trend === 'up'}}"></image>
-          <image
-            src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}"
-            wx:if="{{imageUri && item.trend === 'down'}}"></image>
+          <image src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}" wx:if="{{imageUri && item.trend === 'up'}}"></image>
+          <image src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}" wx:if="{{imageUri && item.trend === 'down'}}"></image>
         </view>
       </view>
     </view>
@@ -31,15 +22,50 @@
       <view>{{typeList[showType].count}}</view>
       <view>较{{nacList[showNac].day}}
         <text>{{typeList[showType].percentage}}%</text>
-        <image
-          src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}"
-          wx:if="{{imageUri && customerTrend.detial.customer_trend === 'up'}}"></image>
-        <image
-          src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}"
-          wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
+        <image src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}" wx:if="{{imageUri && customerTrend.detial.customer_trend === 'up'}}"></image>
+        <image src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}" wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
       </view>
     </view>
     <AeraChart wx:if="{{showAera}}"></AeraChart>
+    <view class="data-source {{monthbox ? 'data-source-top'  : ''}}"></view>
+    <view class="data-source-detail">
+      <view class="data-source-detail-title">
+        <view class="data-detail-title-icon"></view>
+        <view>订单明细</view>
+      </view>
+      <view class="data-detail-box">
+        <view class="data-detail-list">
+          <view class="data-detail-list-left">流量来源</view>
+          <view class="data-detail-list-right">新用户数</view>
+          <view class="data-detail-list-right">访问人数</view>
+          <view class="data-detail-list-right">访问次数</view>
+        </view>
+        <view class="data-detail-list">
+          <view class="data-detail-list-left">分享数据</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">222222220</view>
+          <view class="data-detail-list-right">0</view>
+        </view>
+        <view class="data-detail-list">
+          <view class="data-detail-list-left">二维码数据</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">0</view>
+        </view>
+        <view class="data-detail-list">
+          <view class="data-detail-list-left">联盟数据</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">0</view>
+        </view>
+        <view class="data-detail-list">
+          <view class="data-detail-list-left">商圈数据</view>
+          <view class="data-detail-list-right">011</view>
+          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right">0</view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -58,8 +84,10 @@
     }
 
     config = {
-      navigationBarTitleText: '数据流量'
+      navigationBarTitleText: '数据流量',
+      navigationBarTextStyle: '#363547'
     }
+
     components = {
       AeraChart: AeraChart
     }
@@ -83,7 +111,8 @@
       }],
       typeList: [],
       dataList: [],
-      timeMsg: 'yeaterday'
+      timeMsg: 'yeaterday',
+      monthbox: false
     }
 
     async load (time = 'yesterday', type = 'hit') {
@@ -93,6 +122,12 @@
         this.dataList = res.data
         this.typeList = this.dataList.detail
         this.$invoke('AeraChart', 'infoArea', res.data)
+        this.$invoke('AeraChart', 'switchType', data, true)
+        if (data.time === 'month') {
+          this.monthbox = true
+        } else {
+          this.monthbox = false
+        }
 //        this.$com.AeraChart.$wxpage.infoArea(res.data)
         this.showAera = true
         this.loaded()
@@ -220,5 +255,45 @@
           top: 4px
           height: 10px
           width: 10px
-
+  .data-source
+    height: 10px
+    background: #F9F9F9
+    margin-top: 70vw
+  .data-source-top
+    margin-top: 63vw
+  .data-source-detail
+    padding: 0 12px 50px
+    .data-source-detail-title
+      display: flex
+      flex-direction: row
+      padding: 15px 0
+      align-items: center
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d
+      .data-detail-title-icon
+        width: 4px
+        height: 13px
+        margin-right: 5px
+        background: $color-assist-f
+    .data-detail-box
+      border: 0.5px solid #E6E6E6
+      .data-detail-list
+        display: flex
+        height: 34.5px
+        align-items: center
+        flex-direction: row
+        font-family: $font-family-light
+        font-size: $font-size-small
+        color: $color-theme
+        border-bottom: .5px solid #E6E6E6
+        &:nth-of-type(odd)
+          background: #f7f7f7
+        &:last-child
+          border-bottom: none
+        .data-detail-list-left
+          padding-left: 15px
+          width: 100px
+        .data-detail-list-right
+          flex: 1
 </style>
