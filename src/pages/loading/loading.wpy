@@ -2,8 +2,8 @@
   <view class="content">
     <view class="loading">
       <image wx:if="{{imageUri}}"
-             src="{{imageUri + '/defaults/b-image/page/icon-default-logo@2x.png'}}"></image>
-      <view class="shopText">赞播商家助手</view>
+             src="{{imageUri + '/defaults/b-image/page/icon-guide_logo@2x.png'}}"></image>
+      <view class="shopText">赞播商户助手</view>
       <view class="load">
         <text class="{{showLoad === 1 ? '' : 'white'}}"></text>
         <text class="{{showLoad === 2 ? '' : 'white'}}"></text>
