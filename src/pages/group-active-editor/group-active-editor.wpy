@@ -113,7 +113,7 @@
     onShow() {
       console.log(this)
       console.log(this.$parent.globalData.currentCouponGA, '--------------------------')
-      const currentCoupon = this.$parent.globalData.currentCouponGA
+      const currentCoupon = this.$parent.globalData.groupActive.currentCouponGA
       this._fromServerPageData(currentCoupon)
     }
 
@@ -132,7 +132,7 @@
 
     // 初始化数据
     _init(option) {
-      const obj = this.$parent.globalData.currentGroupActive
+      const obj = this.$parent.globalData.groupActive.currentGroupActive
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {

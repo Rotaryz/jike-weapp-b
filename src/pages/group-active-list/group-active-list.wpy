@@ -90,8 +90,6 @@
       let params = this._resetConfig()
       await this._getNewActiveList(this.status, params)
       wx.stopPullDownRefresh()
-      console.log(this.onlineList, 'on')
-      console.log(this.offlineList, 'off')
     }
 
     // 重置配置
@@ -307,7 +305,7 @@
         this.$invoke('confirm', 'show')
       },
       activeBtnThree(obj) {
-        this.$parent.globalData.currentGroupActive = obj
+        this.$parent.globalData.groupActive.currentGroupActive = obj
         let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
         this.$navigate(url)
       },

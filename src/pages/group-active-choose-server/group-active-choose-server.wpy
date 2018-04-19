@@ -127,7 +127,7 @@
       done() {
         if (this._checkInfoLegal()) {
           this.couponList = this.couponList.length ? [] : jj
-          this.$parent.globalData.currentCouponGA = this.currentCoupon
+          this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()
           this.$back()
         }

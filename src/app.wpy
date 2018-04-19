@@ -9,31 +9,31 @@
   import URIS from 'common/js/config'
 
   export default class extends wepy.app {
-    constructor () {
+    constructor() {
       super()
       this.use('requestfix')
       this.use('promisify')
     }
 
-    onLaunch () {
+    onLaunch() {
       // 校验SDK
       wxUtils.checkSDK()
     }
 
-    isObject (item) {
+    isObject(item) {
       return typeof item === 'object' && !this.isArray(item)
     }
 
-    isArray (item) {
+    isArray(item) {
       return Object.prototype.toString.apply(item) === '[object Array]'
     }
 
-    isUndefined (item) {
+    isUndefined(item) {
       return typeof item === 'undefined'
     }
 
     // 向下暴露一个更换globalData的方法
-    updateGlobalData (name, obj) {
+    updateGlobalData(name, obj) {
       // 校验: globalData
       if (!this.globalData) return
       // 校验: 操作字段
@@ -157,7 +157,12 @@
       baseLogin: URIS.login,
       isAuthorise: false,
       user: null,
-      orderInfo: {}
+      orderInfo: {},
+      groupActive: {
+        currentCouponGA: null,
+        currentGroupActive: null
+      }
+
     }
   }
 </script>
