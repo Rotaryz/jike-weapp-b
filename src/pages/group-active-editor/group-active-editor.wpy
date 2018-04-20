@@ -59,7 +59,7 @@
         </view>
       </view>
     </view>
-    <view class="g-a-submit {{btnStausStyle}}" @tap="saveInfo">保存</view>
+    <view class="g-a-submit {{btnStatusStyle}}" @tap="saveInfo">保存</view>
   </view>
 </template>
 
@@ -68,6 +68,8 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
+  import GroupActiveAPI from 'api/group-active'
+  import {ERR_OK} from 'api/base'
   import {
     PICKERDEFAUFT,
     INPUTDEFAULT,
@@ -78,7 +80,9 @@
     DOWN,
     UP,
     EDITOR,
-    PRICEDEFAULT
+    PRICEDEFAULT,
+    STOCKUNLIMIT,
+    HTOENDSTAMP
   } from 'api/group-active-config'
 
   export default class GAEditor extends wepy.page {
@@ -129,7 +133,7 @@
       if (obj) {
         this.info.serverType = obj.title
         this.info.price = obj.platform_price
-        this.info.inventory = obj.inventory
+        this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
         this.info.id = obj.id
         this.$apply()
       }
@@ -151,7 +155,7 @@
         this.info.timeLimit = obj.timeLimit + '小时'
         this.info.peopleNum = obj.peopleNum + '人'
         this.info.hotPrice = obj.hotPrice.toFixed(1)
-        this.info.inventory = obj.inventory
+        this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
         this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
         this.info.disableReduceInfo.addNum = obj.addNum
@@ -168,6 +172,7 @@
       let price = parseFloat(this.info.price)
       let addNum = parseInt(this.info.addNum)
       let hotPrice = parseFloat(this.info.hotPrice)
+      let peopleNum = parseInt(this.info.peopleNum)
       let flag = false
       if (statusType === UP) {
         // 上线状态的判断
@@ -175,7 +180,7 @@
           // this.info.serverType !== INPUTDEFAULT &&
           // price > 0 && // 价格
           this.info.hotName !== INPUTDEFAULT && // 活动名称
-          addNum >= this.info.peopleNum && // 数量
+          addNum >= peopleNum && // 数量
           this.info.hotEndDate !== HOTENDDEFAULT  // 截止时间
         )
       } else {
@@ -184,7 +189,7 @@
           this.info.serverType !== INPUTDEFAULT &&
           price > 0 &&
           this.info.hotName !== INPUTDEFAULT &&
-          addNum >= this.info.peopleNum &&
+          addNum >= peopleNum &&
           this.info.hotEndDate !== HOTENDDEFAULT &&
           this.info.timeLimit !== PICKERDEFAUFT &&
           this.info.peopleNum !== PICKERDEFAUFT &&
@@ -196,8 +201,31 @@
     }
 
     // 格式化上传数据
-    _formatPostInfo(){
+    _formatPostInfo() {
+      return {
+        good_ids: this.info.id,
+        activity_name: this.info.hotName,
+        stock: this.info.addNum,
+        end_at: this.info.hotEndDate + HTOENDSTAMP,
+        config: {
+          group_validity: parseInt(this.info.timeLimit),
+          group_number: parseInt(this.info.peopleNum),
+          group_price: parseFloat(this.info.hotPrice)
+        }
+      }
+    }
 
+    // 请求服务器创建活动
+    async _rqCreateNewData(data) {
+      const json = await GroupActiveAPI.createGroupActive(data)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.$invoke('toast', 'show', json.message)
+        this.loaded()
+        return false
+      }
     }
 
     methods = {
@@ -242,46 +270,48 @@
         this.$apply()
         return value
       },
-      saveInfo(e) {
+      saveInfo() {
         if (this._checkInfoLegal()) {
-          this.$back()
+          let data = this._formatPostInfo()
+          this._rqCreateNewData(data) && console.log(data)
+          // this.$back()
         }
       }
     }
     computed = {
       price() {
-        return this.info.price !== PRICEDEFAULT ? 'g-a-has-content' : ''
+        return this.info.price !== PRICEDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       peopleNum() {
-        return this.info.peopleNum !== PICKERDEFAUFT ? 'g-a-has-content' : ''
+        return this.info.peopleNum !== PICKERDEFAUFT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       timeLimit() {
-        return this.info.timeLimit !== PICKERDEFAUFT ? 'g-a-has-content' : ''
+        return this.info.timeLimit !== PICKERDEFAUFT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       hotEndDate() {
-        return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : ''
+        return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       hotPrice() {
-        return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       hotName() {
-        return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       addNum() {
-        return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : ''
+        return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
       hotNameLen() {
         return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
       },
       hotEndStartDate() {
-        return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24
+        return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24 * 30
       },
       inventory() {
         return this.info.inventory !== INPUTDEFAULT ? `库存：${this.info.inventory}` : '请输入'
       },
-      btnStausStyle() {
+      btnStatusStyle() {
         let flag = this._checkInfoLegal()
-        return flag ? '' : 'disable'
+        return flag ? 'disable-undef' : 'disable'
       },
       isDisabled() {
         return this.info.statusType === UP

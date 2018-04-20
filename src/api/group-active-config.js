@@ -9,6 +9,8 @@ const NEW = '新建'
 const EDITOR = '编辑'
 const PRICEDEFAULT = '0.0'
 const MINSIZE = 0.1
+const STOCKUNLIMIT = -1 // 库存无限制的值
+const HTOENDSTAMP = ' 23:59:59'
 
 function createTime() {
   let arr = []
@@ -67,5 +69,7 @@ export {
   UPPAGELIMIT,
   DOWNPAGELIMIT,
   SUCCESS,
-  MINSIZE
+  MINSIZE,
+  STOCKUNLIMIT,
+  HTOENDSTAMP
 }

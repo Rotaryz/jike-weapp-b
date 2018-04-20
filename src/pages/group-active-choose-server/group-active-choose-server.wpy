@@ -10,7 +10,7 @@
       </repeat>
     </view>
     <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
-      <view class="g-a-c-s-submit {{btnStausStyle}}" @tap="done">完成</view>
+      <view class="g-a-c-s-submit {{btnStatusStyle}}" @tap="done">完成</view>
     </view>
     <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
       <view class="e-box">
@@ -74,7 +74,6 @@
       const res = await this._rqGetServerList(this.params)
       if (res) {
         this.couponList = this._formatRqData(res)
-        console.log(this.couponList, '----++-------')
         this.$apply()
         this.loaded()
       }
@@ -85,8 +84,7 @@
       id = id * 1
       if (id !== -1) {
         this.prevId = this.couponList.findIndex(val => val.id * 1 === id)
-        console.log(this.prevId, this.couponList)
-        this.couponList[this.prevId].checked = true
+        this.prevId !== -1 && (this.couponList[this.prevId].checked = true)
         this.$apply()
       }
     }
@@ -98,7 +96,6 @@
 
     // 格式化服务器数据
     _formatRqData(res) {
-      console.log(res, '-------------')
       if (res.data && res.data.length === 0) return []
       let arr = []
       res.data.map(item => {
@@ -129,12 +126,11 @@
 
     computed = {
       isEmpty() {
-        console.log(this.couponList, 2222)
         return this.couponList.length === 0
       },
-      btnStausStyle() {
+      btnStatusStyle() {
         let flag = this._checkInfoLegal()
-        return flag ? '' : 'disable'
+        return flag ? 'disable-undef' : 'disable'
       }
     }
 

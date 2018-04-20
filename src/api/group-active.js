@@ -25,6 +25,16 @@ export default class GroupActive extends base {
     return await this.get(url, data)
   }
 
+  /**
+   * 创建团购活动
+   * @param data
+   * @returns {Promise<void>}
+   */
+  static async createGroupActive(data) {
+    const url = `${this.baseUrl}/api/group/tuan-gou`
+    return await this.post(url, data)
+  }
+
 }
 
 // import {ERR_OK} from 'api/base'
