@@ -305,7 +305,6 @@
       this.description = res.describe ? res.describe : ''
       this.tel = res.mobile ? res.mobile : ''
       this.site = res.address ? res.address : ''
-      this.mapAddress = res.address ? res.address : ''
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
       this.latitude = res.latitude ? res.latitude : 23.099994
       this.longitude = res.longitude ? res.longitude : 113.324520
@@ -342,6 +341,7 @@
       if (res.is_leader === 1) {
         this.disableFlag = res.business_circle ? !this.disableFlag : this.disableFlag
       }
+      this._initMapAddress()
       this.$apply()
       this.loaded()
     }
@@ -349,6 +349,21 @@
     onReady() {
       this.mapCtx = wx.createMapContext('myMap')
       this.$apply()
+    }
+
+    _initMapAddress() {
+      this.qqmapsdk.reverseGeocoder({
+        location: {
+          latitude: this.latitude,
+          longitude: this.longitude
+        },
+        success: (resData) => {
+          this.mapAddress = resData.result.address
+          this.movelongitude = this.longitude
+          this.movelatitude = this.latitude
+          this.$apply()
+        }
+      })
     }
 
     methods = {
@@ -507,8 +522,8 @@
         this.$apply()
       },
       async storeMsgSubmit() {
-        this.longitude = this.movelongitude
-        this.latitude = this.movelatitude
+        let longitude = this.movelongitude
+        let latitude = this.movelatitude
         let testArr = [
           {value: this.name, txt: '请输入门店名称'},
           {value: this.description, txt: '请输入门店描述'},
@@ -538,8 +553,8 @@
             open_time: this.hourBegin,
             close_time: this.hourEnd,
             week_day: this.weekChecked,
-            longitude: this.longitude,
-            latitude: this.latitude,
+            longitude: longitude,
+            latitude: latitude,
             logo_image_id: this.logoId,
             shop_images: this.storeImgs,
             qrcode_id: this.serviceCode[0].image_id,
@@ -657,6 +672,9 @@
           let location = res.result.location
           self.longitude = location.lng
           self.latitude = location.lat
+          self.movelongitude = location.lng
+          self.movelatitude = location.lat
+          self.mapAddress = address
           self.$apply()
         },
         fail: function(res) {

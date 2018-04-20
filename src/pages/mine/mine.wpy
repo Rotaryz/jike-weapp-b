@@ -169,7 +169,6 @@
       } else {
         this.messageFlag = false
       }
-      console.log(this.messageFlag)
       this.$apply()
     }
     async load() {

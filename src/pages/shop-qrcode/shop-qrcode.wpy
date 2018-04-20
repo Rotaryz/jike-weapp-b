@@ -1,6 +1,6 @@
 <template>
   <view class="shop-qrcode">
-    <canvas canvas-id="myCanvas" class="canvas" hidden="{{true}}"></canvas>
+    <canvas canvas-id="myCanvas{{index}}" class="canvas" hidden="{{true}}" wx:for="{{canvasArr}}" wx:key="{{index}}"></canvas>
     <swiper class="top" current="{{bigImgIdx}}" duration="300" bindchange="imgMove">
       <block wx:for="{{imgArr}}" wx:key="{{item}}">
         <swiper-item>
@@ -43,7 +43,8 @@
       qrcode: '',
       bigImgIdx: 0,
       smallImgIdx: 0,
-      imgArr: ['', '', '', '', '']
+      imgArr: ['', '', '', '', ''],
+      canvasArr: [0, 1, 2, 3, 4]
     }
 
     methods = {
@@ -71,7 +72,8 @@
       await this.load()
       // 小程序码
       const qrcode = await wepy.downloadFile({url: this.qrcode})
-      this.imgArr = await this.getImgs([0, 1, 2, 3, 4], qrcode)
+      let imgs = await this.getImgs([0, 1, 2, 3, 4], qrcode)
+      this.imgArr = [...imgs]
       this.$apply()
       Tips.loaded()
     }
@@ -95,7 +97,8 @@
     }
 
     async drawImage(idx, qrcode) {
-      const ctx = await wepy.createCanvasContext('myCanvas')
+      let name = 'myCanvas' + idx
+      const ctx = await wepy.createCanvasContext(name)
       // 背景
       const bg = await wepy.downloadFile({url: URIS.image + '/defaults/b-image/mine/pic-bg' + idx + '@2x.png'})
       let bgImg = bg.tempFilePath
@@ -157,7 +160,7 @@
         height: 1800,
         destWidth: 1132,
         destHeight: 1800,
-        canvasId: 'myCanvas'
+        canvasId: name
       })
       return res.tempFilePath
     }
