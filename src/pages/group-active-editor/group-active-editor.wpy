@@ -41,21 +41,21 @@
       <view class="hot-time-limit g-a-item-box">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{timeLimit}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
+          <picker class="g-a-i-option {{timeLimit}}" disabled="{{isDisabled}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-people-number g-a-item-box">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
-          <picker class="g-a-i-option {{peopleNum}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
+          <picker class="g-a-i-option {{peopleNum}}" disabled="{{isDisabled}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
           <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-price g-a-item-box">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input {{hotPrice}}" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
@@ -75,6 +75,8 @@
     TPLTIME,
     TPLPEOPLE,
     // NEW,
+    DOWN,
+    UP,
     EDITOR,
     PRICEDEFAULT
   } from 'api/group-active-config'
@@ -86,19 +88,21 @@
       imageUrlHead: URIS.image,
       model: '',
       info: {
+        id: 0, // 商品id
         serverType: INPUTDEFAULT,
         price: PRICEDEFAULT,
         hotName: INPUTDEFAULT,
         addNum: INPUTDEFAULT,
         hotStartDate: new Date(),
         hotEndDate: HOTENDDEFAULT,
-        hotEndDateIndex: 0,
         timeLimit: PICKERDEFAUFT,
         timeLimitIndex: 0,
         peopleNum: PICKERDEFAUFT,
         peopleNumIndex: 0,
         hotPrice: INPUTDEFAULT,
-        inventory: INPUTDEFAULT
+        inventory: INPUTDEFAULT,
+        statusType: DOWN,
+        disableReduceInfo: {}
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME,
@@ -106,6 +110,7 @@
     }
 
     onLoad(option) {
+      // 页面新建(全部),活动下线时编辑(全部),活动上线时编辑(编辑活动名称,时间只能延后,数量只能增加)
       this._init(option)
     }
 
@@ -119,11 +124,13 @@
 
     }
 
+    // 来自服务页面的对象赋值
     _fromServerPageData(obj) {
       if (obj) {
         this.info.serverType = obj.title
         this.info.price = obj.platform_price
         this.info.inventory = obj.inventory
+        this.info.id = obj.id
         this.$apply()
       }
     }
@@ -135,6 +142,7 @@
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
+        this.info.statusType = obj.statusType
         this.info.serverType = obj.serverType
         this.info.price = obj.price.toFixed(1)
         this.info.hotName = obj.hotName
@@ -146,36 +154,57 @@
         this.info.inventory = obj.inventory
         this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
+        this.info.disableReduceInfo.addNum = obj.addNum
+        this.info.disableReduceInfo.hotEndDate = obj.hotEndDate
         this.$apply()
       }
       this.$apply()
     }
 
     // 检查信息是否完整
-    _checkInfoLegal() {
+    _checkInfoLegal(statusType) {
+      statusType = this.info.statusType
+      // 活动类型上线
       let price = parseFloat(this.info.price)
       let addNum = parseInt(this.info.addNum)
       let hotPrice = parseFloat(this.info.hotPrice)
-      let flag = (
-        this.info.serverType !== INPUTDEFAULT &&
-        price > 0 &&
-        this.info.hotName !== INPUTDEFAULT &&
-        addNum > 0 &&
-        this.info.hotEndDate !== HOTENDDEFAULT &&
-        this.info.timeLimit !== PICKERDEFAUFT &&
-        this.info.peopleNum !== PICKERDEFAUFT &&
-        (hotPrice > 0 && hotPrice < price) &&
-        !isNaN(this.info.hotPrice * 1)
-      )
+      let flag = false
+      if (statusType === UP) {
+        // 上线状态的判断
+        flag = (
+          // this.info.serverType !== INPUTDEFAULT &&
+          // price > 0 && // 价格
+          this.info.hotName !== INPUTDEFAULT && // 活动名称
+          addNum >= this.info.peopleNum && // 数量
+          this.info.hotEndDate !== HOTENDDEFAULT  // 截止时间
+        )
+      } else {
+        // 下线状态的判断
+        flag = (
+          this.info.serverType !== INPUTDEFAULT &&
+          price > 0 &&
+          this.info.hotName !== INPUTDEFAULT &&
+          addNum >= this.info.peopleNum &&
+          this.info.hotEndDate !== HOTENDDEFAULT &&
+          this.info.timeLimit !== PICKERDEFAUFT &&
+          this.info.peopleNum !== PICKERDEFAUFT &&
+          (hotPrice > 0 && hotPrice < price) &&
+          !isNaN(this.info.hotPrice * 1)
+        )
+      }
       return flag
+    }
+
+    // 格式化上传数据
+    _formatPostInfo(){
+
     }
 
     methods = {
       toChooseServer() {
-        console.log(222)
-        if (this.toChooseServerTimer != null) return
+        if (this.toChooseServerTimer != null || this.info.statusType === UP) return
         this.toChooseServerTimer = setTimeout(() => {
-          let url = `/pages/group-active-choose-server/group-active-choose-server`
+          let url = `/pages/group-active-choose-server/group-active-choose-server?id=${this.info.id}`
           this.$navigate(url)
           clearTimeout(this.toChooseServerTimer)
           this.toChooseServerTimer = null
@@ -253,8 +282,10 @@
       btnStausStyle() {
         let flag = this._checkInfoLegal()
         return flag ? '' : 'disable'
+      },
+      isDisabled() {
+        return this.info.statusType === UP
       }
-
     }
     components = {
       Toast

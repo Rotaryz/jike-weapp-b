@@ -118,7 +118,7 @@
       if (status === UP) {
         res = await this._rqGetGroupActiveList(params, status)
         res && (this.onlineList = res.data)
-        res && (this.activityStatus = res.status.toString())
+        // res && (this.activityStatus = res.status.toString())
       } else {
         res = await this._rqGetGroupActiveList(params, status)
         res && (this.offlineList = res.data)
@@ -194,7 +194,6 @@
     async _rqGetGroupActiveList(params, type) {
       const json = await GroupActiveAPI.getGroupActiveList(params, type)
       if (json.error === ERR_OK) {
-        console.log(json)
         return json
       } else {
         this.$invoke('toast', 'show', json.message)

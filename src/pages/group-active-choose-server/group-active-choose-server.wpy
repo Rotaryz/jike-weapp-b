@@ -18,6 +18,7 @@
         <view class="e-txt">暂无数据</view>
       </view>
     </view>
+    <toast></toast>
   </view>
 </template>
 
@@ -26,76 +27,114 @@
   import Coupon from '@/base/coupon/coupon'
   import URIS from 'common/js/config'
   import base from 'common/mixins/base'
+  import GroupActiveAPI from 'api/group-active'
+  import {ERR_OK} from 'api/base'
+  import Toast from '@/base/toast/toast'
 
-  function test() {
-    let arr = []
-    for (let i = 0; i < 7; i++) {
-      arr.push({
-        id: i,
-        promotion_id: i,
-        platform_price: (Math.random() * 100 + 50) >>> 0,
-        title: '80代120代金券' + i,
-        end_at: '2018-5-1',
-        inventory: 888
-      })
-    }
-    return arr
-  }
+  // function test() {
+  //   let arr = []
+  //   for (let i = 0; i < 7; i++) {
+  //     arr.push({
+  //       id: i,
+  //       promotion_id: i,
+  //       platform_price: (Math.random() * 100 + 50) >>> 0,
+  //       title: '80代120代金券' + i,
+  //       end_at: '2018-5-1',
+  //       inventory: 888
+  //     })
+  //   }
+  //   return arr
+  // }
+  //
+  // const jj = test()
 
-  const jj = test()
+  const PAGELIMIT = 10
+
   export default class GACServer extends wepy.page {
     mixins = [base]
 
     data = {
       imageUrlHead: URIS.image,
-      couponList: jj,
+      couponList: [],
       prevId: -1,
-      currentCoupon: {}
+      currentCoupon: {},
+      params: {
+        page: 1,
+        limit: PAGELIMIT
+      }
     }
 
-    onLoad() {
-      const currentCoupon = this.$parent.globalData.currentCouponGA
-      this._findCoupon(currentCoupon)
-    }
-
-    onShow() {
-
+    async onLoad(option) {
+      await this._init()
+      this._findCoupon(option.id)
     }
 
     // 初始化
     async _init() {
-
+      const res = await this._rqGetServerList(this.params)
+      if (res) {
+        this.couponList = this._formatRqData(res)
+        console.log(this.couponList, '----++-------')
+        this.$apply()
+        this.loaded()
+      }
     }
 
-    _findCoupon(obj) {
-      if (obj) {
-        this.prevId = this.couponList.findIndex(val => val.id === obj.id)
+    // 查找已选的服务商品
+    _findCoupon(id) {
+      id = id * 1
+      if (id !== -1) {
+        this.prevId = this.couponList.findIndex(val => val.id * 1 === id)
+        console.log(this.prevId, this.couponList)
         this.couponList[this.prevId].checked = true
         this.$apply()
       }
     }
 
+    // 检查完成数据是否合法
+    _checkInfoLegal() {
+      return this.prevId !== -1
+    }
+
+    // 格式化服务器数据
     _formatRqData(res) {
+      console.log(res, '-------------')
+      if (res.data && res.data.length === 0) return []
+      let arr = []
       res.data.map(item => {
-        return {
+        arr.push({
           id: item.id,
           promotion_id: item.id,
           platform_price: item.platform_price,
           title: item.title,
           end_at: item.sell_end_at,
-          checked: 0,
+          checked: false,
           inventory: item.stock
-        }
+        })
       })
+      return arr
     }
 
-    _checkInfoLegal() {
-      return this.prevId !== -1
+    // 请求可选的服务列表
+    async _rqGetServerList(params) {
+      const json = await GroupActiveAPI.getGroupActiveServerList(params)
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.$invoke('toast', 'show', json.message)
+        this.loaded()
+        return {}
+      }
     }
 
     computed = {
       isEmpty() {
+        console.log(this.couponList, 2222)
         return this.couponList.length === 0
+      },
+      btnStausStyle() {
+        let flag = this._checkInfoLegal()
+        return flag ? '' : 'disable'
       }
     }
 
@@ -116,17 +155,10 @@
       }
     }
 
-    computed = {
-      btnStausStyle() {
-        let flag = this._checkInfoLegal()
-        return flag ? '' : 'disable'
-      }
-    }
-
     methods = {
       done() {
         if (this._checkInfoLegal()) {
-          this.couponList = this.couponList.length ? [] : jj
+          // this.couponList = this.couponList.length ? [] : jj
           this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()
           setTimeout(() => {
@@ -137,7 +169,8 @@
     }
 
     components = {
-      Coupon: Coupon
+      Coupon: Coupon,
+      'toast': Toast
     }
 
     config = {

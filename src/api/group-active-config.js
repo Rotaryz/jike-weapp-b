@@ -29,8 +29,8 @@ function createPeople() {
 }
 
 // 团购活动列表页面 和 header-switch组件
-const UP = '1'
-const DOWN = '2'
+const UP = '1' // 已上线
+const DOWN = '0' // 已下线
 const ON = 'on'
 const OFF = 'off'
 const UPPAGELIMIT = 10
