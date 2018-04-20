@@ -107,6 +107,9 @@
         'pages/my-codes/my-codes',
         'pages/shop-qrcode/shop-qrcode',
         'pages/message/message',
+        'pages/group-active-list/group-active-list',
+        'pages/group-active-editor/group-active-editor',
+        'pages/group-active-choose-server/group-active-choose-server',
         'pages/new-share-activity/new-share-activity'
       ],
       window: {
@@ -155,7 +158,12 @@
       baseLogin: URIS.login,
       isAuthorise: false,
       user: null,
-      orderInfo: {}
+      orderInfo: {},
+      groupActive: {
+        currentCouponGA: null,
+        currentGroupActive: null
+      }
+
     }
   }
 </script>

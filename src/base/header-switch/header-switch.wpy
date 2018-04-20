@@ -1,0 +1,107 @@
+<template>
+  <view class="header-switch-component">
+    <view class="header-switch" wx:if="{{isShowBtn}}">
+      <view class="h-s-title">{{title}}</view>
+      <view class="h-s-switch-box {{switchStyle}}" bindtap="handleClick">
+        <view class="h-s-switch-circle {{switchStyle}}"></view>
+      </view>
+    </view>
+    <view hidden="{{!isShowContent}}">
+      <slot></slot>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ON, SUCCESS} from 'api/group-active-config'
+
+  export default class HeaderSwitch extends wepy.component {
+    props = {
+      title: {
+        type: String,
+        default: ''
+      },
+      isChecked: {
+        type: String,
+        default: ON
+      },
+      activityStatus: {
+        type: String,
+        default: SUCCESS
+      }
+    }
+
+    computed = {
+      switchStyle() {
+        return this.isChecked === ON ? 'checked' : ''
+      },
+      isShowBtn() {
+        console.log(this.activityStatus)
+        return this.activityStatus.trim() === SUCCESS
+      },
+      isShowContent() {
+        if (this.isShowBtn) {
+          return this.isChecked === ON
+        } else {
+          return true
+        }
+      }
+    }
+
+    methods = {
+      handleClick() {
+        this.$emit('headerSwitchChange')
+      }
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import '../../common/stylus/variable'
+
+  .header-switch-component
+    .header-switch
+      display: flex
+      flex-flow: row no-wrap
+      align-items: center
+      justify-content: space-between
+      height: 50px
+      background-color: $color-white
+      box-sizing: border-box
+      margin-bottom: 9px
+      padding: 0 12px
+      border-bottom: .5px solid $color-col-line
+      .h-s-title
+        font-family: $font-family-light
+        font-size: $font-size-medium-x
+        color: $color-text-td
+      .h-s-switch-box
+        width: 44px
+        height: 24px
+        border-radius: 12px
+        background: #eaeaea
+        display: flex
+        align-items: center
+        position: relative
+        transition: .3s all
+        .h-s-switch-circle
+          width: 20px
+          height: 20px
+          background: $color-text-d
+          border-radius: 10px
+          position: absolute
+          left: 2px
+          top: 2px
+          transition: .3s all
+
+      .h-s-switch-box.checked
+        background: $color-assist-f
+        transition: .3s all
+
+        .h-s-switch-circle.checked
+          background: $color-white
+          left: 22px
+          top: 2px
+          transition: .3s all
+</style>

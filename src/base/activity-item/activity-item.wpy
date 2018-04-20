@@ -1,0 +1,205 @@
+<template>
+  <view class="active-item-component">
+    <view class="component-group-item" wx:if="{{activeType === 'group'}}">
+      <view class="up">
+        <view class="up-box">
+          <view class="u-pic">
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
+            <view class="u-p-people">{{activeObj.peopleNum}}人团</view>
+          </view>
+          <view class="u-title">{{activeObj.hotName}}</view>
+          <view class="u-price">现价 ¥{{activeObj.price}}</view>
+          <view class="u-hot-price">团购价
+            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="down">
+        <view class="down-box">
+          <view class="d-status">{{activeObj.status}}</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+      </view>
+    </view>
+    <view class="component-group-item" wx:if="{{activeType === 'share'}}">
+      <view class="up">
+        <view class="up-box">
+          <view class="u-pic">
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
+          </view>
+          <view class="u-title">{{activeObj.hotName}}</view>
+          <view class="u-price">现价 ¥{{activeObj.price}}</view>
+          <view class="u-hot-price">团购价
+            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="down">
+        <view class="down-box">
+          <view class="d-status">{{activeObj.status}}</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+  import {UP} from 'api/group-active-config'
+
+  export default class ActivityItem extends wepy.component {
+    props = {
+      // group 团购活动 share 分享赚钱
+      activeType: {
+        type: String,
+        default: ''
+      },
+      activeObj: {
+        type: Object,
+        default: {}
+      }
+    }
+    data = {
+      imageUrlHead: URIS.image,
+      upStatus: UP
+    }
+    methods = {
+      handleClickOne(obj) {
+        this.$emit('activeBtnOne', obj)
+      },
+      handleClickTwo(obj) {
+        this.$emit('activeBtnTwo', obj)
+      },
+      handleClickThree(obj) {
+        this.$emit('activeBtnThree', obj)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/mixin.styl"
+  @import "../../common/stylus/variable.styl"
+
+  .active-item-component
+    .component-group-item
+      background-color: $color-white
+      position: relative
+      padding-bottom: 31.34%
+      height: 0
+      border-radius: 2px
+      border: .5px solid $color-row-line
+      .up
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        height: 0
+        padding-bottom: 19.945%
+        .up-box
+          layout()
+          justify-content: space-around
+          position: absolute
+          top: 0
+          right: 0
+          left: 0
+          bottom: 0
+          padding: 8px 0px 12px
+          margin: 0 10px
+          overflow: hidden
+          border-bottom: .5px dotted $color-row-line
+          .u-pic
+            position: relative
+            height: 100%
+            width: 27.195%
+            overflow: hidden
+            border: 0.5px solid $color-col-line
+            border-radius: 2px
+            margin-right: 10px
+            .u-p-image
+              width: 100%
+              height: 100%
+              border-radius: 2px
+            .u-p-people
+              position: absolute
+              bottom: 0
+              line-height: 17px
+              height: 17px
+              width: 100%
+              border-radius: 2px
+              opacity: .6
+              background-color: #000
+              text-indent: 7.5px
+              font-family: $font-family-light
+              font-size: $font-size-small-s
+              color: $color-white
+          .u-title
+            no-wrap()
+            font-family: $font-family-regular
+            font-size: $font-size-medium
+            color: $color-text-dark
+            width: 70%
+          .u-price
+            font-family: $font-family-light
+            font-size: $font-size-small-s
+            color: $color-text-light
+            width: 70%
+          .u-hot-price
+            font-family: $font-family-regular
+            font-size: $font-size-small-s
+            color: $color-text-light
+            width: 70%
+            .u-hot-price-em
+              display: inline-block
+              font-family: $font-family-meddle
+              font-size: $font-size-small
+              color: #2D2B2F
+
+      .down
+        position: absolute
+        bottom: 0
+        left: 0
+        right: 0
+        height: 0
+        padding-bottom: 11.465%
+        .down-box
+          layout(row)
+          align-items: center
+          position: absolute
+          top: 0
+          right: 0
+          left: 0
+          bottom: 0
+          margin: 0 10px
+          overflow: hidden
+          .d-status
+            margin-left: 2px
+            ont-family: $font-family-light
+            font-size: $font-size-medium
+            color: $color-text-td
+            flex: 1
+          .d-btn
+            layout()
+            justify-content: center
+            align-items: center
+            box-sizing: border-box
+            margin-left: 5px
+            width: 60px
+            height: 24px
+            border: .5px solid $color-row-line
+            border-radius: 2px
+            font-family: $font-family-light
+            font-size: $font-size-small-s
+            color: $color-text
+          .d-editor
+            color: $color-assist-f
+            border-color: $color-assist-f
+            margin-right: 5px
+
+</style>

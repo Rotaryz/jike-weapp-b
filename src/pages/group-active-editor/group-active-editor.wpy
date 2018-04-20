@@ -1,0 +1,379 @@
+<template>
+  <view class="group-active-editor">
+    <view class="g-a-article">
+      <view class="server-type g-a-item-box">
+        <view class="g-a-item-left">添加服务</view>
+        <view class="g-a-item-middle g-a-server-type">{{info.serverType}}</view>
+        <view class="g-a-item-right to-choose-server" @tap="toChooseServer">
+          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+        </view>
+      </view>
+      <view class="server-price g-a-item-box">
+        <view class="g-a-item-left">现价</view>
+        <view class="g-a-item-middle {{price}}">{{info.price}}</view>
+      </view>
+      <view class="server-left g-a-item-box">
+        <view class="g-a-item-left ">活动名称</view>
+        <view class="g-a-item-middle">
+          <input class="g-a-input {{hotName}}" type="text" value="{{info.hotName}}" @input="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
+        </view>
+        <view class="g-a-item-right g-a-i-max-num">{{hotNameLen}}/15</view>
+      </view>
+      <view class="server-add-number g-a-item-box">
+        <view class="g-a-item-left ">添加数量</view>
+        <view class="g-a-item-middle">
+          <input class="g-a-input {{addNum}}" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
+        </view>
+      </view>
+      <view class="server-hot-date g-a-item-box">
+        <view class="g-a-item-left">活动时间</view>
+        <view class="g-a-item-middle g-a-item-hot-data">
+          <view class="g-a-h-d-l">自今日起</view>
+          <view class="g-a-h-d-m">至</view>
+          <view class="g-a-h-d-r">
+            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
+            <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="g-a-article">
+      <view class="hot-time-limit g-a-item-box">
+        <view class="g-a-item-left ">成团有效期</view>
+        <view class="g-a-item-middle g-a-item-choose">
+          <picker class="g-a-i-option {{timeLimit}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
+          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+        </view>
+      </view>
+      <view class="hot-people-number g-a-item-box">
+        <view class="g-a-item-left">成团人数</view>
+        <view class="g-a-item-middle g-a-item-choose">
+          <picker class="g-a-i-option {{peopleNum}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
+          <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+        </view>
+      </view>
+      <view class="hot-price g-a-item-box">
+        <view class="g-a-item-left">成团价格</view>
+        <view class="g-a-item-middle">
+          <input class="g-a-input {{hotPrice}}" type="digit" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
+        </view>
+      </view>
+    </view>
+    <view class="g-a-submit {{btnStausStyle}}" @tap="saveInfo">保存</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import Toast from '@/base/toast/toast'
+  import URIS from 'common/js/config'
+  import {
+    PICKERDEFAUFT,
+    INPUTDEFAULT,
+    HOTENDDEFAULT,
+    TPLTIME,
+    TPLPEOPLE,
+    // NEW,
+    EDITOR,
+    PRICEDEFAULT
+  } from 'api/group-active-config'
+
+  export default class GAEditor extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrlHead: URIS.image,
+      model: '',
+      info: {
+        serverType: INPUTDEFAULT,
+        price: PRICEDEFAULT,
+        hotName: INPUTDEFAULT,
+        addNum: INPUTDEFAULT,
+        hotStartDate: new Date(),
+        hotEndDate: HOTENDDEFAULT,
+        hotEndDateIndex: 0,
+        timeLimit: PICKERDEFAUFT,
+        timeLimitIndex: 0,
+        peopleNum: PICKERDEFAUFT,
+        peopleNumIndex: 0,
+        hotPrice: INPUTDEFAULT,
+        inventory: INPUTDEFAULT
+      },
+      arrayPeople: TPLPEOPLE,
+      arrayTime: TPLTIME,
+      toChooseServerTimer: null
+    }
+
+    onLoad(option) {
+      this._init(option)
+    }
+
+    onShow() {
+      const currentCoupon = this.$parent.globalData.groupActive.currentCouponGA
+      console.log(currentCoupon, '--------------------------currentGa')
+      this._fromServerPageData(currentCoupon)
+    }
+
+    onHide() {
+
+    }
+
+    _fromServerPageData(obj) {
+      if (obj) {
+        this.info.serverType = obj.title
+        this.info.price = obj.platform_price
+        this.info.inventory = obj.inventory
+        this.$apply()
+      }
+    }
+
+    // 初始化数据
+    _init(option) {
+      const obj = this.$parent.globalData.groupActive.currentGroupActive
+      console.log(obj, '-----------------------groupActive')
+      wepy.setNavigationBarTitle({title: option.model})
+      this.model = option.model
+      if (this.model === EDITOR) {
+        this.info.serverType = obj.serverType
+        this.info.price = obj.price.toFixed(1)
+        this.info.hotName = obj.hotName
+        this.info.addNum = obj.addNum
+        this.info.hotEndDate = obj.hotEndDate
+        this.info.timeLimit = obj.timeLimit + '小时'
+        this.info.peopleNum = obj.peopleNum + '人'
+        this.info.hotPrice = obj.hotPrice.toFixed(1)
+        this.info.inventory = obj.inventory
+        this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
+        this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
+        this.$apply()
+      }
+      this.$apply()
+    }
+
+    // 检查信息是否完整
+    _checkInfoLegal() {
+      let price = parseFloat(this.info.price)
+      let addNum = parseInt(this.info.addNum)
+      let hotPrice = parseFloat(this.info.hotPrice)
+      let flag = (
+        this.info.serverType !== INPUTDEFAULT &&
+        price > 0 &&
+        this.info.hotName !== INPUTDEFAULT &&
+        addNum > 0 &&
+        this.info.hotEndDate !== HOTENDDEFAULT &&
+        this.info.timeLimit !== PICKERDEFAUFT &&
+        this.info.peopleNum !== PICKERDEFAUFT &&
+        (hotPrice > 0 && hotPrice < price) &&
+        !isNaN(this.info.hotPrice * 1)
+      )
+      return flag
+    }
+
+    methods = {
+      toChooseServer() {
+        console.log(222)
+        if (this.toChooseServerTimer != null) return
+        this.toChooseServerTimer = setTimeout(() => {
+          let url = `/pages/group-active-choose-server/group-active-choose-server`
+          this.$navigate(url)
+          clearTimeout(this.toChooseServerTimer)
+          this.toChooseServerTimer = null
+          this.$apply()
+        }, 50)
+      },
+      bindPickerChangePeopleNum(e) {
+        this.info.peopleNum = this.arrayPeople[e.detail.value]
+        this.info.peopleNumIndex = e.detail.value
+        this.$apply()
+      },
+      bindPickerChangeTimeLimit(e) {
+        this.info.timeLimit = this.arrayTime[e.detail.value]
+        this.info.timeLimitIndex = e.detail.value
+        this.$apply()
+      },
+      bindPickerChangeHotEndDate(e) {
+        this.info.hotEndDate = e.detail.value
+        this.$apply()
+      },
+      hotNameInput(e) {
+        this.info.hotName = e.detail.value
+        this.$apply()
+      },
+      addNumInput(e) {
+        let val = e.detail.value
+        this.info.addNum = val
+        this.$apply()
+      },
+      hotPriceInput(e) {
+        let value = e.detail.value
+        let re = /([0-9]+\.[0-9])[0-9]*/
+        value = value.replace(re, '$1')
+        this.info.hotPrice = value
+        this.$apply()
+        return value
+      },
+      saveInfo(e) {
+        if (this._checkInfoLegal()) {
+          this.$back()
+        }
+      }
+    }
+    computed = {
+      price() {
+        return this.info.price !== PRICEDEFAULT ? 'g-a-has-content' : ''
+      },
+      peopleNum() {
+        return this.info.peopleNum !== PICKERDEFAUFT ? 'g-a-has-content' : ''
+      },
+      timeLimit() {
+        return this.info.timeLimit !== PICKERDEFAUFT ? 'g-a-has-content' : ''
+      },
+      hotEndDate() {
+        return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : ''
+      },
+      hotPrice() {
+        return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : ''
+      },
+      hotName() {
+        return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : ''
+      },
+      addNum() {
+        return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : ''
+      },
+      hotNameLen() {
+        return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
+      },
+      hotEndStartDate() {
+        return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24
+      },
+      inventory() {
+        return this.info.inventory !== INPUTDEFAULT ? `库存：${this.info.inventory}` : '请输入'
+      },
+      btnStausStyle() {
+        let flag = this._checkInfoLegal()
+        return flag ? '' : 'disable'
+      }
+
+    }
+    components = {
+      Toast
+    }
+
+    config = {
+      navigationBarTitleText: '',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import "../../common/stylus/mixin.styl"
+  @import "../../common/stylus/variable.styl"
+
+  .group-active-editor
+    position: relative
+    height: 100vh
+    background-color: $color-background
+    .g-a-article
+      margin-bottom: 10px
+      .g-a-item-box
+        layout(row)
+        height: 43px
+        align-item: center
+        background-color: $color-white
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-td
+        border-bottom-line()
+        &:last-child:after
+          width: 100%
+      .g-a-item-left
+        font-family: $font-family-light
+        width: 88px
+        line-height: 43px
+        text-indent: 12px
+      .g-a-item-middle
+        font-family: $font-family-light
+        flex: 1
+        layout(row)
+        justify-content: flex-start
+        align-items: center
+        color: $color-text-d
+        &.g-a-item-hot-data
+          .g-a-h-d-l, .g-a-h-d-m
+            color: $color-text-d
+          .g-a-h-d-l
+            padding-right: 21px
+          .g-a-h-d-r
+            layout(row)
+            align-items: center
+            color: $color-text
+            flex: 1
+            height: 100%
+            padding-left: 21px
+        &.g-a-item-choose
+          justify-content: flex-end
+          .g-a-i-option
+            layout(row)
+            justify-content: flex-end
+            align-items: center
+            height: 100%
+            flex: 1
+            color: $color-text-d
+        &.g-a-server-type
+          justify-content: flex-end
+          margin-right: -39px
+          color: $color-text
+      .g-a-item-right
+        font-family: $font-family-light
+        width: 65px
+        layout(row)
+        justify-content: flex-end
+        align-items: center
+        &.g-a-i-max-num
+          font-family: $font-family-light
+          font-size: $font-size-small-s
+          color: $color-text-d
+          padding-right: 12px
+          width: auto
+        &.to-choose-server
+          z-index: 9
+    .g-a-submit
+      position: fixed
+      left: 0
+      right: 0
+      bottom: 17.5px
+      margin: 0 12px
+      padding: 5.87%
+      height: 0
+      background: $color-theme
+      border-radius: 4px
+      line-height: 0
+      text-align: center;
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      color: $color-white
+      letter-spacing: 1.02px
+      &.disable
+        background: $color-mask-bgc
+
+  .g-a-arrow
+    width: 6px
+    height: 10px
+    margin: 0 12px 0 10px
+
+  .p-h-style
+    font-family: $font-family-light
+    font-size: $font-size-medium
+    color: $color-text-d
+
+  .g-a-input
+    width: 100%
+
+  .g-a-has-content
+    color: $color-text !important
+    font-size: $font-size-medium !important
+</style>

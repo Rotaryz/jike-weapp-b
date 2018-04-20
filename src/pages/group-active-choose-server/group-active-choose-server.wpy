@@ -1,0 +1,224 @@
+<template>
+  <view class="group-active-choose-server">
+    <view class="g-a-c-s-header" @tap="done">可添加的服务</view>
+    <view class="g-a-c-s-section" wx:if="{{!isEmpty}}">
+      <repeat for="{{couponList}}" key="index" index="index"
+              item="item">
+        <view class="coupon-box">
+          <Coupon :coupon.sync="item" :type.sync="'checked'"></Coupon>
+        </view>
+      </repeat>
+    </view>
+    <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
+      <view class="g-a-c-s-submit {{btnStausStyle}}" @tap="done">完成</view>
+    </view>
+    <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+      <view class="e-box">
+        <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+        <view class="e-txt">暂无数据</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Coupon from '@/base/coupon/coupon'
+  import URIS from 'common/js/config'
+  import base from 'common/mixins/base'
+
+  function test() {
+    let arr = []
+    for (let i = 0; i < 7; i++) {
+      arr.push({
+        id: i,
+        promotion_id: i,
+        platform_price: (Math.random() * 100 + 50) >>> 0,
+        title: '80代120代金券' + i,
+        end_at: '2018-5-1',
+        inventory: 888
+      })
+    }
+    return arr
+  }
+
+  const jj = test()
+  export default class GACServer extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrlHead: URIS.image,
+      couponList: jj,
+      prevId: -1,
+      currentCoupon: {}
+    }
+
+    onLoad() {
+      const currentCoupon = this.$parent.globalData.currentCouponGA
+      this._findCoupon(currentCoupon)
+    }
+
+    onShow() {
+
+    }
+
+    // 初始化
+    async _init() {
+
+    }
+
+    _findCoupon(obj) {
+      if (obj) {
+        this.prevId = this.couponList.findIndex(val => val.id === obj.id)
+        this.couponList[this.prevId].checked = true
+        this.$apply()
+      }
+    }
+
+    _formatRqData(res) {
+      res.data.map(item => {
+        return {
+          id: item.id,
+          promotion_id: item.id,
+          platform_price: item.platform_price,
+          title: item.title,
+          end_at: item.sell_end_at,
+          checked: 0,
+          inventory: item.stock
+        }
+      })
+    }
+
+    _checkInfoLegal() {
+      return this.prevId !== -1
+    }
+
+    computed = {
+      isEmpty() {
+        return this.couponList.length === 0
+      }
+    }
+
+    events = {
+      handleClick(id) {
+        console.log(this.prevId, id)
+        let couponItem
+        if (this.prevId === id) return
+        if (this.prevId !== -1) {
+          couponItem = this.couponList.find(val => val.id === this.prevId)
+          couponItem.checked = !couponItem.checked
+        }
+        couponItem = this.couponList.find(val => val.id === id)
+        couponItem.checked = !couponItem.checked
+        this.prevId = id
+        this.currentCoupon = couponItem
+        this.$apply()
+      }
+    }
+
+    computed = {
+      btnStausStyle() {
+        let flag = this._checkInfoLegal()
+        return flag ? '' : 'disable'
+      }
+    }
+
+    methods = {
+      done() {
+        if (this._checkInfoLegal()) {
+          this.couponList = this.couponList.length ? [] : jj
+          this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
+          this.$apply()
+          setTimeout(() => {
+            this.$back()
+          }, 50)
+        }
+      }
+    }
+
+    components = {
+      Coupon: Coupon
+    }
+
+    config = {
+      navigationBarTitleText: '添加服务',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import "../../common/stylus/mixin.styl"
+  @import "../../common/stylus/variable.styl"
+
+  .group-active-choose-server
+    min-height: 100vh
+    background-color: $color-white
+    .g-a-c-s-header
+      position: relative
+      padding: 14.5px
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      background-color: $color-background
+      &:before
+        content: ""
+        position: absolute
+        left: 5.5px
+        top: 14.5px
+        width: 5px
+        height: 13px
+        background-color: $color-assist-f
+    .g-a-c-s-section
+      padding: 10px 0 82px
+      .coupon-box
+        margin-bottom: 10px
+    .g-a-c-s-btn-box
+      position: fixed
+      bottom: 0
+      width: 100%
+      height: 82px
+      box-sizing: border-box
+      padding: 18px 12px 20px
+      layout()
+      justify-content: center
+      align-items: center
+      background-color: $color-background
+      border-top: 0.5px solid $color-row-line
+      .g-a-c-s-submit
+        layout()
+        justify-content: center
+        align-items: center
+        width: 100%
+        height: 100%
+        background: $color-theme
+        border-radius: 4px
+        font-family: $font-family-regular
+        font-size: $font-size-medium
+        color: $color-white
+        letter-spacing: 1.02px
+        &.disable
+          background: $color-mask-bgc
+
+    .g-a-c-s-empty
+      margin-top: -40.5%
+      background-color: $color-white
+      height: 93vh
+      layout()
+      justify-content: center
+      align-items: center
+      .e-box
+        layout()
+        justify-content: center
+        align-items: center
+        margin-top: 2%
+        .e-pic
+          width: 95.5px
+          height: 75.5px
+          margin-bottom: 13.5px
+        .e-txt
+          font-family: $font-family-light
+          font-size: $font-size-small
+          color: $color-text-d
+</style>
