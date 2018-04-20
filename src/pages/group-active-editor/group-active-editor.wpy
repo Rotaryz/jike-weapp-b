@@ -1,10 +1,10 @@
 <template>
   <view class="group-active-editor">
     <view class="g-a-article">
-      <view class="server-type g-a-item-box" @tap="toChooseServer">
+      <view class="server-type g-a-item-box">
         <view class="g-a-item-left">添加服务</view>
-        <view class="g-a-item-middle g-a-has-content">{{info.serverType}}</view>
-        <view class="g-a-item-right">
+        <view class="g-a-item-middle g-a-server-type">{{info.serverType}}</view>
+        <view class="g-a-item-right to-choose-server" @tap="toChooseServer">
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
         </view>
       </view>
@@ -74,12 +74,10 @@
     HOTENDDEFAULT,
     TPLTIME,
     TPLPEOPLE,
-    NEW,
+    // NEW,
     EDITOR,
     PRICEDEFAULT
   } from 'api/group-active-config'
-
-  console.info(NEW, EDITOR)
 
   export default class GAEditor extends wepy.page {
     mixins = [base]
@@ -103,7 +101,8 @@
         inventory: INPUTDEFAULT
       },
       arrayPeople: TPLPEOPLE,
-      arrayTime: TPLTIME
+      arrayTime: TPLTIME,
+      toChooseServerTimer: null
     }
 
     onLoad(option) {
@@ -111,9 +110,8 @@
     }
 
     onShow() {
-      console.log(this)
-      console.log(this.$parent.globalData.currentCouponGA, '--------------------------')
       const currentCoupon = this.$parent.globalData.groupActive.currentCouponGA
+      console.log(currentCoupon, '--------------------------currentGa')
       this._fromServerPageData(currentCoupon)
     }
 
@@ -133,6 +131,7 @@
     // 初始化数据
     _init(option) {
       const obj = this.$parent.globalData.groupActive.currentGroupActive
+      console.log(obj, '-----------------------groupActive')
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
@@ -173,9 +172,15 @@
 
     methods = {
       toChooseServer() {
-        let url = `/pages/group-active-choose-server/group-active-choose-server`
-        // url = `/pages/choice-coupon/choice-coupon`
-        this.$navigate(url)
+        console.log(222)
+        if (this.toChooseServerTimer != null) return
+        this.toChooseServerTimer = setTimeout(() => {
+          let url = `/pages/group-active-choose-server/group-active-choose-server`
+          this.$navigate(url)
+          clearTimeout(this.toChooseServerTimer)
+          this.toChooseServerTimer = null
+          this.$apply()
+        }, 50)
       },
       bindPickerChangePeopleNum(e) {
         this.info.peopleNum = this.arrayPeople[e.detail.value]
@@ -268,23 +273,6 @@
   @import "../../common/stylus/mixin.styl"
   @import "../../common/stylus/variable.styl"
 
-  .g-a-arrow
-    width: 6px
-    height: 10px
-    margin: 0 12px 0 10px
-
-  .p-h-style
-    font-family: $font-family-light
-    font-size: $font-size-medium
-    color: $color-text-d
-
-  .g-a-input
-    width: 100%
-
-  .g-a-has-content
-    color: $color-text !important
-    font-size: $font-size-medium !important
-
   .group-active-editor
     position: relative
     height: 100vh
@@ -335,6 +323,10 @@
             height: 100%
             flex: 1
             color: $color-text-d
+        &.g-a-server-type
+          justify-content: flex-end
+          margin-right: -39px
+          color: $color-text
       .g-a-item-right
         font-family: $font-family-light
         width: 65px
@@ -347,6 +339,8 @@
           color: $color-text-d
           padding-right: 12px
           width: auto
+        &.to-choose-server
+          z-index: 9
     .g-a-submit
       position: fixed
       left: 0
@@ -365,4 +359,21 @@
       letter-spacing: 1.02px
       &.disable
         background: $color-mask-bgc
+
+  .g-a-arrow
+    width: 6px
+    height: 10px
+    margin: 0 12px 0 10px
+
+  .p-h-style
+    font-family: $font-family-light
+    font-size: $font-size-medium
+    color: $color-text-d
+
+  .g-a-input
+    width: 100%
+
+  .g-a-has-content
+    color: $color-text !important
+    font-size: $font-size-medium !important
 </style>

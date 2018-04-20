@@ -33,7 +33,7 @@
           </view>
         </scroll-view>
         <view class="g-a-l-btn-box">
-          <view class="g-a-l-submit" bindtap="toEditor">新建</view>
+          <view class="g-a-l-submit" @tap="toNewPage">新建</view>
         </view>
       </view>
     </header-switch>
@@ -76,7 +76,9 @@
       },
       isAllUp: false,
       isAllDown: false,
-      showTabDownCount: 0
+      showTabDownCount: 0,
+      toNewTimer: null,
+      toEditorTimer: null
     }
 
     async onLoad() {
@@ -261,9 +263,15 @@
         console.log(this.showTabDownCount)
         this.$apply()
       },
-      toEditor() {
-        let url = `/pages/group-active-editor/group-active-editor?model=${NEW}`
-        this.$navigate(url)
+      toNewPage() {
+        if (this.toNewTimer != null) return
+        this.toNewTimer = setTimeout(() => {
+          let url = `/pages/group-active-editor/group-active-editor?model=${NEW}`
+          this.$navigate(url)
+          clearTimeout(this.toNewTimer)
+          this.toNewTimer = null
+          this.$apply()
+        }, 50)
       }
     }
     events = {
@@ -306,8 +314,14 @@
       },
       activeBtnThree(obj) {
         this.$parent.globalData.groupActive.currentGroupActive = obj
-        let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
-        this.$navigate(url)
+        if (this.toEditorTimer != null) return
+        this.toEditorTimer = setTimeout(() => {
+          let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
+          this.$navigate(url)
+          clearTimeout(this.toEditorTimer)
+          this.toEditorTimer = null
+          this.$apply()
+        }, 50)
       },
       confirm() {
         // 删除确认
@@ -378,7 +392,16 @@
         border-bottom-line($color-assist-f, 0, 0)
       .active
         color: $color-assist-f
-        border-bottom-line($color-assist-f, 100%, 2px)
+        position: relative
+        &:after
+          content: ""
+          position: absolute
+          bottom: 0
+          left: 50%
+          transform: translateX(-50%)
+          height: 1px
+          width: 15.5vw
+          border-bottom: 2px solid $color-assist-f
     .g-a-l-article
       background-color: $color-white
       padding-bottom: 82px

@@ -129,7 +129,9 @@
           this.couponList = this.couponList.length ? [] : jj
           this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()
-          this.$back()
+          setTimeout(() => {
+            this.$back()
+          }, 50)
         }
       }
     }
