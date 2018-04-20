@@ -674,6 +674,7 @@
           self.latitude = location.lat
           self.movelongitude = location.lng
           self.movelatitude = location.lat
+          self.mapAddress = address
           self.$apply()
         },
         fail: function(res) {
