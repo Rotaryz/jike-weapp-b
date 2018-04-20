@@ -85,7 +85,8 @@
 
     config = {
       navigationBarTitleText: '数据流量',
-      navigationBarTextStyle: '#363547'
+      navigationBarTextStyle: 'black',
+      navigationBarBackgroundColor: 'white'
     }
 
     components = {
