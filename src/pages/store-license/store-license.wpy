@@ -9,9 +9,9 @@
           <input type="text" placeholder="输入姓名"
                  bindblur="nameChange"
                  placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 class="store-license-txt-input {{submitIndex === 1 || submitIndex === 2 ? 'disabled' : ''}}"
                  value="{{userName}}"
-                 disabled="{{submitIndex === 1}}"/>
+                 disabled="{{submitIndex === 1 || submitIndex === 2}}"/>
         </view>
       </view>
 
@@ -29,9 +29,9 @@
                  placeholder="输入身份证"
                  bindblur="idChange"
                  placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 class="store-license-txt-input {{submitIndex === 1 || submitIndex === 2 ? 'disabled' : ''}}"
                  maxlength="20"
-                 disabled="{{submitIndex === 1}}"
+                 disabled="{{submitIndex === 1 || submitIndex === 2}}"
                  value="{{credentialNumber}}"/>
         </view>
       </view>
@@ -106,6 +106,14 @@
         if (!res) {
           return
         }
+
+        /****/
+        // let signature = this._getSignature() // 获取签名
+        // signature.filepath = res.tempFilePaths[0]
+        // let cosUpRes = await Upload.cosUpload(signature)
+        // console.log(cosUpRes)
+        /****/
+
         let upRes = await Upload.uploadImages(res.tempFilePaths[0])
         this.loaded()
         this.images[idx].image_url = upRes.url
@@ -167,6 +175,12 @@
         this.credentialNumber = value
         this.$apply()
       }
+    }
+    async _getSignature() {
+      console.log('获取签名')
+      let res = await Upload.getSignature()
+      console.log(res)
+      return res
     }
 
     async onLoad() {
