@@ -451,6 +451,8 @@
           line-height: 46px
         .bus-item-txt
           padding: 6px 0px
+          overflow: hidden
+          flex: 1
           >view
             line-height: 26px
             font-size: $font-size-medium
@@ -466,7 +468,7 @@
             letter-spacing: 0
 
       .switchbox
-        width: 50px
+        width: 44px
         height: 24px
         border-radius: 12px
         background: #eaeaea
@@ -492,7 +494,7 @@
 
         .switch-circle.checked
           background: $color-white
-          left: 22px
+          left: 20px
           top: 2px
           transition: .3s all
 

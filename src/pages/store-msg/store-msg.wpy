@@ -305,9 +305,9 @@
       this.description = res.describe ? res.describe : ''
       this.tel = res.mobile ? res.mobile : ''
       this.site = res.address ? res.address : ''
-      this.mapAddress = res.address ? res.address : ''
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
       this.latitude = res.latitude ? res.latitude : 23.099994
+      this.longitude = res.longitude ? res.longitude : 113.324520
       this.movelongitude = this.longitude
       this.movelatitude = this.latitude
       this.area = res.business_circle ? res.business_circle.name : ''
@@ -326,11 +326,10 @@
       this.storeStatusTxt = arr[this.storeStatus]
       if (res.business_circle) {
         let Json1 = await Store.getArea(res.business_circle.district)
-        if (Json1.error !== ERR_OK) {
-          this.loaded()
-          return
+        this.loaded()
+        if (Json1.error === ERR_OK) {
+          this.areaArr = res.business_circle ? Json1.data : []
         }
-        this.areaArr = res.business_circle ? Json1.data : []
       } else {
         this.areaArr = []
       }
@@ -342,7 +341,7 @@
       if (res.is_leader === 1) {
         this.disableFlag = res.business_circle ? !this.disableFlag : this.disableFlag
       }
-      this.longitude = res.longitude ? res.longitude : 113.324520
+      this._initMapAddress()
       this.$apply()
       this.loaded()
     }
@@ -350,6 +349,21 @@
     onReady() {
       this.mapCtx = wx.createMapContext('myMap')
       this.$apply()
+    }
+
+    _initMapAddress() {
+      this.qqmapsdk.reverseGeocoder({
+        location: {
+          latitude: this.latitude,
+          longitude: this.longitude
+        },
+        success: (resData) => {
+          this.mapAddress = resData.result.address
+          this.movelongitude = this.longitude
+          this.movelatitude = this.latitude
+          this.$apply()
+        }
+      })
     }
 
     methods = {
@@ -508,8 +522,8 @@
         this.$apply()
       },
       async storeMsgSubmit() {
-        this.longitude = this.movelongitude
-        this.latitude = this.movelatitude
+        let longitude = this.movelongitude
+        let latitude = this.movelatitude
         let testArr = [
           {value: this.name, txt: '请输入门店名称'},
           {value: this.description, txt: '请输入门店描述'},
@@ -539,8 +553,8 @@
             open_time: this.hourBegin,
             close_time: this.hourEnd,
             week_day: this.weekChecked,
-            longitude: this.longitude,
-            latitude: this.latitude,
+            longitude: longitude,
+            latitude: latitude,
             logo_image_id: this.logoId,
             shop_images: this.storeImgs,
             qrcode_id: this.serviceCode[0].image_id,
@@ -658,6 +672,8 @@
           let location = res.result.location
           self.longitude = location.lng
           self.latitude = location.lat
+          self.movelongitude = location.lng
+          self.movelatitude = location.lat
           self.$apply()
         },
         fail: function(res) {

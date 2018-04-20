@@ -9,9 +9,9 @@
           <input type="text" placeholder="输入姓名"
                  bindblur="nameChange"
                  placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 class="store-license-txt-input {{submitIndex === 1 || submitIndex === 2 ? 'disabled' : ''}}"
                  value="{{userName}}"
-                 disabled="{{submitIndex === 1}}"/>
+                 disabled="{{submitIndex === 1 || submitIndex === 2}}"/>
         </view>
       </view>
 
@@ -29,9 +29,9 @@
                  placeholder="输入身份证"
                  bindblur="idChange"
                  placeholder-class="store-license-txt-holder"
-                 class="store-license-txt-input {{submitIndex === 1 ? 'disabled' : ''}}"
+                 class="store-license-txt-input {{submitIndex === 1 || submitIndex === 2 ? 'disabled' : ''}}"
                  maxlength="20"
-                 disabled="{{submitIndex === 1}}"
+                 disabled="{{submitIndex === 1 || submitIndex === 2}}"
                  value="{{credentialNumber}}"/>
         </view>
       </view>
@@ -94,7 +94,7 @@
         {title: '手持证件照'},
         {title: '商户承诺函证明'}],
       nothing: true,
-      submitTxt: ['提交审核', '审核中...', '已认证', '审核拒绝'],
+      submitTxt: ['提交审核', '审核中...', '已认证', '提交审核'],
       submitIndex: 0,
       submit: true
     }
@@ -106,6 +106,14 @@
         if (!res) {
           return
         }
+
+        /****/
+        // let signature = this._getSignature() // 获取签名
+        // signature.filepath = res.tempFilePaths[0]
+        // let cosUpRes = await Upload.cosUpload(signature)
+        // console.log(cosUpRes)
+        /****/
+
         let upRes = await Upload.uploadImages(res.tempFilePaths[0])
         this.loaded()
         this.images[idx].image_url = upRes.url
@@ -152,13 +160,27 @@
         this.$apply()
       },
       nameChange(e) {
-        this.userName = e.detail.value
+        let value = e.detail.value
+        if (value !== this.userName) {
+          if (this.submitIndex !== 1) this.submit = true
+        }
+        this.userName = value
         this.$apply()
       },
       idChange(e) {
-        this.credentialNumber = e.detail.value
+        let value = e.detail.value
+        if (value !== this.credentialNumber) {
+          if (this.submitIndex !== 1) this.submit = true
+        }
+        this.credentialNumber = value
         this.$apply()
       }
+    }
+    async _getSignature() {
+      console.log('获取签名')
+      let res = await Upload.getSignature()
+      console.log(res)
+      return res
     }
 
     async onLoad() {
@@ -181,14 +203,18 @@
       if (res.credential_images && res.credential_images.length > 0) {
         this.nothing = false
       }
-      this.verifyAudit(res.is_checked)
+      this.verifyAudit(res)
       this.$apply()
     }
-    async verifyAudit(key) {
+    async verifyAudit(data) {
       // 0提交审核，1审核中，2已审核，3审核拒绝
-      this.submitIndex = key
+      this.submitIndex = data.is_checked
       if (this.submitIndex === 3) {
-        this.storeTxt = '您的姓名和身份证号码不匹配，请修改'
+        if (data.reject_remark !== '') {
+          this.storeTxt = data.reject_remark + ',请修改后重新提交'
+        } else {
+          this.storeTxt = '请修改后重新提交'
+        }
       }
       this.submit = false
       this.$apply()

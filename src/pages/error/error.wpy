@@ -24,7 +24,7 @@
   import URIS from 'common/js/config'
   export default class error extends wepy.page {
     config = {
-      navigationBarTitleText: '报错',
+      navigationBarTitleText: '',
       navigationBarBackgroundColor: '#ffffff',
       navigationBarTextStyle: 'black'
     }
@@ -38,9 +38,19 @@
         switch (option.status) {
           case '1':
             this.error = false
+            setTimeout(() => {
+              wepy.setNavigationBarTitle({
+                title: '404'
+              })
+            }, 100)
             break
           case '2':
             this.error = true
+            setTimeout(() => {
+              wepy.setNavigationBarTitle({
+                title: '升级中'
+              })
+            }, 100)
             break
         }
         this.$apply()

@@ -189,10 +189,10 @@
       },
       delCou(index) {
         this.delIndex = index
+        this.activityPromotion.splice(index, 1)
         this.$invoke('Confirm', 'show')
       },
       async submitOk() {
-        console.log(this.isPaused)
         Object.assign(this.allMsg, {
           name: '直播活动',
           is_paused: this.isPaused,
