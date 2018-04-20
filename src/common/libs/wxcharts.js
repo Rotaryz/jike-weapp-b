@@ -584,7 +584,6 @@ function getPieDataPoints(series) {
   if (series.length === 1) {
     series[0].color = '#F3F3F3'
   }
-  // console.log(series)
   series.forEach(function (item) {
     item.data = item.data === null ? 0 : item.data;
     item._proportion_ = item.data / count * process;
@@ -730,51 +729,74 @@ function calYAxisData(series, opts, config) {
 
 function drawPointShape(points, color, shape, context) {
   context.beginPath();
-  context.setStrokeStyle("#ffffff");
+  context.setStrokeStyle("#333333");
   context.setLineWidth(0.5);
   context.setFillStyle(color);
 
   if (shape === 'diamond') {
     points.forEach(function (item, index) {
       if (item !== null) {
-        context.moveTo(item.x, item.y - 4.5);
-        context.lineTo(item.x - 4.5, item.y);
-        context.lineTo(item.x, item.y + 4.5);
-        context.lineTo(item.x + 4.5, item.y);
-        context.lineTo(item.x, item.y - 4.5);
+        // context.moveTo(item.x, item.y - 4.5);
+        // context.lineTo(item.x - 4.5, item.y);
+        // context.lineTo(item.x, item.y + 4.5);
+        // context.lineTo(item.x + 4.5, item.y);
+        // context.lineTo(item.x, item.y - 4.5);
+        context.moveTo(item.x + 4, item.y);
+        context.arc(item.x, item.y, 2.5, 0, 2 * Math.PI, false);
       }
+      context.closePath()
+      context.setStrokeStyle('#5080F4')
+      context.setLineWidth(3)
+      context.stroke()
+      context.setFillStyle('#ffffff')
+      context.fill()
     });
   } else if (shape === 'circle') {
     points.forEach(function (item, index) {
       if (item !== null) {
         context.moveTo(item.x + 4, item.y);
-        context.arc(item.x, item.y, 5, 0, 2 * Math.PI, false);
-
+        context.arc(item.x, item.y, 2.5, 0, 2 * Math.PI, false);
       }
+      context.closePath()
+      context.setStrokeStyle('#29CE9C')
+      context.setLineWidth(3)
+      context.stroke()
+      context.setFillStyle('#ffffff')
+      context.fill()
     });
   } else if (shape === 'rect') {
     points.forEach(function (item, index) {
       if (item !== null) {
-        context.moveTo(item.x - 3.5, item.y - 3.5);
-        context.rect(item.x - 3.5, item.y - 3.5, 7, 7);
+        // context.moveTo(item.x - 3.5, item.y - 3.5);
+        // context.rect(item.x - 3.5, item.y - 3.5, 7, 7);
+        context.moveTo(item.x + 4, item.y);
+        context.arc(item.x, item.y, 2.5, 0, 2 * Math.PI, false);
       }
+      context.closePath()
+      context.setStrokeStyle('#FDB94F')
+      context.setLineWidth(3)
+      context.stroke()
+      context.setFillStyle('#ffffff')
+      context.fill()
     });
   } else if (shape === 'triangle') {
     points.forEach(function (item, index) {
       if (item !== null) {
-        context.moveTo(item.x, item.y - 4.5);
-        context.lineTo(item.x - 4.5, item.y + 4.5);
-        context.lineTo(item.x + 4.5, item.y + 4.5);
-        context.lineTo(item.x, item.y - 4.5);
+        // context.moveTo(item.x, item.y - 4.5);
+        // context.lineTo(item.x - 4.5, item.y + 4.5);
+        // context.lineTo(item.x + 4.5, item.y + 4.5);
+        // context.lineTo(item.x, item.y - 4.5);
+        context.moveTo(item.x + 4, item.y);
+        context.arc(item.x, item.y, 2.5, 0, 2 * Math.PI, false);
       }
+      context.closePath()
+      context.setStrokeStyle('#FDB94F')
+      context.setLineWidth(3)
+      context.stroke()
+      context.setFillStyle('#ffffff')
+      context.fill()
     });
   }
-  context.closePath()
-  context.setStrokeStyle('#FF4E00')
-  context.setLineWidth(4)
-  context.stroke()
-  context.setFillStyle('#ffffff')
-  context.fill()
 }
 
 function drawRingTitle(opts, config, context) {
@@ -972,15 +994,17 @@ function drawToolTipSplitLine(offsetX, opts, config, context) {
 }
 
 function drawToolTip(textList, offset, opts, config, context) {
+  // 矩形背景小三角形
   var legendWidth = 4;
-  var legendMarginRight = 5;
+  var legendMarginRight = 4;
   var arrowWidth = 8;
   var isOverRightBorder = false;
   offset = assign({
     x: 0,
     y: 0
   }, offset);
-  offset.y -= 8;
+  // offset.y -= 8;
+  offset.y = 8;
   var textWidth = textList.map(function (item) {
     return measureText(item.text);
   });
@@ -1002,13 +1026,16 @@ function drawToolTip(textList, offset, opts, config, context) {
     context.lineTo(offset.x - arrowWidth, offset.y + 10 - 5);
     context.lineTo(offset.x - arrowWidth, offset.y + 10 + 5);
     context.moveTo(offset.x, offset.y + 10);
-    context.fillRect(offset.x - toolTipWidth - arrowWidth, offset.y, toolTipWidth, toolTipHeight);
+    // context.fillRect(offset.x - toolTipWidth - arrowWidth, offset.y, toolTipWidth, toolTipHeight);
+    context.fillRect(offset.x - toolTipWidth - arrowWidth, 0, toolTipWidth, toolTipHeight);
   } else {
     context.moveTo(offset.x, offset.y + 10);
     context.lineTo(offset.x + arrowWidth, offset.y + 10 - 5);
     context.lineTo(offset.x + arrowWidth, offset.y + 10 + 5);
     context.moveTo(offset.x, offset.y + 10);
-    context.fillRect(offset.x + arrowWidth, offset.y, toolTipWidth, toolTipHeight);
+    // 文字背景块位置和大小
+    // context.fillRect(offset.x + arrowWidth, offset.y, toolTipWidth, toolTipHeight);
+    context.fillRect(offset.x + arrowWidth, 0, toolTipWidth - 12, toolTipHeight);
   }
 
   context.closePath();
@@ -1016,28 +1043,40 @@ function drawToolTip(textList, offset, opts, config, context) {
   context.setGlobalAlpha(1);
 
   // draw legend
+  // 矩形文字颜色块位置
   textList.forEach(function (item, index) {
     context.beginPath();
-    context.setFillStyle(item.color);
+    // context.setFillStyle(item.color);
     var startX = offset.x + arrowWidth + 2 * config.toolTipPadding;
-    var startY = offset.y + (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
+    // var startY = offset.y + (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
+    var startY = 2 + (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
     if (isOverRightBorder) {
       startX = offset.x - toolTipWidth - arrowWidth + 2 * config.toolTipPadding;
     }
-    context.fillRect(startX, startY, legendWidth, config.fontSize);
+    // context.fillRect(startX, startY, legendWidth, config.fontSize);
+    // context.moveTo(0, 0);
+    context.arc(startX + 1, startY + 4, 2.5, 0, 2 * Math.PI);
+    context.setStrokeStyle(item.color);
+    context.setLineWidth(1.5)
+    context.stroke()
+    context.setFillStyle('rgba(255, 0, 0, 0)')
+    context.fill()
     context.closePath();
   });
 
   // draw text list
   context.beginPath();
-  context.setFontSize(config.fontSize);
+  context.setFontSize(9);
   context.setFillStyle('#ffffff');
+  // 文字大小左右对齐（矩形）
+  context.setTextAlign('left')
   textList.forEach(function (item, index) {
     var startX = offset.x + arrowWidth + 2 * config.toolTipPadding + legendWidth + legendMarginRight;
     if (isOverRightBorder) {
       startX = offset.x - toolTipWidth - arrowWidth + 2 * config.toolTipPadding + +legendWidth + legendMarginRight;
     }
-    var startY = offset.y + (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
+    // var startY = offset.y + (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
+    var startY = (config.toolTipLineHeight - config.fontSize) / 2 + config.toolTipLineHeight * index + config.toolTipPadding;
     context.fillText(item.text, startX, startY + config.fontSize);
   });
   context.stroke();
@@ -1145,8 +1184,8 @@ function drawAreaDataPoints(series, opts, config, context) {
       // 绘制区域数据
       context.beginPath();
       context.setStrokeStyle(eachSeries.color);
-      context.setFillStyle(eachSeries.color);
-      context.setGlobalAlpha(0.6);
+      // context.setGlobalAlpha(0.3);
+      context.setFillStyle(eachSeries.colors);
       context.setLineWidth(0.5);
       if (points.length > 1) {
         var firstPoint = points[0];
@@ -1159,8 +1198,8 @@ function drawAreaDataPoints(series, opts, config, context) {
             if (index > 0) {
               var ctrlPoint = createCurveControlPoints(points, index - 1);
               context.bezierCurveTo(ctrlPoint.ctrA.x, ctrlPoint.ctrA.y, ctrlPoint.ctrB.x, ctrlPoint.ctrB.y, item.x, item.y);
-              context.setStrokeStyle('#F76B1C');
-              context.setLineWidth(4)
+              // context.setStrokeStyle('#F76B1C');
+              context.setLineWidth(3)
               context.stroke();
             }
           });
@@ -1369,16 +1408,34 @@ function drawXAxis(categories, opts, config, context) {
       context.beginPath();
       context.setFontSize(config.fontSize);
       context.setFillStyle(opts.xAxis.fontColor || '#666666');
-      var textWidth = measureText(item);
-      var offset = eachSpacing / 2 - textWidth;
-
+      // var textWidth = measureText(item);
+      // var offset = eachSpacing / 2 - textWidth;
       // var _calRotateTranslate = calRotateTranslate(xAxisPoints[index] + eachSpacing / 2, startY + config.fontSize / 2 + 5, opts.height),
       //   transX = _calRotateTranslate.transX,
       //   transY = _calRotateTranslate.transY;
       //   console.log(config._xAxisTextAngle_)
       // context.rotate(-1 * config._xAxisTextAngle_);
       // context.translate(transX, transY);
-      context.fillText(item, xAxisPoints[index] + 13, startY + config.fontSize + 10);
+      // X轴数据的地方
+      if(parseInt(xAxisPoints.length) === 8){
+        if(parseInt(index) === 6) {
+          context.fillText(item, xAxisPoints[index] - 18, startY + config.fontSize + 10);
+        }else {
+          context.fillText(item, xAxisPoints[index] - 12, startY + config.fontSize + 10);
+        }
+      } else {
+        if(parseInt(index) === 0){
+          context.fillText(item, xAxisPoints[index] - 22, startY + config.fontSize + 10);
+        } else if (parseInt(index) === 1) {
+          context.fillText(item, xAxisPoints[index] - 33, startY + config.fontSize + 10);
+        } else if (parseInt(index) === 2) {
+          context.fillText(item, xAxisPoints[index] - 37, startY + config.fontSize + 10);
+        } else if (parseInt(index) === 3) {
+          context.fillText(item, xAxisPoints[index] - 37, startY + config.fontSize + 10);
+        } else if (parseInt(index) === 4) {
+          context.fillText(item, xAxisPoints[index] - 44, startY + config.fontSize + 10);
+        }
+      }
       context.closePath();
       context.stroke();
       context.restore();
@@ -1442,11 +1499,42 @@ function drawYAxis(series, opts, config, context) {
   context.beginPath();
   context.setFontSize(config.fontSize);
   context.setFillStyle(opts.yAxis.fontColor || '#666666');
+  var str = rangesFormat[0].replace(/\s+/g, function () {
+    return ' ';
+  });
+  var ylength = str.length
   rangesFormat.forEach(function (item, index) {
     var pos = points[index] ? points[index] : endY;
-    context.setTextAlign('right')
-    context.fillText(item, config.padding + config.yAxisTitleWidth + 15, pos + config.fontSize / 2);
-
+    context.setTextAlign('right');
+    // canvasY轴文字位置
+    switch (ylength) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 13, pos + config.fontSize / 2);
+        break;
+      case 4:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 21, pos + config.fontSize / 2);
+        break;
+      case 5:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 27, pos + config.fontSize / 2);
+        break;
+      case 6:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 31, pos + config.fontSize / 2);
+        break;
+      case 7:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 34, pos + config.fontSize / 2);
+        break;
+      case 8:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 40, pos + config.fontSize / 2);
+        break;
+      case 9:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 46, pos + config.fontSize / 2);
+        break;
+      default:
+        context.fillText(item, config.padding + config.yAxisTitleWidth + 45, pos + config.fontSize / 2);
+    }
   });
   context.closePath();
   context.stroke();

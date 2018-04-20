@@ -281,6 +281,7 @@
     }
 
     async onLoad(option) {
+      console.log(1)
       await this.load()
       if (option.id) {
         this.packageId = option.id

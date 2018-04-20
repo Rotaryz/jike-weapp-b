@@ -1,0 +1,208 @@
+<template>
+  <view class="tl-share-con">
+    <view class="tl-share-box tl-share-type-between">
+      <view class="tl-share-left">添加服务</view>
+      <view class="tl-share-right">
+        <view class="full-text">我有一张卷</view>
+        <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+               class="full-image"></image>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">现价</view>
+      <view class="tl-share-right">
+        <view class="full-text">300</view>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">活动名称</view>
+      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15">
+      <view class="tl-share-number">0/15</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">添加数量</view>
+      <input type="number" placeholder="请输入/最大可添加数量为100" class="tl-share-title" placeholder-class="tl-share-title-place">
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">活动时间</view>
+      <view class="tl-share-data-left">自上线之日起</view>
+      <view class="tl-share-data-to tl-share-data-left">至</view>
+      <picker mode="date" class="sell-date" @change="setValidDate">
+        <view class="tl-share-data-time">
+          <view>{{validDate === '' ? '结束时间' : validDate}}</view>
+          <view class="arrow-right" wx:if="{{validDate === ''}}">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </picker>
+    </view>
+  </view>
+  <view class="tl-share-con">
+    <view class="tl-share-box">
+      <view class="tl-share-icon"></view>
+      <view class="tl-share-icontext">领取者</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">抵用券</view>
+      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place">
+    </view>
+  </view>
+  <view class="tl-share-con tl-share-con-bottom">
+    <view class="tl-share-box">
+      <view class="tl-share-icon"></view>
+      <view class="tl-share-icontext">推广者</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">佣金比率</view>
+      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2">
+      <view class="tl-share-title-place">%</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">提成金额</view>
+      <view class="tl-share-title-place">0.00</view>
+    </view>
+  </view>
+  <view class="tl-share-save">
+    <view class="tl-share-save-btn">保存</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import Toast from '@/base/toast/toast'
+  // import {ERR_OK} from 'api/base'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+
+  export default class ShareActivity extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUri: URIS.image,
+      validDate: ''
+    }
+
+    methods = {
+      setValidDate(e) {
+        this.validDate = e.detail.value
+        console.log(e)
+        this.$apply()
+      }
+    }
+
+    components = {}
+
+    config = {
+      navigationBarTitleText: '新建分享活动',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  .tl-share-con
+    margin-bottom: 10px
+    background: $color-white
+    padding-left: 12px
+    .tl-share-type-between
+      justify-content: space-between
+    .tl-share-box
+      border-bottom: 0.5px solid $color-row-line
+      height: 43px
+      display: flex
+      align-items: center
+      padding-right: 12px
+      &:last-child
+        border-bottom: 0
+      .tl-share-left
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-td
+        width: 88px
+      .tl-share-data-time
+        font-size: $font-size-medium
+        font-family: $font-family-light
+        color: $color-theme
+        display: flex
+        align-items: center
+        justify-content: center
+        text-align: right
+        .arrow-right
+          margin-left: 1px
+          justify-content: right
+          .full-image
+            margin-left: 3.5px
+            display: block
+            width: 6px
+            height: 10px
+      .tl-share-data-left
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-d
+      .tl-share-data-to
+        margin: 0 25px
+      .tl-share-title
+        flex: 1
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text
+      .tl-share-title-place
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-d
+      .tl-share-number
+        font-family: $font-family-light
+        font-size: $font-size-small-s
+        color: $color-text-d
+      .tl-share-right
+        display: flex
+        align-items: center
+        .full-text
+          font-size: $font-size-medium
+          font-family: $font-family-light
+          color: $color-theme
+        .full-image
+          margin-left: 10px
+          display: block
+          width: 9px
+          height: 15px
+      .tl-share-icon
+        background: $color-assist-f
+        width: 4px
+        height: 13px
+        margin-right: 5px
+      .tl-share-icontext
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-td
+      .tl-share-rate
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text
+        margin-right: 6px
+        width: 39px
+        height: 22px
+        border: 1px solid $color-col-line-f
+  .tl-share-save
+    position: fixed
+    left: 0
+    bottom: 17.5px
+    padding: 0 12px
+    width: 100%
+    box-sizing: border-box
+    .tl-share-save-btn
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      color: $color-white
+      background: $color-theme
+      border-radius: 2px
+      text-align: center
+      height: 44px
+      line-height: 44px
+  .tl-share-con-bottom
+    margin-bottom: 62px
+</style>

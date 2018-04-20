@@ -110,6 +110,8 @@
         'pages/group-active-list/group-active-list',
         'pages/group-active-editor/group-active-editor',
         'pages/group-active-choose-server/group-active-choose-server'
+        'pages/message/message',
+        'pages/new-share-activity/new-share-activity'
       ],
       window: {
         backgroundColor: '#363547',
