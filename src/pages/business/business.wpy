@@ -451,6 +451,8 @@
           line-height: 46px
         .bus-item-txt
           padding: 6px 0px
+          overflow: hidden
+          flex: 1
           >view
             line-height: 26px
             font-size: $font-size-medium
