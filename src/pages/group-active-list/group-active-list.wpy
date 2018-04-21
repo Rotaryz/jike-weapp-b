@@ -84,14 +84,15 @@
       currentDelObj: null
     }
 
-    async onLoad() {
+    async onLoad(option) {
+      console.log(option.isChecked, '99999')
       await this._init(this.status)
     }
 
-    onShow() {
+    async onShow() {
       const obj = this.$parent.globalData.groupActive.currentGroupActive
       if (!obj) return
-      this._fromPrevPage(obj)
+      await this._fromPrevPage(obj)
     }
 
     async onPullDownRefresh() {
@@ -101,9 +102,20 @@
     }
 
     // 插入来自编辑页面
-    _fromPrevPage(obj) {
+    async _fromPrevPage(obj) {
       if (obj.source === NEW) {
         this.onlineList.unshift(obj)
+        if (this.onlineList.length === 1) {
+          this.activityStatus = SUCCESS
+          let type = '1' // 1团购活动 2分享赚钱活动
+          // 活动状态，0关闭，1开启
+          let status = '1'
+          let flag = await this._rqChangeActiveStatus({status, type})
+          if (flag) {
+            this.isChecked = ON
+            this.$apply()
+          }
+        }
       } else {
         let index = -1
         index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
@@ -120,7 +132,6 @@
           this.onlineList.unshift(obj)
         }
       }
-
       this.$apply()
     }
 
@@ -165,7 +176,8 @@
       if (status === UP) {
         res = await this._rqGetGroupActiveList(this.paramsUp, status)
         res && (this.onlineList = this._formatRqData(res))
-        res && (this.activityStatus = res.status.toString())
+        res && (this.activityStatus = res.total_data.toString() !== '0' ? SUCCESS : 'falid')
+        console.log(this.activityStatus)
       } else {
         res = await this._rqGetGroupActiveList(this.paramsDown, status)
         res && (this.offlineList = this._formatRqData(res))
@@ -221,9 +233,16 @@
     }
 
     // 活动总开关
-    async _rqChangeActiveStatus() {
-      const json = await GroupActiveAPI.changeActiveStatus()
-      console.log(json)
+    async _rqChangeActiveStatus(data) {
+      const json = await GroupActiveAPI.changeActiveStatus(data)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
     }
 
     // 获取活动列表(分页)
@@ -278,6 +297,7 @@
 
     // 格式化服务器数据
     _formatRqData(res) {
+      console.log(res)
       let arr = []
       res.data.map(item => {
         arr.push({
@@ -365,12 +385,7 @@
         }, 50)
       }
     }
-    events = {
-      headerSwitchChange() {
-        this.isChecked = this.isChecked === ON ? OFF : ON
-        this.$apply()
-      }
-    }
+
     computed = {
       upStatus() {
         return this.status === UP ? 'active' : 'active-undef'
@@ -392,10 +407,17 @@
         return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
       }
     }
+
     events = {
-      headerSwitchChange() {
-        this.isChecked = this.isChecked === ON ? OFF : ON
-        this.$apply()
+      async headerSwitchChange() {
+        let type = '1' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = this.isChecked === ON ? '0' : '1'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = this.isChecked === ON ? OFF : ON
+          this.$apply()
+        }
       },
       async activeBtnOne(obj) {
         await this._upOrDown(obj)

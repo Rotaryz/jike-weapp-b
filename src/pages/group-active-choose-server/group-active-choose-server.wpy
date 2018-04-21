@@ -31,23 +31,6 @@
   import {ERR_OK} from 'api/base'
   import Toast from '@/base/toast/toast'
 
-  // function test() {
-  //   let arr = []
-  //   for (let i = 0; i < 7; i++) {
-  //     arr.push({
-  //       id: i,
-  //       promotion_id: i,
-  //       platform_price: (Math.random() * 100 + 50) >>> 0,
-  //       title: '80代120代金券' + i,
-  //       end_at: '2018-5-1',
-  //       inventory: 888
-  //     })
-  //   }
-  //   return arr
-  // }
-  //
-  // const jj = test()
-
   const PAGELIMIT = 10
 
   export default class GACServer extends wepy.page {
@@ -115,6 +98,7 @@
 
     // 请求可选的服务列表
     async _rqGetServerList(params) {
+      // 一个商品只能创建一种活动
       const json = await GroupActiveAPI.getGroupActiveServerList(params)
       if (json.error === ERR_OK) {
         return json
@@ -137,7 +121,6 @@
 
     events = {
       handleClick(id) {
-        console.log(this.prevId, id)
         let couponItem
         if (this.prevId === id) return
         if (this.prevId !== -1) {

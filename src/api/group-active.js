@@ -84,6 +84,17 @@ export default class GroupActive extends base {
     const url = `${this.baseUrl}/api/group/activity-status`
     return await this.get(url, data, loading)
   }
+
+  /**
+   * 查询活动状态
+   * @param data
+   * @param loading
+   * @returns {Promise<void>}
+   */
+  static async showActiveStatus(data, loading = true) {
+    const url = `${this.baseUrl}/api/group/show-status`
+    return await this.get(url, data, loading)
+  }
 }
 
 // import {ERR_OK} from 'api/base'

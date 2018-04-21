@@ -63,6 +63,7 @@
   import ServiceDue from '@/base/service-due/service-due'
   import Merchant from '@/api/merchants'
   import msgWindow from '@/base/popup-model/popup-model'
+  import GroupActiveAPI from 'api/group-active'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
@@ -196,9 +197,15 @@
 
     async load() {
       let Json = await Activity.getAllActivity()
+      // 1团购，2分享有礼
+      // 活动状态，0关闭，1开启
+      let groupShareJson = await this._rqShowGroupShareActive()
+      console.log(groupShareJson)
       if (Json.error !== ERR_OK) {
         return
       }
+      let groupShareRes = groupShareJson.data
+      console.log(groupShareJson)
       let res = Json.data
       this.list.map((item) => {
         switch (item.name) {
@@ -219,16 +226,16 @@
       })
       this.activeList.map(item => {
         switch (item.name) {
-          // case '大转盘':
-          //   item.checked = res.lucky_draw
-          //   break
+          case '团购':
+            item.checked = groupShareRes.groupon
+            break
           // case '签到红包':
           //   item.checked = res.sign
           //   break
-          // case '分享有礼':
-          //   item.checked = res.share
-          //   break
-          case '直播优惠':
+          case '分享赚钱':
+            item.checked = groupShareRes.share
+            break
+          case '点播优惠':
             item.checked = res.video_live
             break
         }
@@ -236,6 +243,16 @@
       })
       this.$apply()
       this.loaded()
+    }
+
+    async _rqShowGroupShareActive() {
+      const json = await GroupActiveAPI.showActiveStatus()
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.load()
+        this.inovke('Toast', 'show', json.message)
+      }
     }
 
     // async _getActivityInfo(type) {
