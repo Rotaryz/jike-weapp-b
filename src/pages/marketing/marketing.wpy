@@ -65,6 +65,13 @@
   import msgWindow from '@/base/popup-model/popup-model'
   import GroupActiveAPI from 'api/group-active'
 
+  const SIGN = '签到红包'
+  const SHARE = '分享有礼'
+  const WHEEL = '大转盘'
+  const LIVE = '点播优惠'
+  const SHAREMONEY = '分享赚钱'
+  const GROUPON = '团购'
+
   export default class Marketing extends wepy.page {
     mixins = [base]
     config = {
@@ -89,19 +96,19 @@
       }],
       list: [
         {
-          name: '签到红包',
+          name: SIGN,
           img: URIS.image + '/defaults/b-image/marketing/icon-sign@2x.png',
           url: '/pages/registration/registration',
           checked: 1
         },
         {
-          name: '分享有礼',
+          name: SHARE,
           img: URIS.image + '/defaults/b-image/marketing/icon-share@2x.png',
           url: '/pages/share-prize/share-prize',
           checked: 1
         },
         {
-          name: '大转盘',
+          name: WHEEL,
           img: URIS.image + '/defaults/b-image/marketing/icon-turntable@2x.png',
           url: '/pages/wheel-controller/wheel-controller',
           checked: 1
@@ -109,19 +116,19 @@
       ],
       activeList: [
         {
-          name: '点播优惠',
+          name: LIVE,
           img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
           url: '/pages/live/live',
           checked: 1
         },
         {
-          name: '分享赚钱',
+          name: SHAREMONEY,
           img: URIS.image + '/defaults/b-image/marketing/icon-sharemoney@2x.png',
-          url: '/pages/new-share-activity/new-share-activity',
+          url: '/pages/share-active-list/share-active-list',
           checked: 1
         },
         {
-          name: '团购',
+          name: GROUPON,
           img: URIS.image + '/defaults/b-image/marketing/icon-group@2x.png',
           url: '/pages/group-active-list/group-active-list',
           checked: 1
@@ -132,15 +139,6 @@
     }
 
     methods = {
-      // showNull(idx) {
-      //   if (this.serviceDue) {
-      //     this.$invoke('ServiceDue', 'show')
-      //     return
-      //   }
-      //   if (idx * 1 === 4) {
-      //     this.$navigate('/pages/prize-pool/prize-pool')
-      //   }
-      // },
       showDetail(url, checked) {
         if (this.serviceDue) {
           this.$invoke('ServiceDue', 'show')
@@ -152,41 +150,6 @@
         }
         this.$navigate(url + `?isChecked=${checked}`)
       }
-      // async switchChange(idx, checked) {
-      //   if (this.serviceDue) {
-      //     this.$invoke('ServiceDue', 'show')
-      //     return
-      //   }
-      //   let type
-      //   switch (idx * 1) {
-      //     case 0:
-      //       type = 'lucky_draw'
-      //       break
-      //     case 1:
-      //       type = 'sign'
-      //       break
-      //     case 2:
-      //       type = 'share'
-      //       break
-      //     case 3:
-      //       type = 'video_live'
-      //       break
-      //   }
-      //   let data = {
-      //     activity_type: type,
-      //     is_paused: checked ? 0 : 1
-      //   }
-      //   const res = await Activity.switchActivity(data)
-      //   this.loaded()
-      //   if (res.error === ERR_OK) {
-      //     let msg = checked ? '开启成功' : '关闭成功'
-      //     this.list = this._checkedChange(idx, checked)
-      //     this.$apply()
-      //     Tips.success(msg)
-      //   } else {
-      //     this.$invoke('Toast', 'show', res.message)
-      //   }
-      // }
     }
 
     async onShow() {
@@ -200,7 +163,6 @@
       // 1团购，2分享有礼
       // 活动状态，0关闭，1开启
       let groupShareJson = await this._rqShowGroupShareActive()
-      console.log(groupShareJson)
       if (Json.error !== ERR_OK) {
         return
       }
@@ -209,33 +171,27 @@
       let res = Json.data
       this.list.map((item) => {
         switch (item.name) {
-          case '大转盘':
+          case WHEEL:
             item.checked = res.lucky_draw
             break
-          case '签到红包':
+          case SIGN:
             item.checked = res.sign
             break
-          case '分享有礼':
+          case SHARE:
             item.checked = res.share
             break
-          // case '直播优惠':
-          //   item.checked = res.video_live
-          //   break
         }
         return item
       })
       this.activeList.map(item => {
         switch (item.name) {
-          case '团购':
+          case GROUPON:
             item.checked = !(groupShareRes.groupon * 1)
             break
-          // case '签到红包':
-          //   item.checked = res.sign
-          //   break
-          case '分享赚钱':
+          case SHAREMONEY:
             item.checked = !(groupShareRes.share * 1)
             break
-          case '点播优惠':
+          case LIVE:
             item.checked = res.video_live
             break
         }
@@ -245,32 +201,16 @@
       this.loaded()
     }
 
+    // 请求服务器查询团购和分享赚钱的活动状态
     async _rqShowGroupShareActive() {
       const json = await GroupActiveAPI.showActiveStatus()
       if (json.error === ERR_OK) {
         return json
       } else {
-        this.load()
+        this.loaded()
         this.inovke('Toast', 'show', json.message)
       }
     }
-
-    // async _getActivityInfo(type) {
-    //   let json = await Activity.getActivityInfo(type)
-    //   if (json.error === ERR_OK) {
-    //     return json.status
-    //   } else {
-    //     return 'failed'
-    //   }
-    // }
-
-    // async _getActivityInfoAll() {
-    //   const lucy = await this._getActivityInfo('lucky')
-    //   const sign = await this._getActivityInfo('sign')
-    //   const share = await this._getActivityInfo('share')
-    //   const live = await this._getActivityInfo('live')
-    //   return {lucy,sign, share, live}
-    // }
 
     async _checkService() {
       let resData = await Merchant.getService(false)
@@ -285,15 +225,6 @@
       wepy.setStorageSync('dataFinish', this.dataFinish)
       this.$apply()
     }
-
-    // _checkedChange(idx, checked) {
-    //   return this.list.map((item, index) => {
-    //     if (index * 1 === idx * 1) {
-    //       item.checked = checked ? 0 : 1
-    //     }
-    //     return item
-    //   })
-    // }
   }
 </script>
 

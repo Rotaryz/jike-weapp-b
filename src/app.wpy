@@ -110,10 +110,8 @@
         'pages/group-active-list/group-active-list',
         'pages/group-active-editor/group-active-editor',
         'pages/group-active-choose-server/group-active-choose-server',
-        'pages/new-share-activity/new-share-activity'
-        'pages/group-active-choose-server/group-active-choose-server',
         'pages/new-share-activity/new-share-activity',
-        'pages/share-active-list/share-active-list',
+        // 'pages/share-active-list/share-active-list',
         'pages/share-active-choose-server/share-active-choose-server'
       ],
       window: {

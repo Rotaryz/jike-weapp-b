@@ -49,7 +49,7 @@
 
     async onLoad(option) {
       await this._init()
-      this._findCoupon(option.id)
+      this._findCoupon(option.goodId)
     }
 
     // 初始化

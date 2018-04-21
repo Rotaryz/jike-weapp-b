@@ -373,9 +373,8 @@
       toChooseServer() {
         if (this.toChooseServerTimer != null || this.info.statusType === UP) return
         this.toChooseServerTimer = setTimeout(() => {
-          let url = `/pages/group-active-choose-server/group-active-choose-server?id=${this.info.id}`
+          let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
           this.$navigate(url)
-          clearTimeout(this.toChooseServerTimer)
           this.toChooseServerTimer = null
           this.$apply()
         }, 50)
