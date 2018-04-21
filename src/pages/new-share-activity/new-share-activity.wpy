@@ -2,8 +2,8 @@
   <view class="tl-share-con">
     <view class="tl-share-box tl-share-type-between">
       <view class="tl-share-left">添加服务</view>
-      <view class="tl-share-right">
-        <view class="full-text">我有一张卷</view>
+      <view class="tl-share-right" @tap="getServeList('share')">
+        <view class="full-text">{{currentCoupon.title}}</view>
         <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                class="full-image"></image>
       </view>
@@ -11,17 +11,17 @@
     <view class="tl-share-box">
       <view class="tl-share-left">现价</view>
       <view class="tl-share-right">
-        <view class="full-text">300</view>
+        <view class="full-text {{!currentCoupon ? 'full-text-dis' : ''}}">{{!currentCoupon ? '0.00' : currentCoupon.platform_price}}</view>
       </view>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动名称</view>
-      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15">
-      <view class="tl-share-number">0/15</view>
+      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15"  bindinput="shareInputTitle">
+      <view class="tl-share-number">{{titleNumber}}/15</view>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">添加数量</view>
-      <input type="number" placeholder="请输入/最大可添加数量为100" class="tl-share-title" placeholder-class="tl-share-title-place">
+      <input type="number" placeholder="请输入/最大可添加数量为100" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="8" bindinput="shareInputNumber">
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动时间</view>
@@ -45,7 +45,7 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">抵用券</view>
-      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place">
+      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="6"  bindinput="shareInputDiscount">
     </view>
   </view>
   <view class="tl-share-con tl-share-con-bottom">
@@ -55,7 +55,7 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">佣金比率</view>
-      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2">
+      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2" bindinput="shareInputRate">
       <view class="tl-share-title-place">%</view>
     </view>
     <view class="tl-share-box">
@@ -80,14 +80,71 @@
 
     data = {
       imageUri: URIS.image,
-      validDate: ''
+      validDate: '',
+      currentCoupon: '',
+      titleNumber: 0,
+      shareData: {
+        promotion_id: '',
+        title: '',
+        price: '',
+        init_stock: '',
+        sell_start_at: '',
+        sell_end_at: '',
+        eductible_money: '',
+        rate_money: '',
+        profit_money: ''
+      }
     }
 
+    onLoad () {
+    }
+
+    onShow() {
+      console.log(this.$parent.globalData.shareCoupon)
+      if (this.$parent.globalData.shareCoupon) {
+        this.currentCoupon = this.$parent.globalData.shareCoupon
+      }
+    }
+
+    // 计算提成金额
+    _calculatCommission () {
+      if (this.currentCoupon) return
+      if (this.shareData.rate_money) return
+      if (this.shareData.eductible_money) return
+      console.log(11)
+    }
     methods = {
+      // 输入分享金额
+      shareInputTitle(e) {
+        this.shareData.title = e.detail.value
+        this.titleNumber = e.detail.value.length
+        this.$apply()
+        console.log(this.shareData)
+      },
+      // 输入分享数量
+      shareInputNumber(e) {
+        this.shareData.init_stock = e.detail.value
+        this.$apply()
+      },
+      // 输入分享折扣
+      shareInputDiscount(e) {
+        this.shareData.eductible_money = e.detail.value
+        this.$apply()
+      },
+      // 输入分享比率
+      shareInputRate(e) {
+        this.shareData.rate_money = e.detail.value
+        this.$apply()
+      },
       setValidDate(e) {
         this.validDate = e.detail.value
         console.log(e)
         this.$apply()
+      },
+
+      getServeList(val) {
+        let url = `/pages/share-active-choose-server/share-active-choose-server`
+        this.$navigate(url)
       }
     }
 
@@ -165,6 +222,10 @@
           font-size: $font-size-medium
           font-family: $font-family-light
           color: $color-theme
+        .full-text-dis
+          font-size: $font-size-medium
+          font-family: $font-family-light
+          color: $color-btn-dis
         .full-image
           margin-left: 10px
           display: block
