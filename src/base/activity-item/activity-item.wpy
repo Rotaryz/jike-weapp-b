@@ -4,7 +4,7 @@
       <view class="up">
         <view class="up-box">
           <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
             <view class="u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
           <view class="u-title">{{activeObj.hotName}}</view>
@@ -27,7 +27,7 @@
       <view class="up">
         <view class="up-box">
           <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
+            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
           </view>
           <view class="u-title">{{activeObj.hotName}}</view>
           <view class="u-price">现价 ¥{{activeObj.price}}</view>

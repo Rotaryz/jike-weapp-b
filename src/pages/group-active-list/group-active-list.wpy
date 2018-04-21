@@ -3,10 +3,10 @@
     <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
-          <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
-          <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
+          <view class="g-a-l-n-item {{upStatus}}" id="{{tabUpId}}">已上线</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="{{tabDownId}}">已过期/已下线</view>
         </view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabUpId}}" bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
               <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
@@ -19,7 +19,7 @@
             </view>
           </view>
         </scroll-view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabDownId}}" bindscrolltolower="_getMoreList">
           <repeat for="{{offlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
               <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
@@ -61,6 +61,8 @@
     data = {
       imageUrlHead: URIS.image,
       activityStatus: 'failed', // 活动总开关
+      tabUpId: UP,
+      tabDownId: DOWN,
       status: UP, // tab栏状态
       onlineList: [],
       offlineList: [],
@@ -78,7 +80,8 @@
       isAllDown: false,
       showTabDownCount: 0,
       toNewTimer: null,
-      toEditorTimer: null
+      toEditorTimer: null,
+      currentDelObj: null
     }
 
     async onLoad() {
@@ -86,12 +89,39 @@
     }
 
     onShow() {
+      const obj = this.$parent.globalData.groupActive.currentGroupActive
+      if (!obj) return
+      this._fromPrevPage(obj)
     }
 
     async onPullDownRefresh() {
       let params = this._resetConfig()
       await this._getNewActiveList(this.status, params)
       wx.stopPullDownRefresh()
+    }
+
+    // 插入来自编辑页面
+    _fromPrevPage(obj) {
+      if (obj.source === NEW) {
+        this.onlineList.unshift(obj)
+      } else {
+        let index = -1
+        index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
+        if (index !== -1) {
+          // 在下线列表中
+          this.offlineList.splice(index, 1)
+        }
+        index = this.onlineList.findIndex(val => val.id * 1 === obj.id * 1)
+        if (index !== -1) {
+          // 在上线列表中
+          this.onlineList.splice(index, 1, obj)
+        } else {
+          // 没在上线类表中
+          this.onlineList.unshift(obj)
+        }
+      }
+
+      this.$apply()
     }
 
     // 重置配置
@@ -117,11 +147,10 @@
       let res = {}
       if (status === UP) {
         res = await this._rqGetGroupActiveList(params, status)
-        res && (this.onlineList = res.data)
-        // res && (this.activityStatus = res.status.toString())
+        res && (this.onlineList = this._formatRqData(res))
       } else {
         res = await this._rqGetGroupActiveList(params, status)
-        res && (this.offlineList = res.data)
+        res && (this.offlineList = this._formatRqData(res))
       }
       if (res) {
         this._checkIsAll(res)
@@ -135,11 +164,11 @@
       let res = {}
       if (status === UP) {
         res = await this._rqGetGroupActiveList(this.paramsUp, status)
-        res && (this.onlineList = res.data)
+        res && (this.onlineList = this._formatRqData(res))
         res && (this.activityStatus = res.status.toString())
       } else {
         res = await this._rqGetGroupActiveList(this.paramsDown, status)
-        res && (this.offlineList = res.data)
+        res && (this.offlineList = this._formatRqData(res))
       }
       if (res) {
         this._checkIsAll(res)
@@ -152,16 +181,19 @@
     async _getMoreList() {
       let status = this.status
       let res = {}
+      let list = []
       if (status === UP) {
         if (this.isAllUp) return
         this.paramsUp.page++
         res = await this._rqGetGroupActiveList(this.paramsUp, status)
-        res && (this.onlineList.push(...res.data))
+        res && (list = this._formatRqData(res))
+        res && (this.onlineList.push(...list))
       } else {
         if (this.isAllDown) return
         this.paramsDown.page++
         res = await this._rqGetGroupActiveList(this.paramsDown, status)
-        res && (this.offlineList.push(...res.data))
+        res && (list = this._formatRqData(res))
+        res && (this.offlineList.push(...list))
       }
       if (res) {
         this._checkIsAll(res)
@@ -172,7 +204,6 @@
 
     // 检查是否已经查询完毕
     _checkIsAll(res) {
-      console.log(this.onlineList)
       if (this.status === UP) {
         if (this.onlineList.length >= res.meta.total * 1) {
           // || this.onlineList.length % UPPAGELIMIT !== 0
@@ -186,8 +217,13 @@
           this.isAllDown = true
         }
       }
-      console.log(this.isAllUp, 1, this.isAllDown, 2)
       this.$apply()
+    }
+
+    // 活动总开关
+    async _rqChangeActiveStatus() {
+      const json = await GroupActiveAPI.changeActiveStatus()
+      console.log(json)
     }
 
     // 获取活动列表(分页)
@@ -196,8 +232,47 @@
       if (json.error === ERR_OK) {
         return json
       } else {
-        this.$invoke('toast', 'show', json.message)
         this.loaded()
+        this.$invoke('toast', 'show', json.message)
+      }
+    }
+
+    // 下线活动
+    async _rqOfflineActive(id) {
+      const json = await GroupActiveAPI.offlineGroupActive(id)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 上线活动
+    async _rqOnlineActive(id) {
+      const json = await GroupActiveAPI.onlineGroupActive(id)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 删除活动
+    async _rqDelActive(id) {
+      const json = await GroupActiveAPI.deleteGroupActive(id)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
       }
     }
 
@@ -212,14 +287,15 @@
           hotName: item.activity_name,
           price: item.platform_price,
           hotPrice: item.config.group_price,
-          status: item.status === UP ? '已上线' : '已下线',
-          statusType: item.status,
+          status: item.status.toString() === UP ? '已上线' : '已下线',
+          statusType: item.status.toString(),
           serverType: item.promotion_title,
           addNum: item.stock,
-          hotEndDate: item.end_at,
+          hotEndDate: item.end_at.split(' ')[0],
           timeLimit: item.config.group_validity,
           inventory: item.promotion_stock,
-          goodId: item.good_ids
+          goodId: item.goods_id,
+          hotSellEndDate: item.promotion_sell_end_at.split(' ')[0]
         })
       })
       return arr
@@ -236,14 +312,31 @@
       }
     }
 
+    // 执行删除动作
+    async _toDelActive() {
+      let id = this.currentDelObj.id
+      let flag = await this._rqDelActive(id)
+      if (!flag) return
+      this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      this.$apply()
+    }
+
     // 上线或下线
-    _upOrDown(obj) {
-      // 请求服务器成功后
+    async _upOrDown(obj) {
       if (this.status === UP) {
-        this.onlineList.splice(this.onlineList.findIndex(val => val.id === obj.id), 1)
+        let flag = await this._rqOfflineActive(obj.id)
+        if (!flag) return
+        this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
+        obj.status = '已下线'
+        obj.statusType = DOWN
         this.offlineList.unshift(obj)
       } else {
-        this.offlineList.splice(this.offlineList.findIndex(val => val.id === obj.id), 1)
+        let flag = await this._rqOnlineActive(obj.id)
+        if (!flag) return
+        this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
+        obj.status = '已上线'
+        obj.statusType = UP
         this.onlineList.unshift(obj)
       }
       this.$apply()
@@ -259,7 +352,6 @@
         if (this._isTabDownInit()) {
           await this._init(this.status)
         }
-        console.log(this.showTabDownCount)
         this.$apply()
       },
       toNewPage() {
@@ -281,10 +373,10 @@
     }
     computed = {
       upStatus() {
-        return this.status === UP ? 'active' : ''
+        return this.status === UP ? 'active' : 'active-undef'
       },
       downStatus() {
-        return this.status === DOWN ? 'active' : ''
+        return this.status === DOWN ? 'active' : 'active-undef'
       },
       isEmpty() {
         if (this.status === UP) {
@@ -305,11 +397,13 @@
         this.isChecked = this.isChecked === ON ? OFF : ON
         this.$apply()
       },
-      activeBtnOne(obj) {
-        this._upOrDown(obj)
+      async activeBtnOne(obj) {
+        await this._upOrDown(obj)
       },
       activeBtnTwo(obj) {
         this.$invoke('confirm', 'show')
+        this.currentDelObj = obj
+        this.$apply()
       },
       activeBtnThree(obj) {
         this.$parent.globalData.groupActive.currentGroupActive = obj
@@ -317,13 +411,13 @@
         this.toEditorTimer = setTimeout(() => {
           let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
           this.$navigate(url)
-          clearTimeout(this.toEditorTimer)
           this.toEditorTimer = null
           this.$apply()
         }, 50)
       },
-      confirm() {
+      async confirm() {
         // 删除确认
+        await this._toDelActive()
       }
     }
     components = {

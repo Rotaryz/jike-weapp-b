@@ -16,7 +16,7 @@ export default class GroupActive extends base {
   }
 
   /**
-   * 查询服务
+   * 查询服务-团购
    * @param data
    * @returns {Promise<void>}
    */
@@ -35,6 +35,55 @@ export default class GroupActive extends base {
     return await this.post(url, data)
   }
 
+  /**
+   * 更新团购活动
+   * @param data
+   * @returns {Promise<void>}
+   */
+  static async updateGroupActive(data, id) {
+    const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
+    return await this.put(url, data)
+  }
+
+  /**
+   * 下线团购活动
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async offlineGroupActive(id) {
+    const url = `${this.baseUrl}/api/group/offline/${id}`
+    return await this.get(url)
+  }
+
+  /**
+   * 上线团购活动
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async onlineGroupActive(id) {
+    const url = `${this.baseUrl}/api/group/online/${id}`
+    return await this.get(url)
+  }
+
+  /**
+   * 删除团购
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async deleteGroupActive(id) {
+    const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
+    return await this.delete(url)
+  }
+
+  /**
+   * 修改活动状态总开关-团购
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async changeActiveStatus(data, loading = true) {
+    const url = `${this.baseUrl}/api/group/activity-status`
+    return await this.get(url, data, loading)
+  }
 }
 
 // import {ERR_OK} from 'api/base'

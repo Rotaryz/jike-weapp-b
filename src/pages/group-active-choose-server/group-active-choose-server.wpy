@@ -100,13 +100,14 @@
       let arr = []
       res.data.map(item => {
         arr.push({
-          id: item.id,
+          id: item.id, // 商品id
           promotion_id: item.id,
           platform_price: item.platform_price,
           title: item.title,
           end_at: item.sell_end_at,
           checked: false,
-          inventory: item.stock
+          inventory: item.stock,
+          src: item.image_url
         })
       })
       return arr
@@ -118,8 +119,8 @@
       if (json.error === ERR_OK) {
         return json
       } else {
-        this.$invoke('toast', 'show', json.message)
         this.loaded()
+        this.$invoke('toast', 'show', json.message)
         return {}
       }
     }

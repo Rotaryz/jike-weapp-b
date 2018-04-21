@@ -31,7 +31,7 @@
           <view class="g-a-h-d-l">自今日起</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
-            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
+            <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" end="{{hotSellEndDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
             <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
           </view>
         </view>
@@ -60,6 +60,7 @@
       </view>
     </view>
     <view class="g-a-submit {{btnStatusStyle}}" @tap="saveInfo">保存</view>
+    <toast></toast>
   </view>
 </template>
 
@@ -76,7 +77,7 @@
     HOTENDDEFAULT,
     TPLTIME,
     TPLPEOPLE,
-    // NEW,
+    NEW,
     DOWN,
     UP,
     EDITOR,
@@ -106,7 +107,10 @@
         hotPrice: INPUTDEFAULT,
         inventory: INPUTDEFAULT,
         statusType: DOWN,
-        disableReduceInfo: {}
+        disableReduceInfo: {},
+        hotSellEndDate: -1,
+        source: NEW, // 新建 和 编辑 2种模式,
+        goodId: 0
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME,
@@ -134,7 +138,9 @@
         this.info.serverType = obj.title
         this.info.price = obj.platform_price
         this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
-        this.info.id = obj.id
+        this.info.goodId = obj.id // 这里是商品id
+        this.info.hotSellEndDate = obj.end_at
+        this.info.src = obj.src
         this.$apply()
       }
     }
@@ -146,12 +152,14 @@
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
+        this.info.source = EDITOR
         this.info.statusType = obj.statusType
         this.info.serverType = obj.serverType
-        this.info.price = obj.price.toFixed(1)
+        this.info.price = parseFloat(obj.price).toFixed(1)
         this.info.hotName = obj.hotName
         this.info.addNum = obj.addNum
         this.info.hotEndDate = obj.hotEndDate
+        this.info.hotSellEndDate = obj.hotSellEndDate
         this.info.timeLimit = obj.timeLimit + '小时'
         this.info.peopleNum = obj.peopleNum + '人'
         this.info.hotPrice = obj.hotPrice.toFixed(1)
@@ -160,50 +168,146 @@
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
         this.info.disableReduceInfo.addNum = obj.addNum
         this.info.disableReduceInfo.hotEndDate = obj.hotEndDate
+        this.info.id = obj.id
+        this.info.src = obj.src
+        this.goodId = obj.goodId
         this.$apply()
+        console.log(this.info, obj)
+      } else {
+        this.$parent.globalData.groupActive.currentGroupActive = null
+        this.$parent.globalData.groupActive.currentCouponGA = null
       }
       this.$apply()
     }
 
-    // 检查信息是否完整
+    // 格式化日期
+    _formateDate(time) {
+      time = new Date(time)
+      const year = time.getFullYear()
+      const month = time.getMonth() + 1
+      const date = time.getDate()
+      return `${year}-${month}-${date}`
+    }
+
+    // 检查信息是否完整且符合条件
     _checkInfoLegal(statusType) {
       statusType = this.info.statusType
       // 活动类型上线
+      let flag = false
       let price = parseFloat(this.info.price)
       let addNum = parseInt(this.info.addNum)
+      let oldAddNum = parseInt(this.info.disableReduceInfo.addNum)
       let hotPrice = parseFloat(this.info.hotPrice)
       let peopleNum = parseInt(this.info.peopleNum)
-      let flag = false
+      let inventory = parseInt(this.info.inventory)
+      let newEndDate = new Date(this.info.hotEndDate).getTime()
+      let oldEndDate = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+      oldEndDate = this._formateDate(oldEndDate)
+      oldEndDate = new Date(oldEndDate).getTime()
+      if (isNaN(inventory) || inventory <= 0) {
+        inventory = Number.MAX_VALUE
+      }
+      if (isNaN(peopleNum)) {
+        peopleNum = 0
+      }
+      if (isNaN(addNum)) {
+        addNum = 0
+      }
+      if (isNaN(oldAddNum)) {
+        oldAddNum = 2
+      }
       if (statusType === UP) {
         // 上线状态的判断
-        flag = (
-          // this.info.serverType !== INPUTDEFAULT &&
-          // price > 0 && // 价格
-          this.info.hotName !== INPUTDEFAULT && // 活动名称
-          addNum >= peopleNum && // 数量
-          this.info.hotEndDate !== HOTENDDEFAULT  // 截止时间
-        )
+        if (this.info.hotName === INPUTDEFAULT) {
+          flag = '请输入活动名称'
+          return flag
+        } else if (peopleNum > inventory) {
+          flag = '库存不足,请添加库存'
+          return flag
+        } else if (addNum < oldAddNum) {
+          flag = `输入的数量不能小于之前${oldAddNum}`
+          return flag
+        } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
+          flag = `输入的数量不能小于${peopleNum}`
+          return flag
+        } else if (addNum < peopleNum && addNum > inventory) {
+          flag = `请输入${peopleNum}至${inventory}之内的数量`
+          return flag
+        } else if (this.info.hotEndDate === HOTENDDEFAULT) {
+          flag = '请输入活动截止日期'
+          return flag
+        } else if (newEndDate < oldEndDate) {
+          flag = `活动时间不能小于30天`
+          return flag
+        }
+        // flag = (
+        //   // this.info.serverType !== INPUTDEFAULT &&
+        //   // price > 0 && // 价格
+        //   this.info.hotName !== INPUTDEFAULT && // 活动名称
+        //   addNum >= peopleNum && // 数量
+        //   this.info.hotEndDate !== HOTENDDEFAULT  // 截止时间
+        // )
       } else {
-        // 下线状态的判断
-        flag = (
-          this.info.serverType !== INPUTDEFAULT &&
-          price > 0 &&
-          this.info.hotName !== INPUTDEFAULT &&
-          addNum >= peopleNum &&
-          this.info.hotEndDate !== HOTENDDEFAULT &&
-          this.info.timeLimit !== PICKERDEFAUFT &&
-          this.info.peopleNum !== PICKERDEFAUFT &&
-          (hotPrice > 0 && hotPrice < price) &&
-          !isNaN(this.info.hotPrice * 1)
-        )
+        // 下线状态或新建状态的判断
+        if (this.info.serverType === INPUTDEFAULT) {
+          flag = '请添加服务'
+          return flag
+        } else if (price < 0) {
+          flag = '价格不能小于0'
+          return flag
+        } else if (this.info.hotName === INPUTDEFAULT) {
+          flag = '请输入活动名称'
+          return flag
+        } else if (peopleNum > inventory) {
+          flag = '库存不足,请添加库存'
+          return flag
+        } else if (addNum === 0) {
+          flag = '请输入服务的数量'
+          return flag
+        } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
+          flag = `请输入的数量不能小于${peopleNum}`
+          return flag
+        } else if (addNum < peopleNum && addNum > inventory) {
+          flag = `请输入${peopleNum}至${inventory}之内的数量`
+          return flag
+        } else if (this.info.hotEndDate === HOTENDDEFAULT) {
+          flag = '请输入活动截止日期'
+          return flag
+        } else if (newEndDate < oldEndDate) {
+          flag = `活动时间不能小于30天`
+          return flag
+        } else if (this.info.timeLimit === PICKERDEFAUFT) {
+          flag = '请输入成团的有效期'
+          return flag
+        } else if (this.info.peopleNum === PICKERDEFAUFT) {
+          flag = '请输入活动的人数'
+          return flag
+        } else if (!(hotPrice > 0 && hotPrice < price)) {
+          flag = `请输入${0.1}至${price}之内的价格`
+          return flag
+        } else if (isNaN(this.info.hotPrice * 1)) {
+          flag = `请输入正确的价格`
+          return flag
+        }
+        //   flag = (
+        //   this.info.serverType !== INPUTDEFAULT &&
+        //   price > 0 &&
+        //   this.info.hotName !== INPUTDEFAULT &&
+        //   addNum >= peopleNum &&
+        //   this.info.hotEndDate !== HOTENDDEFAULT &&
+        //   this.info.timeLimit !== PICKERDEFAUFT &&
+        //   this.info.peopleNum !== PICKERDEFAUFT &&
+        //   (hotPrice > 0 && hotPrice < price) &&
+        //   !isNaN(this.info.hotPrice * 1)
+        // )
       }
-      return flag
+      return 'success'
     }
 
     // 格式化上传数据
     _formatPostInfo() {
       return {
-        good_ids: this.info.id,
+        goods_id: this.info.goodId,
         activity_name: this.info.hotName,
         stock: this.info.addNum,
         end_at: this.info.hotEndDate + HTOENDSTAMP,
@@ -215,16 +319,53 @@
       }
     }
 
-    // 请求服务器创建活动
+    // 请求服务器创建新的活动
     async _rqCreateNewData(data) {
       const json = await GroupActiveAPI.createGroupActive(data)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
       } else {
-        this.$invoke('toast', 'show', json.message)
+        console.log(json)
         this.loaded()
+        this.$invoke('toast', 'show', json.message)
         return false
+      }
+    }
+
+    // 请求服务器更新活动
+    async _rqUpdateData(data, id) {
+      const json = await GroupActiveAPI.updateGroupActive(data, id)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        console.log(json)
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 返回上一页面打包数据
+    _packActiveInfo() {
+      return {
+        statusType: UP,
+        serverType: this.info.serverType,
+        price: this.info.price,
+        hotName: this.info.hotName,
+        addNum: this.info.addNum,
+        hotEndDate: this.info.hotEndDate,
+        timeLimit: parseInt(this.info.timeLimit),
+        peopleNum: parseInt(this.info.peopleNum),
+        hotPrice: this.info.hotPrice,
+        inventory: this.info.inventory === '无限制' ? STOCKUNLIMIT : this.info.inventory,
+        hotSellEndDate: this.info.hotSellEndDate,
+        source: this.info.source,
+        id: this.info.id,
+        src: this.info.src,
+        goodId: this.goodId,
+        status: '已上线'
       }
     }
 
@@ -270,11 +411,24 @@
         this.$apply()
         return value
       },
-      saveInfo() {
-        if (this._checkInfoLegal()) {
+      async saveInfo() {
+        let checkMsg = this._checkInfoLegal()
+        if (checkMsg === 'success') {
           let data = this._formatPostInfo()
-          this._rqCreateNewData(data) && console.log(data)
-          // this.$back()
+          let flag = false
+          if (this.info.source === NEW) {
+            flag = await this._rqCreateNewData(data)
+          } else {
+            flag = await this._rqUpdateData(data, this.info.id)
+          }
+          if (flag) {
+            this.$parent.globalData.groupActive.currentGroupActive = this._packActiveInfo()
+            setTimeout(() => {
+              this.$back()
+            }, 50)
+          }
+        } else {
+          this.$invoke('toast', 'show', checkMsg)
         }
       }
     }
@@ -288,18 +442,18 @@
       timeLimit() {
         return this.info.timeLimit !== PICKERDEFAUFT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
-      hotEndDate() {
-        return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      },
-      hotPrice() {
-        return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      },
-      hotName() {
-        return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      },
-      addNum() {
-        return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      },
+      // hotEndDate() {
+      //   return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
+      // },
+      // hotPrice() {
+      //   return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
+      // },
+      // hotName() {
+      //   return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
+      // },
+      // addNum() {
+      //   return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
+      // },
       hotNameLen() {
         return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
       },
@@ -307,18 +461,18 @@
         return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24 * 30
       },
       inventory() {
-        return this.info.inventory !== INPUTDEFAULT ? `库存：${this.info.inventory}` : '请输入'
+        return this.info.inventory !== INPUTDEFAULT ? `最大可输入数量${this.info.inventory}` : '请输入'
       },
       btnStatusStyle() {
         let flag = this._checkInfoLegal()
-        return flag ? 'disable-undef' : 'disable'
+        return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
         return this.info.statusType === UP
       }
     }
     components = {
-      Toast
+      'toast': Toast
     }
 
     config = {
