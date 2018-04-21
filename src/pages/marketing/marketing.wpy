@@ -1,7 +1,7 @@
 <template>
   <view class="marketing-wrapper">
     <view class="header">
-      <view class="title">营销奖品</view>
+      <view class="title">奖品池</view>
     </view>
     <view class="container jackpot">
       <view class="marketing-item" wx:for="{{jackpotList}}" wx:key="{{item}}" @tap="showDetail({{item.url}})">
@@ -31,6 +31,22 @@
         </view>
       </view>
     </view>
+    <view class="header m-active">
+      <view class="title">促销活动</view>
+    </view>
+    <view class="container">
+      <view class="marketing-item" wx:for="{{activeList}}" wx:key="{{item}}" @tap="showDetail({{item.url}},{{item.checked}})">
+        <view class="item-left">
+          <image src="{{item.img}}" class="item-left-img"></image>
+          <view class="item-left-txt">{{item.name}}</view>
+        </view>
+        <view class="item-right">
+          <view class="status">{{item.checked?'关闭':''}}</view>
+          <image src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="item-right-arrow"
+                 wx:if="{{imageUrlHead}}"></image>
+        </view>
+      </view>
+    </view>
     <Toast></Toast>
     <ServiceDue></ServiceDue>
     <msg-window></msg-window>
@@ -40,7 +56,6 @@
 <script>
   import wepy from 'wepy'
   import Activity from '@/api/activitys'
-  // import Tips from '@/common/js/tips'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
@@ -67,17 +82,11 @@
     data = {
       imageUrlHead: URIS.image,
       jackpotList: [{
-        name: '奖品池',
+        name: '奖品',
         img: URIS.image + '/defaults/b-image/marketing/icon-prize@2x.png',
         url: '/pages/prize-pool/prize-pool'
       }],
       list: [
-        {
-          name: '直播优惠',
-          img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
-          url: '/pages/live/live',
-          checked: 1
-        },
         {
           name: '签到红包',
           img: URIS.image + '/defaults/b-image/marketing/icon-sign@2x.png',
@@ -94,6 +103,26 @@
           name: '大转盘',
           img: URIS.image + '/defaults/b-image/marketing/icon-turntable@2x.png',
           url: '/pages/wheel-controller/wheel-controller',
+          checked: 1
+        }
+      ],
+      activeList: [
+        {
+          name: '点播优惠',
+          img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
+          url: '/pages/live/live',
+          checked: 1
+        },
+        {
+          name: '分享赚钱',
+          img: URIS.image + '/defaults/b-image/marketing/icon-sharemoney@2x.png',
+          url: '/pages/new-share-activity/new-share-activity',
+          checked: 1
+        },
+        {
+          name: '团购',
+          img: URIS.image + '/defaults/b-image/marketing/icon-group@2x.png',
+          url: '/pages/group-active-list/group-active-list',
           checked: 1
         }
       ],
@@ -182,6 +211,23 @@
           case '分享有礼':
             item.checked = res.share
             break
+          // case '直播优惠':
+          //   item.checked = res.video_live
+          //   break
+        }
+        return item
+      })
+      this.activeList.map(item => {
+        switch (item.name) {
+          // case '大转盘':
+          //   item.checked = res.lucky_draw
+          //   break
+          // case '签到红包':
+          //   item.checked = res.sign
+          //   break
+          // case '分享有礼':
+          //   item.checked = res.share
+          //   break
           case '直播优惠':
             item.checked = res.video_live
             break
@@ -250,6 +296,8 @@
       line-height: 50px
       box-sizing border-box
       background-color: $color-white
+      &.m-active
+        margin-top: 10px
       &:after
         content: ""
         position: absolute
