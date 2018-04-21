@@ -85,7 +85,12 @@
     }
 
     async onLoad(option) {
-      console.log(option.isChecked, '99999')
+      if (option.isChecked.toString() === 'true') {
+        this.isChecked = OFF
+      } else {
+        this.isChecked = ON
+      }
+      this.$apply()
       await this._init(this.status)
     }
 

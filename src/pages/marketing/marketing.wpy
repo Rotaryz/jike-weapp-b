@@ -227,13 +227,13 @@
       this.activeList.map(item => {
         switch (item.name) {
           case '团购':
-            item.checked = groupShareRes.groupon
+            item.checked = !(groupShareRes.groupon * 1)
             break
           // case '签到红包':
           //   item.checked = res.sign
           //   break
           case '分享赚钱':
-            item.checked = groupShareRes.share
+            item.checked = !(groupShareRes.share * 1)
             break
           case '点播优惠':
             item.checked = res.video_live
