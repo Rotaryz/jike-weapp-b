@@ -15,33 +15,21 @@
         </view>
       </view>
       <view class="down">
-        <view class="down-box">
-          <view class="d-status">{{activeObj.status}}</view>
-          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+        <view class="down-box" wx:if="{{activeObj.statusType === constObj.UP}}">
+          <view class="d-status">已上线</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
           <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
-      </view>
-    </view>
-    <view class="component-group-item" wx:if="{{activeType === 'share'}}">
-      <view class="up">
-        <view class="up-box">
-          <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
-          </view>
-          <view class="u-title">{{activeObj.hotName}}</view>
-          <view class="u-price">现价 ¥{{activeObj.price}}</view>
-          <view class="u-hot-price">团购价
-            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
-          </view>
-        </view>
-      </view>
-      <view class="down">
-        <view class="down-box">
-          <view class="d-status">{{activeObj.status}}</view>
-          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">{{activeObj.statusType === upStatus ? '下线' : '上线'}}</view>
+        <view class="down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
+          <view class="d-status">已下线</view>
+          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
           <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+        <view class="down-box" wx:elif="{{activeObj.statusType === constObj.OUT}}">
+          <view class="d-status">商品已下架/删除/过期</view>
+          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
       </view>
     </view>
@@ -51,23 +39,40 @@
 <script>
   import wepy from 'wepy'
   import URIS from 'common/js/config'
-  import {UP} from 'api/group-active-config'
 
   export default class ActivityItem extends wepy.component {
     props = {
-      // group 团购活动 share 分享赚钱
+      // group 团购活动类型 share 分享赚钱类型
       activeType: {
         type: String,
         default: ''
       },
+      // 每个活动对象
+      /**
+       * activeObj.src 图片地址
+       * activeObj.peopleNum 团购人数
+       * activeObj.hotName 活动名称
+       * activeObj.price 现价
+       * activeObj.hotPrice 活动价
+       * activeObj.statusType 活动类型
+       */
       activeObj: {
+        type: Object,
+        default: {}
+      },
+      // 常量对象
+      /**
+       * UP 已上线状态
+       * DOWN 已下线状态
+       * OUT 下架或过期状态
+       */
+      constObj: {
         type: Object,
         default: {}
       }
     }
     data = {
-      imageUrlHead: URIS.image,
-      upStatus: UP
+      imageUrlHead: URIS.image
     }
     methods = {
       handleClickOne(obj) {
@@ -177,9 +182,9 @@
           left: 0
           bottom: 0
           margin: 0 10px
+          padding: 0 5px 0 2px
           overflow: hidden
           .d-status
-            margin-left: 2px
             ont-family: $font-family-light
             font-size: $font-size-medium
             color: $color-text-td
@@ -200,6 +205,4 @@
           .d-editor
             color: $color-assist-f
             border-color: $color-assist-f
-            margin-right: 5px
-
 </style>

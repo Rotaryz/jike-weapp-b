@@ -1,6 +1,6 @@
 <template>
   <view class="group-active-list">
-    <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus">
+    <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
           <view class="g-a-l-n-item {{upStatus}}" id="{{tabUpId}}">已上线</view>
@@ -9,7 +9,7 @@
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabUpId}}" bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
@@ -53,7 +53,7 @@
   import Confirm from '@/base/confirm/confirm'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
-  import {UP, DOWN, ON, OFF, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+  import {UP, DOWN, ON, OFF, OUT, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -61,10 +61,19 @@
     data = {
       imageUrlHead: URIS.image,
       activityStatus: 'failed', // 活动总开关
+      activeConstObj: {
+        UP,
+        DOWN,
+        OUT
+      },
+      switchConstObj: {
+        ON,
+        SUCCESS
+      },
       tabUpId: UP,
       tabDownId: DOWN,
       status: UP, // tab栏状态
-      onlineList: [],
+      onlineList: [{statusType: UP}, {statusType: DOWN}, {statusType: OUT}],
       offlineList: [],
       isChecked: ON,
       type: 'group',
@@ -85,13 +94,15 @@
     }
 
     async onLoad(option) {
+      option.isChecked = 'false'
+      this.activityStatus = SUCCESS
       if (option.isChecked.toString() === 'true') {
         this.isChecked = OFF
       } else {
         this.isChecked = ON
       }
       this.$apply()
-      await this._init(this.status)
+      // await this._init(this.status)
     }
 
     async onShow() {
@@ -419,6 +430,7 @@
         // 活动状态，0关闭，1开启
         let status = this.isChecked === ON ? '0' : '1'
         let flag = await this._rqChangeActiveStatus({status, type})
+        // let flag = true
         if (flag) {
           this.isChecked = this.isChecked === ON ? OFF : ON
           this.$apply()

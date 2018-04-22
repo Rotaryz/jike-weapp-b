@@ -14,35 +14,46 @@
 
 <script>
   import wepy from 'wepy'
-  import {ON, SUCCESS} from 'api/group-active-config'
 
   export default class HeaderSwitch extends wepy.component {
     props = {
+      // 标题
       title: {
         type: String,
         default: ''
       },
+      // 按钮是否开启
       isChecked: {
         type: String,
-        default: ON
+        default: ''
       },
+      // 按钮是否显示
       activityStatus: {
         type: String,
-        default: SUCCESS
+        default: ''
+      },
+      // 常量对象
+      /**
+       * ON 开启
+       * SUCCESS 显示按钮栏
+       */
+      constObj: {
+        type: Object,
+        default: {}
       }
     }
 
     computed = {
       switchStyle() {
-        return this.isChecked === ON ? 'checked' : ''
+        return this.isChecked === this.constObj.ON ? 'checked' : 'checked-undef'
       },
       isShowBtn() {
-        console.log(this.activityStatus)
-        return this.activityStatus.trim() === SUCCESS
+        return this.activityStatus === this.constObj.SUCCESS
       },
       isShowContent() {
+        // 只有按钮栏显示时，按钮才进行工作
         if (this.isShowBtn) {
-          return this.isChecked === ON
+          return this.isChecked === this.constObj.ON
         } else {
           return true
         }
@@ -57,7 +68,7 @@
   }
 </script>
 
-<style lang='stylus'>
+<style lang='stylus' scoped>
   @import '../../common/stylus/variable'
 
   .header-switch-component
