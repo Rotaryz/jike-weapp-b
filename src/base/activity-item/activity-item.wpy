@@ -1,35 +1,67 @@
 <template>
   <view class="active-item-component">
     <view class="component-group-item" wx:if="{{activeType === 'group'}}">
-      <view class="up">
-        <view class="up-box">
-          <view class="u-pic">
-            <image class="u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
-            <view class="u-p-people">{{activeObj.peopleNum}}人团</view>
+      <view class="a-i-up">
+        <view class="a-i-up-box">
+          <view class="a-i-u-pic">
+            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
+            <view class="a-i-u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
-          <view class="u-title">{{activeObj.hotName}}</view>
-          <view class="u-price">现价 ¥{{activeObj.price}}</view>
-          <view class="u-hot-price">团购价
-            <view class="u-hot-price-em">¥{{activeObj.hotPrice}}</view>
+          <view class="a-i-u-title">{{activeObj.hotName}}</view>
+          <view class="a-i-u-price">现价 ¥{{activeObj.price}}</view>
+          <view class="a-i-u-hot-price">团购价
+            <view class="a-i-u-hot-price-em">¥{{activeObj.hotPrice}}</view>
           </view>
         </view>
       </view>
-      <view class="down">
-        <view class="down-box" wx:if="{{activeObj.statusType === constObj.UP}}">
-          <view class="d-status">已上线</view>
-          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
-          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+      <view class="a-i-down">
+        <view class="a-i-down-box" wx:if="{{activeObj.statusType === constObj.UP}}">
+          <view class="a-i-d-status">已上线</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
-        <view class="down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
-          <view class="d-status">已下线</view>
-          <view class="d-on-off d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
-          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="d-editor d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
+          <view class="a-i-d-status">已下线</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
-        <view class="down-box" wx:elif="{{activeObj.statusType === constObj.OUT}}">
-          <view class="d-status">商品已下架/删除/过期</view>
-          <view class="d-delete d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.OUT}}">
+          <view class="a-i-d-status">商品已下架/删除/过期</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        </view>
+      </view>
+    </view>
+    <view class="component-group-item" wx:if="{{activeType === 'share'}}">
+      <view class="a-i-up">
+        <view class="a-i-up-box">
+          <view class="a-i-u-pic">
+            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
+          </view>
+          <view class="a-i-u-title">{{activeObj.hotName}}</view>
+          <view class="a-i-u-price">现价 ¥{{activeObj.price}}</view>
+          <view class="a-i-u-hot-price">券后价
+            <view class="a-i-u-hot-price-em">¥{{activeObj.hotPrice}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="a-i-down">
+        <view class="a-i-down-box" wx:if="{{activeObj.statusType === constObj.UP}}">
+          <view class="a-i-d-status">已上线</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
+          <view class="a-i-d-status">已下线</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+        </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.OUT}}">
+          <view class="a-i-d-status">商品已下架/删除/过期</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
       </view>
     </view>
@@ -100,14 +132,14 @@
       height: 0
       border-radius: 2px
       border: .5px solid $color-row-line
-      .up
+      .a-i-up
         position: absolute
         top: 0
         left: 0
         right: 0
         height: 0
         padding-bottom: 19.945%
-        .up-box
+        .a-i-up-box
           layout()
           justify-content: space-around
           position: absolute
@@ -119,7 +151,7 @@
           margin: 0 10px
           overflow: hidden
           border-bottom: .5px dotted $color-row-line
-          .u-pic
+          .a-i-u-pic
             position: relative
             height: 100%
             width: 27.195%
@@ -127,11 +159,11 @@
             border: 0.5px solid $color-col-line
             border-radius: 2px
             margin-right: 10px
-            .u-p-image
+            .a-i-u-p-image
               width: 100%
               height: 100%
               border-radius: 2px
-            .u-p-people
+            .a-i-u-p-people
               position: absolute
               bottom: 0
               line-height: 17px
@@ -144,36 +176,35 @@
               font-family: $font-family-light
               font-size: $font-size-small-s
               color: $color-white
-          .u-title
+          .a-i-u-title
             no-wrap()
             font-family: $font-family-regular
             font-size: $font-size-medium
             color: $color-text-dark
             width: 70%
-          .u-price
+          .a-i-u-price
             font-family: $font-family-light
             font-size: $font-size-small-s
             color: $color-text-light
             width: 70%
-          .u-hot-price
+          .a-i-u-hot-price
             font-family: $font-family-regular
             font-size: $font-size-small-s
             color: $color-text-light
             width: 70%
-            .u-hot-price-em
+            .a-i-u-hot-price-em
               display: inline-block
               font-family: $font-family-meddle
               font-size: $font-size-small
               color: #2D2B2F
-
-      .down
+      .a-i-down
         position: absolute
         bottom: 0
         left: 0
         right: 0
         height: 0
         padding-bottom: 11.465%
-        .down-box
+        .a-i-down-box
           layout(row)
           align-items: center
           position: absolute
@@ -184,12 +215,12 @@
           margin: 0 10px
           padding: 0 5px 0 2px
           overflow: hidden
-          .d-status
+          .a-i-d-status
             ont-family: $font-family-light
             font-size: $font-size-medium
             color: $color-text-td
             flex: 1
-          .d-btn
+          .a-i-d-btn
             layout()
             justify-content: center
             align-items: center
@@ -202,7 +233,7 @@
             font-family: $font-family-light
             font-size: $font-size-small-s
             color: $color-text
-          .d-editor
+          .a-i-d-editor
             color: $color-assist-f
             border-color: $color-assist-f
 </style>

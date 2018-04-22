@@ -1,6 +1,6 @@
 <template>
   <view class="group-active-choose-server">
-    <view class="g-a-c-s-header" @tap="done">可添加的服务</view>
+    <view class="g-a-c-s-header">可添加的服务</view>
     <view class="g-a-c-s-section" wx:if="{{!isEmpty}}">
       <repeat for="{{couponList}}" key="index" index="index"
               item="item">
@@ -31,7 +31,7 @@
   import {ERR_OK} from 'api/base'
   import Toast from '@/base/toast/toast'
 
-  const PAGELIMIT = 10
+  const PAGELIMIT = 100
 
   export default class GACServer extends wepy.page {
     mixins = [base]
@@ -83,7 +83,7 @@
       let arr = []
       res.data.map(item => {
         arr.push({
-          id: item.id, // 商品id
+          id: item.id, // 商品id即goods_id
           promotion_id: item.id,
           platform_price: item.platform_price,
           title: item.title,
@@ -97,9 +97,9 @@
     }
 
     // 请求可选的服务列表
-    async _rqGetServerList(params) {
+    async _rqGetServerList(params, loading) {
       // 一个商品只能创建一种活动
-      const json = await GroupActiveAPI.getGroupActiveServerList(params)
+      const json = await GroupActiveAPI.getGroupActiveServerList(params, loading)
       if (json.error === ERR_OK) {
         return json
       } else {
@@ -138,7 +138,6 @@
     methods = {
       done() {
         if (this._checkInfoLegal()) {
-          // this.couponList = this.couponList.length ? [] : jj
           this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()
           setTimeout(() => {

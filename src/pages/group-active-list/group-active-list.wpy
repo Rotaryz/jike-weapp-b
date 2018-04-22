@@ -22,7 +22,7 @@
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabDownId}}" bindscrolltolower="_getMoreList">
           <repeat for="{{offlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
@@ -73,8 +73,8 @@
       tabUpId: UP,
       tabDownId: DOWN,
       status: UP, // tab栏状态
-      onlineList: [{statusType: UP}, {statusType: DOWN}, {statusType: OUT}],
-      offlineList: [],
+      onlineList: [], // 上线栏数组
+      offlineList: [], // 下线栏数组
       isChecked: ON,
       type: 'group',
       paramsUp: {
@@ -85,24 +85,21 @@
         page: 1,
         limit: DOWNPAGELIMIT
       },
-      isAllUp: false,
-      isAllDown: false,
+      isAllUp: false, // 上线栏数据是否全部查询完毕
+      isAllDown: false, // 下线栏数据是否全部查询完毕
       showTabDownCount: 0,
-      toNewTimer: null,
-      toEditorTimer: null,
       currentDelObj: null
     }
 
     async onLoad(option) {
-      option.isChecked = 'false'
-      this.activityStatus = SUCCESS
-      if (option.isChecked.toString() === 'true') {
+      if ('' + option.isChecked === 'true') {
+        // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
         this.isChecked = OFF
       } else {
         this.isChecked = ON
       }
       this.$apply()
-      // await this._init(this.status)
+      await this._init(this.status)
     }
 
     async onShow() {
@@ -113,12 +110,13 @@
 
     async onPullDownRefresh() {
       let params = this._resetConfig()
-      await this._getNewActiveList(this.status, params)
+      await this._getNewActiveList(this.status, params, false)
       wx.stopPullDownRefresh()
     }
 
     // 插入来自编辑页面
     async _fromPrevPage(obj) {
+      // 从新建活动页面返回该页面
       if (obj.source === NEW) {
         this.onlineList.unshift(obj)
         if (this.onlineList.length === 1) {
@@ -170,13 +168,13 @@
     }
 
     // 获取新的活动
-    async _getNewActiveList(status, params) {
+    async _getNewActiveList(status, params, loading) {
       let res = {}
       if (status === UP) {
-        res = await this._rqGetGroupActiveList(params, status)
+        res = await this._rqGetGroupActiveList(params, status, loading)
         res && (this.onlineList = this._formatRqData(res))
       } else {
-        res = await this._rqGetGroupActiveList(params, status)
+        res = await this._rqGetGroupActiveList(params, status, loading)
         res && (this.offlineList = this._formatRqData(res))
       }
       if (res) {
@@ -192,8 +190,7 @@
       if (status === UP) {
         res = await this._rqGetGroupActiveList(this.paramsUp, status)
         res && (this.onlineList = this._formatRqData(res))
-        res && (this.activityStatus = res.total_data.toString() !== '0' ? SUCCESS : 'falid')
-        console.log(this.activityStatus)
+        res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
       } else {
         res = await this._rqGetGroupActiveList(this.paramsDown, status)
         res && (this.offlineList = this._formatRqData(res))
@@ -234,14 +231,10 @@
     _checkIsAll(res) {
       if (this.status === UP) {
         if (this.onlineList.length >= res.meta.total * 1) {
-          // || this.onlineList.length % UPPAGELIMIT !== 0
-          // this.$invoke('underline', 'show')
           this.isAllUp = true
         }
       } else {
         if (this.offlineList.length >= res.meta.total * 1) {
-          // || this.onlineList.length % DOWNPAGELIMIT !== 0
-          // this.$invoke('underline', 'show')
           this.isAllDown = true
         }
       }
@@ -262,8 +255,8 @@
     }
 
     // 获取活动列表(分页)
-    async _rqGetGroupActiveList(params, type) {
-      const json = await GroupActiveAPI.getGroupActiveList(params, type)
+    async _rqGetGroupActiveList(params, type, loading) {
+      const json = await GroupActiveAPI.getGroupActiveList(params, type, loading)
       if (json.error === ERR_OK) {
         return json
       } else {
@@ -273,8 +266,8 @@
     }
 
     // 下线活动
-    async _rqOfflineActive(id) {
-      const json = await GroupActiveAPI.offlineGroupActive(id)
+    async _rqOfflineActive(id, loading) {
+      const json = await GroupActiveAPI.offlineGroupActive(id, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
@@ -286,8 +279,8 @@
     }
 
     // 上线活动
-    async _rqOnlineActive(id) {
-      const json = await GroupActiveAPI.onlineGroupActive(id)
+    async _rqOnlineActive(id, loading) {
+      const json = await GroupActiveAPI.onlineGroupActive(id, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
@@ -299,8 +292,8 @@
     }
 
     // 删除活动
-    async _rqDelActive(id) {
-      const json = await GroupActiveAPI.deleteGroupActive(id)
+    async _rqDelActive(id, loading) {
+      const json = await GroupActiveAPI.deleteGroupActive(id, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
@@ -313,7 +306,6 @@
 
     // 格式化服务器数据
     _formatRqData(res) {
-      console.log(res)
       let arr = []
       res.data.map(item => {
         arr.push({
@@ -323,8 +315,7 @@
           hotName: item.activity_name,
           price: item.platform_price,
           hotPrice: item.config.group_price,
-          status: item.status.toString() === UP ? '已上线' : '已下线',
-          statusType: item.status.toString(),
+          statusType: '' + item.status,
           serverType: item.promotion_title,
           addNum: item.stock,
           hotEndDate: item.end_at.split(' ')[0],
@@ -392,12 +383,10 @@
       },
       toNewPage() {
         if (this.toNewTimer != null) return
-        this.toNewTimer = setTimeout(() => {
-          let url = `/pages/group-active-editor/group-active-editor?model=${NEW}`
+        let url = `/pages/group-active-editor/group-active-editor?model=${NEW}`
+        this.$apply()
+        setTimeout(() => {
           this.$navigate(url)
-          clearTimeout(this.toNewTimer)
-          this.toNewTimer = null
-          this.$apply()
         }, 50)
       }
     }
@@ -430,7 +419,6 @@
         // 活动状态，0关闭，1开启
         let status = this.isChecked === ON ? '0' : '1'
         let flag = await this._rqChangeActiveStatus({status, type})
-        // let flag = true
         if (flag) {
           this.isChecked = this.isChecked === ON ? OFF : ON
           this.$apply()
@@ -446,12 +434,10 @@
       },
       activeBtnThree(obj) {
         this.$parent.globalData.groupActive.currentGroupActive = obj
-        if (this.toEditorTimer != null) return
-        this.toEditorTimer = setTimeout(() => {
-          let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
+        let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
+        this.$apply()
+        setTimeout(() => {
           this.$navigate(url)
-          this.toEditorTimer = null
-          this.$apply()
         }, 50)
       },
       async confirm() {

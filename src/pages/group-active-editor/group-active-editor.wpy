@@ -15,14 +15,14 @@
       <view class="server-left g-a-item-box">
         <view class="g-a-item-left ">活动名称</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotName}}" type="text" value="{{info.hotName}}" @input="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
+          <input class="g-a-input" type="text" value="{{info.hotName}}" @input="hotNameInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="15"></input>
         </view>
         <view class="g-a-item-right g-a-i-max-num">{{hotNameLen}}/15</view>
       </view>
       <view class="server-add-number g-a-item-box">
         <view class="g-a-item-left ">添加数量</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{addNum}}" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
       <view class="server-hot-date g-a-item-box">
@@ -55,7 +55,7 @@
       <view class="hot-price g-a-item-box">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input {{hotPrice}}" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
@@ -124,12 +124,7 @@
 
     onShow() {
       const currentCoupon = this.$parent.globalData.groupActive.currentCouponGA
-      console.log(currentCoupon, '--------------------------currentGa')
       this._fromServerPageData(currentCoupon)
-    }
-
-    onHide() {
-
     }
 
     // 来自服务页面的对象赋值
@@ -148,7 +143,6 @@
     // 初始化数据
     _init(option) {
       const obj = this.$parent.globalData.groupActive.currentGroupActive
-      console.log(obj, '-----------------------groupActive')
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
@@ -172,7 +166,6 @@
         this.info.src = obj.src
         this.goodId = obj.goodId
         this.$apply()
-        console.log(this.info, obj)
       } else {
         this.$parent.globalData.groupActive.currentGroupActive = null
         this.$parent.globalData.groupActive.currentCouponGA = null
@@ -240,13 +233,6 @@
           flag = `活动时间不能小于30天`
           return flag
         }
-        // flag = (
-        //   // this.info.serverType !== INPUTDEFAULT &&
-        //   // price > 0 && // 价格
-        //   this.info.hotName !== INPUTDEFAULT && // 活动名称
-        //   addNum >= peopleNum && // 数量
-        //   this.info.hotEndDate !== HOTENDDEFAULT  // 截止时间
-        // )
       } else {
         // 下线状态或新建状态的判断
         if (this.info.serverType === INPUTDEFAULT) {
@@ -289,17 +275,6 @@
           flag = `请输入正确的价格`
           return flag
         }
-        //   flag = (
-        //   this.info.serverType !== INPUTDEFAULT &&
-        //   price > 0 &&
-        //   this.info.hotName !== INPUTDEFAULT &&
-        //   addNum >= peopleNum &&
-        //   this.info.hotEndDate !== HOTENDDEFAULT &&
-        //   this.info.timeLimit !== PICKERDEFAUFT &&
-        //   this.info.peopleNum !== PICKERDEFAUFT &&
-        //   (hotPrice > 0 && hotPrice < price) &&
-        //   !isNaN(this.info.hotPrice * 1)
-        // )
       }
       return 'success'
     }
@@ -320,13 +295,12 @@
     }
 
     // 请求服务器创建新的活动
-    async _rqCreateNewData(data) {
-      const json = await GroupActiveAPI.createGroupActive(data)
+    async _rqCreateNewData(data, loading) {
+      const json = await GroupActiveAPI.createGroupActive(data, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
       } else {
-        console.log(json)
         this.loaded()
         this.$invoke('toast', 'show', json.message)
         return false
@@ -334,13 +308,12 @@
     }
 
     // 请求服务器更新活动
-    async _rqUpdateData(data, id) {
-      const json = await GroupActiveAPI.updateGroupActive(data, id)
+    async _rqUpdateData(data, id, loading) {
+      const json = await GroupActiveAPI.updateGroupActive(data, id, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
       } else {
-        console.log(json)
         this.loaded()
         this.$invoke('toast', 'show', json.message)
         return false
@@ -364,8 +337,7 @@
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
-        goodId: this.goodId,
-        status: '已上线'
+        goodId: this.goodId
       }
     }
 
@@ -441,18 +413,6 @@
       timeLimit() {
         return this.info.timeLimit !== PICKERDEFAUFT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
-      // hotEndDate() {
-      //   return this.info.hotEndDate !== HOTENDDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      // },
-      // hotPrice() {
-      //   return this.info.hotPrice !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      // },
-      // hotName() {
-      //   return this.info.hotName !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      // },
-      // addNum() {
-      //   return this.info.addNum !== INPUTDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      // },
       hotNameLen() {
         return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
       },
@@ -475,7 +435,6 @@
     }
 
     config = {
-      navigationBarTitleText: '',
       navigationBarBackgroundColor: '#363547',
       navigationBarTextStyle: 'white',
       backgroundColor: '#F9F9F9'

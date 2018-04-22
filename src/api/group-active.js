@@ -10,9 +10,9 @@ export default class GroupActive extends base {
    * @param data
    * @returns {Promise<void>}
    */
-  static async getGroupActiveList(data, status) {
+  static async getGroupActiveList(data, status, loading = true) {
     const url = `${this.baseUrl}/api/group/tuan-gou?status=${status}`
-    return await this.get(url, data)
+    return await this.get(url, data, loading)
   }
 
   /**
@@ -20,9 +20,9 @@ export default class GroupActive extends base {
    * @param data
    * @returns {Promise<void>}
    */
-  static async getGroupActiveServerList(data) {
+  static async getGroupActiveServerList(data, loading = true) {
     const url = `${this.baseUrl}/api/group/search-coupons`
-    return await this.get(url, data)
+    return await this.get(url, data, loading)
   }
 
   /**
@@ -30,9 +30,9 @@ export default class GroupActive extends base {
    * @param data
    * @returns {Promise<void>}
    */
-  static async createGroupActive(data) {
+  static async createGroupActive(data, loading = true) {
     const url = `${this.baseUrl}/api/group/tuan-gou`
-    return await this.post(url, data)
+    return await this.post(url, data, loading)
   }
 
   /**
@@ -40,9 +40,9 @@ export default class GroupActive extends base {
    * @param data
    * @returns {Promise<void>}
    */
-  static async updateGroupActive(data, id) {
+  static async updateGroupActive(data, id, loading = true) {
     const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
-    return await this.put(url, data)
+    return await this.put(url, data, loading)
   }
 
   /**
@@ -50,9 +50,9 @@ export default class GroupActive extends base {
    * @param id
    * @returns {Promise<void>}
    */
-  static async offlineGroupActive(id) {
+  static async offlineGroupActive(id, loading = true) {
     const url = `${this.baseUrl}/api/group/offline/${id}`
-    return await this.get(url)
+    return await this.get(url, {}, loading)
   }
 
   /**
@@ -60,9 +60,9 @@ export default class GroupActive extends base {
    * @param id
    * @returns {Promise<void>}
    */
-  static async onlineGroupActive(id) {
+  static async onlineGroupActive(id, loading = true) {
     const url = `${this.baseUrl}/api/group/online/${id}`
-    return await this.get(url)
+    return await this.get(url, {}, loading)
   }
 
   /**
@@ -70,9 +70,9 @@ export default class GroupActive extends base {
    * @param id
    * @returns {Promise<void>}
    */
-  static async deleteGroupActive(id) {
+  static async deleteGroupActive(id, loading = true) {
     const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
-    return await this.delete(url)
+    return await this.delete(url, {}, loading = true)
   }
 
   /**
@@ -96,4 +96,3 @@ export default class GroupActive extends base {
     return await this.get(url, data, loading)
   }
 }
-

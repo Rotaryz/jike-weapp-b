@@ -208,7 +208,7 @@
         return json
       } else {
         this.loaded()
-        this.inovke('Toast', 'show', json.message)
+        this.$invoke('Toast', 'show', json.message)
       }
     }
 
