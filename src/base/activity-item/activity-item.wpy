@@ -197,7 +197,7 @@
               display: inline-block
               font-family: $font-family-meddle
               font-size: $font-size-small
-              color: #2D2B2F
+              color: $color-text-light
       .a-i-down
         position: absolute
         bottom: 0

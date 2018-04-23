@@ -5,7 +5,7 @@
         <view class="g-a-item-left">添加服务</view>
         <view class="g-a-item-middle g-a-server-type">{{info.serverType}}</view>
         <view class="g-a-item-right to-choose-server" @tap="toChooseServer">
-          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="server-price g-a-item-box">
@@ -32,24 +32,24 @@
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
             <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" end="{{hotSellEndDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
-            <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+            <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
           </view>
         </view>
       </view>
     </view>
-    <view class="g-a-article">
+    <view class="g-a-article g-a-a-limit-section">
       <view class="hot-time-limit g-a-item-box">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{timeLimit}}" disabled="{{isDisabled}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
-          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-people-number g-a-item-box">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{peopleNum}}" disabled="{{isDisabled}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
-          <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/marketing/icon-whitearrow@2x.png'}}"></image>
+          <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-price g-a-item-box">
@@ -461,6 +461,8 @@
     background-color: $color-background
     .g-a-article
       margin-bottom: 10px
+      &.g-a-a-limit-section
+        border-top: 0.5px solid $color-col-line
       .g-a-item-box
         layout(row)
         height: 43px
@@ -543,9 +545,9 @@
         background: $color-mask-bgc
 
   .g-a-arrow
-    width: 6px
+    width: 10px
     height: 10px
-    margin: 0 12px 0 10px
+    margin: 0 12px 0 5px
 
   .p-h-style
     font-family: $font-family-light
