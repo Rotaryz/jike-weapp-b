@@ -15,7 +15,7 @@
         </view>
       </view>
       <view class="a-i-down">
-        <view class="a-i-down-box" wx:if="{{activeObj.statusType === constObj.OUT}}">
+        <view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">
           <view class="a-i-d-status">商品已下架/删除/过期</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
@@ -170,7 +170,7 @@
               line-height: 17px
               height: 17px
               width: 100%
-              border-radius: 2px
+              border-radius: 0 0 2px 2px
               opacity: .6
               background-color: #000
               text-indent: 7.5px

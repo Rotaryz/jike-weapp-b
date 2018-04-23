@@ -356,14 +356,12 @@
         let flag = await this._rqOfflineActive(obj.id)
         if (!flag) return
         this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
-        obj.status = '已下线'
         obj.statusType = DOWN
         this.offlineList.unshift(obj)
       } else {
         let flag = await this._rqOnlineActive(obj.id)
         if (!flag) return
         this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
-        obj.status = '已上线'
         obj.statusType = UP
         this.onlineList.unshift(obj)
       }

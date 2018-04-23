@@ -115,7 +115,6 @@
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME,
-      toChooseServerTimer: null
     }
 
     onLoad(option) {
@@ -157,7 +156,7 @@
         this.info.hotSellEndDate = obj.hotSellEndDate
         this.info.timeLimit = obj.timeLimit + '小时'
         this.info.peopleNum = obj.peopleNum + '人'
-        this.info.hotPrice = obj.hotPrice.toFixed(1)
+        this.info.hotPrice = parseFloat(obj.hotPrice).toFixed(1)
         this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
         this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
@@ -346,12 +345,11 @@
 
     methods = {
       toChooseServer() {
-        if (this.toChooseServerTimer != null || this.info.statusType === UP) return
-        this.toChooseServerTimer = setTimeout(() => {
-          let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
+        if (this.info.statusType === UP) return
+        let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
+        this.$apply()
+        setTimeout(() => {
           this.$navigate(url)
-          this.toChooseServerTimer = null
-          this.$apply()
         }, 50)
       },
       bindPickerChangePeopleNum(e) {
