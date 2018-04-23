@@ -167,7 +167,6 @@
         return
       }
       let groupShareRes = groupShareJson.data
-      console.log(groupShareJson)
       let res = Json.data
       this.list.map((item) => {
         switch (item.name) {

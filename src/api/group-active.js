@@ -72,7 +72,7 @@ export default class GroupActive extends base {
    */
   static async deleteGroupActive(id, loading = true) {
     const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
-    return await this.delete(url, {}, loading = true)
+    return await this.delete(url, {}, loading)
   }
 
   /**
