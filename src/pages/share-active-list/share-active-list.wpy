@@ -1,33 +1,39 @@
 <template>
   <view class="group-active-list">
-    <header-switch title="分享赚钱" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus">
+    <header-switch title="分享赚钱" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
           <view class="g-a-l-n-item {{upStatus}}" id="0">已上线</view>
           <view class="g-a-l-n-item {{downStatus}}" id="1">已过期/已下线</view>
         </view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}"
+                     bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item"
+                             :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
-              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <image class="e-pic" wx:if="{{imageUrlHead}}"
+                     src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
               <view class="e-txt">暂无数据</view>
             </view>
           </view>
         </scroll-view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}"
+                     bindscrolltolower="_getMoreList">
           <repeat for="{{offlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item"
+                             :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
-              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <image class="e-pic" wx:if="{{imageUrlHead}}"
+                     src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
               <view class="e-txt">暂无数据</view>
             </view>
           </view>
@@ -53,7 +59,19 @@
   import Confirm from '@/base/confirm/confirm'
   import ShareActiveAPI from 'api/share-active'
   import {ERR_OK} from 'api/base'
-  import {UP, DOWN, ON, OFF, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/share-active-config'
+  import {
+    UP,
+    DOWN,
+    ON,
+    OFF,
+    DEVICEINFO,
+    NEW,
+    EDITOR,
+    UPPAGELIMIT,
+    DOWNPAGELIMIT,
+    SUCCESS,
+    OUT
+  } from 'api/share-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -66,13 +84,22 @@
       offlineList: [],
       isChecked: ON,
       type: 'share',
+      activeConstObj: {
+        UP,
+        DOWN,
+        OUT
+      },
+      switchConstObj: {
+        ON,
+        SUCCESS
+      },
       paramsUp: {
         page: 1,
-        limit: UPPAGELIMIT
+        limit: 2
       },
       paramsDown: {
         page: 1,
-        limit: DOWNPAGELIMIT
+        limit: 2
       },
       isAllUp: false,
       isAllDown: false,
@@ -82,8 +109,8 @@
     }
 
     async onLoad() {
-      // await this._init(this.status)
-      await this._getShareActiveList(this.showTabDownCount, this.paramsUp)
+      await this._init(this.status)
+      // await this._getShareActiveList(this.showTabDownCount, this.paramsUp)
       this.loaded()
       this.activityStatus = SUCCESS
       this.$apply()
@@ -100,15 +127,15 @@
 
     // 获取分享活动列表接口
     async _getShareActiveList(type, page) {
-      let sharePage = page.page
-      let shareLimit = 2
-      let res = await ShareActiveAPI.getShareActiveList(type, sharePage, shareLimit)
-      if (res.error === ERR_OK) {
-        console.log(res)
-        this.onlineList = this._formatRqData(res)
-        this.$apply()
+      let json = await ShareActiveAPI.getShareActiveList(type, page)
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
       }
     }
+
     // 重置配置
     // _resetConfig() {
     //   let page, limit
@@ -146,20 +173,24 @@
     // }
 
     // 初始化
-    // async _init(status) {
-      // let res = {}
-      // if (status === UP) {
-      //   res = await this._rqGetGroupActiveList(this.paramsUp, status)
-      //   res && (this.onlineList = res.data)
-      // } else {
-      //   res = await this._rqGetGroupActiveList(this.paramsDown, status)
-      //   res && (this.offlineList = res.data)
-      // }
-      // if (res) {
-      //   this._checkIsAll(res)
-      // }
-      // this.loaded()
-    // }
+    async _init(status) {
+      let res = {}
+      if (parseInt(status) === parseInt(UP)) {
+        res = await this._getShareActiveList(status, this.paramsUp)
+        console.log('paramsUp', res)
+        res && (this.onlineList = this._formatRqData(res))
+        res && (this.activityStatus = SUCCESS)
+      } else {
+        res = await this._getShareActiveList(status, this.paramsDown)
+        console.log('paramsDown', res)
+        res && (this.offlineList = this._formatRqData(res))
+      }
+      if (res) {
+        this._checkIsAll(res)
+      }
+      this.$apply()
+      this.loaded()
+    }
 
     // 获得更多的活动列表
     async _getMoreList() {
@@ -168,12 +199,12 @@
       if (status === UP) {
         if (this.isAllUp) return
         this.paramsUp.page++
-        res = await this._getMoreShareActiveList(status, this.paramsUp)
+        res = await this._getShareActiveList(status, this.paramsUp)
         res && (this.onlineList.push(...this._formatRqData(res)))
       } else {
         if (this.isAllDown) return
         this.paramsDown.page++
-        res = await this._getMoreShareActiveList(status, this.paramsDown)
+        res = await this._getShareActiveList(status, this.paramsDown)
         res && (this.offlineList.push(...this._formatRqData(res)))
       }
       if (res) {
@@ -205,9 +236,7 @@
 
     // 获取活动列表(分页)
     async _getMoreShareActiveList(type, page) {
-      let sharePage = page.page
-      let shareLimit = 2
-      let res = await ShareActiveAPI.getShareActiveList(type, sharePage, shareLimit)
+      let res = await ShareActiveAPI.getShareActiveList(type, page)
       if (res.error === ERR_OK) {
         return res
         // return this._formatRqData(res)
@@ -225,8 +254,8 @@
           price: item.price,
           hotPrice: item.after_price,
           status: item.status_str,
-          statusType: item.status === UP ? '已上线' : '已下线',
-          hotEndDate: item.is_timeout
+          statusType: item.status.toString(),
+          goodStatus: item.is_timeout
         })
       })
       return arr
@@ -246,13 +275,40 @@
     // 上线或下线
     _upOrDown(obj) {
       // 请求服务器成功后
+      console.log('111')
       if (this.status === UP) {
         this.onlineList.splice(this.onlineList.findIndex(val => val.id === obj.id), 1)
+        obj.statusType = DOWN
         this.offlineList.unshift(obj)
       } else {
         this.offlineList.splice(this.offlineList.findIndex(val => val.id === obj.id), 1)
+        obj.statusType = UP
         this.onlineList.unshift(obj)
       }
+      this.$apply()
+    }
+
+    // 删除活动
+    async _rqDelActive(id, loading) {
+      const json = await ShareActiveAPI.deleteShareActive(id, loading)
+      if (json.error === ERR_OK) {
+        this.$invoke('toast', 'show', json.message)
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 执行删除动作
+    async _toDelActive() {
+      let id = this.currentDelObj.id
+      let flag = await this._rqDelActive(id)
+      if (!flag) return
+      this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
       this.$apply()
     }
 
@@ -263,11 +319,9 @@
           return
         }
         this.status = id
-        console.log('1', this.status)
         if (this._isTabDownInit()) {
           await this._init(this.status)
         }
-        console.log(this.showTabDownCount)
         this.$apply()
       },
       toNewPage() {
@@ -282,11 +336,6 @@
       }
     }
     events = {
-      headerSwitchChange() {
-        // 请求服务器成功
-        this.isChecked = this.isChecked === ON ? OFF : ON
-        this.$apply()
-      }
     }
     computed = {
       upStatus() {
@@ -314,24 +363,41 @@
         this.isChecked = this.isChecked === ON ? OFF : ON
         this.$apply()
       },
-      activeBtnOne(obj) {
-        this._upOrDown(obj)
+      async activeBtnOne(obj) {
+        if (obj.statusType === UP) {
+          let res = await ShareActiveAPI.offlineShareActive(obj.id)
+          if (res.error === ERR_OK) {
+            this._upOrDown(obj)
+          }
+        } else {
+          let res = await ShareActiveAPI.onlineShareActive(obj.id)
+          if (res.error === ERR_OK) {
+            this._upOrDown(obj)
+          }
+        }
+        this.loaded()
       },
       activeBtnTwo(obj) {
         this.$invoke('confirm', 'show')
+        this.currentDelObj = obj
+        this.$apply()
       },
       activeBtnThree(obj) {
-        this.$parent.globalData.groupActive.currentGroupActive = obj
+        console.log(obj)
+        let id = obj.id
+        let type = obj.statusType
         if (this.toEditorTimer != null) return
         this.toEditorTimer = setTimeout(() => {
-          let url = `/pages/new-share-activity/new-share-activity?model=${EDITOR}`
+          let url = `/pages/new-share-activity/new-share-activity?id=${id}&&type=${type}`
           this.$navigate(url)
           clearTimeout(this.toEditorTimer)
           this.toEditorTimer = null
           this.$apply()
         }, 50)
       },
-      confirm() {
+      async confirm(obj) {
+        console.log(obj)
+        await this._toDelActive()
         // 删除确认
       }
     }

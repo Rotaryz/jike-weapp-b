@@ -1,12 +1,12 @@
 import wepy from 'wepy'
-// ·ÖÏí±à¼­Ò³Ãæ
-const PICKERDEFAUFT = 'ÇëÑ¡Ôñ'
+// ï¿½ï¿½ï¿½ï¿½à¼­Ò³ï¿½ï¿½
+const PICKERDEFAUFT = 'ï¿½ï¿½Ñ¡ï¿½ï¿½'
 const INPUTDEFAULT = ''
-const HOTENDDEFAULT = '½áÊøÊ±¼ä'
+const HOTENDDEFAULT = 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½'
 const TPLTIME = createTime()
 const TPLPEOPLE = createPeople()
-const NEW = 'ÐÂ½¨'
-const EDITOR = '±à¼­'
+const NEW = 'ï¿½Â½ï¿½'
+const EDITOR = 'ï¿½à¼­'
 const PRICEDEFAULT = '0.0'
 const MINSIZE = 0.1
 
@@ -23,14 +23,15 @@ function createTime() {
 function createPeople() {
   let arr = []
   for (let i = 2; i < 6; i++) {
-    arr.push(i + 'ÈË')
+    arr.push(i + 'ï¿½ï¿½')
   }
   return arr
 }
 
-// ÍÅ¹º»î¶¯ÁÐ±íÒ³Ãæ ºÍ header-switch×é¼þ
+// ï¿½Å¹ï¿½ï¿½î¶¯ï¿½Ð±ï¿½Ò³ï¿½ï¿½ ï¿½ï¿½ header-switchï¿½ï¿½ï¿½
 const UP = '0'
 const DOWN = '1'
+const UP = '2'
 const ON = 'on'
 const OFF = 'off'
 const UPPAGELIMIT = 10
@@ -38,7 +39,7 @@ const DOWNPAGELIMIT = 10
 const SUCCESS = 'success'
 
 /**
- * »ñÈ¡Éè±¸³ß´ç
+ * ï¿½ï¿½È¡ï¿½è±¸ï¿½ß´ï¿½
  * @returns {{width: *, height: *}}
  */
 function getDeviceInfo() {
