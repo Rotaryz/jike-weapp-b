@@ -92,4 +92,14 @@ export default class ShareMoney extends base {
     const url = `${this.baseUrl}/api/share-money/${id}`
     return await this.put(url, data)
   }
+
+  /**
+   * 修改活动状态总开关-分享
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async changeActiveStatus(data, loading = true) {
+    const url = `${this.baseUrl}/api/group/activity-status`
+    return await this.get(url, data, loading)
+  }
 }

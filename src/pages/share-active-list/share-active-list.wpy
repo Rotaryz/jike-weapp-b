@@ -66,9 +66,9 @@
     OFF,
     DEVICEINFO,
     NEW,
-    EDITOR,
-    UPPAGELIMIT,
-    DOWNPAGELIMIT,
+    // EDITOR,
+    // UPPAGELIMIT,
+    // DOWNPAGELIMIT,
     SUCCESS,
     OUT
   } from 'api/share-active-config'
@@ -108,8 +108,14 @@
       toEditorTimer: null
     }
 
-    async onLoad() {
+    async onLoad(option) {
       await this._init(this.status)
+      if ('' + option.isChecked === 'true') {
+        // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
+        this.isChecked = OFF
+      } else {
+        this.isChecked = ON
+      }
       // await this._getShareActiveList(this.showTabDownCount, this.paramsUp)
       this.loaded()
       this.activityStatus = SUCCESS
@@ -133,6 +139,19 @@
       } else {
         this.loaded()
         this.$invoke('toast', 'show', json.message)
+      }
+    }
+
+    // 活动总开关
+    async _rqChangeActiveStatus(data) {
+      const json = await ShareActiveAPI.changeActiveStatus(data)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
       }
     }
 
@@ -179,7 +198,7 @@
         res = await this._getShareActiveList(status, this.paramsUp)
         console.log('paramsUp', res)
         res && (this.onlineList = this._formatRqData(res))
-        res && (this.activityStatus = SUCCESS)
+        // res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
       } else {
         res = await this._getShareActiveList(status, this.paramsDown)
         console.log('paramsDown', res)
@@ -359,9 +378,15 @@
       }
     }
     events = {
-      headerSwitchChange() {
-        this.isChecked = this.isChecked === ON ? OFF : ON
-        this.$apply()
+      async headerSwitchChange() {
+        let type = '2' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = this.isChecked === ON ? '0' : '1'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = this.isChecked === ON ? OFF : ON
+          this.$apply()
+        }
       },
       async activeBtnOne(obj) {
         if (obj.statusType === UP) {
