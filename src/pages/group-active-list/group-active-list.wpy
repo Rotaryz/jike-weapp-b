@@ -322,7 +322,8 @@
           timeLimit: item.config.group_validity,
           inventory: item.promotion_stock,
           goodId: item.goods_id,
-          hotSellEndDate: item.promotion_sell_end_at.split(' ')[0]
+          hotSellEndDate: item.promotion_sell_end_at.split(' ')[0],
+          goodStatus: '' + item.promotion_status
         })
       })
       return arr
