@@ -3,8 +3,8 @@
     <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
-          <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
-          <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
+          <view class="g-a-l-n-item {{upStatus}}" id="0">已上线</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="1">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">

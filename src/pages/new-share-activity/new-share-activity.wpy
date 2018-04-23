@@ -11,26 +11,30 @@
     <view class="tl-share-box">
       <view class="tl-share-left">现价</view>
       <view class="tl-share-right">
-        <view class="full-text {{!currentCoupon ? 'full-text-dis' : ''}}">{{!currentCoupon ? '0.00' : currentCoupon.platform_price}}</view>
+        <view class="full-text {{!currentCoupon ? 'full-text-dis' : ''}}">{{!currentCoupon ? '0.00' :
+          currentCoupon.platform_price}}
+        </view>
       </view>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动名称</view>
-      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15"  bindinput="shareInputTitle">
+      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place"
+             maxlength="15" bindinput="shareInputTitle"/>
       <view class="tl-share-number">{{titleNumber}}/15</view>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">添加数量</view>
-      <input type="number" placeholder="请输入/最大可添加数量为100" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="8" bindinput="shareInputNumber">
+      <input type="number" placeholder="{{stockToast}}" class="tl-share-title" placeholder-class="tl-share-title-place"
+             maxlength="8" bindinput="shareInputNumber"/>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动时间</view>
       <view class="tl-share-data-left">自上线之日起</view>
       <view class="tl-share-data-to tl-share-data-left">至</view>
-      <picker mode="date" class="sell-date" @change="setValidDate">
+      <picker mode="date" class="sell-date" @change="setValidDate" start="{{pickerStar}}">
         <view class="tl-share-data-time">
-          <view>{{validDate === '' ? '结束时间' : validDate}}</view>
-          <view class="arrow-right" wx:if="{{validDate === ''}}">
+          <view>{{shareData.sell_end_at === '' ? '结束时间' : shareData.sell_end_at}}</view>
+          <view class="arrow-right" wx:if="{{shareData.sell_end_at === ''}}">
             <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                    class="full-image"></image>
           </view>
@@ -45,7 +49,8 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">抵用券</view>
-      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="6"  bindinput="shareInputDiscount">
+      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place"
+             maxlength="6" bindinput="shareInputDiscount"/>
     </view>
   </view>
   <view class="tl-share-con tl-share-con-bottom">
@@ -55,71 +60,93 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">佣金比率</view>
-      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2" bindinput="shareInputRate">
+      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2"
+             bindinput="shareInputRate"/>
       <view class="tl-share-title-place">%</view>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">提成金额</view>
-      <view class="tl-share-title-place">0.00</view>
+      <view class="tl-share-title-place {{!shareData.profit_money ? '' : 'tl-share-title-have'}}">
+        {{!shareData.profit_money ? '0.00' : shareData.profit_money}}
+      </view>
     </view>
   </view>
   <view class="tl-share-save">
-    <view class="tl-share-save-btn">保存</view>
+    <view class="tl-share-save-btn" @tap="saveShareNewData">保存</view>
   </view>
+  <Toast></Toast>
 </template>
 
 <script>
   import wepy from 'wepy'
-  // import Toast from '@/base/toast/toast'
+  import Toast from '@/base/toast/toast'
   // import {ERR_OK} from 'api/base'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
+  import ShareMoney from 'api/share-active'
+  import {ERR_OK} from '@/api/base'
 
   export default class ShareActivity extends wepy.page {
     mixins = [base]
 
     data = {
       imageUri: URIS.image,
-      validDate: '',
       currentCoupon: '',
       titleNumber: 0,
+      stockToast: '请输入',
+      pickerStar: '',
       shareData: {
         promotion_id: '',
         title: '',
         price: '',
         init_stock: '',
-        sell_start_at: '',
         sell_end_at: '',
         eductible_money: '',
-        rate_money: '',
+        rate: '',
         profit_money: ''
       }
     }
 
-    onLoad () {
+    onLoad() {
+      this.pickerStar = new Date()
+      this.$apply()
     }
 
     onShow() {
       console.log(this.$parent.globalData.shareCoupon)
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
+        let stock = this.currentCoupon.stock
+        if (stock === -1) {
+          this.stockToast = '最大可添加数量无限制'
+        } else {
+          this.stockToast = `最大可添加数量为${stock}`
+        }
       }
+      this._calculatCommission()
     }
 
     // 计算提成金额
-    _calculatCommission () {
-      if (this.currentCoupon) return
-      if (this.shareData.rate_money) return
-      if (this.shareData.eductible_money) return
+    _calculatCommission() {
+      if (!this.currentCoupon) return
+      if (!this.shareData.eductible_money) return
+      if (!this.shareData.rate) return
+      if (parseInt(this.currentCoupon.platform_price) <= parseInt(this.shareData.eductible_money)) {
+        this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
+        return
+      }
+      this.shareData.profit_money = (parseInt(this.currentCoupon.platform_price) - parseInt(this.shareData.eductible_money)) * (parseInt(this.shareData.rate) / 100)
+      this.shareData.profit_money = this.shareData.profit_money.toFixed(2)
+      this.$apply()
       console.log(11)
     }
+
     methods = {
-      // 输入分享金额
+      // 输入分享金额标题
       shareInputTitle(e) {
         this.shareData.title = e.detail.value
         this.titleNumber = e.detail.value.length
         this.$apply()
-        console.log(this.shareData)
       },
       // 输入分享数量
       shareInputNumber(e) {
@@ -129,26 +156,85 @@
       // 输入分享折扣
       shareInputDiscount(e) {
         this.shareData.eductible_money = e.detail.value
+        this._calculatCommission()
         this.$apply()
       },
       // 输入分享比率
       shareInputRate(e) {
-        this.shareData.rate_money = e.detail.value
+        this.shareData.rate = e.detail.value
+        this._calculatCommission()
         this.$apply()
       },
+      // 保存售卖时间
       setValidDate(e) {
-        this.validDate = e.detail.value
-        console.log(e)
+        this.shareData.sell_end_at = e.detail.value
+        console.log(e.detail.value)
         this.$apply()
       },
-
+      // 提交资料创建
+      async saveShareNewData() {
+        if (!this.currentCoupon) {
+          this.$invoke('Toast', 'show', '请添加服务')
+          return
+        }
+        if (!this.shareData.title) {
+          this.$invoke('Toast', 'show', '请输入活动标题')
+          return
+        }
+        if (!this.shareData.init_stock) {
+          this.$invoke('Toast', 'show', '请输入活动库存')
+          return
+        } else {
+          let stock = this.currentCoupon.stock
+          if (stock !== -1 && this.shareData.init_stock > stock) {
+            this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
+          }
+        }
+        if (!this.shareData.sell_end_at) {
+          this.$invoke('Toast', 'show', '请输入活动截止的日期')
+          return
+        } else {
+          let currentDate = new Date(this.shareData.sell_end_at)
+          let sellCurrentDate = new Date(this.currentCoupon.sell_end_at)
+          if (currentDate - sellCurrentDate > 0) {
+            this.$invoke('Toast', 'show', '活动时间不能大于等于服务售卖时间')
+            return
+          }
+        }
+        if (!this.shareData.eductible_money) {
+          this.$invoke('Toast', 'show', '请输入抵用券金额')
+          return
+        } else {
+          if (parseInt(this.currentCoupon.platform_price) <= parseInt(this.shareData.eductible_money)) {
+            this.$invoke('Toast', 'show', '抵用券金额不能大于现价')
+            return
+          }
+        }
+        if (!this.shareData.rate) {
+          this.$invoke('Toast', 'show', '请输入佣金比率')
+          return
+        }
+        this.shareData.promotion_id = this.currentCoupon.id
+        this.shareData.price = this.currentCoupon.platform_price
+        console.log(this.shareData)
+        console.log('我要提交数据啦')
+        let res = await ShareMoney.createShareActive(this.shareData)
+        if (res.error === ERR_OK) {
+          console.log(res)
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+        this.loaded()
+      },
       getServeList(val) {
         let url = `/pages/share-active-choose-server/share-active-choose-server`
         this.$navigate(url)
       }
     }
 
-    components = {}
+    components = {
+      Toast
+    }
 
     config = {
       navigationBarTitleText: '新建分享活动',
@@ -211,6 +297,8 @@
         font-family: $font-family-light
         font-size: $font-size-medium
         color: $color-text-d
+      .tl-share-title-have
+        color: $color-theme
       .tl-share-number
         font-family: $font-family-light
         font-size: $font-size-small-s
@@ -248,6 +336,7 @@
         width: 39px
         height: 22px
         border: 1px solid $color-col-line-f
+
   .tl-share-save
     position: fixed
     left: 0
@@ -264,6 +353,7 @@
       text-align: center
       height: 44px
       line-height: 44px
+
   .tl-share-con-bottom
     margin-bottom: 62px
 </style>

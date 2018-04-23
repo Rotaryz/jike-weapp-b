@@ -3,8 +3,8 @@
     <header-switch title="分享赚钱" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
-          <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
-          <view class="g-a-l-n-item {{downStatus}}" id="2">已过期/已下线</view>
+          <view class="g-a-l-n-item {{upStatus}}" id="0">已上线</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="1">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
@@ -51,7 +51,7 @@
   import ActivityItem from '@/base/activity-item/activity-item'
   import Toast from '@/base/toast/toast'
   import Confirm from '@/base/confirm/confirm'
-  import GroupActiveAPI from 'api/group-active'
+  import ShareActiveAPI from 'api/share-active'
   import {ERR_OK} from 'api/base'
   import {UP, DOWN, ON, OFF, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/share-active-config'
 
@@ -60,7 +60,7 @@
 
     data = {
       imageUrlHead: URIS.image,
-      activityStatus: 'failed', // 活动总开关
+      activityStatus: SUCCESS, // 活动总开关
       status: UP, // tab栏状态
       onlineList: [],
       offlineList: [],
@@ -82,71 +82,84 @@
     }
 
     async onLoad() {
-      await this._init(this.status)
+      // await this._init(this.status)
+      await this._getShareActiveList(this.showTabDownCount, this.paramsUp)
+      this.loaded()
+      this.activityStatus = SUCCESS
+      this.$apply()
     }
 
     onShow() {
     }
 
     async onPullDownRefresh() {
-      let params = this._resetConfig()
-      await this._getNewActiveList(this.status, params)
-      wx.stopPullDownRefresh()
+      // let params = this._resetConfig()
+      // await this._getNewActiveList(this.status, params)
+      // wx.stopPullDownRefresh()
     }
 
-    // 重置配置
-    _resetConfig() {
-      let page, limit
-      if (this.status === UP) {
-        this.isAllUp = false
-        this.paramsUp.page = 1
-        page = this.paramsUp.page
-        limit = this.onlineList.length >= UPPAGELIMIT ? this.onlineList.length : UPPAGELIMIT
-      } else {
-        this.paramsDown.page = 1
-        this.isAllDown = false
-        page = this.paramsDown.page
-        limit = this.offlineList.length >= DOWNPAGELIMIT ? this.offlineList.length : DOWNPAGELIMIT
+    // 获取分享活动列表接口
+    async _getShareActiveList(type, page) {
+      let sharePage = page.page
+      let shareLimit = 2
+      let res = await ShareActiveAPI.getShareActiveList(type, sharePage, shareLimit)
+      if (res.error === ERR_OK) {
+        console.log(res)
+        this.onlineList = this._formatRqData(res)
+        this.$apply()
       }
-      this.$apply()
-      return {page, limit}
     }
+    // 重置配置
+    // _resetConfig() {
+    //   let page, limit
+    //   if (this.status === UP) {
+    //     this.isAllUp = false
+    //     this.paramsUp.page = 1
+    //     page = this.paramsUp.page
+    //     limit = this.onlineList.length >= UPPAGELIMIT ? this.onlineList.length : UPPAGELIMIT
+    //   } else {
+    //     this.paramsDown.page = 1
+    //     this.isAllDown = false
+    //     page = this.paramsDown.page
+    //     limit = this.offlineList.length >= DOWNPAGELIMIT ? this.offlineList.length : DOWNPAGELIMIT
+    //   }
+    //   this.$apply()
+    //   return {page, limit}
+    // }
 
     // 获取新的活动
-    async _getNewActiveList(status, params) {
-      let res = {}
-      if (status === UP) {
-        res = await this._rqGetGroupActiveList(params, status)
-        res && (this.onlineList = res.data)
-        res && (this.activityStatus = res.status.toString())
-      } else {
-        res = await this._rqGetGroupActiveList(params, status)
-        res && (this.offlineList = res.data)
-      }
-      if (res) {
-        this._checkIsAll(res)
-      }
-      this.$apply()
-      this.loaded()
-    }
+    // async _getNewActiveList(status, params) {
+    //   let res = {}
+    //   if (status === UP) {
+    //     res = await this._rqGetGroupActiveList(params, status)
+    //     res && (this.onlineList = res.data)
+    //     res && (this.activityStatus = res.status.toString())
+    //   } else {
+    //     res = await this._rqGetGroupActiveList(params, status)
+    //     res && (this.offlineList = res.data)
+    //   }
+    //   if (res) {
+    //     this._checkIsAll(res)
+    //   }
+    //   this.$apply()
+    //   this.loaded()
+    // }
 
     // 初始化
-    async _init(status) {
-      let res = {}
-      if (status === UP) {
-        res = await this._rqGetGroupActiveList(this.paramsUp, status)
-        res && (this.onlineList = res.data)
-        res && (this.activityStatus = res.status.toString())
-      } else {
-        res = await this._rqGetGroupActiveList(this.paramsDown, status)
-        res && (this.offlineList = res.data)
-      }
-      if (res) {
-        this._checkIsAll(res)
-      }
-      this.$apply()
-      this.loaded()
-    }
+    // async _init(status) {
+      // let res = {}
+      // if (status === UP) {
+      //   res = await this._rqGetGroupActiveList(this.paramsUp, status)
+      //   res && (this.onlineList = res.data)
+      // } else {
+      //   res = await this._rqGetGroupActiveList(this.paramsDown, status)
+      //   res && (this.offlineList = res.data)
+      // }
+      // if (res) {
+      //   this._checkIsAll(res)
+      // }
+      // this.loaded()
+    // }
 
     // 获得更多的活动列表
     async _getMoreList() {
@@ -155,13 +168,13 @@
       if (status === UP) {
         if (this.isAllUp) return
         this.paramsUp.page++
-        res = await this._rqGetGroupActiveList(this.paramsUp, status)
-        res && (this.onlineList.push(...res.data))
+        res = await this._getMoreShareActiveList(status, this.paramsUp)
+        res && (this.onlineList.push(...this._formatRqData(res)))
       } else {
         if (this.isAllDown) return
         this.paramsDown.page++
-        res = await this._rqGetGroupActiveList(this.paramsDown, status)
-        res && (this.offlineList.push(...res.data))
+        res = await this._getMoreShareActiveList(status, this.paramsDown)
+        res && (this.offlineList.push(...this._formatRqData(res)))
       }
       if (res) {
         this._checkIsAll(res)
@@ -191,14 +204,13 @@
     }
 
     // 获取活动列表(分页)
-    async _rqGetGroupActiveList(params, type) {
-      const json = await GroupActiveAPI.getGroupActiveList(params, type)
-      if (json.error === ERR_OK) {
-        console.log(json)
-        return json
-      } else {
-        this.$invoke('toast', 'show', json.message)
-        this.loaded()
+    async _getMoreShareActiveList(type, page) {
+      let sharePage = page.page
+      let shareLimit = 2
+      let res = await ShareActiveAPI.getShareActiveList(type, sharePage, shareLimit)
+      if (res.error === ERR_OK) {
+        return res
+        // return this._formatRqData(res)
       }
     }
 
@@ -209,18 +221,12 @@
         arr.push({
           id: item.id,
           src: item.image_url,
-          peopleNum: item.config.group_number,
-          hotName: item.activity_name,
-          price: item.platform_price,
-          hotPrice: item.config.group_price,
-          status: item.status === UP ? '已上线' : '已下线',
-          statusType: item.status,
-          serverType: item.promotion_title,
-          addNum: item.stock,
-          hotEndDate: item.end_at,
-          timeLimit: item.config.group_validity,
-          inventory: item.promotion_stock,
-          goodId: item.good_ids
+          hotName: item.title,
+          price: item.price,
+          hotPrice: item.after_price,
+          status: item.status_str,
+          statusType: item.status === UP ? '已上线' : '已下线',
+          hotEndDate: item.is_timeout
         })
       })
       return arr
@@ -257,6 +263,7 @@
           return
         }
         this.status = id
+        console.log('1', this.status)
         if (this._isTabDownInit()) {
           await this._init(this.status)
         }
