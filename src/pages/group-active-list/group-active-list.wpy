@@ -106,6 +106,7 @@
       const obj = this.$parent.globalData.groupActive.currentGroupActive
       if (!obj) return
       await this._fromPrevPage(obj)
+      this.$parent.globalData.groupActive.currentGroupActive = null
     }
 
     async onPullDownRefresh() {
@@ -131,7 +132,7 @@
             this.$apply()
           }
         }
-      } else {
+      } else if (obj.source === EDITOR) {
         let index = -1
         index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
         if (index !== -1) {

@@ -67,7 +67,7 @@
       id = id * 1
       if (id !== -1) {
         this.prevId = this.couponList.findIndex(val => val.id * 1 === id)
-        this.prevId !== -1 && (this.couponList[this.prevId].checked = true)
+        this.prevId !== -1 && (this.couponList[this.prevId].checked = true) && (this.currentCoupon = this.couponList[this.prevId])
         this.$apply()
       }
     }
