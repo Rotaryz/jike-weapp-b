@@ -106,10 +106,11 @@
       const obj = this.$parent.globalData.groupActive.currentGroupActive
       if (!obj) return
       await this._fromPrevPage(obj)
+      this.$parent.globalData.groupActive.currentGroupActive = null
     }
 
     async onPullDownRefresh() {
-      let params = this._resetConfig()
+      let params = this._resetConfig(this.status)
       await this._getNewActiveList(this.status, params, false)
       wx.stopPullDownRefresh()
     }
@@ -118,7 +119,8 @@
     async _fromPrevPage(obj) {
       // 从新建活动页面返回该页面
       if (obj.source === NEW) {
-        this.onlineList.unshift(obj)
+        let params = this._resetConfig(UP)
+        await this._getNewActiveList(UP, params)
         if (this.onlineList.length === 1) {
           this.activityStatus = SUCCESS
           let type = '1' // 1团购活动 2分享赚钱活动
@@ -130,7 +132,7 @@
             this.$apply()
           }
         }
-      } else {
+      } else if (obj.source === EDITOR) {
         let index = -1
         index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
         if (index !== -1) {
@@ -150,9 +152,9 @@
     }
 
     // 重置配置
-    _resetConfig() {
+    _resetConfig(status) {
       let page, limit
-      if (this.status === UP) {
+      if (status === UP) {
         this.isAllUp = false
         this.paramsUp.page = 1
         page = this.paramsUp.page
@@ -342,11 +344,17 @@
 
     // 执行删除动作
     async _toDelActive() {
+      let index = -1
       let id = this.currentDelObj.id
       let flag = await this._rqDelActive(id)
       if (!flag) return
-      this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
-      this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      if (this.currentDelObj.statusType === UP) {
+        index = this.onlineList.findIndex(val => val.id * 1 === id * 1)
+        this.onlineList.splice(index, 1)
+      } else {
+        index = this.offlineList.findIndex(val => val.id * 1 === id * 1)
+        this.offlineList.splice(index, 1)
+      }
       this.$apply()
     }
 
@@ -356,14 +364,12 @@
         let flag = await this._rqOfflineActive(obj.id)
         if (!flag) return
         this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
-        obj.status = '已下线'
         obj.statusType = DOWN
         this.offlineList.unshift(obj)
       } else {
         let flag = await this._rqOnlineActive(obj.id)
         if (!flag) return
         this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
-        obj.status = '已上线'
         obj.statusType = UP
         this.onlineList.unshift(obj)
       }

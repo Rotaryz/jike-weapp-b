@@ -114,8 +114,7 @@
         goodId: 0
       },
       arrayPeople: TPLPEOPLE,
-      arrayTime: TPLTIME,
-      toChooseServerTimer: null
+      arrayTime: TPLTIME
     }
 
     onLoad(option) {
@@ -154,10 +153,10 @@
         this.info.hotName = obj.hotName
         this.info.addNum = obj.addNum
         this.info.hotEndDate = obj.hotEndDate
-        this.info.hotSellEndDate = obj.hotSellEndDate
+        this.info.hotSellEndDate = obj.hotSellEndDate.split(' ')[0]
         this.info.timeLimit = obj.timeLimit + '小时'
         this.info.peopleNum = obj.peopleNum + '人'
-        this.info.hotPrice = obj.hotPrice.toFixed(1)
+        this.info.hotPrice = parseFloat(obj.hotPrice).toFixed(1)
         this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
         this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
@@ -197,6 +196,7 @@
       let inventory = parseInt(this.info.inventory)
       let newEndDate = new Date(this.info.hotEndDate).getTime()
       let oldEndDate = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+      let sellEndDate = new Date(this.info.hotSellEndDate).getTime()
       oldEndDate = this._formateDate(oldEndDate)
       oldEndDate = new Date(oldEndDate).getTime()
       if (isNaN(inventory) || inventory <= 0) {
@@ -225,7 +225,7 @@
         } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
           flag = `输入的数量不能小于${peopleNum}`
           return flag
-        } else if (addNum < peopleNum && addNum > inventory) {
+        } else if (addNum < peopleNum || addNum > inventory) {
           flag = `请输入${peopleNum}至${inventory}之内的数量`
           return flag
         } else if (this.info.hotEndDate === HOTENDDEFAULT) {
@@ -233,6 +233,9 @@
           return flag
         } else if (newEndDate < oldEndDate) {
           flag = `活动时间不能小于30天`
+          return flag
+        } else if (newEndDate > sellEndDate) {
+          flag = `活动时间不能大于售卖时间${this.info.hotSellEndDate}`
           return flag
         }
       } else {
@@ -255,7 +258,7 @@
         } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
           flag = `请输入的数量不能小于${peopleNum}`
           return flag
-        } else if (addNum < peopleNum && addNum > inventory) {
+        } else if (addNum < peopleNum || addNum > inventory) {
           flag = `请输入${peopleNum}至${inventory}之内的数量`
           return flag
         } else if (this.info.hotEndDate === HOTENDDEFAULT) {
@@ -263,6 +266,9 @@
           return flag
         } else if (newEndDate < oldEndDate) {
           flag = `活动时间不能小于30天`
+          return flag
+        } else if (newEndDate > sellEndDate) {
+          flag = `活动时间不能大于售卖时间${this.info.hotSellEndDate}`
           return flag
         } else if (this.info.timeLimit === PICKERDEFAUFT) {
           flag = '请输入成团的有效期'
@@ -284,6 +290,7 @@
     // 格式化上传数据
     _formatPostInfo() {
       return {
+        id: this.info.id,
         goods_id: this.info.goodId,
         activity_name: this.info.hotName,
         stock: this.info.addNum,
@@ -346,12 +353,11 @@
 
     methods = {
       toChooseServer() {
-        if (this.toChooseServerTimer != null || this.info.statusType === UP) return
-        this.toChooseServerTimer = setTimeout(() => {
-          let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
+        if (this.info.statusType === UP) return
+        let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
+        this.$apply()
+        setTimeout(() => {
           this.$navigate(url)
-          this.toChooseServerTimer = null
-          this.$apply()
         }, 50)
       },
       bindPickerChangePeopleNum(e) {
