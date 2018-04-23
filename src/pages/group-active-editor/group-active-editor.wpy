@@ -83,7 +83,8 @@
     EDITOR,
     PRICEDEFAULT,
     STOCKUNLIMIT,
-    HTOENDSTAMP
+    HTOENDSTAMP,
+    NORMAL
   } from 'api/group-active-config'
 
   export default class GAEditor extends wepy.page {
@@ -164,7 +165,8 @@
         this.info.disableReduceInfo.hotEndDate = obj.hotEndDate
         this.info.id = obj.id
         this.info.src = obj.src
-        this.goodId = obj.goodId
+        this.info.goodId = obj.goodId
+        this.info.goodStatus = obj.goodStatus
         this.$apply()
       } else {
         this.$parent.globalData.groupActive.currentGroupActive = null
@@ -337,7 +339,8 @@
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
-        goodId: this.goodId
+        goodId: this.info.goodId,
+        goodStatus: NORMAL
       }
     }
 
