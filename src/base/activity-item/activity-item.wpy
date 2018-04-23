@@ -4,7 +4,7 @@
       <view class="a-i-up">
         <view class="a-i-up-box">
           <view class="a-i-u-pic">
-            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
+            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
             <view class="a-i-u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
           <view class="a-i-u-title">{{activeObj.hotName}}</view>
