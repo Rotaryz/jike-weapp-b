@@ -114,7 +114,7 @@
         goodId: 0
       },
       arrayPeople: TPLPEOPLE,
-      arrayTime: TPLTIME,
+      arrayTime: TPLTIME
     }
 
     onLoad(option) {
