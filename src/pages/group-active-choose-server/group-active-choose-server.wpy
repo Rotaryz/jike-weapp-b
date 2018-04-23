@@ -2,8 +2,7 @@
   <view class="group-active-choose-server">
     <view class="g-a-c-s-header">可添加的服务</view>
     <view class="g-a-c-s-section" wx:if="{{!isEmpty}}">
-      <repeat for="{{couponList}}" key="index" index="index"
-              item="item">
+      <repeat for="{{couponList}}" key="index" index="index" item="item">
         <view class="coupon-box">
           <Coupon :coupon.sync="item" :type.sync="'checked'"></Coupon>
         </view>
@@ -186,6 +185,8 @@
       padding: 10px 0 82px
       .coupon-box
         margin-bottom: 10px
+        &:last-child
+          margin-bottom: 20px
     .g-a-c-s-btn-box
       position: fixed
       bottom: 0
