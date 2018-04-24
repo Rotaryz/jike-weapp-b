@@ -46,40 +46,35 @@
         type: 'area',
         categories: res.x,
         animation: true,
-        series: [{
-          name: '新用户数: ',
-          color: '#73E3C4',
-          colors: 'rgba(86,216,176,.06)',
-//        数据
-//           data: res.y,
-          data: [110, 50, 50, 323, 130],
-          format(val) {
-            val = val * 1
-            return val.toFixed(0)
-          }
-        }, {
-          name: '访问人数: ',
-          color: '#6C9BF7',
-          colors: 'rgba(80,128,244,.06)',
-//        数据
-//           data: res.y,
-          data: [20, 190, 10, 160, 240],
-          format(val) {
-            val = val * 1
-            return val.toFixed(0)
-          }
-        }, {
-          name: '访问次数: ',
-          color: '#FECB6A',
-          colors: 'rgba(253,185,79,.06)',
-//        数据
-//           data: res.y,
-          data: [50, 20, 160, 70, 50],
-          format(val) {
-            val = val * 1
-            return val.toFixed(0)
-          }
-        }],
+        series: res.series,
+        // series: [{
+        //   name: '新用户数: ',
+        //   color: '#73E3C4',
+        //   colors: 'rgba(86,216,176,.06)',
+        //   data: [110, 50, 50, 323, 130],
+        //   format(val) {
+        //     val = val * 1
+        //     return val.toFixed(0)
+        //   }
+        // }, {
+        //   name: '访问人数: ',
+        //   color: '#6C9BF7',
+        //   colors: 'rgba(80,128,244,.06)',
+        //   data: [20, 190, 10, 160, 240],
+        //   format(val) {
+        //     val = val * 1
+        //     return val.toFixed(0)
+        //   }
+        // }, {
+        //   name: '访问次数: ',
+        //   color: '#FECB6A',
+        //   colors: 'rgba(253,185,79,.06)',
+        //   data: [50, 20, 160, 70, 50],
+        //   format(val) {
+        //     val = val * 1
+        //     return val.toFixed(0)
+        //   }
+        // }],
         legend: false,
         dataLabel: false,
         yAxis: {

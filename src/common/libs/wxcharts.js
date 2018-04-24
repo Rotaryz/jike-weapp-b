@@ -1035,7 +1035,7 @@ function drawToolTip(textList, offset, opts, config, context) {
     context.moveTo(offset.x, offset.y + 10);
     // 文字背景块位置和大小
     // context.fillRect(offset.x + arrowWidth, offset.y, toolTipWidth, toolTipHeight);
-    context.fillRect(offset.x + arrowWidth, 0, toolTipWidth - 12, toolTipHeight);
+    context.fillRect(offset.x + arrowWidth, 0, toolTipWidth - 6, toolTipHeight);
   }
 
   context.closePath();

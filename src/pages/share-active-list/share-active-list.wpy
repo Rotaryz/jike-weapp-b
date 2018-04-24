@@ -66,6 +66,8 @@
     OFF,
     DEVICEINFO,
     NEW,
+    DEL,
+    TAKENOFF,
     // EDITOR,
     UPPAGELIMIT,
     DOWNPAGELIMIT,
@@ -87,7 +89,9 @@
       activeConstObj: {
         UP,
         DOWN,
-        OUT
+        OUT,
+        DEL,
+        TAKENOFF
       },
       switchConstObj: {
         ON,
@@ -325,7 +329,8 @@
         let status = '0'
         let flag = await this._rqChangeActiveStatus({status, type})
         if (flag) {
-          this.isChecked = OFF
+          this.activityStatus = !SUCCESS
+          this.isChecked = ON
           this.$apply()
         }
       }

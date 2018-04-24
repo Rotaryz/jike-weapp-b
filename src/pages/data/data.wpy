@@ -31,38 +31,41 @@
     <view class="data-source-detail">
       <view class="data-source-detail-title">
         <view class="data-detail-title-icon"></view>
-        <view>订单明细</view>
+        <view>{{sceneData.type_name}}</view>
       </view>
       <view class="data-detail-box">
-        <view class="data-detail-list">
+        <view class="data-detail-list" wx:if="{{sceneData.type_name === '流量明细'}}">
           <view class="data-detail-list-left">流量来源</view>
           <view class="data-detail-list-right">新用户数</view>
           <view class="data-detail-list-right">访问人数</view>
           <view class="data-detail-list-right">访问次数</view>
         </view>
+        <view class="data-detail-list" wx:if="{{sceneData.type_name === '订单明细'}}">
+          <view class="data-detail-list-left">类型</view>
+          <view class="data-detail-list-right">成功订单</view>
+          <view class="data-detail-list-right">退款订单</view>
+          <view class="data-detail-list-right">未支付订单</view>
+        </view>
+        <view class="data-detail-list" wx:if="{{sceneData.type_name === '金额明细'}}">
+          <view class="data-detail-list-left">类型</view>
+          <view class="data-detail-list-right">交易金额</view>
+          <view class="data-detail-list-right">客单价</view>
+        </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">分享数据</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">222222220</view>
-          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right" wx:for="{{sceneData.share}}" wx:key="index">{{item}}</view>
         </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">二维码数据</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right" wx:for="{{sceneData.code}}" wx:key="index">{{item}}</view>
         </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">联盟数据</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right" wx:for="{{sceneData.alliance}}" wx:key="index">{{item}}</view>
         </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">商圈数据</view>
-          <view class="data-detail-list-right">011</view>
-          <view class="data-detail-list-right">0</view>
-          <view class="data-detail-list-right">0</view>
+          <view class="data-detail-list-right" wx:for="{{sceneData.business}}" wx:key="index">{{item}}</view>
         </view>
       </view>
     </view>
@@ -76,17 +79,12 @@
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
+
   export default class Data extends wepy.page {
     mixins = [base]
 
     onShareAppMessage () {
       this.ShareAppMessage()
-    }
-
-    config = {
-      navigationBarTitleText: '数据流量',
-      navigationBarTextStyle: 'black',
-      navigationBarBackgroundColor: 'white'
     }
 
     components = {
@@ -97,6 +95,7 @@
       imageUri: URIS.image,
       showNac: 0,
       showType: 'hit',
+      dataTitle: '数据流量',
       nacList: [{
         title: '昨天',
         type: 'yeaterday',
@@ -113,7 +112,8 @@
       typeList: [],
       dataList: [],
       timeMsg: 'yeaterday',
-      monthbox: false
+      monthbox: false,
+      sceneData: null
     }
 
     async load (time = 'yesterday', type = 'hit') {
@@ -129,8 +129,33 @@
         } else {
           this.monthbox = false
         }
-//        this.$com.AeraChart.$wxpage.infoArea(res.data)
+        //        this.$com.AeraChart.$wxpage.infoArea(res.data)
+        let type = data.type
+        switch (type) {
+          case 'hit':
+            wepy.setNavigationBarTitle({
+              title: '流量总量'
+            })
+            break
+          case 'order':
+            wepy.setNavigationBarTitle({
+              title: '订单数量'
+            })
+            break
+          case 'money':
+            wepy.setNavigationBarTitle({
+              title: '消费金额'
+            })
+            break
+        }
         this.showAera = true
+        this.loaded()
+        this.$apply()
+      }
+      let resJosn = await shop.sceneDetailData(data)
+      if (resJosn.error === ERR_OK) {
+        this.sceneData = resJosn.data
+        console.log(resJosn.data)
         this.loaded()
         this.$apply()
       }
@@ -148,8 +173,14 @@
       }
     }
 
-    async onLoad () {
+    async onLoad (options) {
       await this.load()
+    }
+
+    config = {
+      navigationBarTitleText: '流量总量',
+      navigationBarTextStyle: 'black',
+      navigationBarBackgroundColor: 'white'
     }
   }
 </script>
