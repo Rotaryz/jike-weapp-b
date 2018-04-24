@@ -128,7 +128,7 @@
           let type = '1' // 1团购活动 2分享赚钱活动
           // 活动状态，0关闭，1开启
           let status = '1'
-          let flag = await this._rqChangeActiveStatus({status, type})
+          let flag = await this._rqChangeActiveStatus({status, type}, false)
           if (flag) {
             this.isChecked = ON
             this.$apply()
@@ -246,8 +246,8 @@
     }
 
     // 活动总开关
-    async _rqChangeActiveStatus(data) {
-      const json = await GroupActiveAPI.changeActiveStatus(data)
+    async _rqChangeActiveStatus(data, loading) {
+      const json = await GroupActiveAPI.changeActiveStatus(data, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
@@ -406,7 +406,8 @@
         let status = '0'
         let flag = await this._rqChangeActiveStatus({status, type})
         if (flag) {
-          this.isChecked = OFF
+          this.activityStatus = !SUCCESS
+          this.isChecked = ON
           this.$apply()
         }
       }
