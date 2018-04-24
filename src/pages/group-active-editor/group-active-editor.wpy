@@ -109,7 +109,7 @@
         inventory: INPUTDEFAULT,
         statusType: DOWN,
         disableReduceInfo: {},
-        hotSellEndDate: -1,
+        hotSellEndDate: '2100-01-01',
         source: NEW, // 新建 和 编辑 2种模式,
         goodId: 0
       },
@@ -426,7 +426,16 @@
         return this.info.hotName !== INPUTDEFAULT ? this.info.hotName.length : 0
       },
       hotEndStartDate() {
-        return this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24 * 30
+        let time = ' '
+        time = this.info.hotStartDate.getTime() + 1000 * 60 * 60 * 24 * 30
+        time = this._formateDate(time)
+        return time
+      },
+      hotSellEndDate() {
+        let time = ' '
+        time = this.info.hotSellEndDate
+        time = this._formateDate(time)
+        return time
       },
       inventory() {
         return this.info.inventory !== INPUTDEFAULT ? `最大可输入数量${this.info.inventory}` : '请输入'
