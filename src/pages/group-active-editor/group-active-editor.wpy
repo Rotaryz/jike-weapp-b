@@ -38,21 +38,21 @@
       </view>
     </view>
     <view class="g-a-article g-a-a-limit-section">
-      <view class="hot-time-limit g-a-item-box">
+      <view class="hot-time-limit g-a-item-box" @tap="timeLimitTap">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{timeLimit}}" disabled="{{isDisabled}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
-      <view class="hot-people-number g-a-item-box">
+      <view class="hot-people-number g-a-item-box" @tap="hotPeopleTap">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{peopleNum}}" disabled="{{isDisabled}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
           <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
-      <view class="hot-price g-a-item-box">
+      <view class="hot-price g-a-item-box" @tap="hotPriceTap">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
           <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
@@ -203,7 +203,7 @@
         inventory = Number.MAX_VALUE
       }
       if (isNaN(peopleNum)) {
-        peopleNum = 0
+        peopleNum = 2
       }
       if (isNaN(addNum)) {
         addNum = 0
@@ -352,8 +352,26 @@
     }
 
     methods = {
+      hotPriceTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团价格不可修改')
+        }
+      },
+      hotPeopleTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团人数不可修改')
+        }
+      },
+      timeLimitTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团有效期不可修改')
+        }
+      },
       toChooseServer() {
-        if (this.info.statusType === UP) return
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '服务不可修改')
+          return
+        }
         let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
         this.$apply()
         setTimeout(() => {

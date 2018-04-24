@@ -16,6 +16,17 @@ export default class GroupActive extends base {
   }
 
   /**
+   * 团购详情
+   * @param id
+   * @param loading
+   * @returns {Promise<void>}
+   */
+  static async getGroupActiveDetail(id, loading = true) {
+    const url = `${this.baseUrl}/api/group/tuan-gou/${id}`
+    return await this.get(url, {}, loading)
+  }
+
+  /**
    * 查询服务-团购
    * @param data
    * @returns {Promise<void>}

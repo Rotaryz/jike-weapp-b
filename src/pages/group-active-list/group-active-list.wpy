@@ -306,6 +306,48 @@
       }
     }
 
+    // 请求活动详情
+    async _rqActiveDetail(id, loading) {
+      const json = await GroupActiveAPI.getGroupActiveDetail(id, loading)
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 完善活动对象
+    async _FillActiveObj(obj) {
+      const res = await this._rqActiveDetail(obj.id)
+      if (res) {
+        return this._formatRqDataDetail(res, obj)
+      }
+      this.loaded()
+    }
+
+    // 格式化服务器详情数据
+    _formatRqDataDetail(res, obj) {
+      let item = res.data
+      if (item) {
+        obj.id = item.id
+        obj.goodId = item.goods_id
+        obj.hotName = item.activity_name
+        obj.addNum = item.stock
+        obj.hotEndDate = item.end_at.split(' ')[0]
+        obj.statusType = '' + item.status
+        obj.price = item.platform_price
+        obj.serverType = item.promotion_title
+        obj.inventory = item.promotion_stock
+        obj.hotSellEndDate = item.promotion_sell_end_at.split(' ')[0]
+        obj.hotPrice = item.config.group_price
+        obj.peopleNum = item.config.group_number
+        obj.timeLimit = item.config.group_validity
+      }
+      return obj
+    }
+
     // 格式化服务器数据
     _formatRqData(res) {
       let arr = []
@@ -313,18 +355,19 @@
         arr.push({
           id: item.id,
           src: item.image_url,
-          peopleNum: item.config.group_number,
+          // peopleNum: item.config.group_number,
           hotName: item.activity_name,
           price: item.platform_price,
-          hotPrice: item.config.group_price,
+          hotPrice: item.activity_price,
           statusType: '' + item.status,
-          serverType: item.promotion_title,
-          addNum: item.stock,
-          hotEndDate: item.end_at.split(' ')[0],
-          timeLimit: item.config.group_validity,
-          inventory: item.promotion_stock,
-          goodId: item.goods_id,
-          hotSellEndDate: item.promotion_sell_end_at.split(' ')[0],
+          statusTypeStr: item.start_str,
+          // serverType: item.promotion_title,
+          // addNum: item.stock,
+          // hotEndDate: item.end_at.split(' ')[0],
+          // timeLimit: item.config.group_validity,
+          // inventory: item.promotion_stock,
+          // goodId: item.goods_id,
+          // hotSellEndDate: item.promotion_sell_end_at.split(' ')[0],
           goodStatus: '' + item.promotion_status
         })
       })
@@ -355,7 +398,23 @@
         index = this.offlineList.findIndex(val => val.id * 1 === id * 1)
         this.offlineList.splice(index, 1)
       }
+      this._checkListEmpty()
       this.$apply()
+    }
+
+    // 如果数组为空关闭活动总开关
+    async _checkListEmpty() {
+      let flag = this.onlineList.length === 0 && this.offlineList.length === 0
+      if (flag) {
+        let type = '1' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = '0'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = OFF
+          this.$apply()
+        }
+      }
     }
 
     // 上线或下线
@@ -439,7 +498,8 @@
         this.currentDelObj = obj
         this.$apply()
       },
-      activeBtnThree(obj) {
+      async activeBtnThree(obj) {
+        obj = await this._FillActiveObj(obj)
         this.$parent.globalData.groupActive.currentGroupActive = obj
         let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
         this.$apply()

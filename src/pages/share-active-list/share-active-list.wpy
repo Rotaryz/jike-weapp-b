@@ -70,7 +70,8 @@
     UPPAGELIMIT,
     DOWNPAGELIMIT,
     SUCCESS,
-    OUT
+    OUT,
+    DEL
   } from 'api/share-active-config'
 
   export default class GAList extends wepy.page {
@@ -87,7 +88,8 @@
       activeConstObj: {
         UP,
         DOWN,
-        OUT
+        OUT,
+        DEL
       },
       switchConstObj: {
         ON,

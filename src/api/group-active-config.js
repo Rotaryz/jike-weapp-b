@@ -35,7 +35,8 @@ function createPeople() {
 // 团购活动列表页面 和 header-switch组件
 const UP = '1' // 已上线
 const DOWN = '0' // 已下线
-const OUT = '0' // 过期 0表示商品已下架，删除，过期 1表示正常
+const OUT = '0' //  0表示商品已过期 1表示正常
+const DEL = '-1' // -1表示商品已删除
 const NORMAL = '1'
 const ON = 'on' // 开关-开
 const OFF = 'off' // 开关-关
@@ -77,5 +78,6 @@ export {
   STOCKUNLIMIT,
   HTOENDSTAMP,
   OUT,
-  NORMAL
+  NORMAL,
+  DEL
 }

@@ -4,7 +4,7 @@
       <view class="a-i-up">
         <view class="a-i-up-box">
           <view class="a-i-u-pic">
-            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFill" src="{{activeObj.src}}"></image>
+            <image class="a-i-u-p-image" mode="aspectFill" src="{{activeObj.src}}"></image>
             <view class="a-i-u-p-people">{{activeObj.peopleNum}}人团</view>
           </view>
           <view class="a-i-u-title">{{activeObj.hotName}}</view>
@@ -16,17 +16,21 @@
       </view>
       <view class="a-i-down">
         <view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">
-          <view class="a-i-d-status">商品已下架/删除/过期</view>
+          <view class="a-i-d-status">商品已过期</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">
+          <view class="a-i-d-status">商品已删除</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
-          <view class="a-i-d-status">已上线</view>
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
-          <view class="a-i-d-status">已下线</view>
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
@@ -37,7 +41,7 @@
       <view class="a-i-up">
         <view class="a-i-up-box">
           <view class="a-i-u-pic">
-            <image class="a-i-u-p-image" wx:if="{{imageUrlHead}}" mode="aspectFit" src="{{activeObj.src}}"></image>
+            <image class="a-i-u-p-image" mode="aspectFit" src="{{activeObj.src}}"></image>
           </view>
           <view class="a-i-u-title">{{activeObj.hotName}}</view>
           <view class="a-i-u-price">现价 ¥{{activeObj.price}}</view>
@@ -51,14 +55,18 @@
           <view class="a-i-d-status">商品已下架/删除/过期</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">
+          <view class="a-i-d-status">商品已删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
-          <view class="a-i-d-status">已上线</view>
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
-          <view class="a-i-d-status">已下线</view>
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
           <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
@@ -67,10 +75,8 @@
     </view>
   </view>
 </template>
-
 <script>
   import wepy from 'wepy'
-  import URIS from 'common/js/config'
 
   export default class ActivityItem extends wepy.component {
     props = {
@@ -86,7 +92,8 @@
        * activeObj.hotName 活动名称
        * activeObj.price 现价
        * activeObj.hotPrice 活动价
-       * activeObj.statusType 活动类型
+       * activeObj.statusType 活动状态类型
+       * activeObj.statusTypeStr 活动状态名称
        * activeObj.goodStatus 商品的状态
        */
       activeObj: {
@@ -97,15 +104,13 @@
       /**
        * UP 已上线状态
        * DOWN 已下线状态
-       * OUT 商品下架或过期或删除状态
+       * OUT 商品过期
+       * DEL 商品已删除
        */
       constObj: {
         type: Object,
         default: {}
       }
-    }
-    data = {
-      imageUrlHead: URIS.image
     }
     methods = {
       handleClickOne(obj) {
