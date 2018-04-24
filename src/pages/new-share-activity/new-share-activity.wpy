@@ -4,7 +4,7 @@
       <view class="tl-share-left">添加服务</view>
       <view class="tl-share-right" @tap="getServeList()">
         <view class="full-text">{{shareData.promotion_title}}</view>
-        <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>
+        <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
       </view>
     </view>
     <view class="tl-share-box">
@@ -31,7 +31,7 @@
         <view class="tl-share-data-time">
           <view>{{shareData.sell_end_at === '' ? '结束时间' : shareData.sell_end_at}}</view>
           <view class="arrow-right" wx:if="{{shareData.sell_end_at === ''}}">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
           </view>
         </view>
       </picker>
@@ -143,7 +143,7 @@
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
         this.shareData.promotion_title = this.$parent.globalData.shareCoupon.title
-        this.shareData.id = this.$parent.globalData.shareCoupon.id
+        this.shareData.promotion_id = this.$parent.globalData.shareCoupon.id
         this.shareData.price = this.$parent.globalData.shareCoupon.platform_price
         let stock = this.currentCoupon.stock
         if (stock === -1) {
@@ -259,7 +259,10 @@
         if (this.editId) {
           let res = await ShareMoney.SaveServerDetails(this.editId, this.shareData)
           if (res.error === ERR_OK) {
-            this.$back()
+            this.$parent.globalData.newData = 'EDIT'
+            setTimeout(() => {
+              this.$back()
+            }, 50)
           } else {
             this.$invoke('Toast', 'show', res.message)
           }
@@ -267,6 +270,10 @@
           let res = await ShareMoney.createShareActive(this.shareData)
           if (res.error === ERR_OK) {
             console.log(res)
+            this.$parent.globalData.newData = 'NEW'
+            setTimeout(() => {
+              this.$back()
+            }, 50)
           } else {
             this.$invoke('Toast', 'show', res.message)
           }
@@ -331,7 +338,7 @@
           .full-image
             margin-left: 3.5px
             display: block
-            width: 6px
+            width: 10px
             height: 10px
       .tl-share-data-left
         font-family: $font-family-light
@@ -368,8 +375,8 @@
         .full-image
           margin-left: 10px
           display: block
-          width: 9px
-          height: 15px
+          width: 10px
+          height: 10px
       .tl-share-icon
         background: $color-assist-f
         width: 4px

@@ -118,17 +118,43 @@
       }
       // await this._getShareActiveList(this.showTabDownCount, this.paramsUp)
       this.loaded()
-      this.activityStatus = SUCCESS
+      // this.activityStatus = SUCCESS
       this.$apply()
     }
 
-    onShow() {
+    async onShow() {
+      if (this.$parent.globalData.newData === 'NEW') {
+        this._resetConfig()
+        await this._init(this.status)
+        await this._fromPrevPage()
+      } else if (this.$parent.globalData.newData === 'EDIT') {
+        this._resetConfig()
+        await this._init(UP)
+        await this._init(DOWN)
+      }
+      this.$parent.globalData.newData = null
     }
 
     async onPullDownRefresh() {
-      // let params = this._resetConfig()
-      // await this._getNewActiveList(this.status, params)
-      // wx.stopPullDownRefresh()
+      this._resetConfig()
+      await this._init(this.status)
+      wx.stopPullDownRefresh()
+    }
+
+    // 插入来自编辑页面
+    async _fromPrevPage() {
+      // 从新建活动页面返回该页面
+      if (this.onlineList.length === 1) {
+        this.activityStatus = SUCCESS
+        let type = '2' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = '1'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = ON
+          this.$apply()
+        }
+      }
     }
 
     // 获取分享活动列表接口
@@ -156,40 +182,40 @@
     }
 
     // 重置配置
-    // _resetConfig() {
-    //   let page, limit
-    //   if (this.status === UP) {
-    //     this.isAllUp = false
-    //     this.paramsUp.page = 1
-    //     page = this.paramsUp.page
-    //     limit = this.onlineList.length >= UPPAGELIMIT ? this.onlineList.length : UPPAGELIMIT
-    //   } else {
-    //     this.paramsDown.page = 1
-    //     this.isAllDown = false
-    //     page = this.paramsDown.page
-    //     limit = this.offlineList.length >= DOWNPAGELIMIT ? this.offlineList.length : DOWNPAGELIMIT
-    //   }
-    //   this.$apply()
-    //   return {page, limit}
-    // }
+    _resetConfig() {
+      let page, limit
+      if (this.status === UP) {
+        this.isAllUp = false
+        this.paramsUp.page = 1
+        page = this.paramsUp.page
+        limit = this.onlineList.length >= UPPAGELIMIT ? this.onlineList.length : UPPAGELIMIT
+      } else {
+        this.paramsDown.page = 1
+        this.isAllDown = false
+        page = this.paramsDown.page
+        limit = this.offlineList.length >= DOWNPAGELIMIT ? this.offlineList.length : DOWNPAGELIMIT
+      }
+      this.$apply()
+      return {page, limit}
+    }
 
     // 获取新的活动
-    // async _getNewActiveList(status, params) {
-    //   let res = {}
-    //   if (status === UP) {
-    //     res = await this._rqGetGroupActiveList(params, status)
-    //     res && (this.onlineList = res.data)
-    //     res && (this.activityStatus = res.status.toString())
-    //   } else {
-    //     res = await this._rqGetGroupActiveList(params, status)
-    //     res && (this.offlineList = res.data)
-    //   }
-    //   if (res) {
-    //     this._checkIsAll(res)
-    //   }
-    //   this.$apply()
-    //   this.loaded()
-    // }
+    async _getNewActiveList(status, params) {
+      let res = {}
+      if (status === UP) {
+        res = await this._rqGetGroupActiveList(params, status)
+        res && (this.onlineList = res.data)
+        res && (this.activityStatus = res.status.toString())
+      } else {
+        res = await this._rqGetGroupActiveList(params, status)
+        res && (this.offlineList = res.data)
+      }
+      if (res) {
+        this._checkIsAll(res)
+      }
+      this.$apply()
+      this.loaded()
+    }
 
     // 初始化
     async _init(status) {
@@ -198,7 +224,7 @@
         res = await this._getShareActiveList(status, this.paramsUp)
         console.log('paramsUp', res)
         res && (this.onlineList = this._formatRqData(res))
-        // res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
+        res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
       } else {
         res = await this._getShareActiveList(status, this.paramsDown)
         console.log('paramsDown', res)
@@ -290,7 +316,20 @@
         return false
       }
     }
-
+    // 如果数组为空关闭活动总开关
+    async _checkListEmpty() {
+      let flag = this.onlineList.length === 0 && this.offlineList.length === 0
+      if (flag) {
+        let type = '2' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = '0'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = OFF
+          this.$apply()
+        }
+      }
+    }
     // 上线或下线
     _upOrDown(obj) {
       // 请求服务器成功后
@@ -329,6 +368,7 @@
       this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
       this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
       this.$apply()
+      await this._checkListEmpty()
     }
 
     methods = {
