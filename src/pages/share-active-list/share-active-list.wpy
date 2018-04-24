@@ -67,8 +67,8 @@
     DEVICEINFO,
     NEW,
     // EDITOR,
-    // UPPAGELIMIT,
-    // DOWNPAGELIMIT,
+    UPPAGELIMIT,
+    DOWNPAGELIMIT,
     SUCCESS,
     OUT
   } from 'api/share-active-config'
@@ -95,11 +95,11 @@
       },
       paramsUp: {
         page: 1,
-        limit: 2
+        limit: UPPAGELIMIT
       },
       paramsDown: {
         page: 1,
-        limit: 2
+        limit: DOWNPAGELIMIT
       },
       isAllUp: false,
       isAllDown: false,

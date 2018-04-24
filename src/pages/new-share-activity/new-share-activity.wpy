@@ -2,7 +2,7 @@
   <view class="tl-share-con">
     <view class="tl-share-box tl-share-type-between">
       <view class="tl-share-left">添加服务</view>
-      <view class="tl-share-right" @tap="getServeList(')">
+      <view class="tl-share-right" @tap="getServeList()">
         <view class="full-text">{{shareData.promotion_title}}</view>
         <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>
       </view>
@@ -131,8 +131,9 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
+      } else {
+        this.pickerStar = new Date()
       }
-      this.pickerStar = new Date()
       this.$apply()
       this.loaded()
     }
@@ -164,8 +165,10 @@
         this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
         return
       }
-      this.shareData.profit_money = (parseInt(this.currentCoupon.platform_price) - parseInt(this.shareData.eductible_money)) * (parseInt(this.shareData.rate) / 100)
+      console.log(this.shareData.price, this.shareData.eductible_money, this.shareData.rate)
+      this.shareData.profit_money = (parseInt(this.shareData.price) - parseInt(this.shareData.eductible_money)) * (parseInt(this.shareData.rate) / 100)
       this.shareData.profit_money = this.shareData.profit_money.toFixed(2)
+      console.log(this.shareData.profit_money)
       this.$apply()
       console.log(11)
     }
