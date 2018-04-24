@@ -23,6 +23,10 @@
           <view class="a-i-d-status">商品已删除</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">
+          <view class="a-i-d-status">商品已下架</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
@@ -52,11 +56,15 @@
       </view>
       <view class="a-i-down">
         <view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">
-          <view class="a-i-d-status">商品已下架/删除/过期</view>
+          <view class="a-i-d-status">商品已过期</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">
           <view class="a-i-d-status">商品已删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+        </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">
+          <view class="a-i-d-status">商品已下架</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
@@ -104,8 +112,9 @@
       /**
        * UP 已上线状态
        * DOWN 已下线状态
-       * OUT 商品过期
+       * OUT 商品已过期
        * DEL 商品已删除
+       * TAKENOFF 商品已下架
        */
       constObj: {
         type: Object,

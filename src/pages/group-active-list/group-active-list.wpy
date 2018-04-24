@@ -53,7 +53,7 @@
   import Confirm from '@/base/confirm/confirm'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
-  import {UP, DOWN, ON, OFF, OUT,SALEOUT,DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+  import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -66,7 +66,7 @@
         DOWN,
         OUT,
         DEL,
-        SALEOUT
+        TAKENOFF
       },
       switchConstObj: {
         ON,
@@ -358,6 +358,7 @@
           id: item.id,
           src: item.image_url,
           hotName: item.activity_name,
+          peopleNum: item.activity_number,
           price: item.platform_price,
           hotPrice: item.activity_price,
           statusType: '' + item.status,
