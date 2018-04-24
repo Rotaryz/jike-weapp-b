@@ -121,10 +121,10 @@
     async _fromPrevPage(obj) {
       // 从新建活动页面返回该页面
       if (obj.source === NEW) {
+        this.activityStatus = SUCCESS
         let params = this._resetConfig(UP)
         await this._getNewActiveList(UP, params)
         if (this.onlineList.length === 1) {
-          this.activityStatus = SUCCESS
           let type = '1' // 1团购活动 2分享赚钱活动
           // 活动状态，0关闭，1开启
           let status = '1'
@@ -401,15 +401,15 @@
     async _checkListEmpty() {
       let flag = this.onlineList.length === 0 && this.offlineList.length === 0
       if (flag) {
+        this.activityStatus = !SUCCESS
         let type = '1' // 1团购活动 2分享赚钱活动
         // 活动状态，0关闭，1开启
         let status = '0'
         let flag = await this._rqChangeActiveStatus({status, type})
         if (flag) {
-          this.activityStatus = !SUCCESS
           this.isChecked = ON
-          this.$apply()
         }
+        this.$apply()
       }
     }
 
