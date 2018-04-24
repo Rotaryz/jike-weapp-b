@@ -37,6 +37,7 @@ const UP = '1' // 已上线
 const DOWN = '0' // 已下线
 const OUT = '0' //  0表示商品已过期 1表示正常
 const DEL = '-1' // -1表示商品已删除
+const SALEOUT = '-2' // -2 表示商品已经下架
 const NORMAL = '1'
 const ON = 'on' // 开关-开
 const OFF = 'off' // 开关-关
@@ -79,5 +80,6 @@ export {
   HTOENDSTAMP,
   OUT,
   NORMAL,
-  DEL
+  DEL,
+  SALEOUT
 }

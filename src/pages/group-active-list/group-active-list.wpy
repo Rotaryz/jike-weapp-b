@@ -53,7 +53,7 @@
   import Confirm from '@/base/confirm/confirm'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
-  import {UP, DOWN, ON, OFF, OUT, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+  import {UP, DOWN, ON, OFF, OUT,SALEOUT,DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -64,7 +64,9 @@
       activeConstObj: {
         UP,
         DOWN,
-        OUT
+        OUT,
+        DEL,
+        SALEOUT
       },
       switchConstObj: {
         ON,
@@ -321,10 +323,10 @@
     // 完善活动对象
     async _FillActiveObj(obj) {
       const res = await this._rqActiveDetail(obj.id)
+      this.loaded()
       if (res) {
         return this._formatRqDataDetail(res, obj)
       }
-      this.loaded()
     }
 
     // 格式化服务器详情数据
@@ -355,19 +357,11 @@
         arr.push({
           id: item.id,
           src: item.image_url,
-          // peopleNum: item.config.group_number,
           hotName: item.activity_name,
           price: item.platform_price,
           hotPrice: item.activity_price,
           statusType: '' + item.status,
           statusTypeStr: item.start_str,
-          // serverType: item.promotion_title,
-          // addNum: item.stock,
-          // hotEndDate: item.end_at.split(' ')[0],
-          // timeLimit: item.config.group_validity,
-          // inventory: item.promotion_stock,
-          // goodId: item.goods_id,
-          // hotSellEndDate: item.promotion_sell_end_at.split(' ')[0],
           goodStatus: '' + item.promotion_status
         })
       })
