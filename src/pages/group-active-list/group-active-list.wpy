@@ -106,6 +106,7 @@
 
     async onShow() {
       const obj = this.$parent.globalData.groupActive.currentGroupActive
+      console.log(obj)
       if (!obj) return
       await this._fromPrevPage(obj)
       this.$parent.globalData.groupActive.currentGroupActive = null

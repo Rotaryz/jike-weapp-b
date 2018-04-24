@@ -149,6 +149,7 @@
         obj = await this._fillActiveObj(obj)
         this.info.source = EDITOR
         this.info.statusType = obj.statusType
+        this.info.statusTypeStr = obj.statusTypeStr
         this.info.serverType = obj.serverType
         this.info.price = parseFloat(obj.price).toFixed(1)
         this.info.hotName = obj.hotName
@@ -173,6 +174,7 @@
         this.$parent.globalData.groupActive.currentCouponGA = null
       }
       this.$apply()
+      console.log(this.info)
     }
 
     // 完善活动对象
@@ -208,7 +210,7 @@
         obj.statusType = '' + item.status
         obj.price = item.platform_price
         obj.serverType = item.promotion_title
-        obj.inventory = item.promotion_stock
+        obj.inventory = item.promotion_stock === STOCKUNLIMIT ? item.promotion_stock : (item.promotion_stock + item.stock)
         obj.hotSellEndDate = item.promotion_sell_end_at.split(' ')[0]
         obj.hotPrice = item.config.group_price
         obj.peopleNum = item.config.group_number
@@ -259,6 +261,9 @@
         if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
           return flag
+        } else if (this.info.addNum === INPUTDEFAULT) {
+          flag = '请输入服务数量'
+          return flag
         } else if (peopleNum > inventory) {
           flag = '库存不足,请添加库存'
           return flag
@@ -292,6 +297,9 @@
         } else if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
           return flag
+        } else if (this.info.addNum === INPUTDEFAULT) {
+          flag = '请输入服务数量'
+          return flag
         } else if (peopleNum > inventory) {
           flag = '库存不足,请添加库存'
           return flag
@@ -320,7 +328,7 @@
           flag = '请输入活动的人数'
           return flag
         } else if (!(hotPrice > 0 && hotPrice < price)) {
-          flag = `请输入${0.1}至${price}之内的价格`
+          flag = `请输入${0}至${price}之内的价格`
           return flag
         } else if (isNaN(this.info.hotPrice * 1)) {
           flag = `请输入正确的价格`
@@ -376,20 +384,13 @@
     _packActiveInfo() {
       return {
         statusType: UP,
-        serverType: this.info.serverType,
+        statusTypeStr: this.info.statusTypeStr,
         price: this.info.price,
         hotName: this.info.hotName,
-        addNum: this.info.addNum,
-        hotEndDate: this.info.hotEndDate,
-        timeLimit: parseInt(this.info.timeLimit),
-        peopleNum: parseInt(this.info.peopleNum),
         hotPrice: this.info.hotPrice,
-        inventory: this.info.inventory === '无限制' ? STOCKUNLIMIT : this.info.inventory,
-        hotSellEndDate: this.info.hotSellEndDate,
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
-        goodId: this.info.goodId,
         goodStatus: NORMAL
       }
     }
