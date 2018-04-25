@@ -14,6 +14,16 @@ export default class shop extends base {
   }
 
   /**
+   * 场景详细数据
+   * @param data
+   * @returns {Promise.<*>}
+   */
+  static async sceneDetailData (data) {
+    const url = `${this.baseUrl}/api/merchants/sence-detail`
+    return await this.get(url, data)
+  }
+
+  /**
    * 输码核销
    * @param data
    * @returns {Promise.<*>}

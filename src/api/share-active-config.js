@@ -11,6 +11,8 @@ const MINSIZE = 0.1
 // �Ź���б�ҳ�� �� header-switch���
 const UP = '0'
 const DOWN = '1'
+const DEL = '-1'
+const TAKENOFF = '-2'
 const ON = 'on'
 const OFF = 'off'
 const UPPAGELIMIT = 10
@@ -37,8 +39,10 @@ export {
   PRICEDEFAULT,
   NEW,
   EDITOR,
+  DEL,
   UP,
   DOWN,
+  TAKENOFF,
   ON,
   OFF,
   DEVICEINFO,
