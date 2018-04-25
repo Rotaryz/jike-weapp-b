@@ -53,7 +53,7 @@
   import Confirm from '@/base/confirm/confirm'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
-  import {UP, DOWN, ON, OFF, OUT, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+  import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
 
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -64,7 +64,9 @@
       activeConstObj: {
         UP,
         DOWN,
-        OUT
+        OUT,
+        DEL,
+        TAKENOFF
       },
       switchConstObj: {
         ON,
@@ -119,14 +121,14 @@
     async _fromPrevPage(obj) {
       // 从新建活动页面返回该页面
       if (obj.source === NEW) {
+        this.activityStatus = SUCCESS
         let params = this._resetConfig(UP)
         await this._getNewActiveList(UP, params)
         if (this.onlineList.length === 1) {
-          this.activityStatus = SUCCESS
           let type = '1' // 1团购活动 2分享赚钱活动
           // 活动状态，0关闭，1开启
           let status = '1'
-          let flag = await this._rqChangeActiveStatus({status, type})
+          let flag = await this._rqChangeActiveStatus({status, type}, false)
           if (flag) {
             this.isChecked = ON
             this.$apply()
@@ -244,8 +246,8 @@
     }
 
     // 活动总开关
-    async _rqChangeActiveStatus(data) {
-      const json = await GroupActiveAPI.changeActiveStatus(data)
+    async _rqChangeActiveStatus(data, loading) {
+      const json = await GroupActiveAPI.changeActiveStatus(data, loading)
       if (json.error === ERR_OK) {
         this.loaded()
         return true
@@ -313,18 +315,12 @@
         arr.push({
           id: item.id,
           src: item.image_url,
-          peopleNum: item.config.group_number,
           hotName: item.activity_name,
+          peopleNum: item.activity_number,
           price: item.platform_price,
-          hotPrice: item.config.group_price,
+          hotPrice: item.activity_price,
           statusType: '' + item.status,
-          serverType: item.promotion_title,
-          addNum: item.stock,
-          hotEndDate: item.end_at.split(' ')[0],
-          timeLimit: item.config.group_validity,
-          inventory: item.promotion_stock,
-          goodId: item.goods_id,
-          hotSellEndDate: item.promotion_sell_end_at.split(' ')[0],
+          statusTypeStr: item.start_str,
           goodStatus: '' + item.promotion_status
         })
       })
@@ -355,7 +351,24 @@
         index = this.offlineList.findIndex(val => val.id * 1 === id * 1)
         this.offlineList.splice(index, 1)
       }
+      this._checkListEmpty()
       this.$apply()
+    }
+
+    // 如果数组为空关闭活动总开关
+    async _checkListEmpty() {
+      let flag = this.onlineList.length === 0 && this.offlineList.length === 0
+      if (flag) {
+        this.activityStatus = !SUCCESS
+        let type = '1' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = '0'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = ON
+        }
+        this.$apply()
+      }
     }
 
     // 上线或下线
@@ -439,7 +452,7 @@
         this.currentDelObj = obj
         this.$apply()
       },
-      activeBtnThree(obj) {
+      async activeBtnThree(obj) {
         this.$parent.globalData.groupActive.currentGroupActive = obj
         let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
         this.$apply()

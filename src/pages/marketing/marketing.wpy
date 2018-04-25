@@ -159,15 +159,30 @@
     }
 
     async load() {
-      let Json = await Activity.getAllActivity()
-      // 1团购，2分享有礼
-      // 活动状态，0关闭，1开启
-      let groupShareJson = await this._rqShowGroupShareActive()
-      if (Json.error !== ERR_OK) {
-        return
+      await Promise.all([
+        this._showGroupShareActive(),
+        this._showMarketing()
+      ])
+    }
+
+    // 请求服务器返回数据
+    async _rqServerBackData(fn) {
+      const json = await fn()
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('Toast', 'show', json.message)
+        return false
       }
-      let groupShareRes = groupShareJson.data
-      let res = Json.data
+    }
+
+    // 获取营销活动状态
+    async _showMarketing() {
+      const getAllActivity = Activity.getAllActivity.bind(Activity)
+      const json = await this._rqServerBackData(getAllActivity)
+      const res = json.data
+      if (!res) return
       this.list.map((item) => {
         switch (item.name) {
           case WHEEL:
@@ -182,33 +197,32 @@
         }
         return item
       })
-      this.activeList.map(item => {
+      let index = this.activeList.findIndex(val => val.name === LIVE)
+      this.activeList[index].checked = res.video_live
+      this.$apply()
+    }
+
+    // 获取促销活动状态
+    async _showGroupShareActive() {
+      const showActiveStatus = GroupActiveAPI.showActiveStatus.bind(GroupActiveAPI)
+      const json = await this._rqServerBackData(showActiveStatus)
+      const res = json.data
+      if (!res) return
+      res && this.activeList.map(item => {
         switch (item.name) {
           case GROUPON:
-            item.checked = !(groupShareRes.groupon * 1)
+            item.checked = !(res.groupon * 1)
             break
           case SHAREMONEY:
-            item.checked = !(groupShareRes.share * 1)
+            item.checked = !(res.share * 1)
             break
-          case LIVE:
-            item.checked = res.video_live
-            break
+          // case LIVE:
+          //   item.checked = res.video_live
+          //   break
         }
         return item
       })
       this.$apply()
-      this.loaded()
-    }
-
-    // 请求服务器查询团购和分享赚钱的活动状态
-    async _rqShowGroupShareActive() {
-      const json = await GroupActiveAPI.showActiveStatus()
-      if (json.error === ERR_OK) {
-        return json
-      } else {
-        this.loaded()
-        this.$invoke('Toast', 'show', json.message)
-      }
     }
 
     async _checkService() {

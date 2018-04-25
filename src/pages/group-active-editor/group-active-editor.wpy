@@ -38,21 +38,21 @@
       </view>
     </view>
     <view class="g-a-article g-a-a-limit-section">
-      <view class="hot-time-limit g-a-item-box">
+      <view class="hot-time-limit g-a-item-box" @tap="timeLimitTap">
         <view class="g-a-item-left ">成团有效期</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{timeLimit}}" disabled="{{isDisabled}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
-      <view class="hot-people-number g-a-item-box">
+      <view class="hot-people-number g-a-item-box" @tap="hotPeopleTap">
         <view class="g-a-item-left">成团人数</view>
         <view class="g-a-item-middle g-a-item-choose">
           <picker class="g-a-i-option {{peopleNum}}" disabled="{{isDisabled}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
           <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
-      <view class="hot-price g-a-item-box">
+      <view class="hot-price g-a-item-box" @tap="hotPriceTap">
         <view class="g-a-item-left">成团价格</view>
         <view class="g-a-item-middle">
           <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
@@ -141,13 +141,15 @@
     }
 
     // 初始化数据
-    _init(option) {
-      const obj = this.$parent.globalData.groupActive.currentGroupActive
+    async _init(option) {
+      let obj = this.$parent.globalData.groupActive.currentGroupActive
       wepy.setNavigationBarTitle({title: option.model})
       this.model = option.model
       if (this.model === EDITOR) {
+        obj = await this._fillActiveObj(obj)
         this.info.source = EDITOR
         this.info.statusType = obj.statusType
+        this.info.statusTypeStr = obj.statusTypeStr
         this.info.serverType = obj.serverType
         this.info.price = parseFloat(obj.price).toFixed(1)
         this.info.hotName = obj.hotName
@@ -172,6 +174,48 @@
         this.$parent.globalData.groupActive.currentCouponGA = null
       }
       this.$apply()
+    }
+
+    // 完善活动对象
+    async _fillActiveObj(obj) {
+      const res = await this._rqActiveDetail(obj.id)
+      this.loaded()
+      if (res) {
+        return this._formatRqDataDetail(res, obj)
+      }
+    }
+
+    // 请求活动详情
+    async _rqActiveDetail(id, loading) {
+      const json = await GroupActiveAPI.getGroupActiveDetail(id, loading)
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 格式化服务器详情数据
+    _formatRqDataDetail(res, obj) {
+      let item = res.data
+      if (item) {
+        obj.id = item.id
+        obj.goodId = item.goods_id
+        obj.hotName = item.activity_name
+        obj.addNum = item.stock
+        obj.hotEndDate = item.end_at.split(' ')[0]
+        obj.statusType = '' + item.status
+        obj.price = item.platform_price
+        obj.serverType = item.promotion_title
+        obj.inventory = item.promotion_stock === STOCKUNLIMIT ? item.promotion_stock : (item.promotion_stock + item.stock)
+        obj.hotSellEndDate = item.promotion_sell_end_at.split(' ')[0]
+        obj.hotPrice = item.config.group_price
+        obj.peopleNum = item.config.group_number
+        obj.timeLimit = item.config.group_validity
+      }
+      return obj
     }
 
     // 格式化日期
@@ -203,7 +247,7 @@
         inventory = Number.MAX_VALUE
       }
       if (isNaN(peopleNum)) {
-        peopleNum = 0
+        peopleNum = 2
       }
       if (isNaN(addNum)) {
         addNum = 0
@@ -215,6 +259,9 @@
         // 上线状态的判断
         if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
+          return flag
+        } else if (this.info.addNum === INPUTDEFAULT) {
+          flag = '请输入服务数量'
           return flag
         } else if (peopleNum > inventory) {
           flag = '库存不足,请添加库存'
@@ -249,6 +296,9 @@
         } else if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
           return flag
+        } else if (this.info.addNum === INPUTDEFAULT) {
+          flag = '请输入服务数量'
+          return flag
         } else if (peopleNum > inventory) {
           flag = '库存不足,请添加库存'
           return flag
@@ -277,7 +327,7 @@
           flag = '请输入活动的人数'
           return flag
         } else if (!(hotPrice > 0 && hotPrice < price)) {
-          flag = `请输入${0.1}至${price}之内的价格`
+          flag = `请输入${0}至${price}之内的价格`
           return flag
         } else if (isNaN(this.info.hotPrice * 1)) {
           flag = `请输入正确的价格`
@@ -333,27 +383,39 @@
     _packActiveInfo() {
       return {
         statusType: UP,
-        serverType: this.info.serverType,
+        statusTypeStr: this.info.statusTypeStr,
         price: this.info.price,
         hotName: this.info.hotName,
-        addNum: this.info.addNum,
-        hotEndDate: this.info.hotEndDate,
-        timeLimit: parseInt(this.info.timeLimit),
-        peopleNum: parseInt(this.info.peopleNum),
         hotPrice: this.info.hotPrice,
-        inventory: this.info.inventory === '无限制' ? STOCKUNLIMIT : this.info.inventory,
-        hotSellEndDate: this.info.hotSellEndDate,
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
-        goodId: this.info.goodId,
-        goodStatus: NORMAL
+        goodStatus: NORMAL,
+        peopleNum: parseInt(this.info.peopleNum)
       }
     }
 
     methods = {
+      hotPriceTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团价格不可修改')
+        }
+      },
+      hotPeopleTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团人数不可修改')
+        }
+      },
+      timeLimitTap() {
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '成团有效期不可修改')
+        }
+      },
       toChooseServer() {
-        if (this.info.statusType === UP) return
+        if (this.info.statusType === UP) {
+          this.$invoke('toast', 'show', '服务不可修改')
+          return
+        }
         let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
         this.$apply()
         setTimeout(() => {
