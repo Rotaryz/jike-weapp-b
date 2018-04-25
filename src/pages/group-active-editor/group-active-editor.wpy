@@ -390,7 +390,8 @@
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
-        goodStatus: NORMAL
+        goodStatus: NORMAL,
+        peopleNum: this.info.peopleNum
       }
     }
 
