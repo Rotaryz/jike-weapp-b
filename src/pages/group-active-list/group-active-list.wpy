@@ -51,6 +51,7 @@
   import ActivityItem from '@/base/activity-item/activity-item'
   import Toast from '@/base/toast/toast'
   import Confirm from '@/base/confirm/confirm'
+  import Tips from 'common/js/tips'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
   import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
@@ -124,6 +125,7 @@
         this.activityStatus = SUCCESS
         let params = this._resetConfig(UP)
         await this._getNewActiveList(UP, params)
+        Tips.success('新建成功')
         if (this.onlineList.length === 1) {
           let type = '1' // 1团购活动 2分享赚钱活动
           // 活动状态，0关闭，1开启
@@ -351,6 +353,7 @@
         index = this.offlineList.findIndex(val => val.id * 1 === id * 1)
         this.offlineList.splice(index, 1)
       }
+      Tips.success('删除成功')
       this._checkListEmpty()
       this.$apply()
     }
@@ -379,12 +382,14 @@
         this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
         obj.statusType = DOWN
         this.offlineList.unshift(obj)
+        Tips.success('下线成功')
       } else {
         let flag = await this._rqOnlineActive(obj.id)
         if (!flag) return
         this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
         obj.statusType = UP
         this.onlineList.unshift(obj)
+        Tips.success('上线成功')
       }
       this.$apply()
     }

@@ -9,7 +9,7 @@
       </repeat>
     </view>
     <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
-      <view class="g-a-c-s-submit {{btnStatusStyle}}" @tap="done">完成</view>
+      <view class="g-a-c-s-submit" @tap="done">完成</view>
     </view>
     <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
       <view class="e-box">
@@ -38,7 +38,7 @@
     data = {
       imageUrlHead: URIS.image,
       couponList: [],
-      prevId: -1,
+      prevId: -1, // 商品id
       currentCoupon: {},
       params: {
         page: 1,
@@ -63,12 +63,14 @@
 
     // 查找已选的服务商品
     _findCoupon(id) {
+      let index = -1
       id = id * 1
       if (id !== -1) {
-        this.prevId = this.couponList.findIndex(val => val.id * 1 === id)
-        this.prevId !== -1 && (this.couponList[this.prevId].checked = true) && (this.currentCoupon = this.couponList[this.prevId])
-        this.$apply()
+        index = this.couponList.findIndex(val => val.id * 1 === id)
+        index !== -1 && (this.couponList[index].checked = true) && (this.currentCoupon = this.couponList[index])
       }
+      this.prevId = id
+      this.$apply()
     }
 
     // 检查完成数据是否合法
@@ -142,6 +144,8 @@
           setTimeout(() => {
             this.$back()
           }, 50)
+        } else {
+          this.$invoke('toast', 'show', '请选择优惠券')
         }
       }
     }
