@@ -231,7 +231,7 @@
           padding: 0 5px 0 2px
           overflow: hidden
           .a-i-d-status
-            ont-family: $font-family-light
+            font-family: $font-family-light
             font-size: $font-size-medium
             color: $color-text-td
             flex: 1

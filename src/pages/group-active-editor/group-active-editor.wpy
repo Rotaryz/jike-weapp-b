@@ -348,7 +348,7 @@
         config: {
           group_validity: parseInt(this.info.timeLimit),
           group_number: parseInt(this.info.peopleNum),
-          group_price: parseFloat(this.info.hotPrice)
+          group_price: '' + parseFloat(this.info.hotPrice)
         }
       }
     }

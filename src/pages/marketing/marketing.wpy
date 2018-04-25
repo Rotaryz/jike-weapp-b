@@ -181,8 +181,8 @@
     async _showMarketing() {
       const getAllActivity = Activity.getAllActivity.bind(Activity)
       const json = await this._rqServerBackData(getAllActivity)
+      if (!json) return
       const res = json.data
-      if (!res) return
       this.list.map((item) => {
         switch (item.name) {
           case WHEEL:
@@ -206,8 +206,8 @@
     async _showGroupShareActive() {
       const showActiveStatus = GroupActiveAPI.showActiveStatus.bind(GroupActiveAPI)
       const json = await this._rqServerBackData(showActiveStatus)
+      if (!json) return
       const res = json.data
-      if (!res) return
       res && this.activeList.map(item => {
         switch (item.name) {
           case GROUPON:

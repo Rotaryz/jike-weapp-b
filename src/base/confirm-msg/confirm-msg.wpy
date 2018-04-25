@@ -10,6 +10,7 @@
             </view>
             <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
             <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
+            <view class="font" wx:if="{{msg2 !== ''}}">{{msg2}}</view>
           </view>
         </view>
         <view class="btn-group border-top-1px">
@@ -31,7 +32,8 @@
       imgFlag: true,
       show: false,
       title: '',
-      msg: ''
+      msg: '',
+      msg2: ''
     }
 
     methods = {
@@ -50,6 +52,7 @@
       show(data) {
         this.title = data.title || ''
         this.msg = data.msg || ''
+        this.msg2 = data.msg2 || ''
         this.imgFlag = data.imgFlag
         this.show = true
         this.$apply()
@@ -90,6 +93,7 @@
           height: 200px
           .content
             text-align: center
+            padding: 0 10px
             .danger-wrapper
               margin: 0 auto
               margin-bottom: 20px
