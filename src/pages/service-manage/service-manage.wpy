@@ -166,6 +166,7 @@
   import Toast from '@/base/toast/toast'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
+  import Tips from 'common/js/tips'
 
   const TABS = ['待上线', '已上线', '已下线']
 
@@ -298,17 +299,17 @@
       const json = await this._rqServerBackData(getRelation)
       this.loaded()
       if (!json) return
-      console.log(json)
       const res = json.data
+      const msgAction = this.deleteId ? '删除' : '下线'
       if (res.length > 0) {
         let arr = []
         res.map(item => {
           arr.push(item.active_type)
         })
         const msg = arr.toString()
-        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: '删除后,会导致关联活动下线', msg2: '是否确认删除?'})
+        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
       } else {
-        this.$invoke('confirm', 'show', {title: `确定要删除？`})
+        this.$invoke('confirm', 'show', {title: `确定要${msgAction}？`})
       }
     }
 
@@ -322,6 +323,7 @@
         return
       }
       this._findListIndex(this.deleteId)
+      Tips.success('删除成功')
       this.deleteId = null
       this.$apply()
     }
@@ -346,13 +348,33 @@
       list.splice(index, 1)
     }
 
+    // 获取上线列表
     async _getOnLineList() {
-      const
+      const data = {status: 1, page: 1, limit: this.onLines.length}
+      const getCouponList = Coupons.getCouponList.bind(Coupons, data)
+      const json = await this._rqServerBackData(getCouponList)
+      this.loaded()
+      if (!json) return
+      const res = json.data
+      this.onLines = res
+      this.$apply()
     }
 
-    // 上线
+    // 获取下线列表
+    async _getOffLineList() {
+      const data = {status: 2, page: 1, limit: this.offLines.length}
+      const getCouponList = Coupons.getCouponList.bind(Coupons, data)
+      const json = await this._rqServerBackData(getCouponList)
+      this.loaded()
+      if (!json) return
+      const res = json.data
+      this.offLines = res
+      this.$apply()
+    }
+
+    // 上线备用
     async _onLine() {
-      const serverOnLine = Coupons.serverOnLine.bind(Coupons)
+      const serverOnLine = Coupons.serverOnLine.bind(Coupons, this.onlineId)
       const json = await this._rqServerBackStatus(serverOnLine)
       if (!json) {
         this.onlineId = null
@@ -360,13 +382,15 @@
         return
       }
       this._findListIndex(this.onlineId)
+      await this._getOnLineList()
+      Tips.success('上线成功')
       this.onlineId = null
       this.$apply()
     }
 
     // 下线
     async _offLine() {
-      const serverOffLine = Coupons.serverOffLine.bind(Coupons)
+      const serverOffLine = Coupons.serverOffLine.bind(Coupons, this.offlineId)
       const json = await this._rqServerBackStatus(serverOffLine)
       if (!json) {
         this.offlineId = null
@@ -374,6 +398,8 @@
         return
       }
       this._findListIndex(this.offlineId)
+      await this._getOffLineList()
+      Tips.success('下线成功')
       this.offlineId = null
       this.$apply()
     }
@@ -381,8 +407,14 @@
     events = {
       async confirm() {
         this.deleteId && await this.delete()
-        this.onlineId && await this._onLine()
+        // this.onlineId && await this._onLine()
         this.offlineId && await this._offLine()
+      },
+      cancel() {
+        this.deleteId = null
+        this.onlineId = null
+        this.offlineId = null
+        this.$apply()
       }
     }
 
@@ -406,6 +438,7 @@
       },
       async showOnlineConfirm(id) {
         this.onlineId = id
+        this.onlineId && await this._onLine()
         this.$apply()
       },
       edit(id) {
