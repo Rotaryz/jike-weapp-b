@@ -174,7 +174,6 @@
         this.$parent.globalData.groupActive.currentCouponGA = null
       }
       this.$apply()
-      console.log(this.info)
     }
 
     // 完善活动对象

@@ -106,7 +106,6 @@
 
     async onShow() {
       const obj = this.$parent.globalData.groupActive.currentGroupActive
-      console.log(obj)
       if (!obj) return
       await this._fromPrevPage(obj)
       this.$parent.globalData.groupActive.currentGroupActive = null
@@ -308,48 +307,6 @@
         return false
       }
     }
-
-    // // 请求活动详情
-    // async _rqActiveDetail(id, loading) {
-    //   const json = await GroupActiveAPI.getGroupActiveDetail(id, loading)
-    //   if (json.error === ERR_OK) {
-    //     return json
-    //   } else {
-    //     this.loaded()
-    //     this.$invoke('toast', 'show', json.message)
-    //     return false
-    //   }
-    // }
-
-    // // 完善活动对象
-    // async _FillActiveObj(obj) {
-    //   const res = await this._rqActiveDetail(obj.id)
-    //   this.loaded()
-    //   if (res) {
-    //     return this._formatRqDataDetail(res, obj)
-    //   }
-    // }
-    //
-    // // 格式化服务器详情数据
-    // _formatRqDataDetail(res, obj) {
-    //   let item = res.data
-    //   if (item) {
-    //     obj.id = item.id
-    //     obj.goodId = item.goods_id
-    //     obj.hotName = item.activity_name
-    //     obj.addNum = item.stock
-    //     obj.hotEndDate = item.end_at.split(' ')[0]
-    //     obj.statusType = '' + item.status
-    //     obj.price = item.platform_price
-    //     obj.serverType = item.promotion_title
-    //     obj.inventory = item.promotion_stock
-    //     obj.hotSellEndDate = item.promotion_sell_end_at.split(' ')[0]
-    //     obj.hotPrice = item.config.group_price
-    //     obj.peopleNum = item.config.group_number
-    //     obj.timeLimit = item.config.group_validity
-    //   }
-    //   return obj
-    // }
 
     // 格式化服务器数据
     _formatRqData(res) {
