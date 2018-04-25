@@ -391,7 +391,7 @@
         id: this.info.id,
         src: this.info.src,
         goodStatus: NORMAL,
-        peopleNum: this.info.peopleNum
+        peopleNum: parseInt(this.info.peopleNum)
       }
     }
 
