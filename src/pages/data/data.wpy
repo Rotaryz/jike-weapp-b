@@ -180,7 +180,8 @@
     config = {
       navigationBarTitleText: '流量总量',
       navigationBarTextStyle: 'black',
-      navigationBarBackgroundColor: 'white'
+      navigationBarBackgroundColor: '#ffffff',
+      backgroundTextStyle: 'white'
     }
   }
 </script>

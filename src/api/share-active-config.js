@@ -1,5 +1,4 @@
 import wepy from 'wepy'
-// ����༭ҳ��
 const PICKERDEFAUFT = '请输入'
 const INPUTDEFAULT = ''
 const HOTENDDEFAULT = '请输入'
@@ -8,7 +7,6 @@ const EDITOR = '编辑'
 const PRICEDEFAULT = '0.0'
 const MINSIZE = 0.1
 
-// �Ź���б�ҳ�� �� header-switch���
 const UP = '1'
 const DOWN = '0'
 const DEL = '-1'
@@ -20,7 +18,6 @@ const DOWNPAGELIMIT = 10
 const SUCCESS = 'success'
 
 /**
- * ��ȡ�豸�ߴ�
  * @returns {{width: *, height: *}}
  */
 function getDeviceInfo() {

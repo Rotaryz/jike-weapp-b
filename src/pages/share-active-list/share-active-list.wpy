@@ -6,34 +6,28 @@
           <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
           <view class="g-a-l-n-item {{downStatus}}" id="0">已过期/已下线</view>
         </view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}"
-                     bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"
-                             :constObj.sync="activeConstObj"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
-              <image class="e-pic" wx:if="{{imageUrlHead}}"
-                     src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
               <view class="e-txt">暂无数据</view>
             </view>
           </view>
         </scroll-view>
-        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}"
-                     bindscrolltolower="_getMoreList">
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">
           <repeat for="{{offlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item"
-                             :constObj.sync="activeConstObj"></activity-item>
+              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
-              <image class="e-pic" wx:if="{{imageUrlHead}}"
-                     src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
               <view class="e-txt">暂无数据</view>
             </view>
           </view>
@@ -305,7 +299,7 @@
           hotName: item.title,
           price: item.price,
           hotPrice: item.after_price,
-          status: item.status_str,
+          statusTypeStr: item.status_str,
           statusType: item.status.toString(),
           goodStatus: item.is_timeout
         })
