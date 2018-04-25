@@ -22,8 +22,8 @@
       <view>{{typeList[showType].count}}</view>
       <view>较{{nacList[showNac].day}}
         <text>{{typeList[showType].percentage}}%</text>
-        <image src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}" wx:if="{{imageUri && customerTrend.detial.customer_trend === 'up'}}"></image>
-        <image src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}" wx:if="{{imageUri && customerTrend.detial.customer_trend === 'down'}}"></image>
+        <image src="{{imageUri + '/defaults/b-image/page/icon-rise@2x.png'}}" wx:if="{{imageUri && typeList[showType].trend === 'up'}}"></image>
+        <image src="{{imageUri + '/defaults/b-image/page/icon-decline@2x.png'}}" wx:if="{{imageUri && typeList[showType].trend === 'down'}}"></image>
       </view>
     </view>
     <AeraChart wx:if="{{showAera}}"></AeraChart>
@@ -191,7 +191,6 @@
   page
     background: $color-white
     max-height: 100%
-    overflow: hidden
 
   view
     box-sizing: border-box
@@ -282,17 +281,18 @@
         text
           color: $color-assist-f
         image
-          position: absolute
-          right: -12px
-          top: 4px
           height: 10px
           width: 10px
   .data-source
     height: 10px
     background: #F9F9F9
     margin-top: 70vw
+    @media screen and (max-width: 340px)
+      margin-top: 80vw
   .data-source-top
     margin-top: 63vw
+    @media screen and (max-width: 340px)
+      margin-top: 70vw
   .data-source-detail
     padding: 0 12px 50px
     .data-source-detail-title

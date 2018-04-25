@@ -126,6 +126,8 @@
       position: absolute
       left: 50%
       transform: translateX(-50%)
+      @media screen and (max-width: 340px)
+        height: 73vw
       .tl-area-name
         left: 0
         bottom: 0
@@ -158,6 +160,8 @@
             margin-right: 0
     .monthcanvas
       height: 56vw
+      @media screen and (max-width: 340px)
+        height: 63vw
   /*width: 200%
   height: 300px
   transform: translateX(-43%)*/

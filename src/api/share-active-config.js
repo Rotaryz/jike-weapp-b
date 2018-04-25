@@ -9,8 +9,8 @@ const PRICEDEFAULT = '0.0'
 const MINSIZE = 0.1
 
 // �Ź���б�ҳ�� �� header-switch���
-const UP = '0'
-const DOWN = '1'
+const UP = '1'
+const DOWN = '0'
 const DEL = '-1'
 const TAKENOFF = '-2'
 const ON = 'on'

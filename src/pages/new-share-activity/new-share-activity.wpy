@@ -99,7 +99,8 @@
         sell_end_at: '',
         eductible_money: '',
         rate: '',
-        profit_money: ''
+        profit_money: '',
+        submitLock: false
       }
     }
 
@@ -218,9 +219,12 @@
           return
         } else {
           let stock = this.currentCoupon.stock
-          if (stock !== -1 && this.shareData.init_stock > stock) {
-            this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
-            return
+          if (!this.editId) {
+            console.log(11)
+            if (stock !== -1 && this.shareData.init_stock > stock) {
+              this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
+              return
+            }
           }
         }
         if (this.editId) {
@@ -256,9 +260,11 @@
         }
         console.log(this.shareData)
         console.log('我要提交数据啦')
+        if (this.submitLock) return
         if (this.editId) {
           let res = await ShareMoney.SaveServerDetails(this.editId, this.shareData)
           if (res.error === ERR_OK) {
+            this.submitLock = true
             this.$parent.globalData.newData = 'EDIT'
             setTimeout(() => {
               this.$back()
@@ -270,6 +276,7 @@
           let res = await ShareMoney.createShareActive(this.shareData)
           if (res.error === ERR_OK) {
             console.log(res)
+            this.submitLock = true
             this.$parent.globalData.newData = 'NEW'
             setTimeout(() => {
               this.$back()
@@ -324,6 +331,8 @@
         font-size: $font-size-medium
         color: $color-text-td
         width: 88px
+        @media screen and (max-width: 340px)
+          width: 80px
       .tl-share-data-time
         font-size: $font-size-medium
         font-family: $font-family-light
@@ -346,6 +355,8 @@
         color: $color-text-d
       .tl-share-data-to
         margin: 0 25px
+        @media screen and (max-width: 340px)
+          margin: 0 10px
       .tl-share-title
         flex: 1
         font-family: $font-family-light

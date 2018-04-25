@@ -3,8 +3,8 @@
     <header-switch title="分享赚钱" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
-          <view class="g-a-l-n-item {{upStatus}}" id="0">已上线</view>
-          <view class="g-a-l-n-item {{downStatus}}" id="1">已过期/已下线</view>
+          <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="0">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}"
                      bindscrolltolower="_getMoreList">
@@ -109,7 +109,8 @@
       isAllDown: false,
       showTabDownCount: 0,
       toNewTimer: null,
-      toEditorTimer: null
+      toEditorTimer: null,
+      submitLock: false
     }
 
     async onLoad(option) {
@@ -127,6 +128,7 @@
     }
 
     async onShow() {
+      this.submitLock = false
       if (this.$parent.globalData.newData === 'NEW') {
         this._resetConfig()
         await this._init(this.status)
@@ -137,6 +139,7 @@
         await this._init(DOWN)
       }
       this.$parent.globalData.newData = null
+      this.$apply()
     }
 
     async onPullDownRefresh() {
@@ -389,7 +392,9 @@
         this.$apply()
       },
       toNewPage() {
+        if (this.submitLock) return
         if (this.toNewTimer != null) return
+        this.submitLock = true
         this.toNewTimer = setTimeout(() => {
           let url = `/pages/new-share-activity/new-share-activity?model=${NEW}`
           this.$navigate(url)
@@ -457,6 +462,8 @@
         let id = obj.id
         let type = obj.statusType
         if (this.toEditorTimer != null) return
+        if (this.submitLock) return
+        this.submitLock = true
         this.toEditorTimer = setTimeout(() => {
           let url = `/pages/new-share-activity/new-share-activity?id=${id}&&type=${type}`
           this.$navigate(url)
