@@ -7,11 +7,13 @@
           <view class="g-a-l-n-item {{downStatus}}" id="0">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
+          <view class="g-a-c-s-has-content">
           <repeat for="{{onlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
               <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
+          </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
               <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
@@ -20,11 +22,13 @@
           </view>
         </scroll-view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">
+          <view class="g-a-c-s-has-content">
           <repeat for="{{offlineList}}" key="index" index="index" item="item">
             <view class="g-a-l-a-item">
               <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </view>
           </repeat>
+          </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
               <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
@@ -572,9 +576,16 @@
     .g-a-l-article
       background-color: $color-white
       padding-bottom: 82px
-      .g-a-l-a-item
-        padding: 0 12px
-        margin: 10px 0
+      .g-a-c-s-has-content
+        layout(column, block, no-wrap)
+        height: 100%
+        .g-a-l-a-item
+          padding: 0 12px
+          margin-bottom: 10px
+          &:first-child
+            margin-top: 10px
+          &:last-child
+            margin-bottom: 20px
     .g-a-l-btn-box
       position: fixed
       bottom: 0
