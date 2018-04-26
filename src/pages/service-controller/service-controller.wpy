@@ -5,7 +5,7 @@
       <view class="catelog input-wrapper border-bottom-1px">
         <view class="label">品类</view>
         <view class="arrow-content-wrapper">
-          <view class="content {{disableStyle}}">{{industry}}</view>
+          <view class="content s-c-disable">{{industry}}</view>
           <!--<view class="arrow-right">-->
           <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
           <!--class="full-image"></image>-->
@@ -79,7 +79,8 @@
       <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
         <view class="label">代金额</view>
         <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="takenPirce">{{shopPrice}}</view>
-        <input type="digit"
+        <input wx:else
+               type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
@@ -341,7 +342,16 @@
       <view class="time input-wrapper border-bottom-1px">
         <view class="label">{{categoryId === 3 || categoryId === 4?'领取时间':'售卖时间'}}</view>
         <view class="content">
-          <picker mode="date" class="sell-date" @change="setSellStartDate">
+          <view wx:if="{{disable}}" class="sell-date" @tap="sellStartDateTap">
+            <view class="date">
+              <view class="s-c-disable">{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
+              <view class="arrow-right">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                       class="full-image"></image>
+              </view>
+            </view>
+          </view>
+          <picker wx:else mode="date" class="sell-date" @change="setSellStartDate">
             <view class="date">
               <view>{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
               <view class="arrow-right">
@@ -351,7 +361,7 @@
             </view>
           </picker>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date" @change="setSellEndDate">
+          <picker mode="date" class="sell-date" @change="setSellEndDate" start="{{limitSellStartDate}}" value="{{sellEndTime}}">
             <view class="date">
               <view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>
               <view class="arrow-right">
@@ -368,7 +378,7 @@
         <view class="content">
           <view class="start">自上线之日起</view>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date" @change="setValidDate">
+          <picker mode="date" class="sell-date" @change="setValidDate" start="{{limitvalidStartDate}}" value="{{validDate}}">
             <view class="date">
               <view>{{validDate === '' ? '结束时间' : validDate}}</view>
               <view class="arrow-right">
@@ -782,7 +792,8 @@
       tempKnowRemark: '',
       imageDis: true,
       ban: 0,
-      model: 'not-up-editor'
+      model: 'not-up-editor',
+      disableReduceInfo: null
     }
 
     async onLoad(option) {
@@ -839,11 +850,11 @@
       this.shopPrice = res.shop_price
       this.services = res.detail
       this.tempServices = this.services.map((item) => Object.assign({}, item))
-      this.sellCount = res.stock
+      this.sellCount = res.stock // 库存
       this.tempSellCount = this.sellCount
       this.sellStartTime = res.sell_start_at
-      this.sellEndTime = res.sell_end_at
-      this.validDate = res.end_at
+      this.sellEndTime = res.sell_end_at // 售卖结束时间
+      this.validDate = res.end_at // 有效期结束时间
       this.notAllowTime = res.not_allow_time
       this.tempNotAllowTime = this.notAllowTime
       this.subscribe = res.note.need_subscribe
@@ -904,6 +915,16 @@
           }
         }
       }
+      this._saveDisRedInfo()
+      this.$apply()
+    }
+
+    // 保存不可减少的选项
+    _saveDisRedInfo() {
+      const sellCount = this.sellCount  // 库存
+      const sellEndTime = this.sellEndTime // 售卖结束时间
+      const validDate = this.validDate  // 有效期结束时间
+      this.disableReduceInfo = {sellCount, sellEndTime, validDate}
       this.$apply()
     }
 
@@ -1094,7 +1115,72 @@
       return data
     }
 
+    // 上线状态检查编辑是否合法
+    _checkStockLegal(key) {
+      if (this.model !== 'up-editor') return true
+      let oldStock = this.disableReduceInfo.sellCount * 1
+      // key.tmp 0 无限制 key.tmp 1 限制数量
+      if (oldStock === -1 && key.tmp !== 0) {
+        this.$invoke('count-modal', 'show')
+        this.$invoke('toast', 'show', `上线中,数量不能小于之前的无限制`)
+        return false
+      }
+      if (key.tmp === 1 && key.tmpValue < oldStock) {
+        this.$invoke('count-modal', 'show')
+        this.$invoke('toast', 'show', `上线中,数量不能小于之前${oldStock}`)
+        return false
+      }
+      return true
+    }
+
+    // 上线状态检查提交信息是否合法
+    _checkFormLegal(data) {
+      // 检查有效期时间是否大于等于售卖时间
+      if (new Date(data.sell_end_at) - new Date(data.end_at) > 0) {
+        this.$invoke('toast', 'show', `有效期时间不能早于售卖时间`)
+        return false
+      }
+      if (this.model !== 'up-editor') return true
+      // 售卖时间检查
+      let oldSellDate = this.disableReduceInfo.sellEndTime
+      if (new Date(oldSellDate) - new Date(data.sell_end_at) > 0) {
+        this.$invoke('toast', 'show', `上线中,售卖时间不能早于${oldSellDate}`)
+        return false
+      }
+      // 有效期时间检查
+      let oldValidDate = this.disableReduceInfo.validDate
+      if (new Date(oldValidDate) - new Date(data.end_at) > 0) {
+        this.$invoke('toast', 'show', `上线中,售卖时间不能早于${oldValidDate}`)
+        return false
+      }
+      // 库存检查
+      let oldStock = this.disableReduceInfo.sellCount * 1
+      if (oldStock === -1 && data.stock !== -1) {
+        this.$invoke('toast', 'show', `上线中,数量不能小于之前的无限制`)
+        return false
+      } else if (oldStock > data.stock) {
+        this.$invoke('toast', 'show', `上线中,数量不能小于之前${oldStock}`)
+        return false
+      }
+      return true
+    }
+
     methods = {
+      sellStartDateTap() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', '上线中,不可修改')
+        }
+      },
+      salePriceTap() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', '上线中,不可修改')
+        }
+      },
+      takenPirce() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', '上线中,不可修改')
+        }
+      },
       selectCatelogTab(catelogTab) {
         this.catelogTab = Math.floor(catelogTab)
       },
@@ -1113,6 +1199,8 @@
       },
       async setSelect(e) {
         let key = this[e.source.name]
+        // 检查输入数量是否合法
+        if (!this._checkStockLegal(key)) return
         key.flag = key.tmp
         if (e.source.name === 'categoryData') {
           this._setTicketState(key.flag + 1, 'add')
@@ -1236,6 +1324,10 @@
         this.tempServices = services.map((item) => Object.assign({}, item))
       },
       setSellStartDate(e) {
+        if (this.disable) {
+          this.$invoke('toast', 'show', '上线中,不可修改')
+          return
+        }
         this.sellStartTime = e.detail.value
       },
       setSellEndDate(e) {
@@ -1304,6 +1396,8 @@
           return
         }
         let data = valid.data
+        // 检查数据是否合法
+        if (!this._checkFormLegal(data)) return
         if (this.industry) {
           data.industry_name = this.industry
         }
@@ -1321,7 +1415,7 @@
       },
       showMealModal() {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,类型不可修改')
+          this.$invoke('toast', 'show', '上线中,不可修改')
           return
         }
         this.$invoke('meal-modal', 'show')
@@ -1454,11 +1548,29 @@
     }
 
     computed = {
+      // 上线编辑时,禁用样式
       disableStyle() {
-        return this.model === 'up-editor' ? 's-c-disable' : 's-c-disable-undef'
+        return this.disable ? 's-c-disable' : 's-c-disable-undef'
       },
+      // 上线编辑时,禁用逻辑开饭
       disable() {
         return this.model === 'up-editor'
+      },
+      // 上线编辑时,售卖结束时间可选择的限制
+      limitSellStartDate() {
+        if (this.disable && this.disableReduceInfo) {
+          const time = this.disableReduceInfo.sellEndTime
+          return time
+        }
+        return null
+      },
+      // 上线编辑时,有效期结束可选择的限制
+      limitValidStartDate() {
+        if (this.disable && this.disableReduceInfo) {
+          const time = this.disableReduceInfo.validDate
+          return time
+        }
+        return null
       }
     }
     components = {

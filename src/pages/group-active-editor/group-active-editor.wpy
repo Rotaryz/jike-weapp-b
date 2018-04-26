@@ -409,22 +409,22 @@
     methods = {
       hotPriceTap() {
         if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '成团价格不可修改')
+          this.$invoke('toast', 'show', '上线中,不可修改')
         }
       },
       hotPeopleTap() {
         if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '成团人数不可修改')
+          this.$invoke('toast', 'show', '上线中,不可修改')
         }
       },
       timeLimitTap() {
         if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '成团有效期不可修改')
+          this.$invoke('toast', 'show', '上线中,不可修改')
         }
       },
       toChooseServer() {
         if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '服务不可修改')
+          this.$invoke('toast', 'show', '上线中,不可修改')
           return
         }
         let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`

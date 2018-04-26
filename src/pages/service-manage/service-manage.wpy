@@ -304,7 +304,7 @@
       if (res.length > 0) {
         let arr = []
         res.map(item => {
-          arr.push(item.active_type)
+          arr.push((item.active_name || '') + (item.active_type || ''))
         })
         const msg = arr.toString()
         this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
@@ -372,7 +372,7 @@
       this.$apply()
     }
 
-    // 上线备用
+    // 上线
     async _onLine() {
       const serverOnLine = Coupons.serverOnLine.bind(Coupons, this.onlineId)
       const json = await this._rqServerBackStatus(serverOnLine)
