@@ -112,7 +112,9 @@
       <!--平台价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">平台价</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{platformPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
@@ -123,7 +125,9 @@
       <!--门市价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">门市价</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{shopPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
@@ -220,7 +224,9 @@
       <!--折扣力度-->
       <view wx:if="{{categoryId === 4}}" class="title input-wrapper border-bottom-1px">
         <view class="label">折扣力度</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{discount}}</view>
+        <input wx:else
+               type="digit"
                value="{{discount}}"
                maxlength="3"
                @input="handleInput('discount')"
@@ -230,7 +236,17 @@
         <view class="content">折</view>
       </view>
       <!--最高优惠-->
-      <view wx:if="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showDiscountsMax">
+      <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
+        <view class="label">最高优惠</view>
+        <view class="arrow-content-wrapper">
+          <view class="content s-c-input-disabel">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showDiscountsMax">
         <view class="label">最高优惠</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
@@ -267,7 +283,17 @@
         </discounts-max>
       </view>
       <!--使用条件-->
-      <view wx:if="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showConditionsMax">
+      <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
+        <view class="label">使用条件</view>
+        <view class="arrow-content-wrapper">
+          <view class="content s-c-input-disabel">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showConditionsMax">
         <view class="label">使用条件</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
@@ -313,7 +339,9 @@
           <view class="sell-date">
             <view class="date">
               满
-              <input class="fullMin"
+              <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{fullMax}}</view>
+              <input wx:else
+                     class="fullMin"
                      type="digit"
                      value="{{fullMax}}"
                      maxlength="10"
@@ -326,7 +354,9 @@
           <view class="tos">可减</view>
           <view class="sell-date">
             <view class="date">
-              <input class="fullMin"
+              <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{fullMin}}</view>
+              <input wx:else
+                     class="fullMin"
                      type="digit"
                      value="{{fullMin}}"
                      maxlength="10"
