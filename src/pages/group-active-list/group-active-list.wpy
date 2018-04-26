@@ -50,7 +50,7 @@
   import HeaderSwitch from '@/base/header-switch/header-switch'
   import ActivityItem from '@/base/activity-item/activity-item'
   import Toast from '@/base/toast/toast'
-  import Confirm from '@/base/confirm/confirm'
+  import Confirm from '@/base/confirm-msg/confirm-msg'
   import Tips from 'common/js/tips'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
@@ -91,7 +91,8 @@
       isAllUp: false, // 上线栏数据是否全部查询完毕
       isAllDown: false, // 下线栏数据是否全部查询完毕
       showTabDownCount: 0,
-      currentDelObj: null
+      currentDelObj: null,
+      currentOfflineObj: null
     }
 
     async onLoad(option) {
@@ -355,6 +356,7 @@
       }
       Tips.success('删除成功')
       this._checkListEmpty()
+      this.currentDelObj = null
       this.$apply()
     }
 
@@ -383,6 +385,7 @@
         obj.statusType = DOWN
         this.offlineList.unshift(obj)
         Tips.success('下线成功')
+        this.currentOfflineObj = null
       } else {
         let flag = await this._rqOnlineActive(obj.id)
         if (!flag) return
@@ -449,15 +452,20 @@
           this.$apply()
         }
       },
-      async activeBtnOne(obj) {
+      async activeBtnOnline(obj) {
         await this._upOrDown(obj)
       },
-      activeBtnTwo(obj) {
-        this.$invoke('confirm', 'show')
+      async activeBtnOffline(obj) {
+        this.$invoke('confirm', 'show', {title: '确定要下线？'})
+        this.currentOfflineObj = obj
+        this.$apply()
+      },
+      activeBtnDel(obj) {
+        this.$invoke('confirm', 'show', {title: '确定要删除？'})
         this.currentDelObj = obj
         this.$apply()
       },
-      async activeBtnThree(obj) {
+      async activeBtnEditor(obj) {
         this.$parent.globalData.groupActive.currentGroupActive = obj
         let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
         this.$apply()
@@ -467,7 +475,13 @@
       },
       async confirm() {
         // 删除确认
-        await this._toDelActive()
+        this.currentDelObj && await this._toDelActive()
+        this.currentOfflineObj && this._upOrDown(this.currentOfflineObj)
+      },
+      cancel() {
+        this.currentDelObj = null
+        this.currentOfflineObj = null
+        this.$apply()
       }
     }
     components = {

@@ -96,7 +96,7 @@
               <view class="btn-group">
                 <view class="left-btn btn" @tap="showOfflineConfirm({{item.id}})">下线</view>
                 <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="right-btn btn" @tap="edit({{item.id}},{{'up-editor'}})">编辑</view>
               </view>
             </view>
           </view>
@@ -441,8 +441,8 @@
         this.onlineId && await this._onLine()
         this.$apply()
       },
-      edit(id) {
-        this.$navigate(`/pages/service-controller/service-controller?id=${id}`)
+      edit(id, model = 'not-up-editor') {
+        this.$navigate(`/pages/service-controller/service-controller?id=${id}&model=${model}`)
       }
     }
 
