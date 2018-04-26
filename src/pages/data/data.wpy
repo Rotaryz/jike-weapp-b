@@ -57,7 +57,7 @@
         </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">二维码数据</view>
-          <view class="data-detail-list-right" wx:for="{{sceneData.code}}" wx:key="index">{{item}}</view>
+          <view class="data-detail-list-right" wx:for="{{sceneData.qrcode}}" wx:key="index">{{item}}</view>
         </view>
         <view class="data-detail-list">
           <view class="data-detail-list-left">联盟数据</view>
