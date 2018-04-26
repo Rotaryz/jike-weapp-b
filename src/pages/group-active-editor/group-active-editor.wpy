@@ -3,14 +3,14 @@
     <view class="g-a-article">
       <view class="server-type g-a-item-box">
         <view class="g-a-item-left">添加服务</view>
-        <view class="g-a-item-middle g-a-server-type">{{info.serverType}}</view>
+        <view class="g-a-item-middle g-a-server-type {{isDisabledStyle}}">{{info.serverType}}</view>
         <view class="g-a-item-right to-choose-server" @tap="toChooseServer">
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="server-price g-a-item-box">
         <view class="g-a-item-left">现价</view>
-        <view class="g-a-item-middle {{price}}">{{info.price}}</view>
+        <view class="g-a-item-middle">{{info.price}}</view>
       </view>
       <view class="server-left g-a-item-box">
         <view class="g-a-item-left ">活动名称</view>
@@ -40,26 +40,37 @@
     <view class="g-a-article g-a-a-limit-section">
       <view class="hot-time-limit g-a-item-box" @tap="timeLimitTap">
         <view class="g-a-item-left ">成团有效期</view>
-        <view class="g-a-item-middle g-a-item-choose">
+        <view class="g-a-item-middle g-a-item-choose" wx:if="{{isDisabled}}">
+          <view class="g-a-i-option">{{info.timeLimit}}</view>
+          <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+        </view>
+        <view class="g-a-item-middle g-a-item-choose" wx:else>
           <picker class="g-a-i-option {{timeLimit}}" disabled="{{isDisabled}}" @change="bindPickerChangeTimeLimit" value="{{info.timeLimitIndex}}" range="{{arrayTime}}">{{info.timeLimit}}</picker>
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-people-number g-a-item-box" @tap="hotPeopleTap">
         <view class="g-a-item-left">成团人数</view>
-        <view class="g-a-item-middle g-a-item-choose">
+        <view class="g-a-item-middle g-a-item-choose" wx:if="{{isDisabled}}">
+          <view class="g-a-i-option">{{info.peopleNum}}</view>
+          <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+        </view>
+        <view class="g-a-item-middle g-a-item-choose" wx:else>
           <picker class="g-a-i-option {{peopleNum}}" disabled="{{isDisabled}}" @change="bindPickerChangePeopleNum" value="{{info.peopleNumIndex}}" range="{{arrayPeople}}">{{info.peopleNum}}</picker>
           <image class="g-a-arrow " wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
       </view>
       <view class="hot-price g-a-item-box" @tap="hotPriceTap">
         <view class="g-a-item-left">成团价格</view>
-        <view class="g-a-item-middle">
+        <view class="g-a-item-middle" wx:if="{{isDisabled}}">
+          <view class="g-a-input {{isDisabledStyle}}">{{info.hotPrice}}</view>
+        </view>
+        <view class="g-a-item-middle" wx:else>
           <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
-    <view class="g-a-submit {{btnStatusStyle}}" @tap="saveInfo">保存</view>
+    <view class="g-a-submit" @tap="saveInfo">保存</view>
     <toast></toast>
   </view>
 </template>
@@ -94,7 +105,7 @@
       imageUrlHead: URIS.image,
       model: '',
       info: {
-        id: 0, // 商品id
+        id: -1, // 商品id
         serverType: INPUTDEFAULT,
         price: PRICEDEFAULT,
         hotName: INPUTDEFAULT,
@@ -111,7 +122,7 @@
         disableReduceInfo: {},
         hotSellEndDate: '2100-01-01',
         source: NEW, // 新建 和 编辑 2种模式,
-        goodId: 0
+        goodId: -1
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME
@@ -348,7 +359,7 @@
         config: {
           group_validity: parseInt(this.info.timeLimit),
           group_number: parseInt(this.info.peopleNum),
-          group_price: parseFloat(this.info.hotPrice)
+          group_price: '' + parseFloat(this.info.hotPrice)
         }
       }
     }
@@ -475,9 +486,6 @@
       }
     }
     computed = {
-      price() {
-        return this.info.price !== PRICEDEFAULT ? 'g-a-has-content' : 'g-a-has-content-undef'
-      },
       peopleNum() {
         return this.info.peopleNum !== PICKERDEFAUFT ? 'g-a-has-content' : 'g-a-has-content-undef'
       },
@@ -508,6 +516,9 @@
       },
       isDisabled() {
         return this.info.statusType === UP
+      },
+      isDisabledStyle() {
+        return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
       }
     }
     components = {
@@ -631,4 +642,7 @@
   .g-a-has-content
     color: $color-text !important
     font-size: $font-size-medium !important
+
+  .g-a-disable-style
+    color: $color-text-d !important
 </style>

@@ -48,12 +48,8 @@
             <view class="ctrl-wrapper">
               <view class="status">未上线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">
-                  <text>删除</text>
-                </view>
-                <view class="right-btn" @tap="edit({{item.id}})">
-                  <text>编辑</text>
-                </view>
+                <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn btn" @tap="edit({{item.id}})">编辑</view>
               </view>
             </view>
           </view>
@@ -98,12 +94,9 @@
             <view class="ctrl-wrapper">
               <view class="status">已上线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">
-                  <text>删除</text>
-                </view>
-                <view class="right-btn" @tap="edit({{item.id}})">
-                  <text>编辑</text>
-                </view>
+                <view class="left-btn btn" @tap="showOfflineConfirm({{item.id}})">下线</view>
+                <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn btn" @tap="edit({{item.id}},{{'up-editor'}})">编辑</view>
               </view>
             </view>
           </view>
@@ -148,12 +141,9 @@
             <view class="ctrl-wrapper">
               <view class="status">已下线</view>
               <view class="btn-group">
-                <view class="left-btn" @tap="showConfirm({{item.id}})">
-                  <text>删除</text>
-                </view>
-                <view class="right-btn" @tap="edit({{item.id}})">
-                  <text>编辑</text>
-                </view>
+                <view class="left-btn btn" @tap="showOnlineConfirm({{item.id}})">上线</view>
+                <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
+                <view class="right-btn btn" @tap="edit({{item.id}})">编辑</view>
               </view>
             </view>
           </view>
@@ -163,7 +153,7 @@
     <view class="create-service border-top-1px">
       <navigator url="/pages/service-controller/service-controller" class="btn">新建服务</navigator>
     </view>
-    <confirm @confirm.user="delete"></confirm>
+    <confirm></confirm>
     <toast></toast>
   </view>
 </template>
@@ -172,10 +162,11 @@
   import wepy from 'wepy'
   import {ERR_OK} from 'api/base'
   import Coupons from 'api/coupons'
-  import Confirm from '@/base/confirm/confirm'
+  import Confirm from '@/base/confirm-msg/confirm-msg'
   import Toast from '@/base/toast/toast'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'
+  import Tips from 'common/js/tips'
 
   const TABS = ['待上线', '已上线', '已下线']
 
@@ -201,7 +192,10 @@
       onPage: 1,
       offLines: [],
       hasOff: false,
-      offPage: 1
+      offPage: 1,
+      onlineId: null,
+      offlineId: null,
+      deleteId: null
     }
 
     async onShow() {
@@ -274,6 +268,156 @@
       this.loaded()
     }
 
+    // 请求服务器返回数据
+    async _rqServerBackData(fn) {
+      const json = await fn()
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('Toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 请求服务器返回状态
+    async _rqServerBackStatus(fn) {
+      const json = await fn()
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('Toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 查询商品关联的活动
+    async _checkIsConnection(id) {
+      const getRelation = Coupons.getRelation.bind(Coupons, id)
+      const json = await this._rqServerBackData(getRelation)
+      this.loaded()
+      if (!json) return
+      const res = json.data
+      const msgAction = this.deleteId ? '删除' : '下线'
+      if (res.length > 0) {
+        let arr = []
+        res.map(item => {
+          arr.push(item.active_type)
+        })
+        const msg = arr.toString()
+        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
+      } else {
+        this.$invoke('confirm', 'show', {title: `确定要${msgAction}？`})
+      }
+    }
+
+    // 删除商品
+    async delete() {
+      const res = await Coupons.deleteCoupon(this.deleteId)
+      this.loaded()
+      if (res.error !== ERR_OK) {
+        this.$invoke('toast', 'show', res.message)
+        this.deleteId = null
+        return
+      }
+      this._findListIndex(this.deleteId)
+      Tips.success('删除成功')
+      this.deleteId = null
+      this.$apply()
+    }
+
+    // 查找状态栏对应的商品下标和数组
+    _findListIndex(id) {
+      let list
+      switch (this.tabIndex) {
+        case 0:
+          list = this.willOnLines
+          break
+        case 1:
+          list = this.onLines
+          break
+        case 2:
+          list = this.offLines
+          break
+        default:
+          break
+      }
+      const index = list.findIndex((item) => item.id === id)
+      list.splice(index, 1)
+    }
+
+    // 获取上线列表
+    async _getOnLineList() {
+      const data = {status: 1, page: 1, limit: this.onLines.length}
+      const getCouponList = Coupons.getCouponList.bind(Coupons, data)
+      const json = await this._rqServerBackData(getCouponList)
+      this.loaded()
+      if (!json) return
+      const res = json.data
+      this.onLines = res
+      this.$apply()
+    }
+
+    // 获取下线列表
+    async _getOffLineList() {
+      const data = {status: 2, page: 1, limit: this.offLines.length}
+      const getCouponList = Coupons.getCouponList.bind(Coupons, data)
+      const json = await this._rqServerBackData(getCouponList)
+      this.loaded()
+      if (!json) return
+      const res = json.data
+      this.offLines = res
+      this.$apply()
+    }
+
+    // 上线备用
+    async _onLine() {
+      const serverOnLine = Coupons.serverOnLine.bind(Coupons, this.onlineId)
+      const json = await this._rqServerBackStatus(serverOnLine)
+      if (!json) {
+        this.onlineId = null
+        this.$apply()
+        return
+      }
+      this._findListIndex(this.onlineId)
+      await this._getOnLineList()
+      Tips.success('上线成功')
+      this.onlineId = null
+      this.$apply()
+    }
+
+    // 下线
+    async _offLine() {
+      const serverOffLine = Coupons.serverOffLine.bind(Coupons, this.offlineId)
+      const json = await this._rqServerBackStatus(serverOffLine)
+      if (!json) {
+        this.offlineId = null
+        this.$apply()
+        return
+      }
+      this._findListIndex(this.offlineId)
+      await this._getOffLineList()
+      Tips.success('下线成功')
+      this.offlineId = null
+      this.$apply()
+    }
+
+    events = {
+      async confirm() {
+        this.deleteId && await this.delete()
+        // this.onlineId && await this._onLine()
+        this.offlineId && await this._offLine()
+      },
+      cancel() {
+        this.deleteId = null
+        this.onlineId = null
+        this.offlineId = null
+        this.$apply()
+      }
+    }
+
     methods = {
       async changeTab(index) {
         this.tabIndex = Math.floor(index)
@@ -282,37 +426,23 @@
           await this.getCouponList()
         }
       },
-      showConfirm(id) {
+      async showConfirm(id) {
+        await this._checkIsConnection(id)
         this.deleteId = id
-        this.$invoke('confirm', 'show')
-      },
-      async delete() {
-        const res = await Coupons.deleteCoupon(this.deleteId)
-        this.loaded()
-        if (res.error !== ERR_OK) {
-          this.$invoke('toast', 'show', res.message)
-          return
-        }
-        let list
-        switch (this.tabIndex) {
-          case 0:
-            list = this.willOnLines
-            break
-          case 1:
-            list = this.onLines
-            break
-          case 2:
-            list = this.offLines
-            break
-          default:
-            break
-        }
-        const deleteIndex = list.findIndex((item) => item.id === this.deleteId)
-        list.splice(deleteIndex, 1)
         this.$apply()
       },
-      edit(id) {
-        this.$navigate(`/pages/service-controller/service-controller?id=${id}`)
+      async showOfflineConfirm(id) {
+        await this._checkIsConnection(id)
+        this.offlineId = id
+        this.$apply()
+      },
+      async showOnlineConfirm(id) {
+        this.onlineId = id
+        this.onlineId && await this._onLine()
+        this.$apply()
+      },
+      edit(id, model = 'not-up-editor') {
+        this.$navigate(`/pages/service-controller/service-controller?id=${id}&model=${model}`)
       }
     }
 
@@ -452,33 +582,31 @@
             align-items: center
             justify-content: space-between
             height: 36.3636363636%
-            padding: 0 10px
+            padding: 0 15px 0 12px
             .status
-              font-size: $font-size-small
+              font-family: $font-family-light
+              font-size: $font-size-medium
+              color: $color-text-td
+              flex: 1
             .btn-group
               display: flex
               align-items: center
-              .left-btn, .right-btn
+              .btn
+                layout()
+                justify-content: center
+                align-items: center
+                box-sizing: border-box
+                margin-left: 5px
                 width: 60px
                 height: 24px
-                line-height: 24px
-                border-1px($color-text-d, 4px)
-                text-align: center
+                border: .5px solid $color-row-line
+                border-radius: 2px
+                font-family: $font-family-light
                 font-size: $font-size-small-s
-                color: $color-text-d
-                position: relative
-                text
-                  display: block
-                  line-height: 12px
-                  font-size: $font-size-small-s
-                  position: absolute
-                  left: 50%
-                  top: 50%
-                  transform: translate(-50%, -50%)
-              .right-btn
-                margin-left: 5px
-                border-1px($color-assist-f, 4px)
-                color: $color-assist-f
+                color: $color-text
+                &:last-child
+                  color: $color-assist-f
+                  border-color: $color-assist-f
     .create-service
       position: fixed
       bottom: 0

@@ -17,27 +17,27 @@
       <view class="a-i-down">
         <view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">
           <view class="a-i-d-status">商品已过期</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">
           <view class="a-i-d-status">商品已删除</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">
           <view class="a-i-d-status">商品已下架</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
-          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOffline({{activeObj}})">下线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
-          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
         </view>
       </view>
     </view>
@@ -57,27 +57,27 @@
       <view class="a-i-down">
         <view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">
           <view class="a-i-d-status">商品已过期</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">
           <view class="a-i-d-status">商品已删除</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">
           <view class="a-i-d-status">商品已下架</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
-          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">下线</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOffline({{activeObj}})">下线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
-          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOne({{activeObj}})">上线</view>
-          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickTwo({{activeObj}})">删除</view>
-          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickThree({{activeObj}})">编辑</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
         </view>
       </view>
     </view>
@@ -122,14 +122,17 @@
       }
     }
     methods = {
-      handleClickOne(obj) {
-        this.$emit('activeBtnOne', obj)
+      handleClickDel(obj) {
+        this.$emit('activeBtnDel', obj)
       },
-      handleClickTwo(obj) {
-        this.$emit('activeBtnTwo', obj)
+      handleClickOnline(obj) {
+        this.$emit('activeBtnOnline', obj)
       },
-      handleClickThree(obj) {
-        this.$emit('activeBtnThree', obj)
+      handleClickOffline(obj) {
+        this.$emit('activeBtnOffline', obj)
+      },
+      handleClickEditor(obj) {
+        this.$emit('activeBtnEditor', obj)
       }
     }
   }
@@ -231,7 +234,7 @@
           padding: 0 5px 0 2px
           overflow: hidden
           .a-i-d-status
-            ont-family: $font-family-light
+            font-family: $font-family-light
             font-size: $font-size-medium
             color: $color-text-td
             flex: 1
