@@ -442,7 +442,9 @@
         this.$apply()
       },
       edit(id, model = 'not-up-editor') {
-        this.$navigate(`/pages/service-controller/service-controller?id=${id}&model=${model}`)
+        setTimeout(() => {
+          this.$navigate(`/pages/service-controller/service-controller?id=${id}&model=${model}`)
+        }, 20)
       }
     }
 

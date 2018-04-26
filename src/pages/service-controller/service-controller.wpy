@@ -462,7 +462,6 @@
                          maxlength="10"
                          @input="handleInput('sellCountData')"
                   />
-
                 </view>
                 <!--<view wx:if="{{item.title==='限制数量'}}"  class="max-unit">个</view>-->
                 <view class="radio {{index !== sellCountData.tmp ? 'unselected' : ''}}">
@@ -1115,22 +1114,40 @@
       return data
     }
 
-    // 上线状态检查编辑是否合法
-    _checkStockLegal(key) {
+    // 检查上线状态,编辑数量是否合法
+    _checkStockLegal(e) {
+      let key = this[e.source.name]
       if (this.model !== 'up-editor') return true
       let oldStock = this.disableReduceInfo.sellCount * 1
       // key.tmp 0 无限制 key.tmp 1 限制数量
-      if (oldStock === -1 && key.tmp !== 0) {
+      if (oldStock === -1 && key.tmp * 1 !== 0) {
         this.$invoke('count-modal', 'show')
         this.$invoke('toast', 'show', `上线中,数量不能小于之前的无限制`)
+        key.sellCount[0].id = -1
+        key.tmpValue = -1
+        key.tmp = 0
+        key.flag = 0
+        this.$apply()
         return false
-      }
-      if (key.tmp === 1 && key.tmpValue < oldStock) {
+      } else if (key.tmpValue * 1 < oldStock) {
         this.$invoke('count-modal', 'show')
         this.$invoke('toast', 'show', `上线中,数量不能小于之前${oldStock}`)
+        key.tmpValue = oldStock
+        this.$apply()
         return false
       }
+
       return true
+    }
+
+    _resetData(e) {
+      let key = this[e.source.name]
+      key.tmp = key.flag
+      if (key.tmpValue) { // 如果弹窗中有输入框
+        let children = e.source.name.split('Data')[0]
+        key[children][1].id = key.tmpValue
+      }
+      this.$apply()
     }
 
     // 上线状态检查提交信息是否合法
@@ -1200,7 +1217,6 @@
       async setSelect(e) {
         let key = this[e.source.name]
         // 检查输入数量是否合法
-        if (!this._checkStockLegal(key)) return
         key.flag = key.tmp
         if (e.source.name === 'categoryData') {
           this._setTicketState(key.flag + 1, 'add')
@@ -1210,6 +1226,7 @@
           key.tmpValue = key[children][1].id
         }
         this.$apply()
+        this._checkStockLegal(e)
       },
       async resetSelect(e) {
         let key = this[e.source.name]
