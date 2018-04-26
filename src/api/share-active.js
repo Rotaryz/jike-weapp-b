@@ -37,7 +37,7 @@ export default class ShareMoney extends base {
    * @param id
    * @returns {Promise.<*>}
    */
-  static async onlineShareActive(id, status = 0, loading = true) {
+  static async onlineShareActive(id, status = 1, loading = true) {
     const url = `${this.baseUrl}/api/act-share-money/update-status/${id}`
     let data = {
       status
@@ -49,7 +49,7 @@ export default class ShareMoney extends base {
    * @param  id
    * @returns {Promise.<*>}
    */
-  static async offlineShareActive(id, status = 1, loading = true) {
+  static async offlineShareActive(id, status = 0, loading = true) {
     const url = `${this.baseUrl}/api/act-share-money/update-status/${id}`
     let data = {
       status

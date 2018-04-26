@@ -115,10 +115,6 @@
           this.titleNumber = res.data.title.length
           this.pickerStar = res.data.sell_end_at
           this.edit_stock = res.data.init_stock
-          console.log(this.shareData)
-          console.log(this.shareData.title.length)
-          console.log(this.shareData.sell_end_at)
-          console.log(this.pickerStar)
           let json = await ShareMoney.getServerShopDetail(res.data.promotion_id)
           if (json.error === ERR_OK) {
             this.currentCoupon = json.data
@@ -140,6 +136,7 @@
     }
 
     onShow() {
+      this.submitLock = false
       console.log(this.$parent.globalData.shareCoupon)
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
@@ -217,23 +214,24 @@
         if (!this.shareData.init_stock) {
           this.$invoke('Toast', 'show', '请输入活动库存')
           return
-        } else {
-          let stock = this.currentCoupon.stock
-          if (!this.editId) {
-            console.log(11)
-            if (stock !== -1 && this.shareData.init_stock > stock) {
-              this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
-              return
-            }
-          }
         }
-        if (this.editId) {
-          let stock = this.edit_stock
-          if (this.shareData.init_stock < stock) {
-            this.$invoke('Toast', 'show', `选择活动数量不能超过小于${stock}`)
-            return
-          }
-        }
+        // else {
+        //   let stock = this.currentCoupon.stock
+        //   if (!this.editId) {
+        //     console.log(11)
+        //     if (stock !== -1 && this.shareData.init_stock > stock) {
+        //       this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
+        //       return
+        //     }
+        //   }
+        // }
+        // if (this.editId) {
+        //   let stock = this.edit_stock
+        //   if (this.shareData.init_stock < stock) {
+        //     this.$invoke('Toast', 'show', `选择活动数量不能超过小于${stock}`)
+        //     return
+        //   }
+        // }
         if (!this.shareData.sell_end_at) {
           this.$invoke('Toast', 'show', '请输入活动截止的日期')
           return

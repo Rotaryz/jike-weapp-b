@@ -39,6 +39,7 @@
     </header-switch>
     <toast></toast>
     <confirm></confirm>
+    <ConfirmMsg></ConfirmMsg>
   </view>
 </template>
 
@@ -51,6 +52,7 @@
   import ActivityItem from '@/base/activity-item/activity-item'
   import Toast from '@/base/toast/toast'
   import Confirm from '@/base/confirm/confirm'
+  import ConfirmMsg from '@/base/confirm-msg/confirm-msg'
   import ShareActiveAPI from 'api/share-active'
   import {ERR_OK} from 'api/base'
   import {
@@ -104,7 +106,9 @@
       showTabDownCount: 0,
       toNewTimer: null,
       toEditorTimer: null,
-      submitLock: false
+      submitLock: false,
+      currentChooseObj: '',
+      currentChooseType: null
     }
 
     async onLoad(option) {
@@ -364,13 +368,24 @@
 
     // 执行删除动作
     async _toDelActive() {
-      let id = this.currentDelObj.id
+      let id = this.currentChooseObj.id
       let flag = await this._rqDelActive(id)
       if (!flag) return
       this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
       this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
       this.$apply()
       await this._checkListEmpty()
+    }
+
+    // 执行下架动作
+    async __DownActive() {
+      let id = this.currentChooseObj.id
+      let obj = this.currentChooseObj
+      let res = await ShareActiveAPI.offlineShareActive(id)
+      if (res.error === ERR_OK) {
+        this._upOrDown(obj)
+      }
+      this.loaded()
     }
 
     methods = {
@@ -398,8 +413,6 @@
         }, 50)
       }
     }
-    events = {
-    }
     computed = {
       upStatus() {
         return this.status === UP ? 'active' : ''
@@ -421,6 +434,7 @@
         return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
       }
     }
+
     events = {
       async headerSwitchChange() {
         let type = '2' // 1团购活动 2分享赚钱活动
@@ -432,26 +446,30 @@
           this.$apply()
         }
       },
-      async activeBtnOne(obj) {
-        if (obj.statusType === UP) {
-          let res = await ShareActiveAPI.offlineShareActive(obj.id)
-          if (res.error === ERR_OK) {
-            this._upOrDown(obj)
-          }
-        } else {
-          let res = await ShareActiveAPI.onlineShareActive(obj.id)
-          if (res.error === ERR_OK) {
-            this._upOrDown(obj)
-          }
+      async activeBtnOnline(obj) {
+        let res = await ShareActiveAPI.onlineShareActive(obj.id)
+        if (res.error === ERR_OK) {
+          this._upOrDown(obj)
         }
         this.loaded()
       },
-      activeBtnTwo(obj) {
-        this.$invoke('confirm', 'show')
-        this.currentDelObj = obj
+      async activeBtnOffline(obj) {
+        console.log(obj)
+        let data = {
+          title: '确定要下线'
+        }
+        this.$invoke('ConfirmMsg', 'show', data)
+        this.currentChooseType = DOWN
+        this.currentChooseObj = obj
         this.$apply()
       },
-      activeBtnThree(obj) {
+      activeBtnDel(obj) {
+        this.$invoke('confirm', 'show')
+        this.currentChooseType = DEL
+        this.currentChooseObj = obj
+        this.$apply()
+      },
+      activeBtnEditor(obj) {
         console.log(obj)
         let id = obj.id
         let type = obj.statusType
@@ -466,9 +484,12 @@
           this.$apply()
         }, 50)
       },
-      async confirm(obj) {
-        console.log(obj)
-        await this._toDelActive()
+      async confirm() {
+        if (this.currentChooseType === DOWN) {
+          await this.__DownActive()
+        } else {
+          await this._toDelActive()
+        }
         // 删除确认
       }
     }
@@ -476,7 +497,8 @@
       'header-switch': HeaderSwitch,
       'activity-item': ActivityItem,
       'confirm': Confirm,
-      'toast': Toast
+      'toast': Toast,
+      'ConfirmMsg': ConfirmMsg
     }
     config = {
       navigationBarTitleText: '分享赚钱',
