@@ -9,6 +9,7 @@ const MINSIZE = 0.1
 
 const UP = '1'
 const DOWN = '0'
+const OUT = '0'
 const DEL = '-1'
 const TAKENOFF = '-2'
 const ON = 'on'
@@ -41,6 +42,7 @@ export {
   DOWN,
   TAKENOFF,
   ON,
+  OUT,
   OFF,
   DEVICEINFO,
   UPPAGELIMIT,

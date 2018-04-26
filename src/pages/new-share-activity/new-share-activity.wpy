@@ -3,7 +3,7 @@
     <view class="tl-share-box tl-share-type-between">
       <view class="tl-share-left">添加服务</view>
       <view class="tl-share-right" @tap="getServeList()">
-        <view class="full-text">{{shareData.promotion_title}}</view>
+        <view class="full-text {{editType === '1' ? 'full-text-dis' : ''}}">{{shareData.promotion_title}}</view>
         <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
       </view>
     </view>
@@ -288,7 +288,8 @@
         this.loaded()
       },
       getServeList() {
-        if (parseInt(this.editType) === 0) {
+        if (parseInt(this.editType) === 1) {
+          console.log(this.editType === '1')
           this.$invoke('Toast', 'show', '上线中的服务不能更改')
         } else {
           let url = `/pages/share-active-choose-server/share-active-choose-server`
