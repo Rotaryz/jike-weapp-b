@@ -512,7 +512,6 @@ function calLegendData(series, opts, config) {
   if (currentRow.length) {
     legendList.push(currentRow);
   }
-
   return {
     legendList: legendList,
     legendHeight: legendList.length * (config.fontSize + marginTop) + padding
@@ -527,7 +526,6 @@ function calCategoriesData(categories, opts, config) {
 
   var _getXAxisPoints = getXAxisPoints(categories, opts, config),
     eachSpacing = _getXAxisPoints.eachSpacing;
-
   // get max length of categories text
 
 
@@ -723,7 +721,6 @@ function calYAxisData(series, opts, config) {
   if (opts.yAxis.disabled === true) {
     yAxisWidth = 0;
   }
-
   return {rangesFormat: rangesFormat, ranges: ranges, yAxisWidth: yAxisWidth};
 }
 
@@ -982,6 +979,7 @@ function drawPieText(series, opts, config, context, radius, center) {
 }
 
 function drawToolTipSplitLine(offsetX, opts, config, context) {
+  // 折线图选择边
   var startY = config.padding;
   var endY = opts.height - config.padding - config.xAxisHeight - config.legendHeight;
   context.beginPath();
@@ -1157,7 +1155,6 @@ function drawAreaDataPoints(series, opts, config, context) {
   var _getXAxisPoints2 = getXAxisPoints(opts.categories, opts, config),
     xAxisPoints = _getXAxisPoints2.xAxisPoints,
     eachSpacing = _getXAxisPoints2.eachSpacing;
-
   var minRange = ranges.pop();
   var maxRange = ranges.shift();
   var endY = opts.height - config.padding - config.xAxisHeight - config.legendHeight;
@@ -1179,7 +1176,6 @@ function drawAreaDataPoints(series, opts, config, context) {
     calPoints.push(points);
 
     var splitPointList = splitPoints(points);
-
     splitPointList.forEach(function (points) {
       // 绘制区域数据
       context.beginPath();
@@ -1387,7 +1383,6 @@ function drawXAxis(categories, opts, config, context) {
   var validWidth = opts.width - 2 * config.padding - config.yAxisWidth - config.yAxisTitleWidth;
   var maxXAxisListLength = Math.min(categories.length, Math.ceil(validWidth / config.fontSize / 1.5));
   var ratio = Math.ceil(categories.length / maxXAxisListLength);
-
   categories = categories.map(function (item, index) {
     return index % ratio !== 0 ? '' : item;
   });
@@ -1476,8 +1471,9 @@ function drawYAxis(series, opts, config, context) {
     rangesFormat = _calYAxisData4.rangesFormat;
 
   var yAxisTotalWidth = config.yAxisWidth + config.yAxisTitleWidth;
-
+  // var spacingValid = opts.height - 2 * config.padding - config.xAxisHeight - config.legendHeight;
   var spacingValid = opts.height - 2 * config.padding - config.xAxisHeight - config.legendHeight;
+
   var eachSpacing = Math.floor(spacingValid / config.yAxisSplit);
   var startX = config.padding + yAxisTotalWidth;
   var endX = opts.width - config.padding;
@@ -1865,7 +1861,7 @@ Animation.prototype.stop = function () {
 
 function drawCharts(type, opts, config, context) {
   var _this = this;
-
+  console.log(type,opts,config)
   var series = opts.series;
   var categories = opts.categories;
   series = fillSeriesColor(series, config);
@@ -1890,7 +1886,6 @@ function drawCharts(type, opts, config, context) {
   if (type === 'pie' || type === 'ring') {
     config._pieTextMaxLength_ = opts.dataLabel === false ? 0 : getPieTextMaxLength(series);
   }
-
   var duration = opts.animation ? 1000 : 0;
   this.animationInstance && this.animationInstance.stop();
   switch (type) {
@@ -1958,7 +1953,6 @@ function drawCharts(type, opts, config, context) {
           _this.chartData.xAxisPoints = xAxisPoints;
           _this.chartData.calPoints = calPoints;
           _this.chartData.eachSpacing = eachSpacing;
-
           drawLegend(opts.series, opts, config, context);
           drawYAxis(series, opts, config, context);
           drawToolTipBridge(opts, config, context, process);

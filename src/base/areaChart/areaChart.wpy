@@ -1,6 +1,6 @@
 <template>
   <view class="container" id="area">
-    <canvas canvas-id="areaCanvas" class="canvas {{monthdata ? 'monthcanvas'  : ''}}" bindtouchstart="touchHandler" disable-scroll="true">
+    <canvas canvas-id="areaCanvas" class="canvas {{monthdata ? 'monthcanvas'  : ''}}" bindtouchstart="touchHandler" >
       <cover-view class="tl-area-name" wx:if="{{areahide}}">
         <cover-view class="tl-area-type" wx:for="{{areatype[areanumber]}}" wx:key="index" item="item">
           <cover-view class="tl-area-icon"></cover-view><cover-view>{{item}}</cover-view>
@@ -78,13 +78,13 @@
         legend: false,
         dataLabel: false,
         yAxis: {
+          min: res.min_y,
+          max: res.max_y,
           title: '',
           format(val) {
             val = val * 1
             return val.toFixed(0)
           },
-          min: res.min_y,
-          max: res.max_y,
           fontColor: '#9b9b9b',
           gridColor: '#E6E6E6',
           titleFontColor: '#9b9b9b'
