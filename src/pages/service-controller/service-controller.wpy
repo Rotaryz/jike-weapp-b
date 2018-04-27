@@ -832,7 +832,8 @@
       imageDis: true,
       ban: 0,
       model: 'not-up-editor',
-      disableReduceInfo: null
+      disableReduceInfo: null,
+      id: '' // 商品id
     }
 
     async onLoad(option) {
@@ -954,6 +955,7 @@
           }
         }
       }
+      this.id = '' + res.id
       this._saveDisRedInfo()
       this.$apply()
     }
@@ -1453,6 +1455,8 @@
           return
         }
         let data = valid.data
+        // 新增字段商品ID给服务器
+        data.id = this.id
         // 检查数据是否合法
         if (!this._checkFormLegal(data)) return
         if (this.industry) {
