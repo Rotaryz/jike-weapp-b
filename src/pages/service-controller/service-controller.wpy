@@ -739,6 +739,8 @@
     image_id: 0
   }
 
+  const FINISHEDMESSAGE = '不可修改'
+
   export default class ServiceController extends wepy.page {
     mixins = [base]
 
@@ -1164,7 +1166,7 @@
       // key.tmp 0 无限制 key.tmp 1 限制数量
       if (oldStock === -1 && key.tmp * 1 !== 0) {
         this.$invoke('count-modal', 'show')
-        this.$invoke('toast', 'show', `上线中,数量不能小于之前的无限制`)
+        this.$invoke('toast', 'show', `数量不能小于之前的无限制`)
         key.sellCount[0].id = -1
         key.tmpValue = -1
         key.tmp = 0
@@ -1173,7 +1175,7 @@
         return false
       } else if (key.tmpValue * 1 < oldStock) {
         this.$invoke('count-modal', 'show')
-        this.$invoke('toast', 'show', `上线中,数量不能小于之前${oldStock}`)
+        this.$invoke('toast', 'show', `数量不能小于之前${oldStock}`)
         key.tmpValue = oldStock
         this.$apply()
         return false
@@ -1203,22 +1205,22 @@
       // 售卖时间检查
       let oldSellDate = this.disableReduceInfo.sellEndTime
       if (new Date(oldSellDate) - new Date(data.sell_end_at) > 0) {
-        this.$invoke('toast', 'show', `上线中,售卖时间不能早于${oldSellDate}`)
+        this.$invoke('toast', 'show', `售卖时间不能早于${oldSellDate}`)
         return false
       }
       // 有效期时间检查
       let oldValidDate = this.disableReduceInfo.validDate
       if (new Date(oldValidDate) - new Date(data.end_at) > 0) {
-        this.$invoke('toast', 'show', `上线中,售卖时间不能早于${oldValidDate}`)
+        this.$invoke('toast', 'show', `售卖时间不能早于${oldValidDate}`)
         return false
       }
       // 库存检查
       let oldStock = this.disableReduceInfo.sellCount * 1
       if (oldStock === -1 && data.stock !== -1) {
-        this.$invoke('toast', 'show', `上线中,数量不能小于之前的无限制`)
+        this.$invoke('toast', 'show', `数量不能小于之前的无限制`)
         return false
       } else if (oldStock > data.stock) {
-        this.$invoke('toast', 'show', `上线中,数量不能小于之前${oldStock}`)
+        this.$invoke('toast', 'show', `数量不能小于之前${oldStock}`)
         return false
       }
       return true
@@ -1227,17 +1229,17 @@
     methods = {
       sellStartDateTap() {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
         }
       },
       salePriceTap() {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
         }
       },
       takenPirce() {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
         }
       },
       selectCatelogTab(catelogTab) {
@@ -1384,7 +1386,7 @@
       },
       setSellStartDate(e) {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
           return
         }
         this.sellStartTime = e.detail.value
@@ -1476,7 +1478,7 @@
       },
       showMealModal() {
         if (this.disable) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
           return
         }
         this.$invoke('meal-modal', 'show')
