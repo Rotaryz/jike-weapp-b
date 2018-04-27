@@ -10,7 +10,7 @@
       </repeat>
     </view>
     <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
-      <view class="g-a-c-s-submit {{btnStausStyle}}" @tap="done">完成</view>
+      <view class="g-a-c-s-submit" @tap="done">完成</view>
     </view>
     <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
       <view class="e-box">
@@ -29,17 +29,25 @@
   import ShareMoney from 'api/share-active'
   import {ERR_OK} from '@/api/base'
 
+  const PAGELIMIT = 10
+  const SHOPWHITELIST = ['voucher', 'cash'] // 商品白名单
+
   export default class SACServer extends wepy.page {
     mixins = [base]
 
     data = {
       imageUrlHead: URIS.image,
       couponList: [],
-      currentCoupon: ''
+      currentCoupon: '',
+      params: {
+        page: 1,
+        limit: PAGELIMIT
+      },
+      isAll: false
     }
 
     async onLoad() {
-      await this._getShareServerList()
+      await this._init()
       this.loaded()
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
@@ -47,22 +55,91 @@
       }
     }
 
-    onShow() {
-
+    async onPullDownRefresh() {
+      await this._getNewList()
+      /* eslint-disable no-undef */
+      wx.stopPullDownRefresh()
     }
 
+    async onReachBottom() {
+      this._getMoreList()
+    }
     // 获取服务列表
-    async _getShareServerList() {
-      let res = await ShareMoney.getshareserver()
+    async _getShareServerList(params, loading) {
+      let res = await ShareMoney.getshareserver(params, loading)
       if (res.error === ERR_OK) {
-        console.log(res)
-        this.couponList = res.data
-        this.$apply()
+        return res
+      } else {
+        this.$invoke('toast', 'show', res.message)
+        return {}
       }
     }
+
+    // 重置请求服务数据
+    _resetConfig() {
+      this.isAll = false
+      this.params.page = 1
+      this.$apply()
+    }
+
+    // 刷新列表
+    async _getNewList() {
+      this._resetConfig()
+      let params = {
+        page: 1,
+        limit: Math.max(this.couponList.length, PAGELIMIT)
+      }
+      const res = await this._getShareServerList(params, false)
+      if (res) {
+        this.couponList = res.data
+        this.$apply()
+        this._checkIsAll(res)
+      }
+      this.$apply()
+    }
+
+    // 获取更多列表
+    async _getMoreList() {
+      if (this.isAll) return
+      this.params.page++
+      const res = await this._getShareServerList(this.params)
+      if (res) {
+        this.couponList.push(...res.data)
+        this._checkIsAll(res)
+      }
+      this.loaded()
+      this.$apply()
+    }
+
     // 初始化
     async _init() {
+      const res = await this._getShareServerList(this.params)
+      if (res) {
+        this.couponList = res.data
+        console.log(res)
+        this.$apply()
+        this._checkIsAll(res)
+      }
+      this.loaded()
+    }
 
+    // 过滤服务白名单
+    _filterRqData(arr) {
+      let newArr = []
+      arr.map(item => {
+        let flag = SHOPWHITELIST.some(val => val === item.promotion_type)
+        flag && newArr.push(item)
+      })
+      return newArr
+    }
+
+    // 检查是否查询了全部
+    _checkIsAll(res) {
+      console.log(res)
+      if (this.couponList.length === res.meta.total * 1) {
+        this.isAll = true
+        this.$apply()
+      }
     }
 
     _findCoupon(obj) {
@@ -128,7 +205,10 @@
     config = {
       navigationBarTitleText: '添加服务',
       navigationBarBackgroundColor: '#363547',
-      navigationBarTextStyle: 'white'
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#f9f9f9',
+      backgroundTextStyle: 'dark',
+      enablePullDownRefresh: true
     }
   }
 </script>
