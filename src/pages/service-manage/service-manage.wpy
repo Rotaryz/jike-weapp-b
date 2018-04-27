@@ -316,8 +316,8 @@
       const msgAction = this.deleteId ? '删除' : '下线'
       let arr = this._assemblyMsg(res)
       if (arr.length > 0) {
-        const msg = arr.toString()
-        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
+        const msg = ' ' + arr.toString()
+        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动 `, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
       } else {
         this.$invoke('confirm', 'show', {title: `确定要${msgAction}？`})
       }
