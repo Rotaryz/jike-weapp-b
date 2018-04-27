@@ -30,7 +30,8 @@
   import {ERR_OK} from 'api/base'
   import Toast from '@/base/toast/toast'
 
-  const PAGELIMIT = 100
+  const PAGELIMIT = 10
+  const SHOPWHITELIST = ['voucher', 'cash'] // 商品白名单
 
   export default class GACServer extends wepy.page {
     mixins = [base]
@@ -43,12 +44,23 @@
       params: {
         page: 1,
         limit: PAGELIMIT
-      }
+      },
+      isAll: false
     }
 
     async onLoad(option) {
       await this._init()
       this._findCoupon(option.goodId)
+    }
+
+    async onPullDownRefresh() {
+      await this._getNewList()
+      /* eslint-disable no-undef */
+      wx.stopPullDownRefresh()
+    }
+
+    async onReachBottom() {
+      this._getMoreList()
     }
 
     // 初始化
@@ -57,7 +69,62 @@
       if (res) {
         this.couponList = this._formatRqData(res)
         this.$apply()
-        this.loaded()
+        this._checkIsAll(res)
+      }
+      this.loaded()
+    }
+
+    // 过滤服务白名单
+    _filterRqData(arr) {
+      let newArr = []
+      arr.map(item => {
+        let flag = SHOPWHITELIST.some(val => val === item.promotion_type)
+        flag && newArr.push(item)
+      })
+      return newArr
+    }
+
+    // 重置请求服务数据
+    _resetConfig() {
+      this.isAll = false
+      this.params.page = 1
+      this.$apply()
+    }
+
+    // 刷新列表
+    async _getNewList() {
+      this._resetConfig()
+      let params = {
+        page: 1,
+        limit: Math.max(this.couponList.length, PAGELIMIT)
+      }
+      const res = await this._rqGetServerList(params, false)
+      if (res) {
+        this.couponList = this._formatRqData(res)
+        this.$apply()
+        this._checkIsAll(res)
+      }
+      this.$apply()
+    }
+
+    // 获取更多列表
+    async _getMoreList() {
+      if (this.isAll) return
+      this.params.page++
+      const res = await this._rqGetServerList(this.params)
+      if (res) {
+        this.couponList.push(...this._formatRqData(res))
+        this._checkIsAll(res)
+      }
+      this.loaded()
+      this.$apply()
+    }
+
+    // 检查是否查询了全部
+    _checkIsAll(res) {
+      if (this.couponList.length === res.meta.total * 1) {
+        this.isAll = true
+        this.$apply()
       }
     }
 
@@ -81,8 +148,9 @@
     // 格式化服务器数据
     _formatRqData(res) {
       if (res.data && res.data.length === 0) return []
+      let list = this._filterRqData(res.data)
       let arr = []
-      res.data.map(item => {
+      list.map(item => {
         arr.push({
           id: item.id, // 商品id即goods_id
           promotion_id: item.id,
@@ -158,7 +226,10 @@
     config = {
       navigationBarTitleText: '添加服务',
       navigationBarBackgroundColor: '#363547',
-      navigationBarTextStyle: 'white'
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#f9f9f9',
+      backgroundTextStyle: 'dark',
+      enablePullDownRefresh: true
     }
   }
 </script>

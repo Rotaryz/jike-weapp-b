@@ -7,7 +7,7 @@
           <view class="g-a-l-n-item {{downStatus}}" id="{{tabDownId}}">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabUpId}}" bindscrolltolower="_getMoreList">
-          <view class="g-a-c-s-has-content">
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{onlineList}}" key="index" index="index" item="item">
               <view class="g-a-l-a-item">
                 <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
@@ -22,7 +22,7 @@
           </view>
         </scroll-view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabDownId}}" bindscrolltolower="_getMoreList">
-          <view class="g-a-c-s-has-content">
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{offlineList}}" key="index" index="index" item="item">
               <view class="g-a-l-a-item">
                 <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
