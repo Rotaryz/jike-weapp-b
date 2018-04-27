@@ -169,6 +169,7 @@
   import Tips from 'common/js/tips'
 
   const TABS = ['待上线', '已上线', '已下线']
+  const SHOPWHITELIST = ['discount', 'reduction', 'voucher', 'cash'] // 商品白名单
 
   export default class ServiceManage extends wepy.page {
     mixins = [base]
@@ -247,7 +248,9 @@
       if (json.error !== ERR_OK) {
         return
       }
-      const res = json.data
+      let res = json.data
+      // 过滤商品
+      res = this._filterRqData(res)
       switch (this.tabIndex) {
         case 0:
           this.willOnLines = [...this.willOnLines, ...res]
@@ -266,6 +269,16 @@
       }
       this.$apply()
       this.loaded()
+    }
+
+    // 过滤服务白名单
+    _filterRqData(arr) {
+      let newArr = []
+      arr.map(item => {
+        let flag = SHOPWHITELIST.some(val => val === item.promotion_type)
+        flag && newArr.push(item)
+      })
+      return newArr
     }
 
     // 请求服务器返回数据
@@ -356,7 +369,7 @@
       this.loaded()
       if (!json) return
       const res = json.data
-      this.onLines = res
+      this.onLines = this._filterRqData(res)
       this.$apply()
     }
 
@@ -368,7 +381,7 @@
       this.loaded()
       if (!json) return
       const res = json.data
-      this.offLines = res
+      this.offLines = this._filterRqData(res)
       this.$apply()
     }
 

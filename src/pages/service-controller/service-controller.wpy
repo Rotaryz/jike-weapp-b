@@ -136,7 +136,17 @@
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
       <!--服务详情-->
-      <view wx:if="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
+      <view wx:if="{{disable && categoryId === 1}}" class="type input-wrapper border-bottom-1px s-c-input-disabel" @tap="salePriceTap">
+        <view class="label">服务详情</view>
+        <view class="arrow-content-wrapper">
+          <view class="content"></view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
         <view class="label">服务详情</view>
         <view class="arrow-content-wrapper">
           <view class="content"></view>
