@@ -314,16 +314,24 @@
       if (!json) return
       const res = json.data
       const msgAction = this.deleteId ? '删除' : '下线'
-      if (res.length > 0) {
-        let arr = []
-        res.map(item => {
-          arr.push((item.active_name || '') + (item.active_type || ''))
-        })
+      let arr = this._assemblyMsg(res)
+      if (arr.length > 0) {
         const msg = arr.toString()
         this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
       } else {
         this.$invoke('confirm', 'show', {title: `确定要${msgAction}？`})
       }
+    }
+
+    // 拼接活动名称
+    _assemblyMsg(json) {
+      let arr = []
+      for (let [key, val] of Object.entries(json)) {
+        val.length > 0 && val.map(item => {
+          arr.push(item + key)
+        })
+      }
+      return arr
     }
 
     // 删除商品
@@ -440,13 +448,13 @@
         }
       },
       async showConfirm(id) {
-        await this._checkIsConnection(id)
         this.deleteId = id
+        await this._checkIsConnection(id)
         this.$apply()
       },
       async showOfflineConfirm(id) {
-        await this._checkIsConnection(id)
         this.offlineId = id
+        await this._checkIsConnection(id)
         this.$apply()
       },
       async showOnlineConfirm(id) {
