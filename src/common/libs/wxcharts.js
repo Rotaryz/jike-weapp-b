@@ -1880,7 +1880,11 @@ function drawCharts(type, opts, config, context) {
       xAxisHeight = _calCategoriesData.xAxisHeight,
       angle = _calCategoriesData.angle;
 
-    config.xAxisHeight = xAxisHeight;
+    console.log(xAxisHeight)
+    console.log(angle)
+    // 修改Y轴高度
+    config.xAxisHeight = 50;
+    // config.xAxisHeight = xAxisHeight;
     config._xAxisTextAngle_ = angle;
   }
   if (type === 'pie' || type === 'ring') {

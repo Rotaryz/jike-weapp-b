@@ -98,7 +98,7 @@
       dataTitle: '数据流量',
       nacList: [{
         title: '昨天',
-        type: 'yeaterday',
+        type: 'yesterday',
         day: '昨天'
       }, {
         title: '最近7天',
@@ -287,9 +287,9 @@
   .data-source
     height: 10px
     background: #F9F9F9
-    margin-top: 70vw
+    margin-top: 63vw
     @media screen and (max-width: 340px)
-      margin-top: 80vw
+      margin-top: 70vw
   .data-source-top
     margin-top: 63vw
     @media screen and (max-width: 340px)
