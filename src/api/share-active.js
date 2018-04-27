@@ -10,9 +10,9 @@ export default class ShareMoney extends base {
    * 获取服务列表
    * @returns {Promise.<*>}
    */
-  static async getshareserver() {
+  static async getshareserver(data, loading = true) {
     const url = `${this.baseUrl}/api/act-share-money/goods-list`
-    return await this.get(url)
+    return await this.get(url, data, loading)
   }
   /**
    * 创建分享赚钱活动
