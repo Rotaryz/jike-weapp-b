@@ -1,6 +1,6 @@
 <template>
   <view class="container" id="area">
-    <canvas canvas-id="areaCanvas" class="canvas {{monthdata ? 'monthcanvas'  : ''}}" bindtouchstart="touchHandler" disable-scroll="true">
+    <canvas canvas-id="areaCanvas" class="canvas {{monthdata ? 'monthcanvas'  : ''}}" bindtouchstart="touchHandler" >
       <cover-view class="tl-area-name" wx:if="{{areahide}}">
         <cover-view class="tl-area-type" wx:for="{{areatype[areanumber]}}" wx:key="index" item="item">
           <cover-view class="tl-area-icon"></cover-view><cover-view>{{item}}</cover-view>
@@ -78,13 +78,13 @@
         legend: false,
         dataLabel: false,
         yAxis: {
+          min: res.min_y * 1,
+          max: res.max_y * 1,
           title: '',
           format(val) {
             val = val * 1
             return val.toFixed(0)
           },
-          min: res.min_y,
-          max: res.max_y,
           fontColor: '#9b9b9b',
           gridColor: '#E6E6E6',
           titleFontColor: '#9b9b9b'
@@ -122,12 +122,12 @@
     /*height: 300px !important*/
     canvas
       width: 100%
-      height: 63vw
+      height: 56vw
       position: absolute
       left: 50%
       transform: translateX(-50%)
       @media screen and (max-width: 340px)
-        height: 73vw
+        height: 63vw
       .tl-area-name
         left: 0
         bottom: 0
@@ -158,10 +158,10 @@
               border: 1.5px solid #FDB94F
           &:last-child
             margin-right: 0
-    .monthcanvas
-      height: 56vw
-      @media screen and (max-width: 340px)
-        height: 63vw
+    /*.monthcanvas*/
+      /*height: 56vw*/
+      /*@media screen and (max-width: 340px)*/
+        /*height: 63vw*/
   /*width: 200%
   height: 300px
   transform: translateX(-43%)*/
