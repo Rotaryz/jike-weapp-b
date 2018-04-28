@@ -297,7 +297,7 @@
     async _rqServerBackStatus(fn) {
       const json = await fn()
       if (json.error === ERR_OK) {
-        this.loaded()
+        // this.loaded()
         return true
       } else {
         this.loaded()

@@ -317,7 +317,7 @@
           flag = '请输入服务的数量'
           return flag
         } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
-          flag = `请输入的数量不能小于${peopleNum}`
+          flag = `输入的数量不能小于${peopleNum}`
           return flag
         } else if (addNum < peopleNum || addNum > inventory) {
           flag = `请输入${peopleNum}至${inventory}之内的数量`

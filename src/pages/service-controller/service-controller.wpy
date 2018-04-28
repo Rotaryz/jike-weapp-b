@@ -135,8 +135,7 @@
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
-      <!--服务详情-->
-      <view wx:if="{{disable && categoryId === 1}}" class="type input-wrapper border-bottom-1px s-c-input-disabel" @tap="salePriceTap">
+      <view wx:if="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
         <view class="label">服务详情</view>
         <view class="arrow-content-wrapper">
           <view class="content"></view>
@@ -145,65 +144,93 @@
                    class="full-image"></image>
           </view>
         </view>
-      </view>
-      <view wx:elif="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
-        <view class="label">服务详情</view>
-        <view class="arrow-content-wrapper">
-          <view class="content"></view>
-          <view class="arrow-right">
-            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                   class="full-image"></image>
-          </view>
-        </view>
-        <service-modal title="服务详情" type="big" @confirm.user="setServices" @cancel.user="resetServices">
-          <view class="service-modal" slot="content">
-            <repeat for="{{tempServices}}" key="index" index="index" item="item">
-              <view class="item-wrapper">
-                <view class="input-wrapper border-bottom-1px">
-                  <view class="label">服务名称</view>
-                  <input type="text"
-                         value="{{item.servie}}"
-                         maxlength="10"
-                         @input="handleInput('servieservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+        <view wx:if="{{disable}}" @tap="showServiceModal">
+          <service-modal title="服务详情" type="big">
+            <view class="service-modal" slot="content">
+              <repeat for="{{tempServices}}" key="index" index="index" item="item">
+                <view class="item-wrapper">
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">服务名称</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.servie}}</view>
+                  </view>
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">数量</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.number}}</view>
+                  </view>
+                  <view class="input-wrapper">
+                    <view class="label">价格</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.price}}</view>
+                  </view>
+                  <view class="del" @tap.stop="salePriceTap">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
                 </view>
-                <view class="input-wrapper border-bottom-1px">
-                  <view class="label">数量</view>
-                  <input type="number"
-                         value="{{item.number}}"
-                         maxlength="10"
-                         @input="handleInput('numberservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+              </repeat>
+              <view class="btn-wrapper">
+                <view class="btn" @tap.stop="salePriceTap">
+                  <view class="add">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  <text>添加</text>
                 </view>
-                <view class="input-wrapper">
-                  <view class="label">价格</view>
-                  <input type="digit"
-                         value="{{item.price}}"
-                         maxlength="10"
-                         @input="handleInput('priceservice{{index}}')"
-                         @change="_regInput('priceservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
-                </view>
-                <view class="del" @tap.stop="deleteService({{index}})">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-              </view>
-            </repeat>
-            <view class="btn-wrapper">
-              <view class="btn" @tap.stop="addService">
-                <view class="add">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-                <text>添加</text>
               </view>
             </view>
-          </view>
-        </service-modal>
+          </service-modal>
+        </view>
+        <view wx:else>
+          <service-modal title="服务详情" type="big" @confirm.user="setServices" @cancel.user="resetServices">
+            <view class="service-modal" slot="content">
+              <repeat for="{{tempServices}}" key="index" index="index" item="item">
+                <view class="item-wrapper">
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">服务名称</view>
+                    <input type="text"
+                           value="{{item.servie}}"
+                           maxlength="10"
+                           @input="handleInput('servieservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">数量</view>
+                    <input type="number"
+                           value="{{item.number}}"
+                           maxlength="10"
+                           @input="handleInput('numberservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="input-wrapper">
+                    <view class="label">价格</view>
+                    <input type="digit"
+                           value="{{item.price}}"
+                           maxlength="10"
+                           @input="handleInput('priceservice{{index}}')"
+                           @change="_regInput('priceservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="del" @tap.stop="deleteService({{index}})">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                </view>
+              </repeat>
+              <view class="btn-wrapper">
+                <view class="btn" @tap.stop="addService">
+                  <view class="add">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  <text>添加</text>
+                </view>
+              </view>
+            </view>
+          </service-modal>
+        </view>
+
       </view>
       <!-- 服务详情图片 -->
       <view wx:if="{{categoryId === 1}}" class="picture-wrapper ">
@@ -418,7 +445,7 @@
         <view class="content">
           <view class="start">自上线之日起</view>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date" @change="setValidDate" start="{{limitvalidStartDate}}" value="{{validDate}}">
+          <picker mode="date" class="sell-date" @change="setValidDate" start="{{limitValidStartDate}}" value="{{validDate}}">
             <view class="date">
               <view>{{validDate === '' ? '结束时间' : validDate}}</view>
               <view class="arrow-right">
@@ -1631,6 +1658,7 @@
       limitValidStartDate() {
         if (this.disable && this.disableReduceInfo) {
           const time = this.disableReduceInfo.validDate
+          console.log(time)
           return time
         }
         return null
@@ -1679,6 +1707,8 @@
     .arrow-content-wrapper
       display: flex
       align-items: center
+      flex: 1
+      justify-content: flex-end
     .arrow-right
       width: 10px
       height: 10px
@@ -2076,6 +2106,11 @@
     .s-c-input-disabel
       font-family: $font-family-light
       font-size: $font-size-medium
+      color: $color-text-d !important
+      flex: 1
+    .s-c-input-disabel-f-small
+      font-family: $font-family-light
+      font-size: $font-size-small
       color: $color-text-d !important
       flex: 1
 
