@@ -144,7 +144,8 @@
                    class="full-image"></image>
           </view>
         </view>
-        <view wx:if="{{disable}}" @tap="showServiceModal">
+        <!-- 需求变更 -->
+        <view wx:if="{{false}}" @tap="showServiceModal">
           <service-modal title="服务详情" type="big">
             <view class="service-modal" slot="content">
               <repeat for="{{tempServices}}" key="index" index="index" item="item">
@@ -276,7 +277,7 @@
       <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
         <view class="label">最高优惠</view>
         <view class="arrow-content-wrapper">
-          <view class="content s-c-input-disabel">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
+          <view class="content s-c-input-disabel-discount">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
           <view class="arrow-right">
             <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                    class="full-image"></image>
@@ -323,7 +324,7 @@
       <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
         <view class="label">使用条件</view>
         <view class="arrow-content-wrapper">
-          <view class="content s-c-input-disabel">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
+          <view class="content s-c-input-disabel-discount">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
           <view class="arrow-right">
             <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                    class="full-image"></image>
@@ -524,7 +525,7 @@
                 </view>
                 <view wx:if="{{item.title==='限制数量'}}" class="input-wrapper {{sellCountData.tmp !== index ? 'disabled' : ''}}">
                   <input type="number"
-                         value="{{sellCountData.tmp !== index ? '' : item.id}}"
+                         value="{{sellCountData.tmp !== index ? '' : '' + item.id * 1}}"
                          disabled="{{sellCountData.tmp !== index}}"
                          maxlength="10"
                          @input="handleInput('sellCountData')"
@@ -1203,7 +1204,7 @@
       } else if (key.tmpValue * 1 < oldStock) {
         this.$invoke('count-modal', 'show')
         this.$invoke('toast', 'show', `数量不能小于之前${oldStock}`)
-        key.tmpValue = oldStock
+        key.tmpValue = parseInt(oldStock)
         this.$apply()
         return false
       }
@@ -1658,7 +1659,6 @@
       limitValidStartDate() {
         if (this.disable && this.disableReduceInfo) {
           const time = this.disableReduceInfo.validDate
-          console.log(time)
           return time
         }
         return null
@@ -2108,6 +2108,10 @@
       font-size: $font-size-medium
       color: $color-text-d !important
       flex: 1
+    .s-c-input-disabel-discount
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d !important
     .s-c-input-disabel-f-small
       font-family: $font-family-light
       font-size: $font-size-small
