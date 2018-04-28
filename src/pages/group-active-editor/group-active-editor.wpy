@@ -240,7 +240,7 @@
 
     // 检查信息是否完整且符合条件
     _checkInfoLegal(statusType) {
-      statusType = this.info.statusType
+      // statusType = this.info.statusType
       // 活动类型上线
       let flag = false
       let price = parseFloat(this.info.price)
@@ -266,7 +266,7 @@
       if (isNaN(oldAddNum)) {
         oldAddNum = 2
       }
-      if (statusType === UP || statusType === DOWN) {
+      if (this.isDisabled) {
         // 上线状态的判断
         if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
@@ -408,22 +408,22 @@
 
     methods = {
       hotPriceTap() {
-        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+        if (this.isDisabled) {
           this.$invoke('toast', 'show', '不可修改')
         }
       },
       hotPeopleTap() {
-        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+        if (this.isDisabled) {
           this.$invoke('toast', 'show', '不可修改')
         }
       },
       timeLimitTap() {
-        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+        if (this.isDisabled) {
           this.$invoke('toast', 'show', '不可修改')
         }
       },
       toChooseServer() {
-        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+        if (this.isDisabled) {
           this.$invoke('toast', 'show', '不可修改')
           return
         }
@@ -515,7 +515,7 @@
         return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
-        return this.info.statusType === UP || this.info.statusType === DOWN
+        return this.info.source !== NEW
       },
       isDisabledStyle() {
         return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
