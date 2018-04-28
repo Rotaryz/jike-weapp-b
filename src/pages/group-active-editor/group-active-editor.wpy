@@ -266,7 +266,7 @@
       if (isNaN(oldAddNum)) {
         oldAddNum = 2
       }
-      if (statusType === UP) {
+      if (statusType === UP || statusType === DOWN) {
         // 上线状态的判断
         if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
@@ -408,23 +408,23 @@
 
     methods = {
       hotPriceTap() {
-        if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+          this.$invoke('toast', 'show', '不可修改')
         }
       },
       hotPeopleTap() {
-        if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+          this.$invoke('toast', 'show', '不可修改')
         }
       },
       timeLimitTap() {
-        if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+          this.$invoke('toast', 'show', '不可修改')
         }
       },
       toChooseServer() {
-        if (this.info.statusType === UP) {
-          this.$invoke('toast', 'show', '上线中,不可修改')
+        if (this.info.statusType === UP || this.info.statusType === DOWN) {
+          this.$invoke('toast', 'show', '不可修改')
           return
         }
         let url = `/pages/group-active-choose-server/group-active-choose-server?goodId=${this.info.goodId}`
@@ -515,7 +515,7 @@
         return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
-        return this.info.statusType === UP
+        return this.info.statusType === UP || this.info.statusType === DOWN
       },
       isDisabledStyle() {
         return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
