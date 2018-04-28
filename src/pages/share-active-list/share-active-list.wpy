@@ -309,7 +309,7 @@
           hotPrice: item.after_price,
           statusTypeStr: item.status_str,
           statusType: item.status.toString(),
-          goodStatus: item.is_timeout
+          goodStatus: item.promotion_status.toString()
         })
       })
       return arr
@@ -454,6 +454,8 @@
         let res = await ShareActiveAPI.onlineShareActive(obj.id)
         if (res.error === ERR_OK) {
           this._upOrDown(obj)
+        } else {
+          this.$invoke('toast', 'show', res.message)
         }
         this.loaded()
       },
@@ -521,7 +523,7 @@
 
   .g-a-c-s-empty
     background-color: $color-white
-    height: 69vh
+    height: 100%
     layout()
     justify-content: center
     align-items: center

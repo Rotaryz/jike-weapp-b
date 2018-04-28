@@ -3,7 +3,7 @@
     <view class="tl-share-box tl-share-type-between">
       <view class="tl-share-left">添加服务</view>
       <view class="tl-share-right" @tap="getServeList()">
-        <view class="full-text {{editType === '1' ? 'full-text-dis' : ''}}">{{shareData.promotion_title}}</view>
+        <view class="full-text {{editType  ? 'full-text-dis' : ''}}">{{shareData.promotion_title}}</view>
         <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
       </view>
     </view>
@@ -21,7 +21,7 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">添加数量</view>
-      <input type="number" placeholder="{{stockToast}}" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="8" bindinput="shareInputNumber" value="{{shareData.init_stock}}"/>
+      <input type="number" placeholder="{{stockToast}}" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="8" bindinput="shareInputNumber" value="{{shareData.stock}}"/>
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动时间</view>
@@ -95,7 +95,7 @@
         promotion_title: '',
         title: '',
         price: '',
-        init_stock: '',
+        stock: '',
         sell_end_at: '',
         eductible_money: '',
         rate: '',
@@ -114,10 +114,12 @@
           this.shareData = res.data
           this.titleNumber = res.data.title.length
           this.pickerStar = res.data.sell_end_at
-          this.edit_stock = res.data.init_stock
+          this.edit_stock = res.data.stock
           let json = await ShareMoney.getServerShopDetail(res.data.promotion_id)
           if (json.error === ERR_OK) {
             this.currentCoupon = json.data
+            console.log('222222', json.data)
+            this.$parent.globalData.shareCoupon = json.data
             let stock = this.currentCoupon.stock
             if (stock === -1) {
               this.stockToast = '最大可添加数量无限制'
@@ -137,7 +139,7 @@
 
     onShow() {
       this.submitLock = false
-      console.log(this.$parent.globalData.shareCoupon)
+      console.log('11', this.$parent.globalData.shareCoupon)
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
         this.shareData.promotion_title = this.$parent.globalData.shareCoupon.title
@@ -159,7 +161,9 @@
       if (!this.currentCoupon) return
       if (!this.shareData.eductible_money) return
       if (!this.shareData.rate) return
-      if (parseInt(this.currentCoupon.platform_price) <= parseInt(this.shareData.eductible_money)) {
+      if (parseInt(this.currentCoupon.price) <= parseInt(this.shareData.eductible_money)) {
+        console.log(this.currentCoupon.price)
+        console.log(this.shareData.eductible_money)
         this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
         return
       }
@@ -180,7 +184,7 @@
       },
       // 输入分享数量
       shareInputNumber(e) {
-        this.shareData.init_stock = e.detail.value
+        this.shareData.stock = e.detail.value
         this.$apply()
       },
       // 输入分享折扣
@@ -211,7 +215,7 @@
           this.$invoke('Toast', 'show', '请输入活动标题')
           return
         }
-        if (!this.shareData.init_stock) {
+        if (!this.shareData.stock) {
           this.$invoke('Toast', 'show', '请输入活动库存')
           return
         }
@@ -247,7 +251,7 @@
           this.$invoke('Toast', 'show', '请输入抵用券金额')
           return
         } else {
-          if (parseInt(this.currentCoupon.platform_price) <= parseInt(this.shareData.eductible_money)) {
+          if (parseInt(this.shareData.price) <= parseInt(this.shareData.eductible_money)) {
             this.$invoke('Toast', 'show', '抵用券金额不能大于现价')
             return
           }
@@ -286,8 +290,7 @@
         this.loaded()
       },
       getServeList() {
-        if (parseInt(this.editType) === 1) {
-          console.log(this.editType === '1')
+        if (this.editType) {
           this.$invoke('Toast', 'show', '上线中的服务不能更改')
         } else {
           let url = `/pages/share-active-choose-server/share-active-choose-server`
