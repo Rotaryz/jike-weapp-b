@@ -402,7 +402,8 @@
         id: this.info.id,
         src: this.info.src,
         goodStatus: NORMAL,
-        peopleNum: parseInt(this.info.peopleNum)
+        peopleNum: parseInt(this.info.peopleNum),
+        saveSuccess: true
       }
     }
 

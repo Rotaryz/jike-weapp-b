@@ -156,6 +156,7 @@
           // 没在上线类表中
           this.onlineList.unshift(obj)
         }
+        obj.saveSuccess && Tips.success('保存成功')
       }
       this.$apply()
     }
