@@ -106,6 +106,7 @@
 
     async onLoad(options) {
       this.pickerStar = new Date()
+      this.$parent.globalData.shareCoupon = null
       if (options.id) {
         this.editId = options.id
         this.editType = options.type
