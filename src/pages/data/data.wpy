@@ -155,7 +155,6 @@
       let resJosn = await shop.sceneDetailData(data)
       if (resJosn.error === ERR_OK) {
         this.sceneData = resJosn.data
-        console.log(resJosn.data)
         this.loaded()
         this.$apply()
       }
@@ -173,7 +172,7 @@
       }
     }
 
-    async onLoad (options) {
+    async onLoad () {
       await this.load()
     }
 

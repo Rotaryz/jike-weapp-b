@@ -105,7 +105,7 @@
     }
 
     async onLoad(options) {
-      console.log(options)
+      this.pickerStar = new Date()
       if (options.id) {
         this.editId = options.id
         this.editType = options.type
@@ -113,12 +113,11 @@
         if (res.error === ERR_OK) {
           this.shareData = res.data
           this.titleNumber = res.data.title.length
-          this.pickerStar = res.data.sell_end_at
+          // this.pickerStar = res.data.sell_end_at
           this.edit_stock = res.data.stock
           let json = await ShareMoney.getServerShopDetail(res.data.promotion_id)
           if (json.error === ERR_OK) {
             this.currentCoupon = json.data
-            console.log('222222', json.data)
             this.$parent.globalData.shareCoupon = json.data
             let stock = this.currentCoupon.stock
             if (stock === -1) {
@@ -130,8 +129,6 @@
         } else {
           this.$invoke('Toast', 'show', res.message)
         }
-      } else {
-        this.pickerStar = new Date()
       }
       this.$apply()
       this.loaded()
@@ -139,7 +136,7 @@
 
     onShow() {
       this.submitLock = false
-      console.log('11', this.$parent.globalData.shareCoupon)
+      // 全局变量拿服务
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
         this.shareData.promotion_title = this.$parent.globalData.shareCoupon.title
@@ -162,17 +159,12 @@
       if (!this.shareData.eductible_money) return
       if (!this.shareData.rate) return
       if (parseInt(this.currentCoupon.price) <= parseInt(this.shareData.eductible_money)) {
-        console.log(this.currentCoupon.price)
-        console.log(this.shareData.eductible_money)
         this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
         return
       }
-      console.log(this.shareData.price, this.shareData.eductible_money, this.shareData.rate)
       this.shareData.profit_money = (parseInt(this.shareData.price) - parseInt(this.shareData.eductible_money)) * (parseInt(this.shareData.rate) / 100)
       this.shareData.profit_money = this.shareData.profit_money.toFixed(2)
-      console.log(this.shareData.profit_money)
       this.$apply()
-      console.log(11)
     }
 
     methods = {
@@ -202,7 +194,6 @@
       // 保存售卖时间
       setValidDate(e) {
         this.shareData.sell_end_at = e.detail.value
-        console.log(e.detail.value)
         this.$apply()
       },
       // 提交资料创建
@@ -219,23 +210,6 @@
           this.$invoke('Toast', 'show', '请输入活动库存')
           return
         }
-        // else {
-        //   let stock = this.currentCoupon.stock
-        //   if (!this.editId) {
-        //     console.log(11)
-        //     if (stock !== -1 && this.shareData.init_stock > stock) {
-        //       this.$invoke('Toast', 'show', `选择活动数量不能超过${stock}`)
-        //       return
-        //     }
-        //   }
-        // }
-        // if (this.editId) {
-        //   let stock = this.edit_stock
-        //   if (this.shareData.init_stock < stock) {
-        //     this.$invoke('Toast', 'show', `选择活动数量不能超过小于${stock}`)
-        //     return
-        //   }
-        // }
         if (!this.shareData.sell_end_at) {
           this.$invoke('Toast', 'show', '请输入活动截止的日期')
           return
@@ -260,8 +234,6 @@
           this.$invoke('Toast', 'show', '请输入佣金比率')
           return
         }
-        console.log(this.shareData)
-        console.log('我要提交数据啦')
         if (this.submitLock) return
         if (this.editId) {
           let res = await ShareMoney.SaveServerDetails(this.editId, this.shareData)
@@ -277,7 +249,6 @@
         } else {
           let res = await ShareMoney.createShareActive(this.shareData)
           if (res.error === ERR_OK) {
-            console.log(res)
             this.submitLock = true
             this.$parent.globalData.newData = 'NEW'
             setTimeout(() => {
