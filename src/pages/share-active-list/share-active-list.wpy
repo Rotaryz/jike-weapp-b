@@ -7,12 +7,12 @@
           <view class="g-a-l-n-item {{downStatus}}" id="0">已过期/已下线</view>
         </view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!upStatus}}" bindscrolltolower="_getMoreList">
-          <view class="g-a-c-s-has-content"  wx:if="{{!isEmpty}}">
-          <repeat for="{{onlineList}}" key="index" index="index" item="item">
-            <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
-            </view>
-          </repeat>
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
+            <repeat for="{{onlineList}}" key="index" index="index" item="item">
+              <view class="g-a-l-a-item">
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+              </view>
+            </repeat>
           </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
@@ -22,12 +22,12 @@
           </view>
         </scroll-view>
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">
-          <view class="g-a-c-s-has-content"  wx:if="{{!isEmpty}}">
-          <repeat for="{{offlineList}}" key="index" index="index" item="item">
-            <view class="g-a-l-a-item">
-              <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
-            </view>
-          </repeat>
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
+            <repeat for="{{offlineList}}" key="index" index="index" item="item">
+              <view class="g-a-l-a-item">
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+              </view>
+            </repeat>
           </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
             <view class="e-box">
@@ -322,6 +322,7 @@
         return false
       }
     }
+
     // 如果数组为空关闭活动总开关
     async _checkListEmpty() {
       let flag = this.onlineList.length === 0 && this.offlineList.length === 0
@@ -337,6 +338,7 @@
         }
       }
     }
+
     // 上线或下线
     _upOrDown(obj) {
       // 请求服务器成功后
@@ -356,8 +358,8 @@
     async _rqDelActive(id, loading) {
       const json = await ShareActiveAPI.deleteShareActive(id, loading)
       if (json.error === ERR_OK) {
-        Tips.success(json.message)
         this.loaded()
+        Tips.success(json.message)
         return true
       } else {
         this.loaded()
@@ -384,9 +386,9 @@
       let res = await ShareActiveAPI.offlineShareActive(id)
       if (res.error === ERR_OK) {
         this._upOrDown(obj)
+        this.loaded()
         Tips.success('下线成功')
       }
-      this.loaded()
     }
 
     methods = {
@@ -451,11 +453,12 @@
         let res = await ShareActiveAPI.onlineShareActive(obj.id)
         if (res.error === ERR_OK) {
           this._upOrDown(obj)
+          this.loaded()
           Tips.success('上线成功')
         } else {
           this.$invoke('toast', 'show', res.message)
+          this.loaded()
         }
-        this.loaded()
       },
       async activeBtnOffline(obj) {
         let data = {
