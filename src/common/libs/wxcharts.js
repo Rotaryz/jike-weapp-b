@@ -231,7 +231,7 @@ function convertCoordinateOrigin(x, y, center) {
 
 function avoidCollision(obj, target) {
   if (target) {
-    // is collision test
+    // is collision test-test
     while (util.isCollision(obj, target)) {
       if (obj.start.x > 0) {
         obj.start.y--;
