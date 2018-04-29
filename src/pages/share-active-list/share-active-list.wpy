@@ -57,6 +57,7 @@
   import Toast from '@/base/toast/toast'
   import Confirm from '@/base/confirm/confirm'
   import ConfirmMsg from '@/base/confirm-msg/confirm-msg'
+  import Tips from 'common/js/tips'
   import ShareActiveAPI from 'api/share-active'
   import {ERR_OK} from 'api/base'
   import {
@@ -135,10 +136,12 @@
         this._resetConfig()
         await this._init(this.status)
         await this._fromPrevPage()
+        Tips.success('新建成功')
       } else if (this.$parent.globalData.newData === 'EDIT') {
         this._resetConfig()
         await this._init(UP)
         await this._init(DOWN)
+        Tips.success('编辑成功')
       }
       this.$parent.globalData.newData = null
       this.$apply()
@@ -353,7 +356,7 @@
     async _rqDelActive(id, loading) {
       const json = await ShareActiveAPI.deleteShareActive(id, loading)
       if (json.error === ERR_OK) {
-        this.$invoke('toast', 'show', json.message)
+        Tips.success(json.message)
         this.loaded()
         return true
       } else {
@@ -381,6 +384,7 @@
       let res = await ShareActiveAPI.offlineShareActive(id)
       if (res.error === ERR_OK) {
         this._upOrDown(obj)
+        Tips.success('下线成功')
       }
       this.loaded()
     }
@@ -447,6 +451,7 @@
         let res = await ShareActiveAPI.onlineShareActive(obj.id)
         if (res.error === ERR_OK) {
           this._upOrDown(obj)
+          Tips.success('上线成功')
         } else {
           this.$invoke('toast', 'show', res.message)
         }
