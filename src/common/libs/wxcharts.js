@@ -1002,7 +1002,7 @@ function drawToolTip(textList, offset, opts, config, context) {
     y: 0
   }, offset);
   // offset.y -= 8;
-  offset.y = 8;
+  offset.y = 0;
   var textWidth = textList.map(function (item) {
     return measureText(item.text);
   });

@@ -49,6 +49,7 @@
     async onLoad() {
       await this._init()
       this.loaded()
+      console.log(this.$parent.globalData.shareCoupon)
       if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
         this._findCoupon(this.currentCoupon)
@@ -91,7 +92,7 @@
       }
       const res = await this._getShareServerList(params, false)
       if (res) {
-        this.couponList = res.data
+        this.couponList = this._formatRqData(res)
         this.$apply()
         this._checkIsAll(res)
       }
@@ -104,19 +105,41 @@
       this.params.page++
       const res = await this._getShareServerList(this.params)
       if (res) {
-        this.couponList.push(...res.data)
+        this.couponList.push(...this._formatRqData(res))
         this._checkIsAll(res)
       }
       this.loaded()
       this.$apply()
     }
 
+    // 格式化服务器数据
+    _formatRqData(res) {
+      if (res.data && res.data.length === 0) return []
+      // let list = this._filterRqData(res.data)
+      // console.log(res.data)
+      let arr = []
+      res.data.map(item => {
+        arr.push({
+          id: item.id, // 商品id即goods_id
+          promotion_id: item.id,
+          platform_price: item.price,
+          title: item.title,
+          end_at: item.sell_end_at,
+          checked: false,
+          stock: item.stock,
+          src: item.image_url
+        })
+      })
+      return arr
+    }
+
     // 初始化
     async _init() {
       const res = await this._getShareServerList(this.params)
       if (res) {
-        this.couponList = res.data
-        console.log(res)
+        console.log('after', res)
+        this.couponList = this._formatRqData(res)
+        console.log('11', this.couponList)
         this.$apply()
         this._checkIsAll(res)
       }
