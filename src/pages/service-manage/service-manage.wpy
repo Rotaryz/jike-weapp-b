@@ -162,7 +162,7 @@
   import wepy from 'wepy'
   import {ERR_OK} from 'api/base'
   import Coupons from 'api/coupons'
-  import Confirm from '@/base/confirm-msg/confirm-msg'
+  import Confirm from '@/base/confirm-msg-scroll/confirm-msg-scroll'
   import Toast from '@/base/toast/toast'
   import base from 'common/mixins/base'
   import URIS from 'common/js/config'

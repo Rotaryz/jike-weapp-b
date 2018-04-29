@@ -1,16 +1,18 @@
 <template>
-  <view class="confirm" wx:if="{{show}}" @tap.stop="cancel">
+  <view class="confirm-msg-scroll" hidden="{{!show}}" @tap.stop="cancel">
     <view class="modal-wrapper" @tap.stop="_hack">
       <view class="modal">
         <view class="content-wrapper">
-          <view class="content">
-            <view class="danger-wrapper" wx:if="{{imgFlag}}">
-              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
-            </view>
-            <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
-            <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
-            <view class="font" wx:if="{{msg2 !== ''}}">{{msg2}}</view>
+          <view class="danger-wrapper" wx:if="{{imgFlag}}">
+            <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
           </view>
+          <scroll-view class="scroll-c-txt-box" scroll-y>
+            <view class="c-txt-box">
+              <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
+              <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
+              <view class="font" wx:if="{{msg2 !== ''}}">{{msg2}}</view>
+            </view>
+          </scroll-view>
         </view>
         <view class="btn-group border-top-1px">
           <view class="btn-left border-right-1px" @tap.stop="cancel">取消</view>
@@ -67,7 +69,7 @@
   @import '../../common/stylus/variable.styl'
   @import '../../common/stylus/mixin.styl'
 
-  .confirm
+  .confirm-msg-scroll
     position: fixed
     top: 0
     left: 0
@@ -89,22 +91,28 @@
       .modal
         height: 240px
         .content-wrapper
-          display: flex
+          layout()
           align-items: center
           justify-content: center
           height: 200px
-          .content
-            text-align: center
-            padding: 0 10px
-            .danger-wrapper
-              margin: 0 auto
-              margin-bottom: 20px
-              width: 51px
-              height: 43px
-            .font
-              text-align: center
-              font-size: $font-size-medium
-              line-height: 28px
+          .danger-wrapper
+            margin-bottom: 15px
+            width: 51px
+            height: 43px
+          .scroll-c-txt-box
+            max-height: 80px
+            max-width: 198.5px
+            .c-txt-box
+              layout()
+              .font
+                layout()
+                justify-content: center
+                align-items: center
+                font-family: $font-family-light
+                font-size: $font-size-medium
+                color: $color-text
+                text-align: center
+                line-height: 20px
         .btn-group
           display: flex
           height: 40px
