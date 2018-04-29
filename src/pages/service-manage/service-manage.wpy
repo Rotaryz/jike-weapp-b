@@ -143,7 +143,7 @@
               <view class="btn-group">
                 <view class="left-btn btn" @tap="showOnlineConfirm({{item.id}})">上线</view>
                 <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn btn" @tap="edit({{item.id}},{{'up-editor'}}))">编辑</view>
+                <view class="right-btn btn" @tap="edit({{item.id}},{{'down-editor'}}))">编辑</view>
               </view>
             </view>
           </view>

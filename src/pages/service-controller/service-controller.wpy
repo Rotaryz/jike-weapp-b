@@ -16,11 +16,9 @@
       <view class="type input-wrapper border-bottom-1px" @tap="showMealModal">
         <view class="label">类型</view>
         <view class="arrow-content-wrapper">
-          <view class="content {{disableStyle}}">{{categoryData.categories[categoryData.flag].name}}</view>
+          <view class="content {{disableStyle}} {{disableDownStyle}}">{{categoryData.categories[categoryData.flag].name}}</view>
           <view class="arrow-right">
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                   class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>
           </view>
         </view>
         <meal-modal type="big" title="选择类型" name="categoryData" @confirm.user="setSelect" @cancel.user="resetSelect">
@@ -32,8 +30,7 @@
                   <view class="desc">{{item.describe}}</view>
                 </view>
                 <view class="radio {{index !== categoryData.tmp ? 'unselected' : ''}}">
-                  <image wx:if="{{index === categoryData.tmp && imageUri}}" class="full-image"
-                         src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+                  <image wx:if="{{index === categoryData.tmp && imageUri}}" class="full-image" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
                 </view>
               </view>
             </repeat>
@@ -602,48 +599,33 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showBuyLimit')">
                 <view class="title">单人购买上限</view>
                 <view class="icon-arrow {{showBuyLimit ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showBuyLimit ? '' : 'hide'}}">
                 <view wx:if="{{categoryId === 3 || categoryId === 4}}" class="radio-wrapper">
                   <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{imageUri}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   限制数量
                   <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number"
-                           value="{{tempBuyLimit === -1 ? buyLimitMin : tempBuyLimit}}"
-                           maxlength="10"
-                           @input="handleInput('tempBuyLimit')"/>
+                    <input type="number" value="{{tempBuyLimit === -1 ? buyLimitMin : tempBuyLimit}}" maxlength="10" @input="handleInput('tempBuyLimit')"/>
                   </view>
                 </view>
                 <view wx:else>
-                  <view class="radio-wrapper">
-                    <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}"
-                          @tap.stop="selectBuyLimit(-1)">
-                      <image wx:if="{{imageUri && tempBuyLimit === -1}}"
-                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                             class="full-image"></image>
+                  <view class="radio-wrapper" @tap.stop="selectBuyLimit(-1)">
+                    <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}">
+                      <image wx:if="{{imageUri && tempBuyLimit === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                     </view>
                     无上限
                   </view>
-                  <view class="radio-wrapper">
-                    <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(1)">
-                      <image wx:if="{{imageUri && tempBuyLimit !== -1}}"
-                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                             class="full-image"></image>
+                  <view class="radio-wrapper" @tap.stop="selectBuyLimit(1)">
+                    <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}">
+                      <image wx:if="{{imageUri && tempBuyLimit !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                     </view>
                     限制数量
                     <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
-                      <input type="number"
-                             value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}"
-                             disabled="{{tempBuyLimit === -1}}"
-                             maxlength="10"
-                             @input="handleInput('tempBuyLimit')"/>
+                      <input type="number" value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}" disabled="{{tempBuyLimit === -1}}" maxlength="10" @input="handleInput('tempBuyLimit')"/>
                     </view>
                   </view>
                 </view>
@@ -654,32 +636,23 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showUseLimit')">
                 <view class="title">使用人数</view>
                 <view class="icon-arrow {{showUseLimit ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showUseLimit ? '' : 'hide'}}">
-                <view class="radio-wrapper">
-                  <view class="radio {{tempUseLimit !== -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(-1)">
-                    <image wx:if="{{imageUri && tempUseLimit === -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectUseLimit(-1)">
+                  <view class="radio {{tempUseLimit !== -1 ? 'unselected' : ''}}" >
+                    <image wx:if="{{imageUri && tempUseLimit === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   无上限
                 </view>
-                <view class="radio-wrapper">
-                  <view class="radio {{tempUseLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(1)">
-                    <image wx:if="{{imageUri && tempUseLimit !== -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectUseLimit(1)">
+                  <view class="radio {{tempUseLimit === -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempUseLimit !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   限制数量
                   <view class="input-wrapper {{tempUseLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number"
-                           value="{{tempUseLimit === -1 ? '' : tempUseLimit}}"
-                           disabled="{{tempUseLimit === -1}}"
-                           maxlength="10"
-                           @input="handleInput('tempUseLimit')"/>
+                    <input type="number" value="{{tempUseLimit === -1 ? '' : tempUseLimit}}" disabled="{{tempUseLimit === -1}}" maxlength="10" @input="handleInput('tempUseLimit')"/>
                   </view>
                 </view>
               </view>
@@ -692,34 +665,23 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showRange')">
                 <view class="title">适用范围</view>
                 <view class="icon-arrow {{showRange ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
-              <view class="select-wrapper {{showRange ? '' : 'hide'}}">
+              <view class="select-wrapper {{showRange ? '' : 'hide'}}" @tap.stop="selectRange(-1)">
                 <view class="radio-wrapper">
-                  <view class="radio {{tempRange !== -1 ? 'unselected' : ''}}"
-                        @tap.stop="selectRange(-1)">
-                    <image wx:if="{{imageUri && tempRange === -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                  <view class="radio {{tempRange !== -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempRange === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   全场通用
                 </view>
-                <view class="radio-wrapper">
-                  <view class="radio {{tempRange === -1 ? 'unselected' : ''}}"
-                        @tap.stop="selectRanges('')">
-                    <image wx:if="{{imageUri && tempRange !== -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectRanges('')">
+                  <view class="radio {{tempRange === -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempRange !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   指定商品
                   <view class="input-wrapper {{tempRange === -1 ? 'disabled' : ''}}">
-                    <input type="text"
-                           value="{{tempRange === -1 ? '' : tempRange}}"
-                           disabled="{{tempRange === -1}}"
-                           maxlength="10"
-                           @input="handleInput('tempRange')"/>
+                    <input type="text" value="{{tempRange === -1 ? '' : tempRange}}" disabled="{{tempRange === -1}}" maxlength="10" @input="handleInput('tempRange')"/>
                   </view>
                 </view>
               </view>
@@ -728,11 +690,7 @@
           <!--备注-->
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
-              <text-area height="50"
-                         :value.sync="tempKnowRemark"
-                         maxLength="20"
-                         @input.user="handleTextarea"
-                         placeHolder="备注：请输入"></text-area>
+              <text-area height="50" :value.sync="tempKnowRemark" maxLength="20" @input.user="handleTextarea" placeHolder="备注：请输入"></text-area>
             </view>
           </view>
         </view>
@@ -1505,7 +1463,7 @@
         this.loaded()
       },
       showMealModal() {
-        if (this.disable) {
+        if (this.disable || this.disableDown) {
           this.$invoke('toast', 'show', FINISHEDMESSAGE)
           return
         }
@@ -1646,6 +1604,12 @@
       // 上线编辑时,禁用逻辑开饭
       disable() {
         return this.model === 'up-editor'
+      },
+      disableDown() {
+        return this.model === 'down-editor'
+      },
+      disableDownStyle() {
+        return this.disableDown ? 's-c-disable' : 's-c-disable-undef'
       },
       // 上线编辑时,售卖结束时间可选择的限制
       limitSellStartDate() {
