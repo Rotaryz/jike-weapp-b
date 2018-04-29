@@ -373,8 +373,11 @@
       let id = this.currentChooseObj.id
       let flag = await this._rqDelActive(id)
       if (!flag) return
-      this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
-      this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      if (this.status === UP) {
+        this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      } else {
+        this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === id * 1), 1)
+      }
       this.$apply()
       await this._checkListEmpty()
     }

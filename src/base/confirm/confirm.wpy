@@ -1,6 +1,6 @@
 <template>
   <view class="confirm" wx:if="{{show}}" @tap.stop="cancel">
-    <view class="modal-wrapper" @tap.stop="">
+    <view class="modal-wrapper" @tap.stop="_hack">
       <view class="modal">
         <view class="content-wrapper">
           <view class="content">
@@ -30,6 +30,9 @@
     }
 
     methods = {
+      _hack() {
+        // 防止报错
+      },
       cancel() {
         this.show = false
         this.$emit('cancel')
