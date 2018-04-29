@@ -231,12 +231,10 @@
       let res = {}
       if (parseInt(status) === parseInt(UP)) {
         res = await this._getShareActiveList(status, this.paramsUp)
-        console.log('paramsUp', res)
         res && (this.onlineList = this._formatRqData(res))
         res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
       } else {
         res = await this._getShareActiveList(status, this.paramsDown)
-        console.log('paramsDown', res)
         res && (this.offlineList = this._formatRqData(res))
       }
       if (res) {
@@ -270,7 +268,6 @@
 
     // 检查是否已经查询完毕
     _checkIsAll(res) {
-      console.log(this.onlineList)
       if (this.status === UP) {
         if (this.onlineList.length >= res.meta.total * 1) {
           // || this.onlineList.length % UPPAGELIMIT !== 0
@@ -279,12 +276,9 @@
         }
       } else {
         if (this.offlineList.length >= res.meta.total * 1) {
-          // || this.onlineList.length % DOWNPAGELIMIT !== 0
-          // this.$invoke('underline', 'show')
           this.isAllDown = true
         }
       }
-      console.log(this.isAllUp, 1, this.isAllDown, 2)
       this.$apply()
     }
 
@@ -343,7 +337,6 @@
     // 上线或下线
     _upOrDown(obj) {
       // 请求服务器成功后
-      console.log('111')
       if (this.status === UP) {
         this.onlineList.splice(this.onlineList.findIndex(val => val.id === obj.id), 1)
         obj.statusType = DOWN
@@ -460,7 +453,6 @@
         this.loaded()
       },
       async activeBtnOffline(obj) {
-        console.log(obj)
         let data = {
           title: '确定要下线'
         }
@@ -476,7 +468,6 @@
         this.$apply()
       },
       activeBtnEditor(obj) {
-        console.log(obj)
         let id = obj.id
         let type = obj.statusType
         if (this.toEditorTimer != null) return
