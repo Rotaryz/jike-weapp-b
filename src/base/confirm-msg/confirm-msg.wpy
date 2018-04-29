@@ -1,12 +1,11 @@
 <template>
   <view class="confirm" wx:if="{{show}}" @tap.stop="cancel">
-    <view class="modal-wrapper" @tap.stop="">
+    <view class="modal-wrapper" @tap.stop="_hack">
       <view class="modal">
         <view class="content-wrapper">
           <view class="content">
             <view class="danger-wrapper" wx:if="{{imgFlag}}">
-              <image wx:if="{{imageUrlHead}}"
-                     src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
+              <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/icon-danger@2x.png'}}" class="full-image"></image>
             </view>
             <view class="font" wx:if="{{title !== ''}}">{{title}}</view>
             <view class="font" wx:if="{{msg !== ''}}">{{msg}}</view>
@@ -37,6 +36,9 @@
     }
 
     methods = {
+      _hack() {
+        // 防止报错
+      },
       cancel() {
         this.show = false
         this.$emit('cancel')
