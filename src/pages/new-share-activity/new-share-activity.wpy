@@ -114,7 +114,9 @@
         if (res.error === ERR_OK) {
           this.shareData = res.data
           this.titleNumber = res.data.title.length
-          // this.pickerStar = res.data.sell_end_at
+          if (options.type === '1') {
+            this.pickerStar = res.data.sell_end_at
+          }
           this.edit_stock = res.data.stock
           let json = await ShareMoney.getServerShopDetail(res.data.promotion_id)
           if (json.error === ERR_OK) {
