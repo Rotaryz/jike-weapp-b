@@ -40,7 +40,7 @@
       imageUrlHead: URIS.image,
       couponList: [],
       prevId: -1, // 商品id
-      currentCoupon: {},
+      currentCoupon: null,
       params: {
         page: 1,
         limit: PAGELIMIT

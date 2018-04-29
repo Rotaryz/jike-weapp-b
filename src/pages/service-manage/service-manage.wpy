@@ -49,7 +49,7 @@
               <view class="status">未上线</view>
               <view class="btn-group">
                 <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="right-btn btn" @tap="edit({{item.id}},{{'up-editor'}})">编辑</view>
               </view>
             </view>
           </view>
@@ -143,7 +143,7 @@
               <view class="btn-group">
                 <view class="left-btn btn" @tap="showOnlineConfirm({{item.id}})">上线</view>
                 <view class="left-btn btn" @tap="showConfirm({{item.id}})">删除</view>
-                <view class="right-btn btn" @tap="edit({{item.id}})">编辑</view>
+                <view class="right-btn btn" @tap="edit({{item.id}},{{'up-editor'}}))">编辑</view>
               </view>
             </view>
           </view>
@@ -297,7 +297,7 @@
     async _rqServerBackStatus(fn) {
       const json = await fn()
       if (json.error === ERR_OK) {
-        this.loaded()
+        // this.loaded()
         return true
       } else {
         this.loaded()
@@ -314,16 +314,24 @@
       if (!json) return
       const res = json.data
       const msgAction = this.deleteId ? '删除' : '下线'
-      if (res.length > 0) {
-        let arr = []
-        res.map(item => {
-          arr.push((item.active_name || '') + (item.active_type || ''))
-        })
-        const msg = arr.toString()
-        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动`, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
+      let arr = this._assemblyMsg(res)
+      if (arr.length > 0) {
+        const msg = ' ' + arr.toString()
+        this.$invoke('confirm', 'show', {title: `该商品关联${msg}活动 `, msg: `${msgAction}后,会导致关联活动下线`, msg2: `是否确认${msgAction}?`})
       } else {
         this.$invoke('confirm', 'show', {title: `确定要${msgAction}？`})
       }
+    }
+
+    // 拼接活动名称
+    _assemblyMsg(json) {
+      let arr = []
+      for (let [key, val] of Object.entries(json)) {
+        val.length > 0 && val.map(item => {
+          arr.push(item + key)
+        })
+      }
+      return arr
     }
 
     // 删除商品
@@ -440,13 +448,13 @@
         }
       },
       async showConfirm(id) {
-        await this._checkIsConnection(id)
         this.deleteId = id
+        await this._checkIsConnection(id)
         this.$apply()
       },
       async showOfflineConfirm(id) {
-        await this._checkIsConnection(id)
         this.offlineId = id
+        await this._checkIsConnection(id)
         this.$apply()
       },
       async showOnlineConfirm(id) {

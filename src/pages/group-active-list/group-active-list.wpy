@@ -511,7 +511,7 @@
 
   .g-a-c-s-empty
     background-color: $color-white
-    height: 69vh
+    height: 100%
     layout()
     justify-content: center
     align-items: center
