@@ -3,7 +3,7 @@
     <view class="g-a-article">
       <view class="server-type g-a-item-box">
         <view class="g-a-item-left">添加服务</view>
-        <view class="g-a-item-middle g-a-server-type {{isDisabledStyle}}">{{info.serverType}}</view>
+        <view class="g-a-item-middle g-a-server-type {{isDisabledStyle}} {{disableDownStyle}}">{{info.serverType}}</view>
         <view class="g-a-item-right to-choose-server" @tap="toChooseServer">
           <image class="g-a-arrow" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
         </view>
@@ -423,7 +423,7 @@
         }
       },
       toChooseServer() {
-        if (this.isDisabled) {
+        if (this.isDisabled || this.disableDown) {
           this.$invoke('toast', 'show', '不可修改')
           return
         }
@@ -515,11 +515,18 @@
         return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
-        return this.info.source !== NEW
+        return this.info.statusType === UP && this.info.source === EDITOR
       },
       isDisabledStyle() {
         return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
+      },
+      disableDown() {
+        return this.info.statusType === DOWN && this.info.source === EDITOR
+      },
+      disableDownStyle() {
+        return this.disableDown ? 'g-a-disable-style' : 'g-a-disable-style-undef'
       }
+
     }
     components = {
       'toast': Toast
