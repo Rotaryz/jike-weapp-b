@@ -1861,7 +1861,7 @@ Animation.prototype.stop = function () {
 
 function drawCharts(type, opts, config, context) {
   var _this = this;
-  console.log(type,opts,config)
+  // console.log(type,opts,config)
   var series = opts.series;
   var categories = opts.categories;
   series = fillSeriesColor(series, config);
@@ -1877,11 +1877,11 @@ function drawCharts(type, opts, config, context) {
   config.yAxisWidth = yAxisWidth;
   if (categories && categories.length) {
     var _calCategoriesData = calCategoriesData(categories, opts, config),
-      xAxisHeight = _calCategoriesData.xAxisHeight,
+      // xAxisHeight = _calCategoriesData.xAxisHeight,
       angle = _calCategoriesData.angle;
 
-    console.log(xAxisHeight)
-    console.log(angle)
+    // console.log(xAxisHeight)
+    // console.log(angle)
     // 修改Y轴高度
     config.xAxisHeight = 50;
     // config.xAxisHeight = xAxisHeight;
