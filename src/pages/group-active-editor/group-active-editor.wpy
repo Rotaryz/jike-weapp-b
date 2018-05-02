@@ -266,7 +266,7 @@
       if (isNaN(oldAddNum)) {
         oldAddNum = 2
       }
-      if (this.isDisabled) {
+      if (this.isDisabled || this.disableDown) {
         // 上线状态的判断
         if (this.info.hotName === INPUTDEFAULT) {
           flag = '请输入活动名称'
