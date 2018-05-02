@@ -448,6 +448,7 @@
         let status = this.isChecked === ON ? '0' : '1'
         let flag = await this._rqChangeActiveStatus({status, type})
         if (flag) {
+          status === '1' ? Tips.success('开启成功') : Tips.success('关闭成功')
           this.isChecked = this.isChecked === ON ? OFF : ON
           this.$apply()
         }
