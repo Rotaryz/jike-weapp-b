@@ -143,6 +143,9 @@
   @import "../../common/stylus/variable.styl"
 
   .active-item-component
+    position: relative
+    padding-bottom: 31.34%
+    height: 0
     .component-group-item
       background-color: $color-white
       position: relative
