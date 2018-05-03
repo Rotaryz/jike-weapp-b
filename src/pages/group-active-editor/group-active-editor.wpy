@@ -566,7 +566,7 @@
           width: 100%
       .g-a-item-left
         font-family: $font-family-light
-        width: 88px
+        width: 100px
         line-height: 43px
         text-indent: 12px
       .g-a-item-middle
