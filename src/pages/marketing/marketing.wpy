@@ -257,8 +257,11 @@
       line-height: 50px
       box-sizing border-box
       background-color: $color-white
-      &.m-active
-        margin-top: 10px
+      border-top: 0.5px solid $color-col-line-f
+      margin-top: 10px
+      &:first-child
+        border-top-color: transparent
+        margin-top: 0
       &:after
         content: ""
         position: absolute
@@ -279,6 +282,8 @@
     .container
       margin: 0
       background: $color-white
+      &:last-child
+        margin-bottom: 20px
       &.jackpot
         margin-bottom: 9.5px
       .marketing-item
