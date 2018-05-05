@@ -1,5 +1,6 @@
 <template>
   <view class="active-item-component">
+    <image class="a-i-line" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/marketing/bg-activity@2x.png'}}"></image>
     <view class="component-group-item" wx:if="{{activeType === 'group'}}">
       <view class="a-i-up">
         <view class="a-i-up-box">
@@ -85,6 +86,7 @@
 </template>
 <script>
   import wepy from 'wepy'
+  import URIS from 'common/js/config'
 
   export default class ActivityItem extends wepy.component {
     props = {
@@ -121,6 +123,9 @@
         default: {}
       }
     }
+    data = {
+      imageUri: URIS.image
+    }
     methods = {
       handleClickDel(obj) {
         this.$emit('activeBtnDel', obj)
@@ -146,13 +151,18 @@
     position: relative
     padding-bottom: 31.34%
     height: 0
+    .a-i-line
+      position: absolute
+      top: 0
+      left: 0
+      display: block
+      width: 100%
+      height: 100%
     .component-group-item
-      background-color: $color-white
       position: relative
       padding-bottom: 31.34%
       height: 0
       border-radius: 2px
-      border: .5px solid $color-row-line
       .a-i-up
         position: absolute
         top: 0
@@ -171,7 +181,6 @@
           padding: 8px 0px 12px
           margin: 0 10px
           overflow: hidden
-          border-bottom: 0.5px dashed $color-col-line
           .a-i-u-pic
             position: relative
             height: 100%
@@ -256,4 +265,6 @@
           .a-i-d-editor
             color: $color-assist-f
             border-color: $color-assist-f
+
+
 </style>

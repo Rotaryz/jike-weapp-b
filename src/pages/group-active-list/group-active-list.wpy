@@ -515,13 +515,13 @@
     background-color: $color-white
     height: 100%
     layout()
-    justify-content: center
+    box-sizing: border-box
+    padding-top: 11.8%
     align-items: center
     .e-box
       layout()
       justify-content: center
       align-items: center
-      margin-top: -50.5%
       .e-pic
         width: 95.5px
         height: 75.5px
