@@ -171,17 +171,7 @@
           padding: 8px 0px 12px
           margin: 0 10px
           overflow: hidden
-          &:after
-            content: ""
-            position: absolute
-            bottom: 0
-            left: -50%
-            right: -50%
-            height: 1px
-            background-image: linear-gradient(to right, #ccc 0%, #ccc 50%, transparent 50%)
-            background-size: 16px 1px
-            background-repeat: repeat-x
-            transform: scale(0.5)
+          border-bottom: 0.5px dashed $color-col-line
           .a-i-u-pic
             position: relative
             height: 100%
