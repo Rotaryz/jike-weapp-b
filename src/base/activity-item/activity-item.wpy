@@ -217,7 +217,7 @@
             color: $color-text-light
             width: 70%
           .a-i-u-hot-price
-            font-family: $font-family-regular
+            font-family: $font-family-light
             font-size: $font-size-small-s
             color: $color-text-light
             width: 70%
@@ -246,7 +246,7 @@
           overflow: hidden
           .a-i-d-status
             font-family: $font-family-light
-            font-size: $font-size-medium
+            font-size: $font-size-small
             color: $color-text-td
             flex: 1
           .a-i-d-btn
