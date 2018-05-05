@@ -171,7 +171,17 @@
           padding: 8px 0px 12px
           margin: 0 10px
           overflow: hidden
-          border-bottom: .5px dotted $color-row-line
+          &:after
+            content: ""
+            position: absolute
+            bottom: 0
+            left: -50%
+            right: -50%
+            height: 1px
+            background-image: linear-gradient(to right, #ccc 0%, #ccc 50%, transparent 50%)
+            background-size: 16px 1px
+            background-repeat: repeat-x
+            transform: scale(0.5)
           .a-i-u-pic
             position: relative
             height: 100%
@@ -191,7 +201,7 @@
               height: 17px
               width: 100%
               border-radius: 0 0 2px 2px
-              background-color: rgba(0,0,0,.6)
+              background-color: rgba(0, 0, 0, .6)
               text-indent: 7.5px
               font-family: $font-family-light
               font-size: $font-size-small-s
