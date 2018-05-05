@@ -10,7 +10,7 @@
     <view class="tl-share-box">
       <view class="tl-share-left">现价</view>
       <view class="tl-share-right">
-        <view class="full-text {{!shareData.price ? 'full-text-dis' : ''}}">{{!shareData.price ? '0.00' : shareData.price}}
+        <view class="full-text-dis">{{!shareData.price ? '0.00' : shareData.price}}
         </view>
       </view>
     </view>
@@ -402,6 +402,7 @@
         margin-right: 6px
         width: 39px
         height: 22px
+        text-align: center
         border: 1px solid $color-col-line-f
 
   .tl-share-save
