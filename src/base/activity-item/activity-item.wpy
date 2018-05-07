@@ -28,6 +28,12 @@
           <view class="a-i-d-status">商品已下架</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
         </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusTypeStr === '已过期'}}">
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
+        </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
           <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOffline({{activeObj}})">下线</view>
@@ -67,6 +73,12 @@
         <view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">
           <view class="a-i-d-status">商品已下架</view>
           <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+        </view>
+        <view class="a-i-down-box" wx:elif="{{activeObj.statusTypeStr === '已过期'}}">
+          <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
+          <view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>
+          <view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>
+          <view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>
         </view>
         <view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">
           <view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>
