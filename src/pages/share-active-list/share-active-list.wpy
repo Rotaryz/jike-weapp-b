@@ -345,10 +345,12 @@
       if (this.status === UP) {
         this.onlineList.splice(this.onlineList.findIndex(val => val.id === obj.id), 1)
         obj.statusType = DOWN
+        obj.statusTypeStr = '已下线'
         this.offlineList.unshift(obj)
       } else {
         this.offlineList.splice(this.offlineList.findIndex(val => val.id === obj.id), 1)
         obj.statusType = UP
+        obj.statusTypeStr = '已上线'
         this.onlineList.unshift(obj)
       }
       this.$apply()

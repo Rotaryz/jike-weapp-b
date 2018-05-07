@@ -388,6 +388,7 @@
         if (!flag) return
         this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
         obj.statusType = DOWN
+        obj.statusTypeStr = '已下线'
         this.offlineList.unshift(obj)
         Tips.success('下线成功')
         this.currentOfflineObj = null
@@ -397,6 +398,7 @@
         this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
         obj.statusType = UP
         this.onlineList.unshift(obj)
+        obj.statusTypeStr = '已上线'
         Tips.success('上线成功')
       }
       this.$apply()
