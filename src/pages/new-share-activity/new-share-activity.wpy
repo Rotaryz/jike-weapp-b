@@ -165,7 +165,7 @@
         this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
         return
       }
-      this.shareData.profit_money = (parseInt(this.shareData.price) - parseInt(this.shareData.eductible_money)) * (parseInt(this.shareData.rate) / 100)
+      this.shareData.profit_money = (this.shareData.price - this.shareData.eductible_money) * (this.shareData.rate / 100)
       this.shareData.profit_money = this.shareData.profit_money.toFixed(2)
       this.$apply()
     }
