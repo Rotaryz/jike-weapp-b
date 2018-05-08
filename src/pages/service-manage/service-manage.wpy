@@ -323,11 +323,22 @@
       }
     }
 
+    // // 拼接活动名称
+    // _assemblyMsg(json) {
+    //   let arr = []
+    //   for (let [key, val] of Object.entries(json)) {
+    //     val.length > 0 && val.map(item => {
+    //       arr.push(item + key)
+    //     })
+    //   }
+    //   return arr
+    // }
+
     // 拼接活动名称
     _assemblyMsg(json) {
       let arr = []
-      for (let [key, val] of Object.entries(json)) {
-        val.length > 0 && val.map(item => {
+      for (let key in json) {
+        json[key].length > 0 && json[key].map(item => {
           arr.push(item + key)
         })
       }

@@ -1,8 +1,8 @@
 <template>
   <view class="tl-share-con">
-    <view class="tl-share-box tl-share-type-between">
+    <view class="tl-share-box tl-share-type-between"  @tap="getServeList()">
       <view class="tl-share-left">添加服务</view>
-      <view class="tl-share-right" @tap="getServeList()">
+      <view class="tl-share-right">
         <view class="full-text {{editType  ? 'full-text-dis' : ''}}">{{shareData.promotion_title}}</view>
         <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
       </view>
@@ -27,7 +27,7 @@
       <view class="tl-share-left">活动时间</view>
       <view class="tl-share-data-left">自上线之日起</view>
       <view class="tl-share-data-to tl-share-data-left">至</view>
-      <picker mode="date" class="sell-date" @change="setValidDate" start="{{pickerStar}}" value="{{shareData.sell_end_at}}">
+      <picker mode="date" class="sell-date" @change="setValidDate" start="{{hotEndStartDate}}" value="{{shareData.sell_end_at}}">
         <view class="tl-share-data-time">
           <view>{{shareData.sell_end_at === '' ? '结束时间' : shareData.sell_end_at}}</view>
           <view class="arrow-right" wx:if="{{shareData.sell_end_at === ''}}">
@@ -170,6 +170,15 @@
       this.$apply()
     }
 
+    // 格式化日期
+    _formateDate(time) {
+      time = new Date(time)
+      const year = time.getFullYear()
+      const month = time.getMonth() + 1
+      const date = time.getDate()
+      return `${year}-${month}-${date}`
+    }
+
     methods = {
       // 输入分享金额标题
       shareInputTitle(e) {
@@ -270,6 +279,19 @@
           let url = `/pages/share-active-choose-server/share-active-choose-server`
           this.$navigate(url)
         }
+      }
+    }
+
+    computed = {
+      hotEndStartDate() {
+        let time = ' '
+        if (this.editType === '1') {
+          time = this.pickerStar
+        } else {
+          time = new Date()
+        }
+        time = this._formateDate(time)
+        return time
       }
     }
 

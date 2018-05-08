@@ -1188,12 +1188,20 @@ function drawAreaDataPoints(series, opts, config, context) {
         var lastPoint = points[points.length - 1];
 
         context.moveTo(firstPoint.x, firstPoint.y);
+        // context.moveTo(0, 0);
+        // console.log(firstPoint.x,firstPoint.y)
         if (opts.extra.lineStyle === 'curve') {
-          points.forEach(function (item, index) {
 
+          points.forEach(function (item, index) {
             if (index > 0) {
               var ctrlPoint = createCurveControlPoints(points, index - 1);
+              // 控制Y轴最大值
+              ctrlPoint.ctrA.y = Math.min(158,ctrlPoint.ctrA.y)
+              ctrlPoint.ctrB.y = Math.min(158,ctrlPoint.ctrB.y)
+              item.y = Math.min(158,item.y)
               context.bezierCurveTo(ctrlPoint.ctrA.x, ctrlPoint.ctrA.y, ctrlPoint.ctrB.x, ctrlPoint.ctrB.y, item.x, item.y);
+              // console.log(ctrlPoint.ctrA.x, ctrlPoint.ctrA.y, ctrlPoint.ctrB.x, ctrlPoint.ctrB.y, item.x, item.y,`--------------${index}`)
+              // context.bezierCurveTo(0, 0, 150, 150, 150, 150)
               // context.setStrokeStyle('#F76B1C');
               context.setLineWidth(3)
               context.stroke();
