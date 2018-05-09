@@ -66,7 +66,7 @@
           <view class="g-a-input {{isDisabledStyle}}">{{info.hotPrice}}</view>
         </view>
         <view class="g-a-item-middle" wx:else>
-          <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input" type="digit" disabled="{{isDisabled}}" value="{{info.hotPrice}}" @blur="hotPriceInputBlur" @input="hotPriceInput" placeholder="请输入" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
     </view>
@@ -242,6 +242,8 @@
     _checkInfoLegal(statusType) {
       // statusType = this.info.statusType
       // 活动类型上线
+
+      let re = /([0-9]+\.[0-9])[0-9]*|^([1-9][0-9]*)$/
       let flag = false
       let price = parseFloat(this.info.price)
       let addNum = parseInt(this.info.addNum)
@@ -295,6 +297,12 @@
         } else if (newEndDate > sellEndDate) {
           flag = `活动时间不能大于售卖时间${this.info.hotSellEndDate}`
           return flag
+        } else if (isNaN(this.info.hotPrice * 1)) {
+          flag = `请输入正确的价格`
+          return flag
+        } else if (!re.test(this.info.hotPrice)) {
+          flag = `请输入正确的价格`
+          return flag
         }
       } else {
         // 下线状态或新建状态的判断
@@ -341,6 +349,9 @@
           flag = `请输入${0}至${price}之内的价格`
           return flag
         } else if (isNaN(this.info.hotPrice * 1)) {
+          flag = `请输入正确的价格`
+          return flag
+        } else if (!re.test(this.info.hotPrice)) {
           flag = `请输入正确的价格`
           return flag
         }
@@ -397,7 +408,7 @@
         statusTypeStr: this.info.statusTypeStr,
         price: this.info.price,
         hotName: this.info.hotName,
-        hotPrice: this.info.hotPrice,
+        hotPrice: parseFloat(this.info.hotPrice),
         source: this.info.source,
         id: this.info.id,
         src: this.info.src,
@@ -408,6 +419,10 @@
     }
 
     methods = {
+      hotPriceInputBlur() {
+        // let re = /([0-9]+\.[0-9])[0-9]* | \d*/
+        // !re.test(this.info.hotPrice)
+      },
       hotPriceTap() {
         if (this.isDisabled) {
           this.$invoke('toast', 'show', '不可修改')
@@ -461,6 +476,9 @@
         let value = e.detail.value
         let re = /([0-9]+\.[0-9])[0-9]*/
         value = value.replace(re, '$1')
+        if (isNaN(value * 1)) {
+          return this.info.hotPrice
+        }
         this.info.hotPrice = value
         this.$apply()
         return value
@@ -516,18 +534,19 @@
         return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
-        return this.info.statusType === UP && this.info.source === EDITOR
+        // return this.info.statusType === UP && this.info.source === EDITOR
+        return this.info.source === EDITOR
       },
       isDisabledStyle() {
         return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
       },
       disableDown() {
-        return this.info.statusType === DOWN && this.info.source === EDITOR
+        // return this.info.statusType === DOWN && this.info.source === EDITOR
+        return this.info.source === EDITOR
       },
       disableDownStyle() {
         return this.disableDown ? 'g-a-disable-style' : 'g-a-disable-style-undef'
       }
-
     }
     components = {
       'toast': Toast
