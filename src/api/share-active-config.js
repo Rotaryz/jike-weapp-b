@@ -9,7 +9,7 @@ const MINSIZE = 0.1
 
 const UP = '1'
 const DOWN = '0'
-const OUT = '0'
+const OUT = '5'
 const DEL = '3'
 const TAKENOFF = '4'
 const ON = 'on'
