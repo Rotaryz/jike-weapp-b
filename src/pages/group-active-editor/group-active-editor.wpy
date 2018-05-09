@@ -534,13 +534,15 @@
         return flag === 'success' ? 'disable-undef' : 'disable'
       },
       isDisabled() {
-        return this.info.statusType === UP && this.info.source === EDITOR
+        // return this.info.statusType === UP && this.info.source === EDITOR
+        return this.info.source === EDITOR
       },
       isDisabledStyle() {
         return this.isDisabled ? 'g-a-disable-style' : 'g-a-disable-style-undef'
       },
       disableDown() {
-        return this.info.statusType === DOWN && this.info.source === EDITOR
+        // return this.info.statusType === DOWN && this.info.source === EDITOR
+        return this.info.source === EDITOR
       },
       disableDownStyle() {
         return this.disableDown ? 'g-a-disable-style' : 'g-a-disable-style-undef'
