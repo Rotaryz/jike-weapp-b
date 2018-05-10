@@ -161,7 +161,7 @@
       if (!this.currentCoupon) return
       if (!this.shareData.eductible_money) return
       if (!this.shareData.rate) return
-      if (parseInt(this.currentCoupon.price) <= parseInt(this.shareData.eductible_money)) {
+      if (this.currentCoupon.price * 1 <= this.shareData.eductible_money * 1) {
         this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
         return
       }
@@ -237,7 +237,7 @@
           this.$invoke('Toast', 'show', '请输入抵用券金额')
           return
         } else {
-          if (parseInt(this.shareData.price) <= parseInt(this.shareData.eductible_money)) {
+          if (this.shareData.price * 1 <= this.shareData.eductible_money * 1) {
             this.$invoke('Toast', 'show', '抵用券金额不能大于现价')
             return
           }
