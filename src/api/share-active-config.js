@@ -18,7 +18,6 @@ const UPPAGELIMIT = 10
 const DOWNPAGELIMIT = 10
 const SUCCESS = 'success'
 
-
 /**
  * @returns {{width: *, height: *}}
  */

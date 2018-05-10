@@ -111,7 +111,7 @@
       }],
       typeList: [],
       dataList: [],
-      timeMsg: 'yeaterday',
+      timeMsg: 'yesterday',
       monthbox: false,
       sceneData: null
     }
