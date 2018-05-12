@@ -112,7 +112,8 @@
         image: URIS.image + '/defaults/b-image/page/icon-content@2x.png',
         src: '/pages/content/content'
       }, {
-        text: '礼包',
+        // text: '礼包',
+        text: '异业卡',
         image: URIS.image + '/defaults/b-image/page/icon-package@2x.png',
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
@@ -143,7 +144,9 @@
       leader: 0,
       serviceDue: false,
       dataFinish: false,
-      showWindow: true
+      showWindow: true,
+      appId: '',
+      path: ''
     }
     async load (time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
@@ -225,7 +228,21 @@
         }
       }
     }
-
+    // 获取异业卡小程序信息
+    async getLinkInfo() {
+      /**
+       * 待获取异业小程序信息的接口 ！！！！
+       * @type {string}
+       */
+      let res = ''
+      if (res.error !== ERR_OK) {
+        return
+      }
+      res = res.data
+      this.appId = res.app_id
+      this.path = res.path
+      this.$apply()
+    }
     methods = {
       async showData(time, index) {
         this.showTime = index
@@ -237,21 +254,35 @@
         })
       },
       skipTo(url, txt) {
-        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
-          this.$invoke('ServiceDue', 'show')
-          return
+        if (txt === '异业卡') {
+          wx.navigateToMiniProgram({
+            appId: this.appId,
+            path: this.path,
+            extraData: {},
+            envVersion: URIS.jumpVersion,
+            success(res) {
+              // 打开成功
+              console.log(res)
+            }
+          })
+        } else {
+          if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
+            this.$invoke('ServiceDue', 'show')
+            return
+          }
+          if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && !this.dataFinish) {
+            this.$invoke('msg-window', 'show')
+            return
+          }
+          this.$navigate(url)
         }
-        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && !this.dataFinish) {
-          this.$invoke('msg-window', 'show')
-          return
-        }
-        this.$navigate(url)
       }
     }
 
     async onLoad () {
       this.showTime = 0
       await this.load()
+      await this.getLinkInfo()
       this.$apply()
     }
   }
