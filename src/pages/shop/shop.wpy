@@ -114,7 +114,7 @@
       }, {
         // text: '礼包',
         text: '异业卡',
-        image: URIS.image + '/defaults/b-image/page/icon-package@2x.png',
+        image: URIS.image + '/defaults/ipc-shopping/page/icon-horizontal@2x.png',
         src: IS_LEADER === 1 ? '/pages/package-manage/package-manage?leader=1' : '/pages/package-manage/package-manage?leader=0'
       }, {
         text: '订单',
