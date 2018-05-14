@@ -1,7 +1,7 @@
 <template>
   <view class="marketing-wrapper">
     <view class="header">
-      <view class="title">营销奖品</view>
+      <view class="title">奖品池</view>
     </view>
     <view class="container jackpot">
       <view class="marketing-item" wx:for="{{jackpotList}}" wx:key="{{item}}" @tap="showDetail({{item.url}})">
@@ -31,6 +31,22 @@
         </view>
       </view>
     </view>
+    <view class="header m-active">
+      <view class="title">促销活动</view>
+    </view>
+    <view class="container">
+      <view class="marketing-item" wx:for="{{activeList}}" wx:key="{{item}}" @tap="showDetail({{item.url}},{{item.checked}})">
+        <view class="item-left">
+          <image src="{{item.img}}" class="item-left-img"></image>
+          <view class="item-left-txt">{{item.name}}</view>
+        </view>
+        <view class="item-right">
+          <view class="status">{{item.checked?'关闭':''}}</view>
+          <image src="{{imageUrlHead + '/defaults/b-image/page/Rectangle @2x.png'}}" class="item-right-arrow"
+                 wx:if="{{imageUrlHead}}"></image>
+        </view>
+      </view>
+    </view>
     <Toast></Toast>
     <ServiceDue></ServiceDue>
     <msg-window></msg-window>
@@ -40,7 +56,6 @@
 <script>
   import wepy from 'wepy'
   import Activity from '@/api/activitys'
-  // import Tips from '@/common/js/tips'
   import base from '@/common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
@@ -48,6 +63,14 @@
   import ServiceDue from '@/base/service-due/service-due'
   import Merchant from '@/api/merchants'
   import msgWindow from '@/base/popup-model/popup-model'
+  import GroupActiveAPI from 'api/group-active'
+
+  const SIGN = '签到红包'
+  const SHARE = '分享有礼'
+  const WHEEL = '大转盘'
+  const LIVE = '点播优惠'
+  const SHAREMONEY = '分享赚钱'
+  const GROUPON = '团购'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
@@ -67,33 +90,47 @@
     data = {
       imageUrlHead: URIS.image,
       jackpotList: [{
-        name: '奖品池',
+        name: '奖品',
         img: URIS.image + '/defaults/b-image/marketing/icon-prize@2x.png',
         url: '/pages/prize-pool/prize-pool'
       }],
       list: [
         {
-          name: '直播优惠',
-          img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
-          url: '/pages/live/live',
-          checked: 1
-        },
-        {
-          name: '签到红包',
+          name: SIGN,
           img: URIS.image + '/defaults/b-image/marketing/icon-sign@2x.png',
           url: '/pages/registration/registration',
           checked: 1
         },
         {
-          name: '分享有礼',
+          name: SHARE,
           img: URIS.image + '/defaults/b-image/marketing/icon-share@2x.png',
           url: '/pages/share-prize/share-prize',
           checked: 1
         },
         {
-          name: '大转盘',
+          name: WHEEL,
           img: URIS.image + '/defaults/b-image/marketing/icon-turntable@2x.png',
           url: '/pages/wheel-controller/wheel-controller',
+          checked: 1
+        }
+      ],
+      activeList: [
+        {
+          name: LIVE,
+          img: URIS.image + '/defaults/b-image/marketing/icon-live@2x.png',
+          url: '/pages/live/live',
+          checked: 1
+        },
+        {
+          name: SHAREMONEY,
+          img: URIS.image + '/defaults/b-image/marketing/icon-sharemoney@2x.png',
+          url: '/pages/share-active-list/share-active-list',
+          checked: 1
+        },
+        {
+          name: GROUPON,
+          img: URIS.image + '/defaults/b-image/marketing/icon-group@2x.png',
+          url: '/pages/group-active-list/group-active-list',
           checked: 1
         }
       ],
@@ -102,15 +139,6 @@
     }
 
     methods = {
-      // showNull(idx) {
-      //   if (this.serviceDue) {
-      //     this.$invoke('ServiceDue', 'show')
-      //     return
-      //   }
-      //   if (idx * 1 === 4) {
-      //     this.$navigate('/pages/prize-pool/prize-pool')
-      //   }
-      // },
       showDetail(url, checked) {
         if (this.serviceDue) {
           this.$invoke('ServiceDue', 'show')
@@ -122,41 +150,6 @@
         }
         this.$navigate(url + `?isChecked=${checked}`)
       }
-      // async switchChange(idx, checked) {
-      //   if (this.serviceDue) {
-      //     this.$invoke('ServiceDue', 'show')
-      //     return
-      //   }
-      //   let type
-      //   switch (idx * 1) {
-      //     case 0:
-      //       type = 'lucky_draw'
-      //       break
-      //     case 1:
-      //       type = 'sign'
-      //       break
-      //     case 2:
-      //       type = 'share'
-      //       break
-      //     case 3:
-      //       type = 'video_live'
-      //       break
-      //   }
-      //   let data = {
-      //     activity_type: type,
-      //     is_paused: checked ? 0 : 1
-      //   }
-      //   const res = await Activity.switchActivity(data)
-      //   this.loaded()
-      //   if (res.error === ERR_OK) {
-      //     let msg = checked ? '开启成功' : '关闭成功'
-      //     this.list = this._checkedChange(idx, checked)
-      //     this.$apply()
-      //     Tips.success(msg)
-      //   } else {
-      //     this.$invoke('Toast', 'show', res.message)
-      //   }
-      // }
     }
 
     async onShow() {
@@ -166,48 +159,71 @@
     }
 
     async load() {
-      let Json = await Activity.getAllActivity()
-      if (Json.error !== ERR_OK) {
-        return
+      await Promise.all([
+        this._showGroupShareActive(),
+        this._showMarketing()
+      ])
+    }
+
+    // 请求服务器返回数据
+    async _rqServerBackData(fn) {
+      const json = await fn()
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('Toast', 'show', json.message)
+        return false
       }
-      let res = Json.data
+    }
+
+    // 获取营销活动状态
+    async _showMarketing() {
+      const getAllActivity = Activity.getAllActivity.bind(Activity)
+      const json = await this._rqServerBackData(getAllActivity)
+      if (!json) return
+      const res = json.data
       this.list.map((item) => {
         switch (item.name) {
-          case '大转盘':
+          case WHEEL:
             item.checked = res.lucky_draw
             break
-          case '签到红包':
+          case SIGN:
             item.checked = res.sign
             break
-          case '分享有礼':
+          case SHARE:
             item.checked = res.share
-            break
-          case '直播优惠':
-            item.checked = res.video_live
             break
         }
         return item
       })
+      let index = this.activeList.findIndex(val => val.name === LIVE)
+      this.activeList[index].checked = res.video_live
       this.$apply()
-      this.loaded()
     }
 
-    // async _getActivityInfo(type) {
-    //   let json = await Activity.getActivityInfo(type)
-    //   if (json.error === ERR_OK) {
-    //     return json.status
-    //   } else {
-    //     return 'failed'
-    //   }
-    // }
-
-    // async _getActivityInfoAll() {
-    //   const lucy = await this._getActivityInfo('lucky')
-    //   const sign = await this._getActivityInfo('sign')
-    //   const share = await this._getActivityInfo('share')
-    //   const live = await this._getActivityInfo('live')
-    //   return {lucy,sign, share, live}
-    // }
+    // 获取促销活动状态
+    async _showGroupShareActive() {
+      const showActiveStatus = GroupActiveAPI.showActiveStatus.bind(GroupActiveAPI)
+      const json = await this._rqServerBackData(showActiveStatus)
+      if (!json) return
+      const res = json.data
+      res && this.activeList.map(item => {
+        switch (item.name) {
+          case GROUPON:
+            item.checked = !(res.groupon * 1)
+            break
+          case SHAREMONEY:
+            item.checked = !(res.share * 1)
+            break
+          // case LIVE:
+          //   item.checked = res.video_live
+          //   break
+        }
+        return item
+      })
+      this.$apply()
+    }
 
     async _checkService() {
       let resData = await Merchant.getService(false)
@@ -222,15 +238,6 @@
       wepy.setStorageSync('dataFinish', this.dataFinish)
       this.$apply()
     }
-
-    // _checkedChange(idx, checked) {
-    //   return this.list.map((item, index) => {
-    //     if (index * 1 === idx * 1) {
-    //       item.checked = checked ? 0 : 1
-    //     }
-    //     return item
-    //   })
-    // }
   }
 </script>
 
@@ -250,6 +257,11 @@
       line-height: 50px
       box-sizing border-box
       background-color: $color-white
+      border-top: 0.5px solid $color-col-line-f
+      margin-top: 10px
+      &:first-child
+        border-top-color: transparent
+        margin-top: 0
       &:after
         content: ""
         position: absolute
@@ -270,6 +282,8 @@
     .container
       margin: 0
       background: $color-white
+      &:last-child
+        margin-bottom: 20px
       &.jackpot
         margin-bottom: 9.5px
       .marketing-item

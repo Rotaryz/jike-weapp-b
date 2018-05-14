@@ -98,7 +98,7 @@
       showTime: 0,
       times: [{
         title: '昨天',
-        type: 'yeaterday'
+        type: 'yesterday'
       }, {
         title: '七天',
         type: 'week'

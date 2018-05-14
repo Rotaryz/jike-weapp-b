@@ -9,31 +9,31 @@
   import URIS from 'common/js/config'
 
   export default class extends wepy.app {
-    constructor () {
+    constructor() {
       super()
       this.use('requestfix')
       this.use('promisify')
     }
 
-    onLaunch () {
+    onLaunch() {
       // 校验SDK
       wxUtils.checkSDK()
     }
 
-    isObject (item) {
+    isObject(item) {
       return typeof item === 'object' && !this.isArray(item)
     }
 
-    isArray (item) {
+    isArray(item) {
       return Object.prototype.toString.apply(item) === '[object Array]'
     }
 
-    isUndefined (item) {
+    isUndefined(item) {
       return typeof item === 'undefined'
     }
 
     // 向下暴露一个更换globalData的方法
-    updateGlobalData (name, obj) {
+    updateGlobalData(name, obj) {
       // 校验: globalData
       if (!this.globalData) return
       // 校验: 操作字段
@@ -106,7 +106,13 @@
         'pages/open-server/open-server',
         'pages/my-codes/my-codes',
         'pages/shop-qrcode/shop-qrcode',
-        'pages/message/message'
+        'pages/message/message',
+        'pages/group-active-list/group-active-list',
+        'pages/group-active-editor/group-active-editor',
+        'pages/group-active-choose-server/group-active-choose-server',
+        'pages/new-share-activity/new-share-activity',
+        'pages/share-active-list/share-active-list',
+        'pages/share-active-choose-server/share-active-choose-server'
       ],
       window: {
         backgroundColor: '#363547',
@@ -154,7 +160,12 @@
       baseLogin: URIS.login,
       isAuthorise: false,
       user: null,
-      orderInfo: {}
+      orderInfo: {},
+      groupActive: {
+        currentCouponGA: null,
+        currentGroupActive: null
+      }
+
     }
   }
 </script>

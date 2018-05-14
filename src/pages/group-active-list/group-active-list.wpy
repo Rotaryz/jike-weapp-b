@@ -1,0 +1,607 @@
+<template>
+  <view class="group-active-list">
+    <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
+      <view class="group-active-list-box">
+        <view class="g-a-l-nav" @tap="chooseStatus">
+          <view class="g-a-l-n-item {{upStatus}}" id="{{tabUpId}}">已上线</view>
+          <view class="g-a-l-n-item {{downStatus}}" id="{{tabDownId}}">已过期/已下线</view>
+        </view>
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabUpId}}" bindscrolltolower="_getMoreList">
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
+            <repeat for="{{onlineList}}" key="index" index="index" item="item">
+              <view class="g-a-l-a-item">
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+              </view>
+            </repeat>
+          </view>
+          <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+            <view class="e-box">
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <view class="e-txt">暂无数据</view>
+            </view>
+          </view>
+        </scroll-view>
+        <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabDownId}}" bindscrolltolower="_getMoreList">
+          <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
+            <repeat for="{{offlineList}}" key="index" index="index" item="item">
+              <view class="g-a-l-a-item">
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+              </view>
+            </repeat>
+          </view>
+          <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
+            <view class="e-box">
+              <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+              <view class="e-txt">暂无数据</view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="g-a-l-btn-box">
+          <view class="g-a-l-submit" @tap="toNewPage">新建</view>
+        </view>
+      </view>
+    </header-switch>
+    <toast></toast>
+    <confirm></confirm>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from '@/common/mixins/base'
+  import URIS from 'common/js/config'
+  import HeaderSwitch from '@/base/header-switch/header-switch'
+  import ActivityItem from '@/base/activity-item/activity-item'
+  import Toast from '@/base/toast/toast'
+  import Confirm from '@/base/confirm-msg/confirm-msg'
+  import Tips from 'common/js/tips'
+  import GroupActiveAPI from 'api/group-active'
+  import {ERR_OK} from 'api/base'
+  import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+
+  export default class GAList extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUrlHead: URIS.image,
+      activityStatus: 'failed', // 活动总开关
+      activeConstObj: {
+        UP,
+        DOWN,
+        OUT,
+        DEL,
+        TAKENOFF
+      },
+      switchConstObj: {
+        ON,
+        SUCCESS
+      },
+      tabUpId: UP,
+      tabDownId: DOWN,
+      status: UP, // tab栏状态
+      onlineList: [], // 上线栏数组
+      offlineList: [], // 下线栏数组
+      isChecked: ON,
+      type: 'group',
+      paramsUp: {
+        page: 1,
+        limit: UPPAGELIMIT
+      },
+      paramsDown: {
+        page: 1,
+        limit: DOWNPAGELIMIT
+      },
+      isAllUp: false, // 上线栏数据是否全部查询完毕
+      isAllDown: false, // 下线栏数据是否全部查询完毕
+      showTabDownCount: 0,
+      currentDelObj: null,
+      currentOfflineObj: null
+    }
+
+    async onLoad(option) {
+      if ('' + option.isChecked === 'true') {
+        // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
+        this.isChecked = OFF
+      } else {
+        this.isChecked = ON
+      }
+      this.$apply()
+      await this._init(this.status)
+    }
+
+    async onShow() {
+      const obj = this.$parent.globalData.groupActive.currentGroupActive
+      if (!obj) return
+      await this._fromPrevPage(obj)
+      this.$parent.globalData.groupActive.currentGroupActive = null
+    }
+
+    async onPullDownRefresh() {
+      let params = this._resetConfig(this.status)
+      await this._getNewActiveList(this.status, params, false)
+      wx.stopPullDownRefresh()
+    }
+
+    // 插入来自编辑页面
+    async _fromPrevPage(obj) {
+      // 从新建活动页面返回该页面
+      if (obj.source === NEW) {
+        this.activityStatus = SUCCESS
+        let params = this._resetConfig(UP)
+        await this._getNewActiveList(UP, params)
+        Tips.success('新建成功')
+        if (this.onlineList.length === 1) {
+          let type = '1' // 1团购活动 2分享赚钱活动
+          // 活动状态，0关闭，1开启
+          let status = '1'
+          let flag = await this._rqChangeActiveStatus({status, type}, false)
+          if (flag) {
+            this.isChecked = ON
+            this.$apply()
+          }
+        }
+      } else if (obj.source === EDITOR) {
+        let index = -1
+        index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
+        if (index !== -1) {
+          // 在下线列表中
+          this.offlineList.splice(index, 1)
+        }
+        index = this.onlineList.findIndex(val => val.id * 1 === obj.id * 1)
+        if (index !== -1) {
+          // 在上线列表中
+          this.onlineList.splice(index, 1, obj)
+        } else {
+          // 没在上线类表中
+          this.onlineList.unshift(obj)
+        }
+        obj.saveSuccess && Tips.success('编辑成功')
+      }
+      this.$apply()
+    }
+
+    // 重置配置
+    _resetConfig(status) {
+      let page, limit
+      if (status === UP) {
+        this.isAllUp = false
+        this.paramsUp.page = 1
+        page = this.paramsUp.page
+        limit = this.onlineList.length >= UPPAGELIMIT ? this.onlineList.length : UPPAGELIMIT
+      } else {
+        this.paramsDown.page = 1
+        this.isAllDown = false
+        page = this.paramsDown.page
+        limit = this.offlineList.length >= DOWNPAGELIMIT ? this.offlineList.length : DOWNPAGELIMIT
+      }
+      this.$apply()
+      return {page, limit}
+    }
+
+    // 获取新的活动
+    async _getNewActiveList(status, params, loading) {
+      let res = {}
+      if (status === UP) {
+        res = await this._rqGetGroupActiveList(params, status, loading)
+        res && (this.onlineList = this._formatRqData(res))
+      } else {
+        res = await this._rqGetGroupActiveList(params, status, loading)
+        res && (this.offlineList = this._formatRqData(res))
+      }
+      if (res) {
+        this._checkIsAll(res)
+      }
+      this.$apply()
+      this.loaded()
+    }
+
+    // 初始化
+    async _init(status) {
+      let res = {}
+      if (status === UP) {
+        res = await this._rqGetGroupActiveList(this.paramsUp, status)
+        res && (this.onlineList = this._formatRqData(res))
+        res && (this.activityStatus = ('' + res.total_data !== '0') ? SUCCESS : 'falid')
+      } else {
+        res = await this._rqGetGroupActiveList(this.paramsDown, status)
+        res && (this.offlineList = this._formatRqData(res))
+      }
+      if (res) {
+        this._checkIsAll(res)
+      }
+      this.$apply()
+      this.loaded()
+    }
+
+    // 获得更多的活动列表
+    async _getMoreList() {
+      let status = this.status
+      let res = {}
+      let list = []
+      if (status === UP) {
+        if (this.isAllUp) return
+        this.paramsUp.page++
+        res = await this._rqGetGroupActiveList(this.paramsUp, status)
+        res && (list = this._formatRqData(res))
+        res && (this.onlineList.push(...list))
+      } else {
+        if (this.isAllDown) return
+        this.paramsDown.page++
+        res = await this._rqGetGroupActiveList(this.paramsDown, status)
+        res && (list = this._formatRqData(res))
+        res && (this.offlineList.push(...list))
+      }
+      if (res) {
+        this._checkIsAll(res)
+      }
+      this.$apply()
+      this.loaded()
+    }
+
+    // 检查是否已经查询完毕
+    _checkIsAll(res) {
+      if (this.status === UP) {
+        if (this.onlineList.length >= res.meta.total * 1) {
+          this.isAllUp = true
+        }
+      } else {
+        if (this.offlineList.length >= res.meta.total * 1) {
+          this.isAllDown = true
+        }
+      }
+      this.$apply()
+    }
+
+    // 活动总开关
+    async _rqChangeActiveStatus(data, loading) {
+      const json = await GroupActiveAPI.changeActiveStatus(data, loading)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 获取活动列表(分页)
+    async _rqGetGroupActiveList(params, type, loading) {
+      const json = await GroupActiveAPI.getGroupActiveList(params, type, loading)
+      if (json.error === ERR_OK) {
+        return json
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+      }
+    }
+
+    // 下线活动
+    async _rqOfflineActive(id, loading) {
+      const json = await GroupActiveAPI.offlineGroupActive(id, loading)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 上线活动
+    async _rqOnlineActive(id, loading) {
+      const json = await GroupActiveAPI.onlineGroupActive(id, loading)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 删除活动
+    async _rqDelActive(id, loading) {
+      const json = await GroupActiveAPI.deleteGroupActive(id, loading)
+      if (json.error === ERR_OK) {
+        this.loaded()
+        return true
+      } else {
+        this.loaded()
+        this.$invoke('toast', 'show', json.message)
+        return false
+      }
+    }
+
+    // 格式化服务器数据
+    _formatRqData(res) {
+      let arr = []
+      res.data.map(item => {
+        arr.push({
+          id: item.id,
+          src: item.image_url,
+          hotName: item.activity_name,
+          peopleNum: item.activity_number,
+          price: item.platform_price,
+          hotPrice: item.activity_price,
+          statusType: '' + item.status,
+          statusTypeStr: item.start_str,
+          goodStatus: '' + item.promotion_status
+        })
+      })
+      return arr
+    }
+
+    // 检查下线栏的次数
+    _isTabDownInit() {
+      if (this.status === DOWN) {
+        if (this.showTabDownCount++ <= 0) {
+          this.$apply()
+          return true
+        }
+        return false
+      }
+    }
+
+    // 执行删除动作
+    async _toDelActive() {
+      let index = -1
+      let id = this.currentDelObj.id
+      let flag = await this._rqDelActive(id)
+      if (!flag) return
+      if (this.currentDelObj.statusType === UP) {
+        index = this.onlineList.findIndex(val => val.id * 1 === id * 1)
+        this.onlineList.splice(index, 1)
+      } else {
+        index = this.offlineList.findIndex(val => val.id * 1 === id * 1)
+        this.offlineList.splice(index, 1)
+      }
+      Tips.success('删除成功')
+      this._checkListEmpty()
+      this.currentDelObj = null
+      this.$apply()
+    }
+
+    // 如果数组为空关闭活动总开关
+    async _checkListEmpty() {
+      let flag = this.onlineList.length === 0 && this.offlineList.length === 0
+      if (flag) {
+        this.activityStatus = !SUCCESS
+        let type = '1' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = '0'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          this.isChecked = ON
+        }
+        this.$apply()
+      }
+    }
+
+    // 上线或下线
+    async _upOrDown(obj) {
+      if (this.status === UP) {
+        let flag = await this._rqOfflineActive(obj.id)
+        if (!flag) return
+        this.onlineList.splice(this.onlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
+        obj.statusType = DOWN
+        obj.statusTypeStr = '已下线'
+        this.offlineList.unshift(obj)
+        Tips.success('下线成功')
+        this.currentOfflineObj = null
+      } else {
+        let flag = await this._rqOnlineActive(obj.id)
+        if (!flag) return
+        this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
+        obj.statusType = UP
+        this.onlineList.unshift(obj)
+        obj.statusTypeStr = '已上线'
+        Tips.success('上线成功')
+      }
+      this.$apply()
+    }
+
+    methods = {
+      async chooseStatus(e) {
+        let id = e.target.id
+        if (id !== UP && id !== DOWN) {
+          return
+        }
+        this.status = id
+        if (this._isTabDownInit()) {
+          await this._init(this.status)
+        }
+        this.$apply()
+      },
+      toNewPage() {
+        if (this.toNewTimer != null) return
+        let url = `/pages/group-active-editor/group-active-editor?model=${NEW}`
+        this.$apply()
+        setTimeout(() => {
+          this.$navigate(url)
+        }, 50)
+      }
+    }
+
+    computed = {
+      upStatus() {
+        return this.status === UP ? 'active' : 'active-undef'
+      },
+      downStatus() {
+        return this.status === DOWN ? 'active' : 'active-undef'
+      },
+      isEmpty() {
+        if (this.status === UP) {
+          return this.onlineList.length === 0
+        } else {
+          return this.offlineList.length === 0
+        }
+      },
+      switchStatus() {
+        return this.isChecked
+      },
+      heightStyle() {
+        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
+      }
+    }
+
+    events = {
+      async headerSwitchChange() {
+        let type = '1' // 1团购活动 2分享赚钱活动
+        // 活动状态，0关闭，1开启
+        let status = this.isChecked === ON ? '0' : '1'
+        let flag = await this._rqChangeActiveStatus({status, type})
+        if (flag) {
+          status === '1' ? Tips.success('开启成功') : Tips.success('关闭成功')
+          this.isChecked = this.isChecked === ON ? OFF : ON
+          this.$apply()
+        }
+      },
+      async activeBtnOnline(obj) {
+        await this._upOrDown(obj)
+      },
+      async activeBtnOffline(obj) {
+        this.$invoke('confirm', 'show', {title: '确定要下线？'})
+        this.currentOfflineObj = obj
+        this.$apply()
+      },
+      activeBtnDel(obj) {
+        this.$invoke('confirm', 'show', {title: '确定要删除？'})
+        this.currentDelObj = obj
+        this.$apply()
+      },
+      async activeBtnEditor(obj) {
+        this.$parent.globalData.groupActive.currentGroupActive = obj
+        let url = `/pages/group-active-editor/group-active-editor?model=${EDITOR}`
+        this.$apply()
+        setTimeout(() => {
+          this.$navigate(url)
+        }, 50)
+      },
+      async confirm() {
+        // 删除确认
+        this.currentDelObj && await this._toDelActive()
+        this.currentOfflineObj && this._upOrDown(this.currentOfflineObj)
+      },
+      cancel() {
+        this.currentDelObj = null
+        this.currentOfflineObj = null
+        this.$apply()
+      }
+    }
+    components = {
+      'header-switch': HeaderSwitch,
+      'activity-item': ActivityItem,
+      'confirm': Confirm,
+      'toast': Toast
+    }
+    config = {
+      navigationBarTitleText: '团购',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#f9f9f9',
+      backgroundTextStyle: 'dark',
+      enablePullDownRefresh: true
+    }
+  }
+</script>
+
+<style lang='stylus'>
+  @import "../../common/stylus/mixin.styl"
+  @import "../../common/stylus/variable.styl"
+
+  .g-a-c-s-empty
+    background-color: $color-white
+    height: 100%
+    layout()
+    box-sizing: border-box
+    padding-top: 11.8%
+    align-items: center
+    .e-box
+      layout()
+      justify-content: center
+      align-items: center
+      .e-pic
+        width: 95.5px
+        height: 75.5px
+        margin-bottom: 13.5px
+      .e-txt
+        font-family: $font-family-light
+        font-size: $font-size-small
+        color: $color-text-d
+
+  .group-active-list-box
+    position: relative
+    background-color: $color-background
+    .g-a-l-nav
+      layout(row)
+      justify-content: space-around
+      align-items: center
+      height: 42.5px
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      border: 0.5px solid $color-split-line
+      border-right: none
+      border-left: none
+      background-color: $color-white
+      .g-a-l-n-item
+        padding: 0 8px
+        height: 100%
+        line-height: 42.5px
+        transition: 0.3 all
+        color: $color-text
+        border-bottom-line($color-assist-f, 0, 0)
+      .active
+        color: $color-assist-f
+        position: relative
+        &:after
+          content: ""
+          position: absolute
+          bottom: 0
+          left: 50%
+          transform: translateX(-50%)
+          height: 1px
+          width: 15.5vw
+          border-bottom: 2px solid $color-assist-f
+    .g-a-l-article
+      background-color: $color-white
+      padding-bottom: 82px
+      .g-a-c-s-has-content
+        layout(column, block, no-wrap)
+        .g-a-l-a-item
+          padding: 0 12px
+          margin-bottom: 10px
+          &:first-child
+            margin-top: 10px
+          &:last-child
+            margin-bottom: 20px
+    .g-a-l-btn-box
+      position: fixed
+      bottom: 0
+      width: 100%
+      height: 82px
+      box-sizing: border-box
+      padding: 18px 12px 20px
+      layout()
+      justify-content: center
+      align-items: center
+      background-color: $color-background
+      border-top: 0.5px solid $color-row-line
+      .g-a-l-submit
+        layout()
+        justify-content: center
+        align-items: center
+        width: 100%
+        height: 100%
+        background: $color-theme
+        border-radius: 4px
+        font-family: $font-family-regular
+        font-size: $font-size-medium
+        color: $color-white
+        letter-spacing: 1.02px
+
+</style>

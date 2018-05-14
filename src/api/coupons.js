@@ -59,4 +59,34 @@ export default class Coupons extends base {
     const url = `${this.baseUrl}/api/coupons/promotions/${promotionId}`
     return await this.put(url, data)
   }
+
+  /**
+   * 该优惠券绑定的活动名称
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async getRelation(id) {
+    const url = `${this.baseUrl}/api/coupons/relation/${id}`
+    return await this.get(url)
+  }
+
+  /**
+   * 服务上线
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async serverOnLine(id) {
+    const url = `${this.baseUrl}/api/coupons/online/${id}`
+    return await this.get(url)
+  }
+
+  /**
+   * 服务下线
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async serverOffLine(id) {
+    const url = `${this.baseUrl}/api/coupons/offline/${id}`
+    return await this.get(url)
+  }
 }

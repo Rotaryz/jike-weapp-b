@@ -1,6 +1,6 @@
 <template>
   <view class="base-modal" wx:if="{{show}}">
-    <view class="modal" @tap.stop="">
+    <view class="modal" @tap.stop="_hack">
       <view class="title-wrapper" name="{{name}}">
         {{title}}
       </view>
@@ -12,7 +12,7 @@
         <view class="btn-confirm" @tap.stop="confirm">确定</view>
       </view>
       <!--<view class="close-wrapper" @tap.stop="close">-->
-        <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>-->
+      <!--<image src="http://jike-file.jerryf.cn/defaults/b-image/page/icon-close_white@2x.png" class="full-image"></image>-->
       <!--</view>-->
     </view>
   </view>
@@ -44,6 +44,9 @@
     }
 
     methods = {
+      _hack() {
+        // 阻止冒泡事件
+      },
       cancel() {
         this.show = false
         this.$emit('cancel')
@@ -119,11 +122,11 @@
           color: $color-text
 
   /*.close-wrapper*/
-        /*width: 23px*/
-        /*height: 23px*/
-        /*margin: auto*/
-        /*margin-top: 77.55px*/
-        /*image*/
-          /*width: 23px*/
-          /*height: 23px*/
+  /*width: 23px*/
+  /*height: 23px*/
+  /*margin: auto*/
+  /*margin-top: 77.55px*/
+  /*image*/
+  /*width: 23px*/
+  /*height: 23px*/
 </style>

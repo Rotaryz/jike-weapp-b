@@ -5,10 +5,10 @@
       <view class="catelog input-wrapper border-bottom-1px">
         <view class="label">品类</view>
         <view class="arrow-content-wrapper">
-          <view class="content">{{industry}}</view>
+          <view class="content s-c-disable">{{industry}}</view>
           <!--<view class="arrow-right">-->
-            <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
-                   <!--class="full-image"></image>-->
+          <!--<image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"-->
+          <!--class="full-image"></image>-->
           <!--</view>-->
         </view>
       </view>
@@ -16,11 +16,9 @@
       <view class="type input-wrapper border-bottom-1px" @tap="showMealModal">
         <view class="label">类型</view>
         <view class="arrow-content-wrapper">
-          <view class="content">{{categoryData.categories[categoryData.flag].name}}</view>
+          <view class="content {{disableStyle}} {{disableDownStyle}}">{{categoryData.categories[categoryData.flag].name}}</view>
           <view class="arrow-right">
-            <image wx:if="{{imageUri}}"
-                   src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
-                   class="full-image"></image>
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}" class="full-image"></image>
           </view>
         </view>
         <meal-modal type="big" title="选择类型" name="categoryData" @confirm.user="setSelect" @cancel.user="resetSelect">
@@ -32,8 +30,7 @@
                   <view class="desc">{{item.describe}}</view>
                 </view>
                 <view class="radio {{index !== categoryData.tmp ? 'unselected' : ''}}">
-                  <image wx:if="{{index === categoryData.tmp && imageUri}}" class="full-image"
-                         src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
+                  <image wx:if="{{index === categoryData.tmp && imageUri}}" class="full-image" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
                 </view>
               </view>
             </repeat>
@@ -65,7 +62,9 @@
       <!--售价-->
       <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
         <view class="label">售价</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{platformPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
@@ -76,7 +75,9 @@
       <!--代金额-->
       <view wx:if="{{categoryId === 2}}" class="title input-wrapper border-bottom-1px">
         <view class="label">代金额</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="takenPirce">{{shopPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
@@ -108,7 +109,9 @@
       <!--平台价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">平台价</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{platformPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{platformPrice}}"
                maxlength="10"
                @input="handleInput('platformPrice')"
@@ -119,7 +122,9 @@
       <!--门市价-->
       <view wx:if="{{categoryId === 1}}" class="title input-wrapper border-bottom-1px">
         <view class="label">门市价</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{shopPrice}}</view>
+        <input wx:else
+               type="digit"
                value="{{shopPrice}}"
                maxlength="10"
                @input="handleInput('shopPrice')"
@@ -127,7 +132,6 @@
                placeholder="请输入"
                placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
       </view>
-      <!--服务详情-->
       <view wx:if="{{categoryId === 1}}" class="type input-wrapper border-bottom-1px" @tap="showServiceModal">
         <view class="label">服务详情</view>
         <view class="arrow-content-wrapper">
@@ -137,55 +141,94 @@
                    class="full-image"></image>
           </view>
         </view>
-        <service-modal title="服务详情" type="big" @confirm.user="setServices" @cancel.user="resetServices">
-          <view class="service-modal" slot="content">
-            <repeat for="{{tempServices}}" key="index" index="index" item="item">
-              <view class="item-wrapper">
-                <view class="input-wrapper border-bottom-1px">
-                  <view class="label">服务名称</view>
-                  <input type="text"
-                         value="{{item.servie}}"
-                         maxlength="10"
-                         @input="handleInput('servieservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+        <!-- 需求变更 -->
+        <view wx:if="{{false}}" @tap="showServiceModal">
+          <service-modal title="服务详情" type="big">
+            <view class="service-modal" slot="content">
+              <repeat for="{{tempServices}}" key="index" index="index" item="item">
+                <view class="item-wrapper">
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">服务名称</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.servie}}</view>
+                  </view>
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">数量</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.number}}</view>
+                  </view>
+                  <view class="input-wrapper">
+                    <view class="label">价格</view>
+                    <view class="s-c-input-disabel-f-small" @tap.stop="salePriceTap">{{item.price}}</view>
+                  </view>
+                  <view class="del" @tap.stop="salePriceTap">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
                 </view>
-                <view class="input-wrapper border-bottom-1px">
-                  <view class="label">数量</view>
-                  <input type="number"
-                         value="{{item.number}}"
-                         maxlength="10"
-                         @input="handleInput('numberservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+              </repeat>
+              <view class="btn-wrapper">
+                <view class="btn" @tap.stop="salePriceTap">
+                  <view class="add">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  <text>添加</text>
                 </view>
-                <view class="input-wrapper">
-                  <view class="label">价格</view>
-                  <input type="digit"
-                         value="{{item.price}}"
-                         maxlength="10"
-                         @input="handleInput('priceservice{{index}}')"
-                         @change="_regInput('priceservice{{index}}')"
-                         placeholder="请输入"
-                         placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
-                </view>
-                <view class="del" @tap.stop="deleteService({{index}})">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-              </view>
-            </repeat>
-            <view class="btn-wrapper">
-              <view class="btn" @tap.stop="addService">
-                <view class="add">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
-                         class="full-image"></image>
-                </view>
-                <text>添加</text>
               </view>
             </view>
-          </view>
-        </service-modal>
+          </service-modal>
+        </view>
+        <view wx:else>
+          <service-modal title="服务详情" type="big" @confirm.user="setServices" @cancel.user="resetServices">
+            <view class="service-modal" slot="content">
+              <repeat for="{{tempServices}}" key="index" index="index" item="item">
+                <view class="item-wrapper">
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">服务名称</view>
+                    <input type="text"
+                           value="{{item.servie}}"
+                           maxlength="10"
+                           @input="handleInput('servieservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="input-wrapper border-bottom-1px">
+                    <view class="label">数量</view>
+                    <input type="number"
+                           value="{{item.number}}"
+                           maxlength="10"
+                           @input="handleInput('numberservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="input-wrapper">
+                    <view class="label">价格</view>
+                    <input type="digit"
+                           value="{{item.price}}"
+                           maxlength="10"
+                           @input="handleInput('priceservice{{index}}')"
+                           @change="_regInput('priceservice{{index}}')"
+                           placeholder="请输入"
+                           placeholder-style="color: #9b9b9b; font-family: PingFangSC-Light"/>
+                  </view>
+                  <view class="del" @tap.stop="deleteService({{index}})">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-del@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                </view>
+              </repeat>
+              <view class="btn-wrapper">
+                <view class="btn" @tap.stop="addService">
+                  <view class="add">
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-add_black@2x.png'}}"
+                           class="full-image"></image>
+                  </view>
+                  <text>添加</text>
+                </view>
+              </view>
+            </view>
+          </service-modal>
+        </view>
+
       </view>
       <!-- 服务详情图片 -->
       <view wx:if="{{categoryId === 1}}" class="picture-wrapper ">
@@ -216,7 +259,9 @@
       <!--折扣力度-->
       <view wx:if="{{categoryId === 4}}" class="title input-wrapper border-bottom-1px">
         <view class="label">折扣力度</view>
-        <input type="digit"
+        <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{discount}}</view>
+        <input wx:else
+               type="digit"
                value="{{discount}}"
                maxlength="3"
                @input="handleInput('discount')"
@@ -226,7 +271,17 @@
         <view class="content">折</view>
       </view>
       <!--最高优惠-->
-      <view wx:if="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showDiscountsMax">
+      <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
+        <view class="label">最高优惠</view>
+        <view class="arrow-content-wrapper">
+          <view class="content s-c-input-disabel-discount">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showDiscountsMax">
         <view class="label">最高优惠</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{discountsMaxData.discountsMax[discountsMaxData.flag].id === -1 ? '不限制' : discountsMaxData.discountsMax[discountsMaxData.flag].id}}</view>
@@ -242,7 +297,7 @@
                 <view class="desc-wrapper">
                   <view class="name">{{item.title}}</view>
                 </view>
-                <view wx:if="{{item.title==='最高优惠'}}"  class="input-wrapper {{discountsMaxData.tmp !== index ? 'disabled' : ''}}">
+                <view wx:if="{{item.title==='最高优惠'}}" class="input-wrapper {{discountsMaxData.tmp !== index ? 'disabled' : ''}}">
                   <input type="digit"
                          value="{{discountsMaxData.tmp !== index ? '' : item.id}}"
                          disabled="{{discountsMaxData.tmp !== index}}"
@@ -252,7 +307,7 @@
                   />
 
                 </view>
-                <view wx:if="{{item.title==='最高优惠'}}"  class="max-unit"> 元</view>
+                <view wx:if="{{item.title==='最高优惠'}}" class="max-unit"> 元</view>
                 <view class="radio {{index !== discountsMaxData.tmp ? 'unselected' : ''}}">
                   <image wx:if="{{index === discountsMaxData.tmp && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
@@ -263,7 +318,17 @@
         </discounts-max>
       </view>
       <!--使用条件-->
-      <view wx:if="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showConditionsMax">
+      <view wx:if="{{disable && categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="salePriceTap">
+        <view class="label">使用条件</view>
+        <view class="arrow-content-wrapper">
+          <view class="content s-c-input-disabel-discount">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{categoryId === 4}}" class="count-limit input-wrapper border-bottom-1px" @tap="showConditionsMax">
         <view class="label">使用条件</view>
         <view class="arrow-content-wrapper">
           <view class="content">{{conditionsData.conditions[conditionsData.flag].id === -1 ? '不限制' : conditionsData.conditions[conditionsData.flag].id}}</view>
@@ -279,7 +344,7 @@
                 <view class="desc-wrapper">
                   <view class="name">{{item.title}}</view>
                 </view>
-                <view wx:if="{{item.title==='指定金额'}}"  class="input-wrapper {{conditionsData.tmp !== index ? 'disabled' : ''}}">
+                <view wx:if="{{item.title==='指定金额'}}" class="input-wrapper {{conditionsData.tmp !== index ? 'disabled' : ''}}">
                   <input type="digit"
                          value="{{conditionsData.tmp !== index ? '' : item.id}}"
                          disabled="{{conditionsData.tmp !== index}}"
@@ -289,7 +354,7 @@
                   />
 
                 </view>
-                <view wx:if="{{item.title==='指定金额'}}"  class="max-unit"> 元</view>
+                <view wx:if="{{item.title==='指定金额'}}" class="max-unit"> 元</view>
                 <view class="radio {{index !== conditionsData.tmp ? 'unselected' : ''}}">
                   <image wx:if="{{index === conditionsData.tmp && imageUri}}" class="full-image"
                          src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"></image>
@@ -309,7 +374,9 @@
           <view class="sell-date">
             <view class="date">
               满
-              <input class="fullMin"
+              <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{fullMax}}</view>
+              <input wx:else
+                     class="fullMin"
                      type="digit"
                      value="{{fullMax}}"
                      maxlength="10"
@@ -322,7 +389,9 @@
           <view class="tos">可减</view>
           <view class="sell-date">
             <view class="date">
-              <input class="fullMin"
+              <view wx:if="{{disable}}" class="s-c-input-disabel" @tap="salePriceTap">{{fullMin}}</view>
+              <input wx:else
+                     class="fullMin"
                      type="digit"
                      value="{{fullMin}}"
                      maxlength="10"
@@ -338,7 +407,16 @@
       <view class="time input-wrapper border-bottom-1px">
         <view class="label">{{categoryId === 3 || categoryId === 4?'领取时间':'售卖时间'}}</view>
         <view class="content">
-          <picker mode="date" class="sell-date" @change="setSellStartDate">
+          <view wx:if="{{disable}}" class="sell-date" @tap="sellStartDateTap">
+            <view class="date">
+              <view class="s-c-disable">{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
+              <view class="arrow-right">
+                <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
+                       class="full-image"></image>
+              </view>
+            </view>
+          </view>
+          <picker wx:else mode="date" class="sell-date" @change="setSellStartDate">
             <view class="date">
               <view>{{sellStartTime === '' ? '开始时间' : sellStartTime}}</view>
               <view class="arrow-right">
@@ -348,7 +426,7 @@
             </view>
           </picker>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date" @change="setSellEndDate">
+          <picker mode="date" class="sell-date" @change="setSellEndDate" start="{{limitSellStartDate}}" value="{{sellEndTime}}">
             <view class="date">
               <view>{{sellEndTime === '' ? '结束时间' : sellEndTime}}</view>
               <view class="arrow-right">
@@ -365,7 +443,7 @@
         <view class="content">
           <view class="start">自上线之日起</view>
           <view class="to">至</view>
-          <picker mode="date" class="sell-date" @change="setValidDate">
+          <picker mode="date" class="sell-date" @change="setValidDate" start="{{limitValidStartDate}}" value="{{validDate}}">
             <view class="date">
               <view>{{validDate === '' ? '结束时间' : validDate}}</view>
               <view class="arrow-right">
@@ -384,7 +462,7 @@
           <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow-right@2x.png'}}"
                  class="full-image"></image>
         </view>
-        <target-population title="目标人群" name="targetPopulationData"  @confirm.user="setSelect" @cancel.user="resetSelect">
+        <target-population title="目标人群" name="targetPopulationData" @confirm.user="setSelect" @cancel.user="resetSelect">
           <view class="target-population" slot="content">
             <repeat for="{{targetPopulationData.targetPopulation}}" index="index" key="index" item="item">
               <view class="item-wrapper border-bottom-1px" @tap.stop="selecteType({{index}},'targetPopulationData')">
@@ -442,14 +520,13 @@
                 <view class="desc-wrapper">
                   <view class="name">{{item.title}}</view>
                 </view>
-                <view wx:if="{{item.title==='限制数量'}}"  class="input-wrapper {{sellCountData.tmp !== index ? 'disabled' : ''}}">
+                <view wx:if="{{item.title==='限制数量'}}" class="input-wrapper {{sellCountData.tmp !== index ? 'disabled' : ''}}">
                   <input type="number"
-                         value="{{sellCountData.tmp !== index ? '' : item.id}}"
+                         value="{{sellCountData.tmp !== index ? '' : '' + item.id * 1}}"
                          disabled="{{sellCountData.tmp !== index}}"
                          maxlength="10"
                          @input="handleInput('sellCountData')"
                   />
-
                 </view>
                 <!--<view wx:if="{{item.title==='限制数量'}}"  class="max-unit">个</view>-->
                 <view class="radio {{index !== sellCountData.tmp ? 'unselected' : ''}}">
@@ -473,10 +550,10 @@
         </view>
       </view>
       <view wx:if="{{categoryId === 1}}" class="know">
-      1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
-      2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
-      3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
-      4.备注：{{knowRemark}}
+        1.{{subscribe === 1 ? '需' : '不需要'}}提前预约
+        2.{{useLimit === -1 ? '不限' : '限' + useLimit}}人使用
+        3.{{buyLimit === -1 ? '不限购' : '每人限购' + buyLimit + '张优惠券'}}
+        4.备注：{{knowRemark}}
       </view>
       <view wx:else class="know">
         1.{{buyLimit === -1 ? '不限' : '限' + buyLimit}}人使用
@@ -486,7 +563,7 @@
       <know-modal title="使用须知" type="big" @cancel.user="resetBuyKnow" @confirm.user="setBuyKnow">
         <view class="know-modal" slot="content">
           <!--是否需要预约-->
-          <view wx:if="{{categoryId === 1}}" class="card-wrapper border-bottom-1px" >
+          <view wx:if="{{categoryId === 1}}" class="card-wrapper border-bottom-1px">
             <view class="item-wrapper">
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showSubscribe')">
                 <view class="title">是否需要预约</view>
@@ -522,48 +599,33 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showBuyLimit')">
                 <view class="title">单人购买上限</view>
                 <view class="icon-arrow {{showBuyLimit ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showBuyLimit ? '' : 'hide'}}">
                 <view wx:if="{{categoryId === 3 || categoryId === 4}}" class="radio-wrapper">
                   <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}">
-                    <image wx:if="{{imageUri}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                    <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   限制数量
                   <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number"
-                           value="{{tempBuyLimit === -1 ? buyLimitMin : tempBuyLimit}}"
-                           maxlength="10"
-                           @input="handleInput('tempBuyLimit')"/>
+                    <input type="number" value="{{tempBuyLimit === -1 ? buyLimitMin : tempBuyLimit}}" maxlength="10" @input="handleInput('tempBuyLimit')"/>
                   </view>
                 </view>
                 <view wx:else>
-                  <view class="radio-wrapper">
-                    <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}"
-                          @tap.stop="selectBuyLimit(-1)">
-                      <image wx:if="{{imageUri && tempBuyLimit === -1}}"
-                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                             class="full-image"></image>
+                  <view class="radio-wrapper" @tap.stop="selectBuyLimit(-1)">
+                    <view class="radio {{tempBuyLimit !== -1 ? 'unselected' : ''}}">
+                      <image wx:if="{{imageUri && tempBuyLimit === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                     </view>
                     无上限
                   </view>
-                  <view class="radio-wrapper">
-                    <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectBuyLimit(1)">
-                      <image wx:if="{{imageUri && tempBuyLimit !== -1}}"
-                             src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                             class="full-image"></image>
+                  <view class="radio-wrapper" @tap.stop="selectBuyLimit(1)">
+                    <view class="radio {{tempBuyLimit === -1 ? 'unselected' : ''}}">
+                      <image wx:if="{{imageUri && tempBuyLimit !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                     </view>
                     限制数量
                     <view class="input-wrapper {{tempBuyLimit === -1 ? 'disabled' : ''}}">
-                      <input type="number"
-                             value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}"
-                             disabled="{{tempBuyLimit === -1}}"
-                             maxlength="10"
-                             @input="handleInput('tempBuyLimit')"/>
+                      <input type="number" value="{{tempBuyLimit === -1 ? '' : tempBuyLimit}}" disabled="{{tempBuyLimit === -1}}" maxlength="10" @input="handleInput('tempBuyLimit')"/>
                     </view>
                   </view>
                 </view>
@@ -574,32 +636,23 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showUseLimit')">
                 <view class="title">使用人数</view>
                 <view class="icon-arrow {{showUseLimit ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
               <view class="select-wrapper {{showUseLimit ? '' : 'hide'}}">
-                <view class="radio-wrapper">
-                  <view class="radio {{tempUseLimit !== -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(-1)">
-                    <image wx:if="{{imageUri && tempUseLimit === -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectUseLimit(-1)">
+                  <view class="radio {{tempUseLimit !== -1 ? 'unselected' : ''}}" >
+                    <image wx:if="{{imageUri && tempUseLimit === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   无上限
                 </view>
-                <view class="radio-wrapper">
-                  <view class="radio {{tempUseLimit === -1 ? 'unselected' : ''}}" @tap.stop="selectUseLimit(1)">
-                    <image wx:if="{{imageUri && tempUseLimit !== -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectUseLimit(1)">
+                  <view class="radio {{tempUseLimit === -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempUseLimit !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   限制数量
                   <view class="input-wrapper {{tempUseLimit === -1 ? 'disabled' : ''}}">
-                    <input type="number"
-                           value="{{tempUseLimit === -1 ? '' : tempUseLimit}}"
-                           disabled="{{tempUseLimit === -1}}"
-                           maxlength="10"
-                           @input="handleInput('tempUseLimit')"/>
+                    <input type="number" value="{{tempUseLimit === -1 ? '' : tempUseLimit}}" disabled="{{tempUseLimit === -1}}" maxlength="10" @input="handleInput('tempUseLimit')"/>
                   </view>
                 </view>
               </view>
@@ -612,34 +665,23 @@
               <view class="header-wrapper" @tap.stop="toggleKnowTabShowHide('showRange')">
                 <view class="title">适用范围</view>
                 <view class="icon-arrow {{showRange ? '' : 'up'}}">
-                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}"
-                         class="full-image"></image>
+                  <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-arrow_down@2x.png'}}" class="full-image"></image>
                 </view>
               </view>
-              <view class="select-wrapper {{showRange ? '' : 'hide'}}">
+              <view class="select-wrapper {{showRange ? '' : 'hide'}}" @tap.stop="selectRange(-1)">
                 <view class="radio-wrapper">
-                  <view class="radio {{tempRange !== -1 ? 'unselected' : ''}}"
-                        @tap.stop="selectRange(-1)">
-                    <image wx:if="{{imageUri && tempRange === -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                  <view class="radio {{tempRange !== -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempRange === -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   全场通用
                 </view>
-                <view class="radio-wrapper">
-                  <view class="radio {{tempRange === -1 ? 'unselected' : ''}}"
-                        @tap.stop="selectRanges('')">
-                    <image wx:if="{{imageUri && tempRange !== -1}}"
-                           src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}"
-                           class="full-image"></image>
+                <view class="radio-wrapper" @tap.stop="selectRanges('')">
+                  <view class="radio {{tempRange === -1 ? 'unselected' : ''}}">
+                    <image wx:if="{{imageUri && tempRange !== -1}}" src="{{imageUri + '/defaults/b-image/page/icon-selected@2x.png'}}" class="full-image"></image>
                   </view>
                   指定商品
                   <view class="input-wrapper {{tempRange === -1 ? 'disabled' : ''}}">
-                    <input type="text"
-                           value="{{tempRange === -1 ? '' : tempRange}}"
-                           disabled="{{tempRange === -1}}"
-                           maxlength="10"
-                           @input="handleInput('tempRange')"/>
+                    <input type="text" value="{{tempRange === -1 ? '' : tempRange}}" disabled="{{tempRange === -1}}" maxlength="10" @input="handleInput('tempRange')"/>
                   </view>
                 </view>
               </view>
@@ -648,11 +690,7 @@
           <!--备注-->
           <view class="textarea-wrapper border-top-1px">
             <view class="textarea">
-              <text-area height="50"
-                         :value.sync="tempKnowRemark"
-                         maxLength="20"
-                         @input.user="handleTextarea"
-                         placeHolder="备注：请输入"></text-area>
+              <text-area height="50" :value.sync="tempKnowRemark" maxLength="20" @input.user="handleTextarea" placeHolder="备注：请输入"></text-area>
             </view>
           </view>
         </view>
@@ -686,6 +724,8 @@
     id: 0,
     image_id: 0
   }
+
+  const FINISHEDMESSAGE = '不可修改'
 
   export default class ServiceController extends wepy.page {
     mixins = [base]
@@ -778,10 +818,14 @@
       tempSellCount: -1,
       tempKnowRemark: '',
       imageDis: true,
-      ban: 0
+      ban: 0,
+      model: 'not-up-editor',
+      disableReduceInfo: null,
+      id: '' // 商品id
     }
 
     async onLoad(option) {
+      this.model = option.model
       if (option.id) {
         this.promotionId = option.id
         this.navigationBarTitle = '编辑服务'
@@ -790,6 +834,7 @@
       }
       await this.load()
       this.loaded()
+      this.$apply()
     }
 
     async load() {
@@ -833,11 +878,11 @@
       this.shopPrice = res.shop_price
       this.services = res.detail
       this.tempServices = this.services.map((item) => Object.assign({}, item))
-      this.sellCount = res.stock
+      this.sellCount = res.stock // 库存
       this.tempSellCount = this.sellCount
       this.sellStartTime = res.sell_start_at
-      this.sellEndTime = res.sell_end_at
-      this.validDate = res.end_at
+      this.sellEndTime = res.sell_end_at // 售卖结束时间
+      this.validDate = res.end_at // 有效期结束时间
       this.notAllowTime = res.not_allow_time
       this.tempNotAllowTime = this.notAllowTime
       this.subscribe = res.note.need_subscribe
@@ -898,6 +943,17 @@
           }
         }
       }
+      this.id = '' + res.id
+      this._saveDisRedInfo()
+      this.$apply()
+    }
+
+    // 保存不可减少的选项
+    _saveDisRedInfo() {
+      const sellCount = this.sellCount  // 库存
+      const sellEndTime = this.sellEndTime // 售卖结束时间
+      const validDate = this.validDate  // 有效期结束时间
+      this.disableReduceInfo = {sellCount, sellEndTime, validDate}
       this.$apply()
     }
 
@@ -927,6 +983,7 @@
       }
       this.$apply()
     }
+
     async _setTicketState(id, sta) {
       this.categoryId = id
       if (sta === 'add') {
@@ -936,6 +993,7 @@
       }
       this.$apply()
     }
+
     async _handleInput(name, e) {
       let value = e.detail.value
       if (name.indexOf('service') > -1) {
@@ -995,6 +1053,7 @@
     _toast(message) {
       this.$invoke('toast', 'show', message)
     }
+
     _dataArray(type) {
       const validPicture = this.pictures.findIndex((item) => item.image_url)
       const validDetails = this.detailsPictures.findIndex((item) => item.image_url)
@@ -1019,7 +1078,8 @@
         {type: '1234', title: 'sell_end_at', value: this.sellEndTime, valid: this.sellEndTime, txt: type === 3 ? '请选择领取结束时间' : '请选择售卖结束时间'},
         {type: '1234', title: 'end_at', value: this.validDate, valid: this.validDate, txt: '请选择券有效期结束时间'},
         {type: '1234', title: '', valid: this.buyLimit, txt: '单人限购上限不能为0', standard: 0},
-        {type: '1234',
+        {
+          type: '1234',
           title: 'stock',
           value: this.sellCountData.sellCount[this.sellCountData.flag].id * 1,
           valid: this.sellCountData.sellCount[this.sellCountData.flag].id * 1,
@@ -1027,7 +1087,8 @@
           standard: 0
         },
         {type: '1234', title: 'not_allow_time', value: this.notAllowTime},
-        {type: '4',
+        {
+          type: '4',
           title: 'config',
           value: {
             role: this.targetPopulationData.targetPopulation[this.targetPopulationData.flag].id,
@@ -1036,7 +1097,8 @@
             meet_money: this.conditionsData.conditions[this.conditionsData.flag].id
           }
         },
-        {type: '3',
+        {
+          type: '3',
           title: 'config',
           value: {
             role: this.targetPopulationData.targetPopulation[this.targetPopulationData.flag].id,
@@ -1044,19 +1106,22 @@
             reduction: this.fullMin
           }
         },
-        {type: '2',
+        {
+          type: '2',
           title: 'config',
           value: {
             role: this.targetPopulationData.targetPopulation[this.targetPopulationData.flag].id
           }
         },
-        {type: '1',
+        {
+          type: '1',
           title: 'config',
           value: {
             role: this.targetPopulationData.targetPopulation[this.targetPopulationData.flag].id
           }
         },
-        {type: '1',
+        {
+          type: '1',
           title: 'note',
           value: {
             need_subscribe: this.subscribe,
@@ -1065,7 +1130,8 @@
             remarks: this.knowRemark
           }
         },
-        {type: '234',
+        {
+          type: '234',
           title: 'note',
           value: {
             buy_upper_limit: this.buyLimit,
@@ -1077,7 +1143,91 @@
       ]
       return data
     }
+
+    // 检查上线状态,编辑数量是否合法
+    _checkStockLegal(e) {
+      let key = this[e.source.name]
+      if (this.model !== 'up-editor') return true
+      let oldStock = this.disableReduceInfo.sellCount * 1
+      // key.tmp 0 无限制 key.tmp 1 限制数量
+      if (oldStock === -1 && key.tmp * 1 !== 0) {
+        this.$invoke('count-modal', 'show')
+        this.$invoke('toast', 'show', `数量不能小于之前的无限制`)
+        key.sellCount[0].id = -1
+        key.tmpValue = -1
+        key.tmp = 0
+        key.flag = 0
+        this.$apply()
+        return false
+      } else if (key.tmpValue * 1 < oldStock) {
+        this.$invoke('count-modal', 'show')
+        this.$invoke('toast', 'show', `数量不能小于之前${oldStock}`)
+        key.tmpValue = parseInt(oldStock)
+        this.$apply()
+        return false
+      }
+
+      return true
+    }
+
+    _resetData(e) {
+      let key = this[e.source.name]
+      key.tmp = key.flag
+      if (key.tmpValue) { // 如果弹窗中有输入框
+        let children = e.source.name.split('Data')[0]
+        key[children][1].id = key.tmpValue
+      }
+      this.$apply()
+    }
+
+    // 上线状态检查提交信息是否合法
+    _checkFormLegal(data) {
+      // 检查有效期时间是否大于等于售卖时间
+      if (new Date(data.sell_end_at) - new Date(data.end_at) > 0) {
+        this.$invoke('toast', 'show', `有效期时间不能早于售卖时间`)
+        return false
+      }
+      if (this.model !== 'up-editor') return true
+      // 售卖时间检查
+      let oldSellDate = this.disableReduceInfo.sellEndTime
+      if (new Date(oldSellDate) - new Date(data.sell_end_at) > 0) {
+        this.$invoke('toast', 'show', `售卖时间不能早于${oldSellDate}`)
+        return false
+      }
+      // 有效期时间检查
+      let oldValidDate = this.disableReduceInfo.validDate
+      if (new Date(oldValidDate) - new Date(data.end_at) > 0) {
+        this.$invoke('toast', 'show', `售卖时间不能早于${oldValidDate}`)
+        return false
+      }
+      // 库存检查
+      let oldStock = this.disableReduceInfo.sellCount * 1
+      if (oldStock === -1 && data.stock !== -1) {
+        this.$invoke('toast', 'show', `数量不能小于之前的无限制`)
+        return false
+      } else if (oldStock > data.stock) {
+        this.$invoke('toast', 'show', `数量不能小于之前${oldStock}`)
+        return false
+      }
+      return true
+    }
+
     methods = {
+      sellStartDateTap() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
+        }
+      },
+      salePriceTap() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
+        }
+      },
+      takenPirce() {
+        if (this.disable) {
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
+        }
+      },
       selectCatelogTab(catelogTab) {
         this.catelogTab = Math.floor(catelogTab)
       },
@@ -1096,6 +1246,7 @@
       },
       async setSelect(e) {
         let key = this[e.source.name]
+        // 检查输入数量是否合法
         key.flag = key.tmp
         if (e.source.name === 'categoryData') {
           this._setTicketState(key.flag + 1, 'add')
@@ -1105,6 +1256,7 @@
           key.tmpValue = key[children][1].id
         }
         this.$apply()
+        this._checkStockLegal(e)
       },
       async resetSelect(e) {
         let key = this[e.source.name]
@@ -1219,6 +1371,10 @@
         this.tempServices = services.map((item) => Object.assign({}, item))
       },
       setSellStartDate(e) {
+        if (this.disable) {
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
+          return
+        }
         this.sellStartTime = e.detail.value
       },
       setSellEndDate(e) {
@@ -1287,6 +1443,10 @@
           return
         }
         let data = valid.data
+        // 新增字段商品ID给服务器
+        data.id = this.id
+        // 检查数据是否合法
+        if (!this._checkFormLegal(data)) return
         if (this.industry) {
           data.industry_name = this.industry
         }
@@ -1303,6 +1463,10 @@
         this.loaded()
       },
       showMealModal() {
+        if (this.disable || this.disableDown) {
+          this.$invoke('toast', 'show', FINISHEDMESSAGE)
+          return
+        }
         this.$invoke('meal-modal', 'show')
       },
       showServiceModal() {
@@ -1405,7 +1569,8 @@
         }
       }
     }
-    numberString (number) { // 1位小数
+
+    numberString(number) { // 1位小数
       let num = number.split('.')
       let newNum = Math.round(num[0])
       if (num[1]) {
@@ -1416,7 +1581,8 @@
       }
       return newNum
     }
-    async _imageOnOff (obj, f) {
+
+    async _imageOnOff(obj, f) {
       for (let i = 0; i < obj.length; i++) {
         if (obj[i + 1]) {
           if (obj[i].image_id === 0 && obj[i + 1].image_id === 0) {
@@ -1428,6 +1594,39 @@
       }
 
       this.$apply()
+    }
+
+    computed = {
+      // 上线编辑时,禁用样式
+      disableStyle() {
+        return this.disable ? 's-c-disable' : 's-c-disable-undef'
+      },
+      // 上线编辑时,禁用逻辑开饭
+      disable() {
+        return this.model === 'up-editor'
+      },
+      disableDown() {
+        return this.model === 'down-editor'
+      },
+      disableDownStyle() {
+        return this.disableDown ? 's-c-disable' : 's-c-disable-undef'
+      },
+      // 上线编辑时,售卖结束时间可选择的限制
+      limitSellStartDate() {
+        if (this.disable && this.disableReduceInfo) {
+          const time = this.disableReduceInfo.sellEndTime
+          return time
+        }
+        return null
+      },
+      // 上线编辑时,有效期结束可选择的限制
+      limitValidStartDate() {
+        if (this.disable && this.disableReduceInfo) {
+          const time = this.disableReduceInfo.validDate
+          return time
+        }
+        return null
+      }
     }
     components = {
       'meal-modal': BaseModal,
@@ -1472,6 +1671,8 @@
     .arrow-content-wrapper
       display: flex
       align-items: center
+      flex: 1
+      justify-content: flex-end
     .arrow-right
       width: 10px
       height: 10px
@@ -1492,7 +1693,7 @@
         .picture-content
           display: flex
           align-items: center
-          margin-bottom:5px
+          margin-bottom: 5px
           .picture
             position: relative
             display: flex
@@ -1715,7 +1916,7 @@
               background-color: $color-assist-f
         .picker-time-wrapper
           height: 227px
-      .not-allow-time-modal,.target-population
+      .not-allow-time-modal, .target-population
         padding: 0 10px
         .item-wrapper
           display: flex
@@ -1772,7 +1973,7 @@
       .know-content
         justify-content: space-between
       .know
-        font-family: $font-family-light;
+        font-family: $font-family-light
         font-size: $font-size-small
         color: $color-text-d
         display: block
@@ -1861,5 +2062,24 @@
         font-size: $font-size-medium
         color: $color-white
         background: $color-text
+
+    .s-c-disable
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d !important
+    .s-c-input-disabel
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d !important
+      flex: 1
+    .s-c-input-disabel-discount
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d !important
+    .s-c-input-disabel-f-small
+      font-family: $font-family-light
+      font-size: $font-size-small
+      color: $color-text-d !important
+      flex: 1
 
 </style>

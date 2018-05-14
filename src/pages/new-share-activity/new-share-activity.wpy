@@ -1,0 +1,427 @@
+<template>
+  <view class="tl-share-con">
+    <view class="tl-share-box tl-share-type-between"  @tap="getServeList()">
+      <view class="tl-share-left">添加服务</view>
+      <view class="tl-share-right">
+        <view class="full-text {{editType  ? 'full-text-dis' : ''}}">{{shareData.promotion_title}}</view>
+        <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">现价</view>
+      <view class="tl-share-right">
+        <view class="full-text-dis">{{!shareData.price ? '0.00' : shareData.price}}
+        </view>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">活动名称</view>
+      <input type="text" placeholder="请输入（越分享越赚钱）" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15" bindinput="shareInputTitle" value="{{shareData.title}}"/>
+      <view class="tl-share-number">{{titleNumber}}/15</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">添加数量</view>
+      <input type="number" placeholder="{{stockToast}}" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="8" bindinput="shareInputNumber" value="{{shareData.stock}}"/>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">活动时间</view>
+      <view class="tl-share-data-left">自上线之日起</view>
+      <view class="tl-share-data-to tl-share-data-left">至</view>
+      <picker mode="date" class="sell-date" @change="setValidDate" start="{{hotEndStartDate}}" value="{{shareData.sell_end_at}}">
+        <view class="tl-share-data-time">
+          <view>{{shareData.sell_end_at === '' ? '结束时间' : shareData.sell_end_at}}</view>
+          <view class="arrow-right" wx:if="{{shareData.sell_end_at === ''}}">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+          </view>
+        </view>
+      </picker>
+    </view>
+  </view>
+  <view class="tl-share-con">
+    <view class="tl-share-box">
+      <view class="tl-share-icon"></view>
+      <view class="tl-share-icontext">领取者</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">抵用券</view>
+      <input type="number" placeholder="仅限该活动和该服务使用" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="6" bindinput="shareInputDiscount" value="{{shareData.eductible_money}}"/>
+    </view>
+  </view>
+  <view class="tl-share-con tl-share-con-bottom">
+    <view class="tl-share-box">
+      <view class="tl-share-icon"></view>
+      <view class="tl-share-icontext">推广者</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">佣金比率</view>
+      <input type="number" placeholder="" class="tl-share-rate" placeholder-class="tl-share-title-place" maxlength="2" bindinput="shareInputRate" value="{{shareData.rate}}" />
+      <view class="tl-share-title-place">%</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">提成金额</view>
+      <view class="tl-share-title-place {{!shareData.profit_money ? '' : 'tl-share-title-have'}}">
+        {{!shareData.profit_money ? '0.00' : shareData.profit_money}}
+      </view>
+    </view>
+  </view>
+  <view class="tl-share-save">
+    <view class="tl-share-save-btn" @tap="saveShareNewData">保存</view>
+  </view>
+  <Toast></Toast>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Toast from '@/base/toast/toast'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import ShareMoney from 'api/share-active'
+  import {ERR_OK} from '@/api/base'
+
+  export default class ShareActivity extends wepy.page {
+    mixins = [base]
+
+    data = {
+      imageUri: URIS.image,
+      currentCoupon: '',
+      titleNumber: 0,
+      editId: null, // 编辑ID
+      editType: null, // 编辑类型
+      edit_stock: null,
+      stockToast: '请输入',
+      pickerStar: '',
+      shareData: {
+        promotion_id: '',
+        promotion_title: '',
+        title: '',
+        price: '',
+        stock: '',
+        sell_end_at: '',
+        eductible_money: '',
+        rate: '',
+        profit_money: '',
+        submitLock: false
+      }
+    }
+
+    async onLoad(options) {
+      this.pickerStar = new Date()
+      this.$parent.globalData.shareCoupon = null
+      if (options.id) {
+        this.editId = options.id
+        this.editType = options.type
+        let res = await ShareMoney.getServerDetail(options.id)
+        if (res.error === ERR_OK) {
+          this.shareData = res.data
+          this.titleNumber = res.data.title.length
+          if (options.type === '1') {
+            this.pickerStar = res.data.sell_end_at
+          }
+          this.edit_stock = res.data.stock
+          let json = await ShareMoney.getServerShopDetail(res.data.promotion_id)
+          if (json.error === ERR_OK) {
+            this.currentCoupon = json.data
+            this.$parent.globalData.shareCoupon = json.data
+            let stock = this.currentCoupon.stock
+            if (stock === -1) {
+              this.stockToast = '最大可添加数量无限制'
+            } else {
+              this.stockToast = `最大可添加数量为${stock}`
+            }
+          }
+        } else {
+          this.$invoke('Toast', 'show', res.message)
+        }
+      }
+      this.$apply()
+      this.loaded()
+    }
+
+    onShow() {
+      this.submitLock = false
+      // 全局变量拿服务
+      if (this.$parent.globalData.shareCoupon) {
+        this.currentCoupon = this.$parent.globalData.shareCoupon
+        this.shareData.promotion_title = this.$parent.globalData.shareCoupon.title
+        this.shareData.promotion_id = this.$parent.globalData.shareCoupon.id
+        this.shareData.price = this.$parent.globalData.shareCoupon.platform_price
+        let stock = this.currentCoupon.stock
+        if (stock === -1) {
+          this.stockToast = '最大可添加数量无限制'
+        } else {
+          this.stockToast = `最大可添加数量为${stock}`
+        }
+        this.$apply()
+      }
+      this._calculatCommission()
+    }
+
+    // 计算提成金额
+    _calculatCommission() {
+      if (!this.currentCoupon) return
+      if (!this.shareData.eductible_money) return
+      if (!this.shareData.rate) return
+      if (this.currentCoupon.price * 1 <= this.shareData.eductible_money * 1) {
+        this.$invoke('Toast', 'show', '抵用券金额不能大于等于现价')
+        return
+      }
+      this.shareData.profit_money = (this.shareData.price - this.shareData.eductible_money) * (this.shareData.rate / 100)
+      this.shareData.profit_money = this.shareData.profit_money.toFixed(2)
+      this.$apply()
+    }
+
+    // 格式化日期
+    _formateDate(time) {
+      time = new Date(time)
+      const year = time.getFullYear()
+      const month = time.getMonth() + 1
+      const date = time.getDate()
+      return `${year}-${month}-${date}`
+    }
+
+    methods = {
+      // 输入分享金额标题
+      shareInputTitle(e) {
+        this.shareData.title = e.detail.value
+        this.titleNumber = e.detail.value.length
+        this.$apply()
+      },
+      // 输入分享数量
+      shareInputNumber(e) {
+        this.shareData.stock = e.detail.value
+        this.$apply()
+      },
+      // 输入分享折扣
+      shareInputDiscount(e) {
+        this.shareData.eductible_money = e.detail.value
+        this._calculatCommission()
+        this.$apply()
+      },
+      // 输入分享比率
+      shareInputRate(e) {
+        this.shareData.rate = e.detail.value
+        this._calculatCommission()
+        this.$apply()
+      },
+      // 保存售卖时间
+      setValidDate(e) {
+        this.shareData.sell_end_at = e.detail.value
+        this.$apply()
+      },
+      // 提交资料创建
+      async saveShareNewData() {
+        if (!this.currentCoupon) {
+          this.$invoke('Toast', 'show', '请添加服务')
+          return
+        }
+        if (!this.shareData.title) {
+          this.$invoke('Toast', 'show', '请输入活动标题')
+          return
+        }
+        if (!this.shareData.stock) {
+          this.$invoke('Toast', 'show', '请输入活动库存')
+          return
+        }
+        if (!this.shareData.sell_end_at) {
+          this.$invoke('Toast', 'show', '请输入活动截止的日期')
+          return
+        } else {
+          let currentDate = new Date(this.shareData.sell_end_at)
+          let sellCurrentDate = new Date(this.currentCoupon.sell_end_at)
+          if (currentDate - sellCurrentDate > 0) {
+            this.$invoke('Toast', 'show', '活动时间不能大于等于服务售卖时间')
+            return
+          }
+        }
+        if (!this.shareData.eductible_money) {
+          this.$invoke('Toast', 'show', '请输入抵用券金额')
+          return
+        } else {
+          if (this.shareData.price * 1 <= this.shareData.eductible_money * 1) {
+            this.$invoke('Toast', 'show', '抵用券金额不能大于现价')
+            return
+          }
+        }
+        if (!this.shareData.rate) {
+          this.$invoke('Toast', 'show', '请输入佣金比率')
+          return
+        }
+        if (this.submitLock) return
+        if (this.editId) {
+          let res = await ShareMoney.SaveServerDetails(this.editId, this.shareData)
+          if (res.error === ERR_OK) {
+            this.submitLock = true
+            this.$parent.globalData.newData = 'EDIT'
+            setTimeout(() => {
+              this.$back()
+            }, 50)
+          } else {
+            this.$invoke('Toast', 'show', res.message)
+          }
+        } else {
+          let res = await ShareMoney.createShareActive(this.shareData)
+          if (res.error === ERR_OK) {
+            this.submitLock = true
+            this.$parent.globalData.newData = 'NEW'
+            setTimeout(() => {
+              this.$back()
+            }, 50)
+          } else {
+            this.$invoke('Toast', 'show', res.message)
+          }
+        }
+        this.loaded()
+      },
+      getServeList() {
+        if (this.editType) {
+          this.$invoke('Toast', 'show', '上线中的服务不能更改')
+        } else {
+          let url = `/pages/share-active-choose-server/share-active-choose-server`
+          this.$navigate(url)
+        }
+      }
+    }
+
+    computed = {
+      hotEndStartDate() {
+        let time = ' '
+        if (this.editType === '1') {
+          time = this.pickerStar
+        } else {
+          time = new Date()
+        }
+        time = this._formateDate(time)
+        return time
+      }
+    }
+
+    components = {
+      Toast
+    }
+
+    config = {
+      navigationBarTitleText: '新建分享活动',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#F9F9F9'
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  .tl-share-con
+    margin-bottom: 10px
+    background: $color-white
+    padding-left: 12px
+    .tl-share-type-between
+      justify-content: space-between
+    .tl-share-box
+      border-bottom: 0.5px solid $color-row-line
+      height: 43px
+      display: flex
+      align-items: center
+      padding-right: 12px
+      &:last-child
+        border-bottom: 0
+      .tl-share-left
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-td
+        width: 88px
+        @media screen and (max-width: 340px)
+          width: 80px
+      .tl-share-data-time
+        font-size: $font-size-medium
+        font-family: $font-family-light
+        color: $color-theme
+        display: flex
+        align-items: center
+        justify-content: center
+        text-align: right
+        .arrow-right
+          margin-left: 1px
+          justify-content: right
+          .full-image
+            margin-left: 3.5px
+            display: block
+            width: 10px
+            height: 10px
+      .tl-share-data-left
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-d
+      .tl-share-data-to
+        margin: 0 25px
+        @media screen and (max-width: 340px)
+          margin: 0 10px
+      .tl-share-title
+        flex: 1
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text
+      .tl-share-title-place
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-d
+      .tl-share-title-have
+        color: $color-theme
+      .tl-share-number
+        font-family: $font-family-light
+        font-size: $font-size-small-s
+        color: $color-text-d
+      .tl-share-right
+        display: flex
+        align-items: center
+        .full-text
+          font-size: $font-size-medium
+          font-family: $font-family-light
+          color: $color-theme
+        .full-text-dis
+          font-size: $font-size-medium
+          font-family: $font-family-light
+          color: $color-btn-dis
+        .full-image
+          margin-left: 10px
+          display: block
+          width: 10px
+          height: 10px
+      .tl-share-icon
+        background: $color-assist-f
+        width: 4px
+        height: 13px
+        margin-right: 5px
+      .tl-share-icontext
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text-td
+      .tl-share-rate
+        font-family: $font-family-light
+        font-size: $font-size-medium
+        color: $color-text
+        margin-right: 6px
+        width: 39px
+        height: 22px
+        text-align: center
+        border: 1px solid $color-col-line-f
+
+  .tl-share-save
+    position: fixed
+    left: 0
+    bottom: 17.5px
+    padding: 0 12px
+    width: 100%
+    box-sizing: border-box
+    .tl-share-save-btn
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      color: $color-white
+      background: $color-theme
+      border-radius: 2px
+      text-align: center
+      height: 44px
+      line-height: 44px
+
+  .tl-share-con-bottom
+    margin-bottom: 62px
+</style>
