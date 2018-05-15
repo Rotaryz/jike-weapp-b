@@ -69,6 +69,7 @@
           this.$parent.updateGlobalData('coupon', this.couponList[this.num])
           this.$parent.updateGlobalData('couIndex', this.index)
         } else {
+          this.moreList = []
           this.couponList.forEach((item) => {
             if (item['checked']) {
               this.moreList.push(item)
