@@ -256,8 +256,12 @@
         if (txt === '异业卡') {
           wx.navigateToMiniProgram({
             appId: this.appId,
-            path: this.path + `?`,
-            extraData: {},
+            path: this.path,
+            extraData: {
+              merchantId: wepy.getStorageSync('merchant_id'),
+              entryRole: wepy.getStorageSync('is_leader') ? 'union' : 'shop',
+              token: wepy.getStorageSync('token')
+            },
             envVersion: URIS.jumpVersion,
             success(res) {
               // 打开成功

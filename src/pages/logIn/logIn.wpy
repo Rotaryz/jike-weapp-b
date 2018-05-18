@@ -228,10 +228,9 @@
           this.loaded()
           if (res.error === ERR_OK) {
             wepy.setStorageSync('token', res.data.access_token)
-            wepy.setStorageSync('is_leader',
-              res.data.merchant_info.merchant_data.is_leader)
-            wepy.setStorageSync('is_parent',
-              res.data.merchant_info.is_parent)
+            wepy.setStorageSync('is_leader', res.data.merchant_info.merchant_data.is_leader)
+            wepy.setStorageSync('merchant_id', res.data.merchant_info.merchant_data.merchant_id)
+            wepy.setStorageSync('is_parent', res.data.merchant_info.is_parent)
             this.rightTip('登录成功')
             setTimeout(async () => {
               await wepy.switchTab({
