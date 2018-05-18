@@ -234,11 +234,10 @@
        * 待获取异业小程序信息的接口 ！！！！
        * @type {string}
        */
-      let res = ''
-      if (res.error !== ERR_OK) {
-        return
+      let res = {
+        app_id: 'wx4e95ce94436c4d29',
+        path: '/pages/loading/loading'
       }
-      res = res.data
       this.appId = res.app_id
       this.path = res.path
       this.$apply()
@@ -257,7 +256,7 @@
         if (txt === '异业卡') {
           wx.navigateToMiniProgram({
             appId: this.appId,
-            path: this.path,
+            path: this.path + `?`,
             extraData: {},
             envVersion: URIS.jumpVersion,
             success(res) {
