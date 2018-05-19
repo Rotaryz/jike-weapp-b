@@ -157,4 +157,14 @@ export default class shop extends base {
     const url = `${this.baseUrl}/api/merchants/collect-formid`
     return await this.post(url, data, false)
   }
+
+  /**
+   * 获取异业小程序appid
+   * @param data
+   * @returns {Promise.<*>}
+   */
+  static async getYylmApp (data) {
+    const url = `${this.baseUrl}/api/authorise/get-yylm-app`
+    return await this.get(url, data, false)
+  }
 }
