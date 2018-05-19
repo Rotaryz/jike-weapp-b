@@ -236,12 +236,13 @@
        * 待获取异业小程序信息的接口 ！！！！
        * @type {string}
        */
-      let res = {
-        app_id: 'wx4e95ce94436c4d29',
-        path: '/pages/home/home'
+      let res = await shop.getYylmApp()
+      if (res.error === ERR_OK) {
+        this.appId = res.app_id
+        this.path = res.path
       }
-      this.appId = res.app_id
-      this.path = res.path
+      // this.appId = 'wx4e95ce94436c4d29'
+      // this.path = '/pages/loading/loading'
       this.$apply()
     }
 
@@ -264,8 +265,7 @@
           wx.navigateToMiniProgram({
             appId: this.appId,
             path: this.path + `?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`,
-            extraData: {
-            },
+            extraData: {},
             envVersion: URIS.jumpVersion,
             success(res) {
               // 打开成功
@@ -286,10 +286,10 @@
       }
     }
 
-    async onLoad() {
+    async onLoad () {
       this.showTime = 0
-      await this.load()
       await this.getLinkInfo()
+      await this.load()
       this.$apply()
     }
   }
