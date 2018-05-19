@@ -65,7 +65,7 @@
   import base from 'common/mixins/base'
   import Toast from '@/base/toast/toast'
   import URIS from 'common/js/config'
-  import { ERR_OK } from 'api/base'
+  import {ERR_OK} from 'api/base'
   import ServiceDue from '@/base/service-due/service-due'
   import Merchant from '@/api/merchants'
   import msgWindow from '@/base/popup-model/popup-model'
@@ -79,7 +79,7 @@
   export default class Shop extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       this.ShareAppMessage()
     }
 
@@ -148,7 +148,8 @@
       appId: '',
       path: ''
     }
-    async load (time = 'yesterday', type = 'hit') {
+
+    async load(time = 'yesterday', type = 'hit') {
       let data = {time: time, type: type}
       let res = await shop.dataTrend(data)
       this.loaded()
@@ -165,7 +166,7 @@
     }
 
 //      父店铺进行收集FormId
-    async getFormId (e) {
+    async getFormId(e) {
       let parent = await wepy.getStorage({key: 'is_parent'})
       if (parent.data === 1) {
         const formId = e.detail.formId
@@ -201,7 +202,7 @@
       this.$apply()
     }
 
-    async scanCodes (e) {
+    async scanCodes(e) {
       if (this.serviceDue) {
         this.$invoke('ServiceDue', 'show')
         return
@@ -228,6 +229,7 @@
         }
       }
     }
+
     // 获取异业卡小程序信息
     async getLinkInfo() {
       /**
@@ -236,12 +238,13 @@
        */
       let res = {
         app_id: 'wx4e95ce94436c4d29',
-        path: '/pages/loading/loading'
+        path: '/pages/home/home'
       }
       this.appId = res.app_id
       this.path = res.path
       this.$apply()
     }
+
     methods = {
       async showData(time, index) {
         this.showTime = index
@@ -254,13 +257,14 @@
       },
       skipTo(url, txt) {
         if (txt === '异业卡') {
+          let merchantId = wepy.getStorageSync('merchant_id')
+          let entryRole = wepy.getStorageSync('is_leader') ? 'union' : 'shop'
+          let token = wepy.getStorageSync('token')
+          /* eslint-disable */
           wx.navigateToMiniProgram({
             appId: this.appId,
-            path: this.path,
+            path: this.path + `?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`,
             extraData: {
-              merchantId: wepy.getStorageSync('merchant_id'),
-              entryRole: wepy.getStorageSync('is_leader') ? 'union' : 'shop',
-              token: wepy.getStorageSync('token')
             },
             envVersion: URIS.jumpVersion,
             success(res) {
@@ -282,7 +286,7 @@
       }
     }
 
-    async onLoad () {
+    async onLoad() {
       this.showTime = 0
       await this.load()
       await this.getLinkInfo()
