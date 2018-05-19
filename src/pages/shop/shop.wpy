@@ -145,8 +145,8 @@
       serviceDue: false,
       dataFinish: false,
       showWindow: true,
-      appId: '',
-      path: ''
+      appId: '', // 异业联盟APPID
+      path: '' // 异业联盟路径
     }
 
     async load(time = 'yesterday', type = 'hit') {
@@ -237,6 +237,7 @@
        * @type {string}
        */
       let res = await shop.getYylmApp()
+      console.log(res)
       if (res.error === ERR_OK) {
         this.appId = res.app_id
         this.path = res.path
