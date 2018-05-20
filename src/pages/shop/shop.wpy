@@ -144,9 +144,7 @@
       leader: 0,
       serviceDue: false,
       dataFinish: false,
-      showWindow: true,
-      appId: '', // 异业联盟APPID
-      path: '' // 异业联盟路径
+      showWindow: true
     }
 
     async load(time = 'yesterday', type = 'hit') {
@@ -236,11 +234,13 @@
        * 待获取异业小程序信息的接口 ！！！！
        * @type {string}
        */
+      // let appId = wepy.getStorageSync('yylmAppId')
+      // if (appId) return
       let res = await shop.getYylmApp()
       console.log(res)
       if (res.error === ERR_OK) {
-        this.appId = res.app_id
-        this.path = res.path
+        wepy.setStorageSync('yylmAppId', res.data.app_id)
+        wepy.setStorageSync('yylmPath', res.data.path)
       }
       // this.appId = 'wx4e95ce94436c4d29'
       // this.path = '/pages/loading/loading'
@@ -262,10 +262,13 @@
           let merchantId = wepy.getStorageSync('merchant_id')
           let entryRole = wepy.getStorageSync('is_leader') ? 'union' : 'shop'
           let token = wepy.getStorageSync('token')
+          let appId = `${wepy.getStorageSync('yylmAppId')}`
+          let path = `/${wepy.getStorageSync('yylmPath')}?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`
+          console.log(appId, path)
           /* eslint-disable */
           wx.navigateToMiniProgram({
-            appId: this.appId,
-            path: this.path + `?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`,
+            appId,
+            path,
             extraData: {},
             envVersion: URIS.jumpVersion,
             success(res) {
@@ -287,7 +290,7 @@
       }
     }
 
-    async onLoad () {
+    async onLoad() {
       this.showTime = 0
       await this.getLinkInfo()
       await this.load()
