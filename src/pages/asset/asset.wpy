@@ -28,7 +28,7 @@
         </view>
         <view class="split-line border-bottom-1px border-top-1px"></view>
         <view class="list-wrapper">
-          <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
+          <navigator url="/pages/total-income/total-income?orderType=1" class="item border-bottom-1px">
             <view class="label">待结算</view>
             <view class="content-wrapper">
               <view class="content"><text class="money-icon">¥</text>{{totalRemaining}}</view>
@@ -82,7 +82,7 @@
             <view class="image-wrapper">
               <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
             </view>
-            <view class="desc">暂无数据</view>
+            <view class="desc">暂无记录</view>
           </view>
         </view>
       </view>
