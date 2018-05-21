@@ -151,6 +151,9 @@
       }, {
         title: '买单订单',
         type: 3
+      }, {
+        title: '异业联盟卡订单',
+        type: 4
       }],
       navList: [{
         title: '支付成功',
