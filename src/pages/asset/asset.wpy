@@ -14,8 +14,7 @@
         <view class="top-wrapper">
           <view class="content">
             <view class="t-content">可提现(元)
-              <image wx:if="{{imageUrl}}" class="help"
-                     src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image>
+              <image wx:if="{{imageUrl}}" class="help" src="{{imageUrl + '/defaults/b-image/page/icon-finance_help@2x.png'}}" @tap="showTip"></image>
             </view>
             <view class="b-content">¥{{remaining}}</view>
             <base-modal type="tip" title="提示信息">
@@ -23,29 +22,38 @@
                 <text class="text">当顾客使用优惠券或优惠券过期，相关订单资金即转入可提现账户。</text>
               </view>
             </base-modal>
-
           </view>
           <navigator url="/pages/withdrawal/withdrawal" class="btn">提现</navigator>
           <view class="tip">每天可提现一次，每笔限额1万元</view>
         </view>
         <view class="split-line border-bottom-1px border-top-1px"></view>
         <view class="list-wrapper">
-          <navigator url="/pages/present-record/present-record" class="item border-bottom-1px">
-            <view class="label">提现记录</view>
+          <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
+            <view class="label">待结算</view>
             <view class="content-wrapper">
+              <view class="content"><text class="money-icon">¥</text>{{totalRemaining}}</view>
               <view class="arrow-right">
-                <image wx:if="{{imageUrl}}" class="full-image"
-                       src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
             </view>
           </navigator>
-          <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
-            <view class="label">累计收入</view>
+          <navigator url="/pages/present-record/present-record" class="item">
+            <view class="label">已提现</view>
             <view class="content-wrapper">
-              <view class="content">¥{{totalRemaining}}</view>
+              <view class="content"><text class="money-icon">¥</text>{{totalRemaining}}</view>
               <view class="arrow-right">
-                <image wx:if="{{imageUrl}}" class="full-image"
-                       src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
+              </view>
+            </view>
+          </navigator>
+        </view>
+        <view class="margin-box-10px"></view>
+        <view class="list-wrapper border-bottom-1px">
+          <navigator url="/pages/total-income/total-income" class="item border-bottom-1px">
+            <view class="label">收支记录</view>
+            <view class="content-wrapper">
+              <view class="arrow-right">
+                <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
             </view>
           </navigator>
@@ -56,7 +64,7 @@
           <view class="t-content">已支出(元)</view>
           <view class="b-content">¥{{outcome}}</view>
         </view>
-        <view class="split-line border-bottom-1px border-top-1px"></view>
+        <view class="margin-box-10px"></view>
         <view class="list-wrapper">
           <view class="header block-title border-bottom-1px">支出列表</view>
           <view class="list" wx:if="{{outcomeList.length > 0}}">
@@ -72,8 +80,7 @@
           </view>
           <view class="empty-wrapper" wx:if="{{outcomeList.length === 0}}">
             <view class="image-wrapper">
-              <image wx:if="{{imageUrl}}" class="full-image"
-                     src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
+              <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
             </view>
             <view class="desc">暂无数据</view>
           </view>
@@ -172,10 +179,8 @@
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
 
-  page
-    background-color: $color-white
-
   .asset
+    background: $color-white
     .tip-modal
       padding: 16px 10px 0 10px
       .text
@@ -271,6 +276,12 @@
             .content-wrapper
               display: flex
               align-items: center
+              .content
+                font-size: $font-size-medium
+                color: $color-text-title
+                margin-right: 3px
+                .money-icon
+                  margin-right: 2px
       .outcome-wrapper
         .top-wrapper
           display: flex
@@ -309,6 +320,7 @@
                   font-size: $font-size-small-s
                   color: $color-text-d
               .right-content
+                font-family: $font-family-meddle
                 font-size: $font-size-medium
                 color: $color-text-td
 </style>

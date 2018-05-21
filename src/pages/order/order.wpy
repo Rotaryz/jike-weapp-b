@@ -14,8 +14,8 @@
       </view>
       <view class="tab-box-right">
         <view class="tab-screen" @tap="screen">
-          <view class="tab-screen-txt {{screening || (typeScreenIdx.length || timeScreenFlag) ? 'checked' : ''}}">筛选</view>
-          <image class="tab-screen-icon" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/order/' + (screening ? 'icon-down24@2x.png' : (typeScreenIdx.length || timeScreenFlag) ? 'icon-down22@2x.png' : 'icon-down23@2x.png')}}"></image>
+          <view class="tab-screen-txt {{screening || (typeScreenIdx || timeScreenFlag) ? 'checked' : ''}}">筛选</view>
+          <image class="tab-screen-icon" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/order/' + (screening ? 'icon-down24@2x.png' : (typeScreenIdx || timeScreenFlag) ? 'icon-down22@2x.png' : 'icon-down23@2x.png')}}"></image>
         </view>
       </view>
     </view>
@@ -30,16 +30,16 @@
       <view class="screen-box" hidden="{{!screening}}">
         <view class="screen-container">
           <view class="screen-order-item">
-            <view class="screen-order-title">订单类型(可多选)</view>
+            <view class="screen-order-title">订单类型(单选)</view>
             <view class="screen-order-list">
-              <view class="screen-order-list-li {{item.checked ? 'active' : ''}}" wx:for="{{orderScreenType}}" wx:key="{{index}}" @tap="typeScreenCheck({{item.idx}})">
+              <view class="screen-order-list-li {{item.idx === typeScreenIdx ? 'active' : ''}}" wx:for="{{orderScreenType}}" wx:key="{{index}}" @tap="typeScreenCheck({{item.idx}})">
                 {{item.txt}}
-                <image class="screen-order-list-li-icon" wx:if="{{imageUri && item.checked}}" src="{{imageUri + '/defaults/b-image/order/icon-select@2x.png'}}"></image>
+                <image class="screen-order-list-li-icon" wx:if="{{imageUri && item.idx === typeScreenIdx}}" src="{{imageUri + '/defaults/b-image/order/icon-select@2x.png'}}"></image>
               </view>
             </view>
           </view>
           <view class="screen-order-item">
-            <view class="screen-order-title">时间(可单选)</view>
+            <view class="screen-order-title">时间(单选)</view>
             <view class="screen-order-list">
               <view class="screen-order-list-li {{timeScreenFlag === item.flag ? 'active' : ''}}" wx:for="{{orderScreenTime}}" wx:key="{{index}}" @tap="timeScreenCheck({{item.flag}})">
                 {{item.txt}}
@@ -107,7 +107,7 @@
         {txt: '买单', idx: 3, checked: false},
         {txt: '砍价', idx: 6, checked: false}
       ],
-      typeScreenIdx: [],
+      typeScreenIdx: '',
       orderScreenTime: [
         {txt: '今天', idx: 0, flag: 'today'},
         {txt: '昨天', idx: 1, flag: 'yesterday'},
@@ -161,24 +161,31 @@
         this.$apply()
       },
       typeScreenCheck(idx) {
-        if (this.typeScreenIdx.indexOf(idx * 1) !== -1) {
-          this.typeScreenIdx = this.typeScreenIdx.filter((item) => {
-            return item !== idx * 1
-          })
-          this.orderScreenType = this.orderScreenType.map((item) => {
-            if (item.idx === idx) {
-              item.checked = false
-            }
-            return item
-          })
+//        类型多选处理
+//        if (this.typeScreenIdx.indexOf(idx * 1) !== -1) {
+//          this.typeScreenIdx = this.typeScreenIdx.filter((item) => {
+//            return item !== idx * 1
+//          })
+//          this.orderScreenType = this.orderScreenType.map((item) => {
+//            if (item.idx === idx) {
+//              item.checked = false
+//            }
+//            return item
+//          })
+//        } else {
+//          this.typeScreenIdx.push(idx)
+//          this.orderScreenType = this.orderScreenType.map((item) => {
+//            if (item.idx === idx) {
+//              item.checked = true
+//            }
+//            return item
+//          })
+//        }
+//        类型单选处理
+        if (this.typeScreenIdx === idx * 1) {
+          this.typeScreenIdx = ''
         } else {
-          this.typeScreenIdx.push(idx)
-          this.orderScreenType = this.orderScreenType.map((item) => {
-            if (item.idx === idx) {
-              item.checked = true
-            }
-            return item
-          })
+          this.typeScreenIdx = idx * 1
         }
         this.$apply()
       },
@@ -191,12 +198,13 @@
         this.$apply()
       },
       screenClear() {
-        this.typeScreenIdx = []
+        this.typeScreenIdx = ''
         this.timeScreenFlag = ''
-        this.orderScreenType = this.orderScreenType.map((item) => {
-          item.checked = false
-          return item
-        })
+//        订单类型多选时的判断
+//        this.orderScreenType = this.orderScreenType.map((item) => {
+//          item.checked = false
+//          return item
+//        })
         this.$apply()
       },
       async screenSearch() {
@@ -243,9 +251,8 @@
         page: this.page,
         transaction_status: this.tabIdx,
         date: this.timeScreenFlag,
-        type: this.screenType
+        type: this.typeScreenIdx
       }
-      console.log(data)
       let resData = await OrderApi.getOrderList(data)
       if (resData.error !== ERR_OK) {
         this.loaded()
@@ -268,9 +275,6 @@
     computed = {
       searchTxt() {
         return this.searchTxtInput && this.searchTxtInput.length ? '搜索' : '取消'
-      },
-      screenType() {
-        return this.typeScreenIdx.join()
       }
     }
 
