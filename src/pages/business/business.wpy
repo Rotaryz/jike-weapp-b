@@ -1,8 +1,7 @@
 <template>
   <view>
     <view class="client-head-img">
-      <image wx:if="{{imageUri}}"
-             src="{{imageUri + '/defaults/b-image/page/pic-square_bg@2x.png'}}"></image>
+      <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-square_bg@2x.png'}}"></image>
       <view class="client-head-img-txt">全部({{allNumber}}家)门店</view>
     </view>
 

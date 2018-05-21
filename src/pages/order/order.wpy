@@ -1,122 +1,76 @@
 <template>
   <view class="order-box">
-    <view class="or-header" wx:if="{{!showInput}}">
-      <!--<text>服务订单</text>-->
-      <view class="{{showOrder ? 'active' : ''}}" @tap="showOrders">
-        <text>{{orders[orderPage].title}}</text>
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
-        <view class="day-select first" wx:if="{{showOrder}}">
-          <view wx:for="{{orders}}" wx:key="{{index}}"
-                class="{{orderPage === index? 'tactive' : ''}}"
-                @tap="orderPage({{index}})">{{item.title}}
-          </view>
+    <view class="order-head">
+      <view class="search-box {{inputChecked ? 'checked' : ''}}">
+        <image class="search-icon" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-search24@2x.png'}}"></image>
+        <input type="text" class="search-input" value="{{searchTxtInput}}" confirm-type="search" bindconfirm="inputSearch" placeholder="手机号/订单号" max-length="30" placeholder-class="holder-class" bindinput="inputTxtIn" bindfocus="inputOn" focus="{{inputFocus}}"/>
+        <image class="search-delete" wx:if="{{imageUri && searchTxtInput.length}}" src="{{imageUri + '/defaults/b-image/order/icon-clear@2x.png'}}" @tap.stop="clearInput"></image>
+      </view>
+      <view class="search-txt" wx:if="{{inputChecked}}" @tap.stop="searchNextWork">{{searchTxt}}</view>
+    </view>
+    <view class="tab-box border-bottom-1px">
+      <view class="tab-box-left">
+        <view class="{{screening ? 'tab-item disabled' : 'tab-item'}} {{tabIdx === item.idx * 1 ? 'active' : ''}}" wx:for="{{tabList}}" wx:key="{{index}}" @tap="tabCheck({{item.idx}})">{{item.txt}}</view>
+      </view>
+      <view class="tab-box-right">
+        <view class="tab-screen" @tap="screen">
+          <view class="tab-screen-txt {{screening || (typeScreenIdx.length || timeScreenFlag) ? 'checked' : ''}}">筛选</view>
+          <image class="tab-screen-icon" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/order/' + (screening ? 'icon-down24@2x.png' : (typeScreenIdx.length || timeScreenFlag) ? 'icon-down22@2x.png' : 'icon-down23@2x.png')}}"></image>
         </view>
       </view>
-      <view class="{{showDay ? 'active' : ''}}" @tap="showDays">
-        <text>{{days[dayPage].title}}</text>
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-down24@2x.png'}}"></image>
-        <view class="day-select" wx:if="{{showDay}}">
-          <view wx:for="{{days}}" wx:key="{{index}}"
-                class="{{dayPage === index? 'tactive' : ''}}"
-                @tap="showPage({{index}})">{{item.title}}
+    </view>
+    <view class="order-container-box" style="height:{{scrollHeight}}px">
+      <scroll-view scroll-y bindscrolltolower="loadMore" class="order-container" wx:if="{{orderList.length}}">
+        <repeat for="{{orderList}}" key="index" index="index" item="item">
+          <view class="order-item-box">
+            <order-item :orderMsg.sync="item"></order-item>
           </view>
-        </view>
-      </view>
-      <view @tap="isInput">
-        <image wx:if="{{imageUrlHead}}"
-               src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
-        <text>搜索</text>
-      </view>
-    </view>
-    <view class="inputs" wx:if="{{showInput}}">
-      <image
-        src="{{imageUrlHead+'/defaults/b-image/page/icon-search24@2x.png'}}"></image>
-      <input type="number" placeholder="手机号搜索" bindinput="sreaching"
-             focus="{{showInput}}"
-             value="{{searchValue}}" bindblur="bindblurs"/>
-    </view>
-    <NavHeader>
-      <view wx:for="{{navList}}" class="{{navNum === index + 1 ? 'choice' : ''}}"
-            wx:key="{{index}}" @tap="showMsg({{index}})" id="nav-order">
-        <text>{{item.title}}</text>
-      </view>
-    </NavHeader>
-    <Blank></Blank>
-    <scroll-view scroll-y="true" bindscrolltolower="loadMore">
-      <view class="order-conpon">
-        <view class="order-item" wx:for="{{couponList}}" wx:key="{{index}}">
-          <image wx:if="{{imageUrlHead}}"
-                 src="{{imageUrlHead+'/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
-          <view class="order-top">
-            <view>
-              <view class="order-title">服务名称: {{item.title}}</view>
-              <view class="order-title">手机号码: {{item.customer_phone}}</view>
+        </repeat>
+      </scroll-view>
+      <view class="screen-box" hidden="{{!screening}}">
+        <view class="screen-container">
+          <view class="screen-order-item">
+            <view class="screen-order-title">订单类型(可多选)</view>
+            <view class="screen-order-list">
+              <view class="screen-order-list-li {{item.checked ? 'active' : ''}}" wx:for="{{orderScreenType}}" wx:key="{{index}}" @tap="typeScreenCheck({{item.idx}})">
+                {{item.txt}}
+                <image class="screen-order-list-li-icon" wx:if="{{imageUri && item.checked}}" src="{{imageUri + '/defaults/b-image/order/icon-select@2x.png'}}"></image>
+              </view>
             </view>
-            <text>
-              {{statusTxt[navNum - 1]}}
-            </text>
           </view>
-          <view class="order-bottom">
-            <view>订单号: {{item.order_sn}}</view>
-            <text @tap="showDetail({{item.id}})">
-              查看详情
-            </text>
+          <view class="screen-order-item">
+            <view class="screen-order-title">时间(可单选)</view>
+            <view class="screen-order-list">
+              <view class="screen-order-list-li {{timeScreenFlag === item.flag ? 'active' : ''}}" wx:for="{{orderScreenTime}}" wx:key="{{index}}" @tap="timeScreenCheck({{item.flag}})">
+                {{item.txt}}
+                <image class="screen-order-list-li-icon" wx:if="{{imageUri && timeScreenFlag === item.flag}}" src="{{imageUri + '/defaults/b-image/order/icon-select@2x.png'}}"></image>
+              </view>
+            </view>
+          </view>
+          <view class="screen-btn-box">
+            <view class="screen-btn screen-btn-clear border-top-1px border-bottom-1px" @tap="screenClear">重置</view>
+            <view class="screen-btn screen-btn-search" @tap="screenSearch">查询</view>
           </view>
         </view>
       </view>
-    </scroll-view>
-    <view class="order-detail" wx:if="{{isDetail}}">
-      <view wx:if="{{orderType === 1}}" class="order-box"> <!--服务订单-->
-        <view>订单详情</view>
-        <view>订单号：{{datail.order_sn}}</view>
-        <view>下单时间：{{datail.created_at}}</view>
-        <view>手机号：{{datail.customer_phone}}</view>
-        <view>用户ID：{{datail.customer_id}}</view>
-        <view>数量：{{datail.count}}</view>
-        <view>总价：
-          <text>¥{{datail.total}}</text>
-        </view>
-        <view @tap="hideDetail">确定</view>
-      </view>
-      <view wx:if="{{orderType === 2}}" class="order-box"><!--联盟订单-->
-        <view>订单详情</view>
-        <view>订单号：{{datail.order_sn}}</view>
-        <view>下单时间：{{datail.created_at}}</view>
-        <view>商家账号：{{datail.customer_phone}}</view>
-        <view>商家名称：{{datail.shop_name}}</view>
-        <view>用户ID：{{datail.customer_id}}</view>
-        <view>开通时间：{{datail.start_showed_at + '至' + datail.end_showed_at}}</view>
-        <view>总价：
-          <text>¥{{datail.total}}</text>
-        </view>
-        <view @tap="hideDetail">确定</view>
-      </view>
-      <view wx:if="{{orderType === 3}}" class="order-box"><!--买单订单-->
-        <view>订单详情</view>
-        <view>订单号：{{datail.order_sn}}</view>
-        <view>下单时间：{{datail.created_at}}</view>
-        <view>手机号：{{datail.customer_phone}}</view>
-        <view>用户ID：{{datail.customer_id}}</view>
-        <view>数量：{{datail.count}}</view>
-        <view>总价：¥{{datail.offline_total}}</view>
-        <view>优惠价格：¥{{datail.preferential_price}}</view>
-        <view>实付价格：<text>¥{{datail.total}}</text></view>
-        <view @tap="hideDetail">确定</view>
+      <view class="nothing-box" wx:if="{{!orderList.length}}">
+        <image class="nothing-img" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_order@2x.png'}}"></image>
+        <view class="nothing-txt">暂无订单</view>
       </view>
     </view>
+    <Toast></Toast>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import shop from 'api/shop'
-  import NavHeader from '@/base/nav-header/nav-header'
   import base from 'common/mixins/base'
-  import Blank from '@/base/blank/blank'
   import URIS from 'common/js/config'
   import { ERR_OK } from 'api/base'
+  import orderItem from '@/base/order-item/order-item'
+  import OrderApi from 'api/orders'
+  import Toast from '@/base/toast/toast'
+
   export default class order extends wepy.page {
     mixins = [base]
 
@@ -130,158 +84,201 @@
       navigationBarTextStyle: 'white'
     }
     components = {
-      NavHeader: NavHeader,
-      Blank: Blank
+      'order-item': orderItem,
+      Toast
     }
     data = {
-      imageUrlHead: URIS.image,
-      showDay: false,
-      dayPage: 0,
-      showOrder: false,
-      orderPage: 0,
-      isDetail: false,
-      navNum: 1,
-      orderType: 1,
-      orders: [{
-        title: '服务订单',
-        type: 1
-      }, {
-        title: '联盟订单',
-        type: 2
-      }, {
-        title: '买单订单',
-        type: 3
-      }],
-      navList: [{
-        title: '支付成功',
-        id: 0
-      }, {
-        title: '退款成功',
-        id: 1
-      }],
-      days: [{
-        title: '今天',
-        type: 'today'
-      }, {
-        title: '昨天',
-        type: 'yesterday'
-      }, {
-        title: '7天',
-        type: 'week'
-      }, {
-        title: '30天',
-        type: 'month'
-      }, {
-        title: '全部',
-        type: 'all'
-      }],
-      showInput: false,
-      couponList: [],
-      dayType: 'today',
-      searchValue: '',
-      datail: {},
+      imageUri: URIS.image,
+      inputChecked: false,
+      searchTxtInput: '',
+      inputFocus: false,
+      screening: false,
+      tabList: [
+        {txt: '全部', idx: 1},
+        {txt: '交易中', idx: 2},
+        {txt: '交易完成', idx: 3},
+        {txt: '交易关闭', idx: 4}
+      ],
+      tabIdx: 1,
+      orderScreenType: [
+        {txt: '优惠券', idx: 1, checked: false},
+        {txt: '团购', idx: 4, checked: false},
+        {txt: '分享赚钱', idx: 5, checked: false},
+        {txt: '买单', idx: 3, checked: false},
+        {txt: '砍价', idx: 6, checked: false}
+      ],
+      typeScreenIdx: [],
+      orderScreenTime: [
+        {txt: '今天', idx: 0, flag: 'today'},
+        {txt: '昨天', idx: 1, flag: 'yesterday'},
+        {txt: '7天', idx: 2, flag: 'week'},
+        {txt: '30天', idx: 3, flag: 'month'}
+      ],
+      timeScreenFlag: '',
+      scrollHeight: '',
       page: 1,
-      nothing: false,
-      // statusTxt: ['待付款', '待使用', '待评价', '退款中', '退款成功', '已评价', '已关闭', '退款失败', '退款失败', '已关闭']
-      statusTxt: ['支付成功', '退款成功']
-    }
-
-    _showBlank (res) {
-      if (res.length === 0) {
-        this.$invoke('Blank',
-          'show', this.imageUrlHead +
-          '/defaults/b-image/common/pic-empty_customer@2x.png', '暂无订单', '15.2')
-      } else {
-        this.$invoke('Blank', 'hide')
-      }
+      orderList: [],
+      noMore: false
     }
 
     methods = {
-      hideDetail() {
-        this.isDetail = false
+      inputOn() {
+        this.inputChecked = true
+        this.inputFocus = true
+        this.$apply()
       },
-      async showDetail(id) {
-        let prom = {
-          type: this.orderType,
-          id: id
+      inputTxtIn(e) {
+        this.searchTxtInput = e.detail.value
+        this.$apply()
+      },
+      searchNextWork() {
+        this.inputFocus = false
+        this.inputChecked = false
+        if (this.searchTxtInput.length * 1 !== 0) {
+          let url = '/pages/order-result/order-result?txt=' + this.searchTxtInput
+          this.$navigate(url)
         }
-        this.isDetail = true
-        let data = await shop.Orders(prom)
-        this.datail = data.data
+        this.$apply()
+      },
+      clearInput() {
+        this.searchTxtInput = ''
+        this.$apply()
+      },
+      screen() {
+        this.screening = !this.screening
+        this.$apply()
+      },
+      async tabCheck(idx) {
+        if (this.screening) return
+        if (this.tabIdx === idx * 1) {
+          return
+        }
+        this.tabIdx = idx * 1
+        this.page = 1
+        this.noMore = false
+        await this._getOrderList('get')
         this.loaded()
         this.$apply()
       },
-      showDays() {
-        this.showDay = !this.showDay
-      },
-      showOrders() {
-        this.showOrder = !this.showOrder
-      },
-      showPage(num) {
-        this.page = 1
-        this.nothing = false
-        this.dayPage = num
-        this.dayType = this.days[num].type
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      orderPage(num) {
-        this.page = 1
-        this.nothing = false
-        this.orderPage = num
-        this.orderType = this.orders[num].type
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      showMsg(index) {
-        this.nothing = false
-        this.navNum = index + 1
-        this.page = 1
-        this.load(this.orderType, this.navNum, this.dayType, '', this.page)
-      },
-      isInput() {
-        this.showInput = true
-      },
-      sreaching(e) {
-        this.searchValue = e.detail.value
-        this.page = 1
-        this.dayType = 'all'
-        this.dayPage = 4
-        setTimeout(() => {
-          this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page)
-        }, 1000)
-      },
-      bindblurs() {
-        this.showInput = false
-        this.searchValue = ''
-      },
-      async loadMore(e) {
-        if (!this.nothing) {
-          this.page++
-          let res = await this.load(this.orderType, this.navNum, this.dayType, this.searchValue, this.page, 2)
-          if (res.length === 0) {
-            this.nothing = true
-          }
-        }
-      }
-    }
-
-    async load (type = 1, status = 1, date = 'today', mobile = '', page = 1, key) {
-      let data = {type, status, mobile, date, page}
-      let res = await shop.wechatOrders(data)
-      if (res.error === ERR_OK) {
-        if (key === 2) {
-          this.couponList = this.couponList.concat(res.data)
+      typeScreenCheck(idx) {
+        if (this.typeScreenIdx.indexOf(idx * 1) !== -1) {
+          this.typeScreenIdx = this.typeScreenIdx.filter((item) => {
+            return item !== idx * 1
+          })
+          this.orderScreenType = this.orderScreenType.map((item) => {
+            if (item.idx === idx) {
+              item.checked = false
+            }
+            return item
+          })
         } else {
-          this.couponList = res.data
+          this.typeScreenIdx.push(idx)
+          this.orderScreenType = this.orderScreenType.map((item) => {
+            if (item.idx === idx) {
+              item.checked = true
+            }
+            return item
+          })
         }
-        this._showBlank(this.couponList)
+        this.$apply()
+      },
+      timeScreenCheck(flag) {
+        if (this.timeScreenFlag === flag) {
+          this.timeScreenFlag = ''
+        } else {
+          this.timeScreenFlag = flag
+        }
+        this.$apply()
+      },
+      screenClear() {
+        this.typeScreenIdx = []
+        this.timeScreenFlag = ''
+        this.orderScreenType = this.orderScreenType.map((item) => {
+          item.checked = false
+          return item
+        })
+        this.$apply()
+      },
+      async screenSearch() {
+        this.screening = false
+        this.page = 1
+        this.noMore = false
+        await this._getOrderList('get')
         this.loaded()
         this.$apply()
-        return res.data
+      },
+      async loadMore() {
+        if (this.noMore) return
+        this.page++
+        await this._getOrderList('add')
+        this.loaded()
+        this.$apply()
+      },
+      inputSearch() {
+        this.inputFocus = false
+        this.inputChecked = false
+        if (this.searchTxtInput.length * 1 !== 0) {
+          let url = '/pages/order-result/order-result?txt=' + this.searchTxtInput
+          this.$navigate(url)
+        }
+        this.$apply()
       }
     }
 
     async onLoad () {
+      let res = await wepy.getSystemInfo()
+      let maxHeight = res.windowHeight
+      this.scrollHeight = maxHeight - 84
       await this.load()
+      this.loaded()
+      this.$apply()
+    }
+
+    async load() {
+      await this._getOrderList('get')
+    }
+
+    async _getOrderList(type) {
+      let data = {
+        page: this.page,
+        transaction_status: this.tabIdx,
+        date: this.timeScreenFlag,
+        type: this.screenType
+      }
+      console.log(data)
+      let resData = await OrderApi.getOrderList(data)
+      if (resData.error !== ERR_OK) {
+        this.loaded()
+        this.$invoke('toast', 'show', resData.message)
+        return
+      }
+      if (type === 'get') {
+        this.orderList = resData.data
+      } else if (type === 'add') {
+        if (!resData.data.length) {
+          this.page--
+          this.noMore = true
+          return
+        }
+        this.orderList = [...this.orderList, ...resData.data]
+      }
+      this.$apply()
+    }
+
+    computed = {
+      searchTxt() {
+        return this.searchTxtInput && this.searchTxtInput.length ? '搜索' : '取消'
+      },
+      screenType() {
+        return this.typeScreenIdx.join()
+      }
+    }
+
+    events = {
+      orderDetail(id) {
+        let url = '/pages/order-detail/order-detail?id=' + id
+        this.$navigate(url)
+      }
     }
   }
 </script>
@@ -290,173 +287,204 @@
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
   .order-box
+    width: 100%
     height: 100vh
     overflow: hidden
-
-  scroll-view
-    height: 92vh
-    width: 100%
-    box-sizing: border-box
-
-  view
-    box-sizing: border-box
-
-  .or-header
-    // height: 51.5px
     display: flex
-    background-color: $color-theme
-    padding: 18px 20px
-    justify-content: space-between
-    .active
-      border: 0.5px solid  $color-white
-    > view
-      display: inline-block
-      font-size: $font-size-small
-      line-height: 24px
-      padding: 0 11px
-      border: 1px solid $color-text-d
-      border-radius: 4px
-      height: 24px
-      position: relative
-      color: $color-white
-      image
-        height: 12px
-        width: 12px
-        transform: translate(3px, 2px)
-      &:last-child
-        image
-          transform: translate(-3px, 2px)
-      .day-select
-        position: absolute
-        top: 34px
-        left: -50%
-        background: $color-white
-        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19)
-        z-index: 110
-        &::before
-          content: ''
-          top: -20px
-          row-center()
-          height: 0px
-          border: 10px solid $color-white
-          border-right: 10px solid transparent
-          border-top: 10px solid transparent
-          border-left: 10px solid transparent
-        view
-          width: 115px
-          height: 29px
-          line-height: 29px
-          border-bottom: 0.5px solid  $color-split-line
-          text-indent 10.5px
-        .tactive
-          color: $color-assist-f
-      .first
-        left: -25%
-  .inputs
-    background: $color-theme
-    position: relative
-    padding: 13px 23px
-    image
-      position: absolute
-      left: 35px
-      height: 10px
-      width: 10px
-      top: 50%
-      transform: translate(0, -50%)
-    input
-      height: 32px
-      font-size: $font-size-small
-      color: $color-white
-      padding-left: 26px
-      border-radius: 4px
-      border: 0.5px solid $color-white
-
-  #nav-order
-    text
-      width: 40%
-
-  .order-conpon
-    box-sizing: border-box
-    padding: 0 $padding 60px
-    .order-item
-      margin-top: 10px
-      position: relative
-      height: 25.34vw
+    flex-direction: column
+    .order-head
+      height: 44px
+      padding: 10px 20px 0
+      background: $color-theme
       display: flex
-      flex-direction: column
-      image
+      .search-box
+        width: 100%
+        height: 32px
+        border: 0.5px solid $color-white
+        border-radius: 2px
+        box-sizing: border-box
+        display: flex
+        align-items: center
+        margin: 1px
+        .search-icon
+          width: 12px
+          height: 12px
+          margin-left: 12px
+        .holder-class
+          font-family: PingFangSC-Light
+          font-size: $font-size-small
+          color: $color-text-d
+        .search-input
+          flex: 1
+          margin-left: 6px
+          height: 30px
+          color: $color-white
+          font-size: $font-size-small
+        .search-delete
+          width: 12px
+          height: 12px
+          padding: 10px 15px 10px 5px
+      .checked.search-box
+        width: 87%
+      .search-txt
+        height: 32px
+        width: 13%
+        font-family: PingFangSC-Light
+        font-size: $font-size-medium
+        color: $color-white
+        line-height: 32px
+        text-align: end
+    .tab-box
+      height: 40px
+      display: flex
+      background: $color-white
+      .tab-box-left
+        flex: 8
+        padding-right: 10px
+        display: flex
+        .tab-item
+          flex: 1
+          line-height: 40px
+          font-size: $font-size-medium
+          color: $color-text-title
+          text-align: center
+          position: relative
+          &:before
+            content: ''
+            position: absolute
+            left: 50%
+            bottom: 0.5px
+            transform: translate(-50%, 0)
+            display: block
+            width: 30px
+            height: 2px
+            background: $color-white
+        .disabled.tab-item
+          color: $color-text-d
+        .active.tab-item
+          color: $color-assist-f
+          &:before
+            background: $color-assist-f
+      .tab-box-right
+        flex: 2
+        position: relative
+        &:after
+          content: ''
+          width: 1px
+          height: 13px
+          transform: translate(0, -50%)
+          background: $color-col-line
+          position: absolute
+          left: 0
+          top: 50%
+        .tab-screen
+          width: 90%
+          all-center()
+          display: flex
+          height: 40px
+          align-items: center
+          justify-content: center
+          .tab-screen-txt
+            font-family: PingFangSC-Light
+            font-size: $font-size-small
+            color: $color-text-light
+            margin-right: 3px
+          .tab-screen-txt.checked
+            color: $color-assist-f
+          .tab-screen-icon
+            width: 12px
+            height: 12px
+
+    .order-container-box
+      overflow: hidden
+      position: relative
+      .order-container
         position: absolute
+        left: 0
+        top: 0
         width: 100%
         height: 100%
-      view
-        font-size: $font-size-small
-        line-height: 16.5px
-        position: relative
+        .order-item-box
+          margin-top: 10px
+          padding: 0 12px
+          &:last-child
+            margin-bottom: 10px
+      .screen-box
+        position: absolute
+        left: 0
+        top: 0
+        width: 100%
+        height: 100%
+        background: $color-mask-bgc
         z-index: 100
-        text-indent: 12.5px
-        align-items: center
-      > view
-        display: flex
-        justify-content: space-between
-        text
-          transform: translate(-14.5px, -25%)
-      .order-top
-        height: 57.89%
-        .order-title
-          margin-top: 2px
-        text
-          color: $color-text-d
-      .order-bottom
-        height: 42.11%
-        text
-          color: $color-assist-f
-          text-align center
-          height: 24px
-          width: 60px
-          line-height: 0.7
-          transform: translate(-14.5px, 0%)
-          border: 0.5px solid $color-assist-f
-          border-radius: 2px
-
-  .order-detail
-    position: fixed
-    z-index: 120
-    background: $color-mask-bgc
-    top: 0
-    width: 100vw
-    height: 100vh
-    .order-box
-      border-radius: 2px
-      height: 400px
-      width: 265px
-      all-center()
-      background: $color-white
-      view
-        height: 40px
-        line-height: 40px
-        text-indent: 9.5px
-        font-size: $font-size-small
-        color: $color-text
-        border-bottom: 0.5px solid $color-split-line
-        text
-          color: $color-assist-f
-        &:first-child
-          border-top-right-radius: 2px
-          border-top-left-radius: 2px
-          color: $color-white
-          text-align: center
-          background-color: $color-theme
-          border-bottom: none
-        &:last-child
-          text-align: center
+        .screen-container
           position: absolute
-          border-bottom: none
-          border-top: 0.5px solid $color-split-line
-          bottom: 0
+          left: 0
+          top: 0
           width: 100%
-    image
-      height: 20px
-      width: 20px
-      row-center()
-      bottom: 16vw
+          background: $color-white
+          overflow: hidden
+          padding: 15px 12px 0
+          .screen-order-item
+            padding-bottom: 10px
+            .screen-order-title
+              font-family: PingFang-SC-Regular
+              font-size: $font-size-medium
+              color: $color-text
+              padding-bottom: 15px
+            .screen-order-list
+              display: flex
+              flex-wrap: wrap
+              .screen-order-list-li
+                width: 80px
+                margin-right: 10px
+                background: #f6f6f6
+                height: 26px
+                border-radius: 2px
+                line-height: 26px
+                text-align: center
+                font-family: PingFangSC-Light
+                font-size: $font-size-small
+                margin-bottom: 10px
+                overflow: hidden
+                position: relative
+                .screen-order-list-li-icon
+                  position: absolute
+                  right: 0
+                  bottom: 0
+                  width: 17.5px
+                  height: 13.8px
+                &:last-child
+                  margin-right: 0
+              .active.screen-order-list-li
+                background: rgba(239,112,93,0.1)
+                color: $color-assist-f
+          .screen-btn-box
+            height: 40px
+            display: flex
+            .screen-btn
+              flex: 1
+              line-height: 40px
+              text-align: center
+              font-family: PingFangSC-Light
+              font-size: $font-size-medium
+            .screen-btn-clear
+              color: $color-text
+            .screen-btn-search
+              color: $color-white
+              background: $color-assist-f
+      .nothing-box
+        padding-top: 85px
+        width: 100%
+        height: 108px
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: space-between
+        .nothing-img
+          width: 100px
+          height: 80px
+        .nothing-txt
+          font-size: $font-size-small
+          color: $color-text-d
 </style>

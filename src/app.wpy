@@ -81,6 +81,8 @@
         'pages/service-controller/service-controller',
         'pages/qrCode/qrCode',
         'pages/order/order',
+        'pages/order-result/order-result',
+        'pages/order-detail/order-detail',
         'pages/evaluate/evaluate',
         'pages/business/business',
         'pages/alliance/alliance',
