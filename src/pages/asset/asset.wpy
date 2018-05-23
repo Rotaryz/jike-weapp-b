@@ -31,7 +31,7 @@
           <navigator url="/pages/total-income/total-income?orderType=1" class="item border-bottom-1px">
             <view class="label">待结算</view>
             <view class="content-wrapper">
-              <view class="content"><text class="money-icon">¥</text>{{totalRemaining}}</view>
+              <view class="content"><text class="money-icon">¥</text>{{waitingSettlement}}</view>
               <view class="arrow-right">
                 <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
@@ -40,7 +40,7 @@
           <navigator url="/pages/present-record/present-record" class="item">
             <view class="label">已提现</view>
             <view class="content-wrapper">
-              <view class="content"><text class="money-icon">¥</text>{{totalRemaining}}</view>
+              <view class="content"><text class="money-icon">¥</text>{{withdrawal}}</view>
               <view class="arrow-right">
                 <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/Rectangle @2x.png'}}"></image>
               </view>
@@ -104,8 +104,10 @@
     data = {
       imageUrl: URIS.image,
       activeTab: 1,
-      remaining: '0.00',
+      remaining: '0.00', // 可提现
       totalRemaining: '0.00',
+      waitingSettlement: '0.00', // 待结算
+      withdrawal: '0.00', // 已提现
       outcome: '0.00',
       outcomeList: [],
       page: 1,
@@ -135,6 +137,8 @@
         const data = res.data
         this.remaining = data.remaining
         this.totalRemaining = data.total_remaining
+        this.waitingSettlement = data.waiting_settlement
+        this.withdrawal = data.withdrawal
         this.$apply()
       }
     }

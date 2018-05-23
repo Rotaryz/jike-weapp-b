@@ -12,7 +12,7 @@
       <view class="order-component-down">
         <view class="component-down-left">订单编号: {{orderMsg.order_sn}}</view>
         <view class="component-down-right">
-          <view class="component-down-right-btn" @tap="orderDetail({{orderMsg.id}})">查看详情</view>
+          <view class="component-down-right-btn" @tap="orderDetail({{orderMsg.id}}, {{orderMsg.genre ? orderMsg.genre : ''}})">查看详情</view>
         </view>
       </view>
     </view>
@@ -47,9 +47,8 @@
     }
 
     methods = {
-      orderDetail(id) {
-        console.log(id)
-        this.$emit('orderDetail', id)
+      orderDetail(id, genre) {
+        this.$emit('orderDetail', id, genre)
       }
     }
   }

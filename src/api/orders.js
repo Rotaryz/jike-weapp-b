@@ -17,9 +17,12 @@ export default class orders extends base {
    * @param data
    * @returns {Promise.<*>}
    */
-  static async getOrderDetail(id) {
+  static async getOrderDetail(id, genre) {
+    let data = {
+      genre
+    }
     const url = `${this.baseUrl}/api/orders/wechat-orders/${id}`
-    return await this.get(url)
+    return await this.get(url, data)
   }
 
   /**

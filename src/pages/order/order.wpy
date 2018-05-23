@@ -103,9 +103,10 @@
       orderScreenType: [
         {txt: '优惠券', idx: 1, checked: false},
         {txt: '团购', idx: 4, checked: false},
-        {txt: '分享赚钱', idx: 5, checked: false},
+        {txt: '分享赚钱', idx: 6, checked: false},
         {txt: '买单', idx: 3, checked: false},
-        {txt: '砍价', idx: 6, checked: false}
+        {txt: '异业联盟', idx: 5, checked: false},
+        {txt: '砍价', idx: 7, checked: false}
       ],
       typeScreenIdx: '',
       orderScreenTime: [
@@ -279,8 +280,8 @@
     }
 
     events = {
-      orderDetail(id) {
-        let url = '/pages/order-detail/order-detail?id=' + id
+      orderDetail(id, genre) {
+        let url = '/pages/order-detail/order-detail?id=' + id + '&genre=' + genre
         this.$navigate(url)
       }
     }

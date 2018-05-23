@@ -25,11 +25,11 @@
       </view>
       <view class="checked-detail-box border-bottom-1px" wx:if="{{list.length > 0}}">
         <view class="detail-title">{{date}}</view>
-        <view class="detail-content">收入100，支出20</view>
+        <view class="detail-content">收入{{income}}{{expend ? '，支出' + expend : ''}}</view>
       </view>
       <view class="list-wrapper" wx:if="{{list.length > 0}}">
         <repeat for="{{list}}" key="index" index="index">
-          <navigator url="/pages/order-detail/order-detail?id={{item.id}}" class="item-wrapper border-bottom-1px">
+          <navigator url="/pages/order-detail/order-detail?id={{item.order_id}}&genre={{item.genre}}" class="item-wrapper border-bottom-1px">
             <view class="content-wrapper">
               <view class="t-content">{{item.title}}</view>
               <view class="b-content">{{item.created_at}}</view>
@@ -67,23 +67,26 @@
       types: [
         {id: 0, name: '全部'},
         {id: 1, name: '服务-优惠券'},
-        {id: 2, name: '服务-团购'},
+        {id: 4, name: '服务-团购'},
+        {id: 6, name: '分享赚钱'},
         {id: 3, name: '买单'},
         {id: 4, name: '服务-砍价'},
-        {id: 5, name: '联盟投放'}
+        {id: 20, name: '联盟投放'}
       ],
       selectType: {id: 0, name: '全部'},
       orderTypes: [
         {id: 0, name: '全部'},
-        {id: 1, name: '待结算'},
-        {id: 2, name: '已结算'}
+        {id: 2, name: '待结算'},
+        {id: 1, name: '已结算'}
       ],
       selectOrderType: {id: 0, name: '全部'},
       startDate: '',
       date: '',
       list: [],
       hasMore: true,
-      page: 1
+      page: 1,
+      income: 0,
+      expend: 0
     }
 
     async onLoad(option) {
@@ -114,9 +117,11 @@
     }
 
     async _getSaleLogs() {
-      const res = await Monies.getSaleLogs({date: this.date, type: this.selectType.id, page: this.page})
+      const res = await Monies.getSaleLogs({date: this.date, type: this.selectType.id, page: this.page, status: this.selectOrderType.id})
       if (res.error === ERR_OK) {
         this.totalIncome = res.total_money
+        this.income = res.total_money
+        this.expend = res.expend_money
         this.list = this.page === 1 ? res.data : [...this.list, ...res.data]
         this.hasMore = res.data.length >= 10
         this.$apply()
