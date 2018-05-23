@@ -234,10 +234,9 @@
        * 待获取异业小程序信息的接口 ！！！！
        * @type {string}
        */
-      // let appId = wepy.getStorageSync('yylmAppId')
-      // if (appId) return
+        // let appId = wepy.getStorageSync('yylmAppId')
+        // if (appId) return
       let res = await shop.getYylmApp()
-      console.log(res)
       if (res.error === ERR_OK) {
         wepy.setStorageSync('yylmAppId', res.data.app_id)
         wepy.setStorageSync('yylmPath', res.data.path)
@@ -258,12 +257,21 @@
         })
       },
       skipTo(url, txt) {
+        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容' || txt === '异业卡') && this.serviceDue) {
+          this.$invoke('ServiceDue', 'show')
+          return
+        }
+        if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容' || txt === '异业卡') && !this.dataFinish) {
+          this.$invoke('msg-window', 'show')
+          return
+        }
+
         if (txt === '异业卡') {
           let merchantId = wepy.getStorageSync('merchant_id')
           let entryRole = wepy.getStorageSync('is_leader') ? 'union' : 'shop'
           let token = wepy.getStorageSync('token')
           let appId = `${wepy.getStorageSync('yylmAppId')}`
-          let path = `/${wepy.getStorageSync('yylmPath')}?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`
+          let path = `${wepy.getStorageSync('yylmPath')}?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`
           console.log(appId, path)
           /* eslint-disable */
           wx.navigateToMiniProgram({
@@ -277,14 +285,6 @@
             }
           })
         } else {
-          if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && this.serviceDue) {
-            this.$invoke('ServiceDue', 'show')
-            return
-          }
-          if ((txt === '礼包' || txt === '输码核销' || txt === '联盟' || txt === '服务' || txt === '内容') && !this.dataFinish) {
-            this.$invoke('msg-window', 'show')
-            return
-          }
           this.$navigate(url)
         }
       }
