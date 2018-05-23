@@ -272,7 +272,6 @@
           let token = wepy.getStorageSync('token')
           let appId = `${wepy.getStorageSync('yylmAppId')}`
           let path = `${wepy.getStorageSync('yylmPath')}?merchantId=${merchantId}&entryRole=${entryRole}&token=${token}`
-          console.log(appId, path)
           /* eslint-disable */
           wx.navigateToMiniProgram({
             appId,
