@@ -117,7 +117,7 @@
     }
 
     async _getSaleLogs() {
-      const res = await Monies.getSaleLogs({date: this.date, type: this.selectType.id, page: this.page, status: this.selectOrderType.id})
+      const res = await Monies.getSaleLogs({date: this.date, type: this.selectType.id, page: this.page, is_settlement: this.selectOrderType.id})
       if (res.error === ERR_OK) {
         this.totalIncome = res.total_money
         this.income = res.total_money

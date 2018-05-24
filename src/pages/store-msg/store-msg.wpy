@@ -187,6 +187,7 @@
         </view>
       </view>
     </view>
+    <view @tap="test">1212121121</view>
 
     <Toast></Toast>
     <Picture></Picture>
@@ -367,6 +368,11 @@
     }
 
     methods = {
+      async test() {
+//        let res = await wepy.chooseLocation()
+        let res = await wepy.chooseAddress()
+        console.log(res)
+      },
       showNull() {
 
       },
