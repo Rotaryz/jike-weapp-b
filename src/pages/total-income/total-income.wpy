@@ -121,7 +121,7 @@
       if (res.error === ERR_OK) {
         this.totalIncome = res.total_money
         this.income = res.total_money
-        this.expend = res.expend_money
+        this.expend = res.expend_money ? res.expend_money : ''
         this.list = this.page === 1 ? res.data : [...this.list, ...res.data]
         this.hasMore = res.data.length >= 10
         this.$apply()
