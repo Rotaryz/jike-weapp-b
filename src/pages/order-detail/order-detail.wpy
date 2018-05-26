@@ -28,7 +28,7 @@
         </view>
       </view>
       <view class="order-ul border-bottom-1px">
-        <view wx:if="{{orderDetail.type * 1 !== 9}}">
+        <view wx:if="{{orderDetail.type * 1 !== 20}}">
           <view class="order-li">
             <view class="order-li-title">顾客</view>
             <view class="order-li-txt">{{orderDetail.customer_name}}</view>
