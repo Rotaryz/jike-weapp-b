@@ -18,7 +18,7 @@
           <view class="order-li-title">创建时间</view>
           <view class="order-li-txt">{{orderDetail.created_at}}</view>
         </view>
-        <view class="order-li">
+        <view class="order-li" wx:if="{{orderDetail.pay_time}}">
           <view class="order-li-title">支付时间</view>
           <view class="order-li-txt">{{orderDetail.pay_time}}</view>
         </view>
@@ -28,7 +28,7 @@
         </view>
       </view>
       <view class="order-ul border-bottom-1px">
-        <view wx:if="{{orderDetail.type * 1 !== 20}}">
+        <view wx:if="{{orderDetail.type * 1 !== 9}}">
           <view class="order-li">
             <view class="order-li-title">顾客</view>
             <view class="order-li-txt">{{orderDetail.customer_name}}</view>
@@ -38,7 +38,7 @@
             <view class="order-li-txt">{{orderDetail.customer_phone}}</view>
           </view>
         </view>
-        <view wx:if="{{orderDetail.type * 1 === 20}}">
+        <view wx:if="{{orderDetail.type * 1 === 9}}">
           <view class="order-li">
             <view class="order-li-title">商家名称</view>
             <view class="order-li-txt">{{orderDetail.customer_name}}</view>
@@ -50,7 +50,7 @@
         </view>
       </view>
       <view class="order-ul">
-        <view wx:if="{{orderDetail.type * 1 !== 3 && orderDetail.type * 1 !== 6 && orderDetail.type * 1 !== 20}}">
+        <view wx:if="{{orderDetail.type * 1 !== 3 && orderDetail.type * 1 !== 6 && orderDetail.type * 1 !== 9}}">
           <view class="order-li">
             <view class="order-li-title">单价</view>
             <view class="order-li-txt">{{orderDetail.price}}</view>
@@ -112,7 +112,7 @@
             <view class="order-li-txt">{{orderDetail.total}}</view>
           </view>
         </view>
-        <view wx:if="{{orderDetail.type * 1 === 20}}">
+        <view wx:if="{{orderDetail.type * 1 === 9}}">
           <view class="order-li">
             <view class="order-li-title">单价</view>
             <view class="order-li-txt">{{orderDetail.price}}</view>
