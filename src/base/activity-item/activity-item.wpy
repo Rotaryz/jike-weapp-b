@@ -1,5 +1,5 @@
 <template>
-  <view class="active-item-component">
+  <view class="active-item-component" wx:if="{{activeType !== 'bargain'}}">
     <image class="a-i-line" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/marketing/bg-activity@2x.png'}}"></image>
     <view class="component-group-item" wx:if="{{activeType === 'group'}}">
       <view class="a-i-up">
@@ -83,11 +83,42 @@
       </view>
     </view>
   </view>
+  <view class="ro-active-use-item" wx:if="{{activeType === 'bargain'}}">
+    <image class="ro-active-use-item-img" src="{{activeObj.image_url}}" mode="aspectFill">
+      <image class="ro-active-use-item-down" src="{{activeObj.status_str === '已下线' ? imageUri + '/defaults/b-image/marketing/icon_soldout@2x.png' : imageUri + '/defaults/b-image/marketing/icon_overdue@2x.png'}}" wx:if="{{activeObj.status !== 1 && imageUri}}"></image>
+    </image>
+    <view class="ro-active-use-item-content">
+      <view class="ro-active-use-item-title">{{activeObj.activity_name}}</view>
+      <view class="ro-active-use-item-price">
+        <view class="ro-active-use-item-price-box">
+          <view class="ro-active-use-price-item">底价：<text class="bottom-price">¥{{activeObj.bottom_price}}</text></view>
+          <view class="ro-active-use-price-item">现价：¥{{activeObj.platform_price}}</view>
+        </view>
+        <view class="ro-active-use-item-price-box">
+          <view class="ro-active-use-price-item">库存：{{activeObj.stock}}</view>
+          <view class="ro-active-use-price-item">销量：{{activeObj.sales_volume}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="ro-active-use-item-icon">
+      <image class="ro-active-use-item-pic" @tap.stop="show({{activeObj}})"  wx:if="{{imageUri}}" src="{{activeObj.show ? imageUri + '/defaults/b-image/marketing/icon-play2@2x.png' :imageUri + '/defaults/b-image/marketing/icon-play@2x.png'}}"></image>
+    </view>
+    <!--ro-active-use-item-nav-box-active-tw-->
+    <view class="ro-active-use-item-nav-box {{activeObj.show ? length === 6 ? 'ro-active-use-item-nav-box-active' : length < 6 ? 'ro-active-use-item-nav-box-active-tw' : '' : ''}}">
+      <image class="ro-active-use-item-nav" wx:if="{{imageUri}}" src="{{length === 6 ? imageUri + '/defaults/b-image/marketing/bg-kj@2x.png' : imageUri + '/defaults/b-image/marketing/bg-kj2@2x.png'}}">
+      </image>
+      <view class="ro-active-use-item-nav-small-box">
+        <view class="ro-active-use-item-nav-item" wx:for="{{navList}}" wx:key="{{key}}" @tap.stop="goDetails({{item.text}})">
+          <image class="ro-active-use-nav-icon" src="{{item.icon}}"></image>
+          <view class="ro-active-use-item-nav-text">{{item.text}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 <script>
   import wepy from 'wepy'
   import URIS from 'common/js/config'
-
   export default class ActivityItem extends wepy.component {
     props = {
       // group 团购活动类型 share 分享赚钱类型
@@ -121,12 +152,73 @@
       constObj: {
         type: Object,
         default: {}
+      },
+      navList: {
+        type: Array,
+        default: []
       }
     }
     data = {
-      imageUri: URIS.image
+      maskAnimation: '',
+      imageUri: URIS.image,
+      length: 0,
+      showAct: false,
+      activityItem: {}
+    }
+    onLoad() {
+    }
+    showNav(item) {
+      item.show = true
+      this.$apply()
+      this.$emit('showNav', item)
+    }
+    hideNav(item) {
+      item.show = false
+      this.$apply()
+      this.$emit('hideNav', item)
     }
     methods = {
+//      功能导航
+      goDetails(text) {
+        console.log('dsfs')
+        this.hideNav(this.activityItem)
+        setTimeout(() => {
+          switch (text) {
+            case '预览':
+              this.$emit('activityDetail', this.activityItem)
+              break
+            case '编辑':
+              this.$emit('compile', this.activityItem)
+              break
+            case '删除':
+              this.$emit('del', this.activityItem.id)
+              break
+            case '下线':
+              this.$emit('down', this.activityItem.id)
+              break
+            case '上线':
+              this.$emit('up', this.activityItem.id)
+              break
+            case '分享':
+              this.$emit('share', this.activityItem)
+              break
+          }
+        }, 200)
+//        this.$emit('compile', this.activityItem)
+      },
+      show(item) {
+        this.activityItem = item
+        item.show = !item.show
+        if (!item.show) {
+          this.hideNav(item)
+        } else {
+          this.showNav(item)
+        }
+        this.$apply()
+      },
+      setLength(length) {
+        this.length = length
+      },
       handleClickDel(obj) {
         this.$emit('activeBtnDel', obj)
       },
@@ -146,7 +238,136 @@
 <style lang="stylus">
   @import "../../common/stylus/mixin.styl"
   @import "../../common/stylus/variable.styl"
+/*新活动样式*/
+  .ro-active-use-item
+    margin: 10px 10px 0
+    padding :10px
+    box-sizing :border-box
+    display :flex
+    border: 0.5px solid $color-col-line
+    border-radius: 4px
+    position: relative
+    z-index: 1000
+    .ro-active-use-item-img
+      display :block
+      height :70px
+      width : 70px
+      border-radius :2px
+      overflow :hidden
+      position: relative
+      .ro-active-use-item-down
+        position: absolute
+        z-index:2
+        height: 100%
+        width: 100%
+        top: 0
+        left: 0
+        border-radius :2px
+    .ro-active-use-item-content
+      flex :1
+      margin-left: 10px
+      .ro-active-use-item-title
+        margin-top: 3px
+        font-family: $font-family-regular
+        font-size: $font-size-medium
+        color: $color-text-dark
+        letter-spacing: 0
+      .ro-active-use-item-price
+        margin-top: 12px
+        display :flex
+        .ro-active-use-item-price-box
+          width: 115px
+          .ro-active-use-price-item
+            width: 100%
+            white-space :nowrap
+            margin-top: 7px
+            font-family: $font-family-regular
+            color :$color-text-light
+            font-size $font-size-small
+          .bottom-price
+            font-family : PingFang-SC-Medium
+    .ro-active-use-item-icon
+      position: absolute
+      width: 60px
+      height: 46px
+      right: 0
+      bottom: 0
+      z-index :1000
+      display :flex
+      justify-content :center
+      align-items :center
+      .ro-active-use-item-pic
+        height: 20px
+        width: 40px
+    .ro-active-use-item-nav-box
+      position: absolute
+      bottom: 0px
+      right: 50px
+      display :flex
+      height: 17.33vw
+      width: 0
+      opacity: 0
+      overflow :hidden
+      transition :all 0.2s linear 0.05s
+      .ro-active-use-item-nav-small-box
+        height: 100%
+        width: 100%
+        display :flex
+        opacity: 0
+        transition : opacity 0.1s
+        justify-content :space-around
+        padding : 0 4.5vw 0 3vw
+        box-sizing :border-box
+      .ro-active-use-item-nav
+        position: absolute
+        top: 0
+        width:100%
+        height: 100%
+      /*&:after
+        content : ''
+        position: absolute
+        border :5px solid rgba(0,0,0,0.75)
+        border-top:5px solid transparent
+        border-bottom :5px solid transparent
+        border-right :5px solid transparent
+        right: -10px
+        bottom: 14px*/
+      .ro-active-use-item-nav-item
+        position: relative
+        z-index: 100
+        display :flex
+        flex-direction :column
+        align-items :center
+        justify-content:center
+        /**&:not(:first-child)
+          padding-left: 6.67vw
+        &:first-child
+          padding-left: 6.5vw
+        &:last-child
+          padding-right: 5.33vw*/
+      .ro-active-use-nav-icon
+        height: 4.53vw
+        width: 4.53vw
+      .ro-active-use-item-nav-text
+        white-space :nowrap
+        margin-top: 2.4vw
+        font-size :$font-size-small-s
+        color :$color-white
 
+    .ro-active-use-item-nav-box-active
+      width: 80vw
+      opacity: 1
+      transition :all 0.3s
+      .ro-active-use-item-nav-small-box
+        opacity: 1
+        transition :all 0.1s linear 0.2s
+    .ro-active-use-item-nav-box-active-tw
+      width: 59.2vw
+      opacity: 1
+      transition :all 0.2s
+      .ro-active-use-item-nav-small-box
+        opacity: 1
+        transition :all 0.1s linear 0.3s
   .active-item-component
     position: relative
     padding-bottom: 31.34%

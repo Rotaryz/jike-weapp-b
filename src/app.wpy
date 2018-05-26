@@ -113,7 +113,9 @@
         'pages/group-active-choose-server/group-active-choose-server',
         'pages/new-share-activity/new-share-activity',
         'pages/share-active-list/share-active-list',
-        'pages/share-active-choose-server/share-active-choose-server'
+        'pages/share-active-choose-server/share-active-choose-server',
+        'pages/bargain-active-list/bargain-active-list',
+        'pages/new-bargain-activity/new-bargain-activity'
       ],
       window: {
         backgroundColor: '#363547',
