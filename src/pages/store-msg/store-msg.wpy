@@ -4,7 +4,7 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeName" class="store-msg-txt-left-title">门店名称</label>
-          <input type="text" id="storeName"  maxlength="15" class="store-msg-txt-left-input" value="{{name}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
+          <input type="text" id="storeName" maxlength="15" class="store-msg-txt-left-input" value="{{name}}" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
         </view>
         <view class="wordNum">{{name.length}}/15</view>
       </view>
@@ -12,7 +12,7 @@
       <view class="store-msg-txt">
         <view class="store-msg-txt-left">
           <label for="storeDescription" class="store-msg-txt-left-title">门店描述</label>
-          <input type="text" id="storeDescription"  maxlength="10" value="{{description}}" class="store-msg-txt-left-input" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
+          <input type="text" id="storeDescription" maxlength="10" value="{{description}}" class="store-msg-txt-left-input" placeholder="请输入" placeholder-class="placeholderTxt" bindinput="txtChange" />
         </view>
         <view class="wordNum">{{description.length}}/10</view>
       </view>
@@ -55,29 +55,35 @@
         </picker>
       </view>
 
-      <view class="store-msg-txt">
+      <view class="store-msg-address-box">
         <view class="store-msg-txt-left">
-          <label for="storeSite" class="store-msg-txt-left-title">门店地址</label>
-          <input type="text" id="storeSite" class="store-msg-txt-left-input" value="{{site}}" placeholder="请输入" placeholder-class="placeholderTxt" bindchange="txtChange" />
+          <label class="store-msg-txt-left-title">门店地址</label>
+          <view class="store-msg-txt-left-input">
+            <textarea cols="30" id="storeSite" rows="3" placeholder="点击右侧图标快捷设置" bindinput="txtChange" value="{{site}}" class="store-textarea" max-length="60" auto-height placeholder-class="placeholderTxt" disabled="{{!textareaSwitch}}"></textarea>
+          </view>
+          <!--<input type="text" id="storeSite" class="store-msg-txt-left-input" value="{{site}}" placeholder="点击右侧图标快捷设置" placeholder-class="placeholderTxt" bindchange="txtChange" />-->
+        </view>
+        <view class="store-msg-txt-right" @tap.stop="chioceAddress">
+          <image class="store-msg-address-icon" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/icon-address-new@2x.png'}}"></image>
         </view>
       </view>
 
-      <view class="storeMap">
-        <view class="store-msg-txt-left">
-          <view class="store-msg-txt-left-title">门店地图</view>
-          <view class="store-msg-txt-show">{{mapAddress}}</view>
-        </view>
-      </view>
+      <!--<view class="storeMap">-->
+        <!--<view class="store-msg-txt-left">-->
+          <!--<view class="store-msg-txt-left-title">门店地图</view>-->
+          <!--<view class="store-msg-txt-show">{{mapAddress}}</view>-->
+        <!--</view>-->
+      <!--</view>-->
 
-      <view class="store-msg-map">
-        <view class="map-box {{showMap?'':'hide'}}">
-          <map id="myMap" wx:if="{{showMap}}" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">
-            <cover-view class="mapIcon">
-              <cover-image src="./icon-site-msg.png" class="mapIcon-img"></cover-image>
-            </cover-view>
-          </map>
-        </view>
-      </view>
+      <!--<view class="store-msg-map">-->
+        <!--<view class="map-box {{showMap?'':'hide'}}">-->
+          <!--<map id="myMap" wx:if="{{showMap}}" scale="16" bindregionchange="getCenter" longitude="{{longitude}}" latitude="{{latitude}}" show-location style="width: 100%; height: 100%;">-->
+            <!--<cover-view class="mapIcon">-->
+              <!--<cover-image src="./icon-site-msg.png" class="mapIcon-img"></cover-image>-->
+            <!--</cover-view>-->
+          <!--</map>-->
+        <!--</view>-->
+      <!--</view>-->
     </view>
 
     <view class="store-msg-foot">
@@ -187,7 +193,6 @@
         </view>
       </view>
     </view>
-    <view @tap="test">1212121121</view>
 
     <Toast></Toast>
     <Picture></Picture>
@@ -246,13 +251,13 @@
       industryId: '',
       tel: '',
       site: '',
-      mapAddress: '',
+//      mapAddress: '',
       storeStatus: '',
       storeStatusTxt: '',
-      longitude: 0,
-      latitude: 0,
-      movelongitude: 0,
-      movelatitude: 0,
+      longitude: '',
+      latitude: '',
+//      movelongitude: 0,
+//      movelatitude: 0,
       area: '',
       areaId: '',
       areaArr: [],
@@ -289,7 +294,6 @@
     async load() {
       this.qqmapsdk = new QQMapWX({
         key: 'V6VBZ-5MB6S-JOKOW-6B724-OCXOF-3OFG2'
-
       })
       let Json = await Store.getMsgList()
       if (Json.error !== ERR_OK) {
@@ -307,8 +311,8 @@
       this.tel = res.mobile ? res.mobile : ''
       this.site = res.address ? res.address : ''
       this.region = res.business_circle ? [res.business_circle.province, res.business_circle.city, res.business_circle.district] : ['', '', '']
-      this.latitude = res.latitude ? res.latitude : 23.099994
-      this.longitude = res.longitude ? res.longitude : 113.324520
+      this.latitude = res.latitude ? res.latitude : ''
+      this.longitude = res.longitude ? res.longitude : ''
       this.movelongitude = this.longitude
       this.movelatitude = this.latitude
       this.area = res.business_circle ? res.business_circle.name : ''
@@ -342,37 +346,33 @@
       if (res.is_leader === 1) {
         this.disableFlag = res.business_circle ? !this.disableFlag : this.disableFlag
       }
-      this._initMapAddress()
+//      this._initMapAddress()
       this.$apply()
       this.loaded()
     }
 
     onReady() {
-      this.mapCtx = wx.createMapContext('myMap')
+//      this.mapCtx = wx.createMapContext('myMap')
       this.$apply()
     }
 
-    _initMapAddress() {
-      this.qqmapsdk.reverseGeocoder({
-        location: {
-          latitude: this.latitude,
-          longitude: this.longitude
-        },
-        success: (resData) => {
-          this.mapAddress = resData.result.address
-          this.movelongitude = this.longitude
-          this.movelatitude = this.latitude
-          this.$apply()
-        }
-      })
-    }
+    // 初始化地图
+//    _initMapAddress() {
+//      this.qqmapsdk.reverseGeocoder({
+//        location: {
+//          latitude: this.latitude,
+//          longitude: this.longitude
+//        },
+//        success: (resData) => {
+//          this.mapAddress = resData.result.address
+//          this.movelongitude = this.longitude
+//          this.movelatitude = this.latitude
+//          this.$apply()
+//        }
+//      })
+//    }
 
     methods = {
-      async test() {
-//        let res = await wepy.chooseLocation()
-        let res = await wepy.chooseAddress()
-        console.log(res)
-      },
       showNull() {
 
       },
@@ -444,17 +444,17 @@
             this.description = e.detail.value
             break
           case 'storeSite':
-            let mapAddress = this.region[0] + this.region[1] + this.region[2] + e.detail.value
+//            let mapAddress = this.region[0] + this.region[1] + this.region[2] + e.detail.value
             this.site = e.detail.value
-            this._mapAuto(mapAddress)
+//            this._mapAuto(mapAddress)
             break
         }
         this.$apply()
       },
       async bindRegionChange(e) {
         this.region = e.detail.value
-        this.mapAddress = this.region[0] + this.region[1] + this.region[2]
-        this._mapAuto(this.mapAddress)
+//        this.mapAddress = this.region[0] + this.region[1] + this.region[2]
+//        this._mapAuto(this.mapAddress)
         let Json = await Store.getArea(this.region[2])
         if (Json.error !== ERR_OK) {
           this.loaded()
@@ -463,30 +463,30 @@
         }
         this.areaArr = Json.data
         this.loaded()
-        this.showMap = true
+//        this.showMap = true
         this.$apply()
       },
-      getCenter(e) {
-        if (e.type === 'end') {
-          let self = this
-          this.mapCtx.getCenterLocation({
-            success: (res) => {
-              self.qqmapsdk.reverseGeocoder({
-                location: {
-                  latitude: res.latitude,
-                  longitude: res.longitude
-                },
-                success: (resData) => {
-                  self.mapAddress = resData.result.address
-                  self.movelongitude = res.longitude
-                  self.movelatitude = res.latitude
-                  self.$apply()
-                }
-              })
-            }
-          })
-        }
-      },
+//      getCenter(e) {
+//        if (e.type === 'end') {
+//          let self = this
+//          this.mapCtx.getCenterLocation({
+//            success: (res) => {
+//              self.qqmapsdk.reverseGeocoder({
+//                location: {
+//                  latitude: res.latitude,
+//                  longitude: res.longitude
+//                },
+//                success: (resData) => {
+//                  self.mapAddress = resData.result.address
+//                  self.movelongitude = res.longitude
+//                  self.movelatitude = res.latitude
+//                  self.$apply()
+//                }
+//              })
+//            }
+//          })
+//        }
+//      },
       hourBeginChange(e) {
         this.hourBegin = e.detail.value
         this.$apply()
@@ -528,8 +528,8 @@
         this.$apply()
       },
       async storeMsgSubmit() {
-        let longitude = this.movelongitude
-        let latitude = this.movelatitude
+//        let longitude = this.movelongitude
+//        let latitude = this.movelatitude
         let testArr = [
           {value: this.name, txt: '请输入门店名称'},
           {value: this.description, txt: '请输入门店描述'},
@@ -559,12 +559,12 @@
             open_time: this.hourBegin,
             close_time: this.hourEnd,
             week_day: this.weekChecked,
-            longitude: longitude,
-            latitude: latitude,
+            longitude: this.longitude,
+            latitude: this.latitude,
             logo_image_id: this.logoId,
             shop_images: this.storeImgs,
             qrcode_id: this.serviceCode[0].image_id,
-            particular_address: this.region[0] + this.region[1] + this.region[2] + this.site
+            particular_address: this.site
           }
           let upRes = await Store.setStoreMsg(data)
           this.loaded()
@@ -636,6 +636,13 @@
         this.showMap = false
         this.$invoke('Picture', 'showPic', url, scale, width)
         this.$apply()
+      },
+      async chioceAddress() {
+        let res = await wepy.chooseLocation()
+        this.site = res.address
+        this.longitude = res.longitude
+        this.latitude = res.latitude
+        this.$apply()
       }
     }
 
@@ -670,23 +677,23 @@
       }
     }
 
-    _mapAuto(address) {
-      let self = this
-      this.qqmapsdk.geocoder({
-        address: address,
-        success: (res) => {
-          let location = res.result.location
-          self.longitude = location.lng
-          self.latitude = location.lat
-          self.movelongitude = location.lng
-          self.movelatitude = location.lat
-          self.mapAddress = address
-          self.$apply()
-        },
-        fail: function(res) {
-        }
-      })
-    }
+//    _mapAuto(address) {
+//      let self = this
+//      this.qqmapsdk.geocoder({
+//        address: address,
+//        success: (res) => {
+//          let location = res.result.location
+//          self.longitude = location.lng
+//          self.latitude = location.lat
+//          self.movelongitude = location.lng
+//          self.movelatitude = location.lat
+//          self.mapAddress = address
+//          self.$apply()
+//        },
+//        fail: function(res) {
+//        }
+//      })
+//    }
 
     _choiseChecked(arr) {
       arr.forEach((item) => {
@@ -754,6 +761,9 @@
           return item.image_url
         })
         return res.length
+      },
+      textareaSwitch() {
+        return this.longitude && this.latitude
       }
     }
   }
@@ -836,6 +846,48 @@
         font-size: $font-size-small-s
         color: $color-text-d
 
+    .store-msg-address-box
+      display: flex
+      min-height: 49px
+      border-bottom: 0.5px solid $color-col-line
+      justify-content: space-between
+      align-items: center
+      .store-msg-txt-left
+        flex: 1
+        overflow: hidden
+        display: flex
+        align-items: center
+        .store-msg-txt-left-title
+          width: 60px
+          color: $color-text-title
+          font-size: $font-size-medium
+          margin-right: 10vw
+
+        .store-msg-txt-left-input
+          flex: 1
+          overflow: hidden
+          min-height: 40px
+          overflow-y: auto
+          font-size: $font-size-medium
+          display: flex
+          align-items: center
+        .store-textarea
+          width: 100%
+          height: 100%
+
+        .placeholderTxt
+          font-size: $font-size-medium
+          color: $color-text-d
+      .store-msg-txt-right
+        width: 40px
+        height: 100%
+        display: flex
+        justify-content: center
+        align-items: center
+        .store-msg-address-icon
+          width: 18px
+          height: 23px
+          padding: 5px
     .store-msg-picker
       display: flex
       height: 39px
