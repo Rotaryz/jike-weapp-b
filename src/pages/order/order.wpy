@@ -68,7 +68,7 @@
       </view>
     </scroll-view>
     <view class="order-detail" wx:if="{{isDetail}}">
-      <view wx:if="{{orderType === 1}}" class="order-box"> <!--服务订单-->
+      <view wx:if="{{orderType === 1 || orderType === 4}}" class="order-box"> <!--服务订单-->
         <view>订单详情</view>
         <view>订单号：{{datail.order_sn}}</view>
         <view>下单时间：{{datail.created_at}}</view>
@@ -80,7 +80,7 @@
         </view>
         <view @tap="hideDetail">确定</view>
       </view>
-      <view wx:if="{{orderType === 2}}" class="order-box"><!--联盟订单-->
+      <view wx:if="{{orderType === 2 }}" class="order-box"><!--联盟订单-->
         <view>订单详情</view>
         <view>订单号：{{datail.order_sn}}</view>
         <view>下单时间：{{datail.created_at}}</view>
@@ -102,7 +102,9 @@
         <view>数量：{{datail.count}}</view>
         <view>总价：¥{{datail.offline_total}}</view>
         <view>优惠价格：¥{{datail.preferential_price}}</view>
-        <view>实付价格：<text>¥{{datail.total}}</text></view>
+        <view>实付价格：
+          <text>¥{{datail.total}}</text>
+        </view>
         <view @tap="hideDetail">确定</view>
       </view>
     </view>
@@ -116,11 +118,12 @@
   import base from 'common/mixins/base'
   import Blank from '@/base/blank/blank'
   import URIS from 'common/js/config'
-  import { ERR_OK } from 'api/base'
+  import {ERR_OK} from 'api/base'
+
   export default class order extends wepy.page {
     mixins = [base]
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       this.ShareAppMessage()
     }
 
@@ -189,7 +192,7 @@
       statusTxt: ['支付成功', '退款成功']
     }
 
-    _showBlank (res) {
+    _showBlank(res) {
       if (res.length === 0) {
         this.$invoke('Blank',
           'show', this.imageUrlHead +
@@ -267,7 +270,7 @@
       }
     }
 
-    async load (type = 1, status = 1, date = 'today', mobile = '', page = 1, key) {
+    async load(type = 1, status = 1, date = 'today', mobile = '', page = 1, key) {
       let data = {type, status, mobile, date, page}
       let res = await shop.wechatOrders(data)
       if (res.error === ERR_OK) {
@@ -283,7 +286,7 @@
       }
     }
 
-    async onLoad () {
+    async onLoad() {
       await this.load()
     }
   }
@@ -355,6 +358,7 @@
           color: $color-assist-f
       .first
         left: -25%
+
   .inputs
     background: $color-theme
     position: relative
