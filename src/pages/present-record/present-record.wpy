@@ -56,7 +56,7 @@
       if (res.error === ERR_OK) {
         const data = res.data
         this.list = [...this.list, ...data]
-        this.hasMore = data.length >= 10
+        this.hasMore = data.length >= 20
       }
     }
 

@@ -28,17 +28,19 @@
         <view class="detail-content">收入{{income}}{{expend ? '，支出' + expend : ''}}</view>
       </view>
       <view class="list-wrapper" wx:if="{{list.length > 0}}">
-        <repeat for="{{list}}" key="index" index="index">
-          <navigator url="/pages/order-detail/order-detail?id={{item.order_id}}&genre={{item.genre}}" class="item-wrapper border-bottom-1px">
-            <view class="content-wrapper">
-              <view class="t-content">{{item.title}}</view>
-              <view class="b-content">{{item.created_at}}</view>
-            </view>
-            <view class="content-wrapper">
-              <view class="t-content">{{item.money}}</view>
-            </view>
-          </navigator>
-        </repeat>
+        <scroll-view scroll-y bindscrolltolower="loadMore" class="list-box">
+          <repeat for="{{list}}" key="index" index="index">
+            <navigator url="/pages/order-detail/order-detail?id={{item.order_id}}&genre={{item.genre}}" class="item-wrapper border-bottom-1px">
+              <view class="content-wrapper">
+                <view class="t-content">{{item.title}}</view>
+                <view class="b-content">{{item.created_at}}</view>
+              </view>
+              <view class="content-wrapper">
+                <view class="t-content">{{item.money}}</view>
+              </view>
+            </navigator>
+          </repeat>
+        </scroll-view>
       </view>
       <view wx:if="{{list.length === 0}}" class="empty-wrapper">
         <view class="image-wrapper">
@@ -98,7 +100,7 @@
       this.$apply()
     }
 
-    async onReachBottom() {
+    async loadMore() {
       if (!this.hasMore) {
         return
       }
@@ -123,7 +125,10 @@
         this.income = res.total_money
         this.expend = res.expend_money ? res.expend_money : ''
         this.list = this.page === 1 ? res.data : [...this.list, ...res.data]
-        this.hasMore = res.data.length >= 10
+        this.hasMore = res.data.length >= 20
+        if (res.data.length === 0) {
+          this.page--
+        }
         this.$apply()
       }
       this.loaded()
@@ -183,6 +188,8 @@
   page
     background: transparent
   .total-income
+    width: 100vw
+    height: 100vh
     .tip-modal
       padding: 16px 10px 0 10px
       .text
@@ -213,6 +220,11 @@
         font-size: 30px
         color: $color-assist-tr
     .container
+      width: 100vw
+      height: 100vh
+      overflow: hidden
+      display: flex
+      flex-direction: column
       .select-wrapper
         display: flex
         align-items: center
@@ -266,6 +278,10 @@
           color: $color-text-d
       .list-wrapper
         padding-left: 12px
+        flex: 1
+        overflow: hidden
+        .list-box
+          height: 100%
         .item-wrapper
           display: flex
           align-items: center
