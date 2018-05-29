@@ -98,7 +98,8 @@
       nothing: false,
       appid: null,
       detail: {},
-      shop: {}
+      shop: {},
+      newData: ''
     }
 
     onLoad(option) {
@@ -113,7 +114,9 @@
 
     async onShow() {
       this.$invoke('activity-item', 'setLength', this.navList.length)
+      this.newData = this.$parent.globalData.newData || ''
       await this.setList()
+      await this.autoOpen()
     }
     // 获取上下线列表
     async _getList() {
@@ -166,7 +169,15 @@
       }
       this.$apply()
     }
-
+    // 自动开启活动
+    async autoOpen() {
+      if (this.newData === 'NEW' && this.isChecked === OFF) {
+        await this._rqChangeActiveStatus({status: 1, type: 3})
+        this.isChecked = ON
+        this.$apply()
+        this.loaded()
+      }
+    }
     //    删除活动
     async _delBargain() {
       let res = await bargain.delActivityBargain(this.delId)

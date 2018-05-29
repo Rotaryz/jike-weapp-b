@@ -115,10 +115,13 @@
       </view>
     </view>
   </view>
+  <toast></toast>
 </template>
 <script>
   import wepy from 'wepy'
   import URIS from 'common/js/config'
+  import Toast from '@/base/toast/toast'
+
   export default class ActivityItem extends wepy.component {
     props = {
       // group 团购活动类型 share 分享赚钱类型
@@ -188,6 +191,14 @@
               this.$emit('activityDetail', this.activityItem)
               break
             case '编辑':
+              if (this.activityItem.promotion_status === 0) {
+                this.$parent.$invoke('toast', 'show', '活动不可用，商品已下线')
+                return
+              } else if (this.activityItem.promotion_status === 3) {
+                this.$parent.$invoke('toast', 'show', '活动不可用，商品已删除')
+                return
+              }
+              console.log(this.activityItem)
               this.$emit('compile', this.activityItem)
               break
             case '删除':
@@ -201,6 +212,9 @@
               break
             case '分享':
               this.$emit('share', this.activityItem)
+              break
+            case '统计':
+              this.$parent.$invoke('toast', 'show', '功能开发中，敬请期待！')
               break
           }
         }, 200)
@@ -231,6 +245,9 @@
       handleClickEditor(obj) {
         this.$emit('activeBtnEditor', obj)
       }
+    }
+    components = {
+      'toast': Toast
     }
   }
 </script>
