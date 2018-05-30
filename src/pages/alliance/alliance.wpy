@@ -144,17 +144,18 @@
     }
 
     async _checkBusiness (data) {
-      let res = ''
+      let res
       if (this.navInadex === 0) {
         res = await circle.getShopList(data)
       } else {
         res = await circle.dredgeList(data)
       }
+      res.data = res.data.filter((item) => {
+        return !item.current_merchant
+      })
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].current_merchant) {
           this.pageTitle = res.data[i].business_circle.alias
-          res.data.splice(i, 1)
-          // break
         }
         let tmp = res.data[i].distance / 1000
         res.data[i].distance = tmp.toFixed(1)

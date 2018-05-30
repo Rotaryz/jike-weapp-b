@@ -1,0 +1,140 @@
+<template>
+  <view class="order-component">
+    <image class="component-bc" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/pic-orderbg@2x.png'}}"></image>
+    <view class="order-component-content">
+      <view class="order-component-top">
+        <view class="component-top-left">
+          <view class="order-component-title">{{orderMsg.title}}</view>
+          <view class="order-component-tel">手机号码: {{orderMsg.customer_phone}}</view>
+        </view>
+        <view class="component-top-right">{{status[orderMsg.status]}}</view>
+      </view>
+      <view class="order-component-down">
+        <view class="component-down-left">订单编号: {{orderMsg.order_sn}}</view>
+        <view class="component-down-right">
+          <view class="component-down-right-btn" @tap="orderDetail({{orderMsg.id}}, {{orderMsg.genre ? orderMsg.genre : ''}})">查看详情</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import URIS from 'common/js/config'
+
+  export default class OrderItem extends wepy.component {
+    props = {
+      orderMsg: {
+        type: Object,
+        default: {},
+        twoWay: true
+      }
+    }
+
+    data = {
+      imageUri: URIS.image,
+      status: {
+        0: '待付款',
+        1: '待使用',
+        2: '已使用',
+        3: '退款中',
+        4: '已退款',
+        5: '已评价',
+        6: '已关闭',
+        7: '退款中',
+        8: '退款中',
+        10: '待成团'
+      }
+    }
+
+    methods = {
+      orderDetail(id, genre) {
+        this.$emit('orderDetail', id, genre)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable.styl'
+  @import '../../common/stylus/mixin.styl'
+
+  .order-component
+    width: 100%
+    height: 0
+    padding-top: 27.06%
+    position: relative
+    .component-bc
+      width: 100%
+      height: 100%
+      position: absolute
+      left: 0
+      top: 0
+    .order-component-content
+      width: 100%
+      height: 100%
+      position: absolute
+      left: 0
+      top: 0
+      .order-component-top
+        height: 57.89%
+        padding: 0 15px 0 12px
+        display: flex
+        align-items: center
+        justify-content: space-between
+        .component-top-left
+          flex: 1
+          overflow: hidden
+          .order-component-title, .order-component-tel
+            width: 100%
+            color: $color-text
+            font-size: $font-size-small
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+          .order-component-title
+            font-family: $font-family-regular
+            margin-bottom: 6.5px
+          .order-component-tel
+            font-family: $font-family-light
+        .component-top-right
+          width: 60px
+          text-align: end
+          font-size: $font-size-small
+          color: $color-text-d
+          font-family: $font-family-light
+      .order-component-down
+        height: 42.11%
+        padding: 0 12px
+        display: flex
+        align-items: center
+        justify-content: space-between
+        .component-down-left
+          flex: 1
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+          font-size: $font-size-small
+          color: $color-text-title
+          font-family: $font-family-light
+        .component-down-right
+          width: 60px
+          height: 24px
+          position: relative
+          .component-down-right-btn
+            position: absolute
+            bottom: 0
+            right: 0
+            font-family: $font-family-light
+            width: 60px
+            font-size: $font-size-small-s
+            color: $color-assist-f
+            box-sizing: border-box
+            text-align: center
+            height: 24px
+            line-height: 24px
+            border: 0.5px solid $color-assist-f
+            border-radius: 2px
+
+</style>

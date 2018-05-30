@@ -1,0 +1,237 @@
+<template>
+  <view class="order-box">
+    <view class="order-head">
+      <view class="search-box {{inputChecked ? 'checked' : ''}}">
+        <image class="search-icon" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/icon-search24@2x.png'}}"></image>
+        <input type="text" class="search-input" value="{{searchTxtInput}}" confirm-type="search" bindconfirm="inputSearch" placeholder="手机号/订单号" max-length="30" placeholder-class="holder-class" bindinput="inputTxtIn" bindfocus="inputOn" focus="{{inputFocus}}"/>
+        <image class="search-delete" wx:if="{{imageUri && searchTxtInput.length}}" src="{{imageUri + '/defaults/b-image/order/icon-clear@2x.png'}}" @tap.stop="clearInput"></image>
+      </view>
+      <view class="search-txt" wx:if="{{inputChecked}}" @tap.stop="searchNextWork">{{searchTxt}}</view>
+    </view>
+    <view class="order-container-box" style="height:{{scrollHeight}}px">
+      <scroll-view scroll-y bindscrolltolower="loadMore" class="order-container" wx:if="{{orderList.length}}">
+        <repeat for="{{orderList}}" key="index" index="index" item="item">
+          <view class="order-item-box">
+            <order-item :orderMsg.sync="item"></order-item>
+          </view>
+        </repeat>
+      </scroll-view>
+      <view class="nothing-box" wx:if="{{!orderList.length}}">
+        <image class="nothing-img" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/common/pic-empty_order@2x.png'}}"></image>
+        <view class="nothing-txt">暂无订单</view>
+      </view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
+  import orderItem from '@/base/order-item/order-item'
+  import OrderApi from 'api/orders'
+  import Toast from '@/base/toast/toast'
+
+  export default class orderResult extends wepy.page {
+    mixins = [base]
+
+    onShareAppMessage () {
+      this.ShareAppMessage()
+    }
+
+    config = {
+      navigationBarTitleText: '订单管理',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+      'order-item': orderItem,
+      Toast
+    }
+    data = {
+      imageUri: URIS.image,
+      inputChecked: false,
+      searchTxtInput: '',
+      inputFocus: false,
+      scrollHeight: '',
+      page: 1,
+      orderList: [],
+      noMore: false
+    }
+
+    methods = {
+      inputOn() {
+        this.inputChecked = true
+        this.inputFocus = true
+        this.$apply()
+      },
+      inputTxtIn(e) {
+        this.searchTxtInput = e.detail.value
+        this.$apply()
+      },
+      async searchNextWork() {
+        this.inputFocus = false
+        this.inputChecked = false
+        this.noMore = false
+        this.page = 1
+        if (this.searchTxtInput.length * 1 !== 0) {
+          await this._getOrderList('get')
+          this.loaded()
+        }
+        this.$apply()
+      },
+      clearInput() {
+        this.searchTxtInput = ''
+        this.$apply()
+      },
+      async loadMore() {
+        if (this.noMore) return
+        this.page++
+        await this._getOrderList('add')
+        this.loaded()
+        this.$apply()
+      },
+      async inputSearch() {
+        this.inputFocus = false
+        this.inputChecked = false
+        this.noMore = false
+        this.page = 1
+        if (this.searchTxtInput.length * 1 !== 0) {
+          await this._getOrderList('get')
+          this.loaded()
+        }
+        this.$apply()
+      }
+    }
+
+    async onLoad (option) {
+      this.searchTxtInput = option.txt
+      let res = await wepy.getSystemInfo()
+      let maxHeight = res.windowHeight
+      this.scrollHeight = maxHeight - 44
+      await this.load()
+      this.loaded()
+      this.$apply()
+    }
+
+    async load() {
+      await this._getOrderList('get')
+    }
+
+    async _getOrderList(type) {
+      let resData = await OrderApi.searchOrder(this.searchTxtInput, this.page)
+      if (resData.error !== ERR_OK) {
+        this.loaded()
+        this.$invoke('toast', 'show', resData.message)
+        return
+      }
+      if (type === 'get') {
+        this.orderList = resData.data
+      } else if (type === 'add') {
+        if (!resData.data.length) {
+          this.page--
+          this.noMore = true
+          return
+        }
+        this.orderList = [...this.orderList, ...resData.data]
+      }
+      this.$apply()
+    }
+
+    computed = {
+      searchTxt() {
+        return this.searchTxtInput && this.searchTxtInput.length ? '搜索' : '取消'
+      }
+    }
+
+    events = {
+      orderDetail(id, genre) {
+        let url = '/pages/order-detail/order-detail?id=' + id + '&genre=' + genre
+        this.$navigate(url)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+  .order-box
+    width: 100%
+    height: 100vh
+    overflow: hidden
+    display: flex
+    flex-direction: column
+    .order-head
+      height: 44px
+      padding: 10px 20px 0
+      background: $color-theme
+      display: flex
+      .search-box
+        width: 100%
+        height: 32px
+        border: 0.5px solid $color-white
+        border-radius: 2px
+        box-sizing: border-box
+        display: flex
+        align-items: center
+        margin: 1px
+        .search-icon
+          width: 12px
+          height: 12px
+          margin-left: 12px
+        .holder-class
+          font-family: PingFangSC-Light
+          font-size: $font-size-small
+          color: $color-text-d
+        .search-input
+          flex: 1
+          margin-left: 6px
+          height: 30px
+          color: $color-white
+          font-size: $font-size-small
+        .search-delete
+          width: 12px
+          height: 12px
+          padding: 10px 15px 10px 5px
+      .checked.search-box
+        width: 87%
+      .search-txt
+        height: 32px
+        width: 13%
+        font-family: PingFangSC-Light
+        font-size: $font-size-medium
+        color: $color-white
+        line-height: 32px
+        text-align: end
+    .order-container-box
+      overflow: hidden
+      position: relative
+      .order-container
+        position: absolute
+        left: 0
+        top: 0
+        width: 100%
+        height: 100%
+        .order-item-box
+          margin-top: 10px
+          padding: 0 12px
+          &:last-child
+            margin-bottom: 10px
+      .nothing-box
+        padding-top: 85px
+        width: 100%
+        height: 108px
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: space-between
+        .nothing-img
+          width: 100px
+          height: 80px
+        .nothing-txt
+          font-size: $font-size-small
+          color: $color-text-d
+</style>

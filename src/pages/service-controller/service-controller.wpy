@@ -556,7 +556,7 @@
         4.备注：{{knowRemark}}
       </view>
       <view wx:else class="know">
-        1.{{buyLimit === -1 ? '不限' : '限' + buyLimit}}人使用
+        1.{{buyLimit === -1 ? '不限领取张数' : '每人限领' + buyLimit + '张优惠券'}}
         2.{{tempRange === -1 ? '全场通用' : '限' + tempRange + '商品使用'}}
         3.备注：{{knowRemark}}
       </view>

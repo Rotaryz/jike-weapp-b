@@ -1,0 +1,263 @@
+<template>
+  <view class="order-detail">
+    <view class="order-head border-bottom-1px">
+      <view class="order-title">{{orderDetail.title}}</view>
+      <view class="big-money">
+        <text class="money-icon">¥</text>
+        <text>{{orderDetail.total}}</text>
+      </view>
+      <view class="order-status">{{status[orderDetail.status]}}</view>
+    </view>
+    <view class="order-detail-container border-bottom-1px">
+      <view class="order-ul border-bottom-1px">
+        <view class="order-li">
+          <view class="order-li-title">业务类型</view>
+          <view class="order-li-txt">{{orderDetail.business_type}}</view>
+        </view>
+        <view class="order-li">
+          <view class="order-li-title">创建时间</view>
+          <view class="order-li-txt">{{orderDetail.created_at}}</view>
+        </view>
+        <view class="order-li" wx:if="{{orderDetail.pay_time}}">
+          <view class="order-li-title">支付时间</view>
+          <view class="order-li-txt">{{orderDetail.pay_time}}</view>
+        </view>
+        <view class="order-li">
+          <view class="order-li-title">商户订单号</view>
+          <view class="order-li-txt">{{orderDetail.order_sn}}</view>
+        </view>
+      </view>
+      <view class="order-ul border-bottom-1px">
+        <view wx:if="{{orderDetail.type * 1 !== 20}}">
+          <view class="order-li">
+            <view class="order-li-title">顾客</view>
+            <view class="order-li-txt">{{orderDetail.customer_name}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">手机号码</view>
+            <view class="order-li-txt">{{orderDetail.customer_phone}}</view>
+          </view>
+        </view>
+        <view wx:if="{{orderDetail.type * 1 === 20}}">
+          <view class="order-li">
+            <view class="order-li-title">商家名称</view>
+            <view class="order-li-txt">{{orderDetail.shop_name}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">手机号码</view>
+            <view class="order-li-txt">{{orderDetail.mobile}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="order-ul">
+        <view wx:if="{{orderDetail.type * 1 !== 3 && orderDetail.type * 1 !== 6 && orderDetail.type * 1 !== 20}}">
+          <view class="order-li">
+            <view class="order-li-title">单价</view>
+            <view class="order-li-txt">{{orderDetail.price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">数量</view>
+            <view class="order-li-txt">{{orderDetail.count}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">总价</view>
+            <view class="order-li-txt">{{orderDetail.total_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">优惠金额</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">实收金额</view>
+            <view class="order-li-txt">{{orderDetail.total}}</view>
+          </view>
+        </view>
+        <view wx:if="{{orderDetail.type * 1 === 6}}">
+          <view class="order-li">
+            <view class="order-li-title">单价</view>
+            <view class="order-li-txt">{{orderDetail.price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">数量</view>
+            <view class="order-li-txt">{{orderDetail.count}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">总价</view>
+            <view class="order-li-txt">{{orderDetail.total_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">优惠金额</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">分佣金额</view>
+            <view class="order-li-txt">{{orderDetail.profit_money}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">实收金额</view>
+            <view class="order-li-txt">{{orderDetail.total}}</view>
+          </view>
+        </view>
+        <view wx:if="{{orderDetail.type * 1 === 3}}">
+          <view class="order-li">
+            <view class="order-li-title">消费</view>
+            <view class="order-li-txt">{{orderDetail.price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">优惠金额</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">实收金额</view>
+            <view class="order-li-txt">{{orderDetail.total}}</view>
+          </view>
+        </view>
+        <view wx:if="{{orderDetail.type * 1 === 20}}">
+          <view class="order-li">
+            <view class="order-li-title">单价</view>
+            <view class="order-li-txt">{{orderDetail.price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">开通时间</view>
+            <view class="order-li-txt">{{orderDetail.count}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">总价</view>
+            <view class="order-li-txt">{{orderDetail.total_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">优惠金额</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+          </view>
+          <view class="order-li">
+            <view class="order-li-title">实收金额</view>
+            <view class="order-li-txt">{{orderDetail.total}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <Toast></Toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import { ERR_OK } from 'api/base'
+  import OrderApi from 'api/orders'
+  import Toast from '@/base/toast/toast'
+
+  export default class orderDetail extends wepy.page {
+    mixins = [base]
+
+    onShareAppMessage () {
+      this.ShareAppMessage()
+    }
+
+    config = {
+      navigationBarTitleText: '订单详情',
+      navigationBarBackgroundColor: '#363547',
+      navigationBarTextStyle: 'white'
+    }
+
+    data = {
+      imageUri: URIS.image,
+      id: '',
+      genre: '',
+      orderDetail: {},
+      status: {
+        0: '待付款',
+        1: '待使用',
+        2: '已使用',
+        3: '退款中',
+        4: '已退款',
+        5: '已评价',
+        6: '已关闭',
+        7: '退款中',
+        8: '退款中',
+        10: '待成团',
+        20: '申请中',
+        21: '申请成功',
+        22: '退款成功'
+      }
+    }
+
+    methods = {
+
+    }
+
+    async onLoad(option) {
+      this.id = option.id
+      this.genre = option.genre
+      await this.load()
+      this.loaded()
+    }
+
+    async load() {
+      let resData = await OrderApi.getOrderDetail(this.id, this.genre)
+      if (resData.error !== ERR_OK) {
+        this.loaded()
+        this.$invoke('Toast', 'show', resData.message)
+        return
+      }
+      this.orderDetail = resData.data
+      this.$apply()
+    }
+
+    components = {
+      Toast
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+  @import "../../common/stylus/mixin"
+
+  .order-detail
+    width: 100%
+    background: $color-white
+    .order-head
+      height: 137px
+      display: flex
+      flex-direction: column
+      align-items: center
+      .order-title
+        padding-top: 19.5px
+        font-family: $font-family-light
+        font-size: $font-size-medium
+      .big-money
+        margin-top: 22px
+        font-family: PingFangSC-Semibold
+        font-size: 30px
+        color: #363448
+        .money-icon
+          margin-right: 5px
+      .order-status
+        margin-top: 10px
+        font-family: $font-family-light
+        font-size: $font-size-small
+        color: $color-text-d
+    .order-detail-container
+      padding-left: 12px
+      .order-ul
+        padding: 14.5px 12px 14.5px 0
+        .order-li
+          margin-bottom: 16px
+          display: flex
+          justify-content: space-between
+          white-space: nowrap
+          .order-li-title
+            font-size: $font-size-medium
+            font-family: $font-family-light
+            white-space: nowrap
+          .order-li-txt
+            font-size: $font-size-medium
+            font-family: $font-family-light
+            color: $color-text-d
+            white-space: nowrap
+          &:last-child
+            margin-bottom: 0
+
+</style>
