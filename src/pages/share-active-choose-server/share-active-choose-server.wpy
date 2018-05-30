@@ -4,7 +4,7 @@
     <view class="g-a-c-s-section" wx:if="{{!isEmpty}}">
       <repeat for="{{couponList}}" key="index" index="index" item="item">
         <view class="coupon-box">
-          <Coupon :coupon.sync="item" :type.sync="'checked'"></Coupon>
+          <Coupon :coupon.sync="item" :type.sync="'checked'" actType="marketing"></Coupon>
         </view>
       </repeat>
     </view>
@@ -74,6 +74,7 @@
       } else {
         res = await ShareMoney.getshareserver(params, loading)
       }
+      console.log(res)
       if (res.error === ERR_OK) {
         return res
       } else {

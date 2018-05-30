@@ -183,7 +183,6 @@
     methods = {
 //      功能导航
       goDetails(text) {
-        console.log('dsfs')
         this.hideNav(this.activityItem)
         setTimeout(() => {
           switch (text) {
@@ -198,17 +197,16 @@
                 this.$parent.$invoke('toast', 'show', '活动不可用，商品已删除')
                 return
               }
-              console.log(this.activityItem)
-              this.$emit('compile', this.activityItem)
+              this.$emit('activeBtnEditor', this.activityItem)
               break
             case '删除':
-              this.$emit('del', this.activityItem.id)
+              this.$emit('activeBtnDel', this.activityItem.id)
               break
             case '下线':
-              this.$emit('down', this.activityItem.id)
+              this.$emit('activeBtnOffline', this.activityItem.id)
               break
             case '上线':
-              this.$emit('up', this.activityItem.id)
+              this.$emit('activeBtnOnline', this.activityItem.id)
               break
             case '分享':
               this.$emit('share', this.activityItem)

@@ -1,7 +1,6 @@
 <template>
   <view class="coupon">
-    <view class="couponList-item-head-container"
-          @tap="handleClick({{coupon.id ? coupon.id : coupon.promotion_id}})">
+    <view class="couponList-item-head-container" @tap="handleClick({{coupon.id ? coupon.id : coupon.promotion_id}})" wx:if="{{actType === 'promotion'}}">
       <image class="coupon-bc" wx:if="{{imageUrlHead}}"
              src="{{imageUrlHead + '/defaults/c-image/mine/pic-couponbg@2x.png'}}"></image>
       <view class="couponList-item-head-left">
@@ -51,6 +50,48 @@
         </view>
       </view>
     </view>
+    <view class="couponList-item-head-container" @tap="handleClick({{coupon.id ? coupon.id : coupon.promotion_id}})" wx:if="{{actType === 'marketing'}}">
+      <image class="coupon-bc" wx:if="{{imageUrlHead}}"
+             src="{{imageUrlHead + '/defaults/c-image/mine/pic-couponbg@2x.png'}}"></image>
+      <view class="couponList-item-head-left">
+        <view class="border-line" wx:if="{{border!=='no'}}"></view>
+        <view class="couponList-itemPay">
+          <image class="couponList-itemPay-img" mode="aspectFill" src="{{coupon.src}}"></image>
+        </view>
+        <view class="couponList-itemMsg">
+          <view class="couponList-item-title ro-couponList-item-title">
+            {{coupon.title}}
+          </view>
+          <!--<view class="underline"></view>-->
+          <view class="couponList-item-time">
+            {{coupon.not_allow_time ? coupon.not_allow_time : coupon.promotion.not_allow_time}}
+          </view>
+          <view class="couponList-item-time ro-couponList-item-time">
+            {{coupon.stock === -1 ? '不限量' : '剩余' + coupon.stock + '件'}}
+          </view>
+        </view>
+      </view>
+      <view class="couponList-item-head-right">
+        <view class="checked-wrapper" wx:if="{{type === 'checked'}}">
+          <view class="radio {{!coupon.checked ? 'unselected' : ''}}">
+            <image wx:if="{{coupon.checked && imageUrlHead}}"
+                   src="{{imageUrlHead + '/defaults/b-image/page/icon-selected@2x.png'}}"
+                   class="full-image"></image>
+          </view>
+        </view>
+        <view class="couponList-item-head-right-btn" wx:if="{{type === 'buy'}}">
+          立即购买
+        </view>
+        <view class="shopMsg" wx:if="{{type === 'logo'}}">
+          <image
+            src="{{coupon.shop_logo ? coupon.shop_logo : coupon.merchant_data.logo_image}}"
+            class="shopLogo" mode="aspectFill"></image>
+          <view class="shopName">
+            {{coupon.shop_name ? coupon.shop_name : coupon.merchant_data.shop_name}}
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -72,6 +113,10 @@
       border: {
         type: String,
         default: 'no'
+      },
+      actType: {
+        type: String,
+        default: 'promotion'
       }
     }
 
@@ -131,7 +176,11 @@
           display: flex
           align-items: center
           justify-content: center
-
+          .couponList-itemPay-img
+            height: 70px
+            width: 70px
+            border-radius: 3px
+            border: 0.5px solid #E5E5E5
           .couponList-desc
             display: flex
             align-items: flex-end
@@ -154,14 +203,19 @@
         .couponList-itemMsg
           flex: 7
           display: flex
+          padding-top: 16px
+          box-sizing :border-box
           flex-direction: column
-          justify-content: center
 
           .couponList-item-title
-            font-family: PingFangSC-Medium
+            font-family: PingFangSC-Regular
             font-size: $font-size-medium
+            line-height: 18px
             padding-bottom: 10px
-
+          .ro-couponList-item-title
+            padding-bottom: 7px
+            width: 90%
+            border-bottom: .5px solid $color-col-line
           .underline
             width: 90%
             height: 10px
@@ -171,6 +225,9 @@
             font-size: $font-size-small-s
             color: $color-text-d
             line-height: 14px
+          .ro-couponList-item-time
+            position: absolute
+            bottom: 18px
 
       .couponList-item-head-right
         position: absolute

@@ -162,7 +162,7 @@
     onShow() {
       this.submitLock = false
       // 全局变量拿服务
-      if (this.$parent.globalData.shareCoupon && !this.id) {
+      if (this.$parent.globalData.shareCoupon) {
         this.currentCoupon = this.$parent.globalData.shareCoupon
         this.title = this.$parent.globalData.shareCoupon.title
         this.shareData.goods_id = this.$parent.globalData.shareCoupon.id
@@ -266,7 +266,10 @@
           }
         }
         if (!this.shareData.bottom_price) {
-          this.$invoke('Toast', 'show', '请输入低价')
+          this.$invoke('Toast', 'show', '请输入底价')
+          return
+        } else if (this.shareData.bottom_price * 1 === 0) {
+          this.$invoke('Toast', 'show', '底价不能为0')
           return
         } else if (this.shareData.bottom_price * 1 >= this.price * 1) {
           this.$invoke('Toast', 'show', '底价不可以大于等于现价')

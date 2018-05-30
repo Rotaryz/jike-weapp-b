@@ -72,7 +72,10 @@
   export default class bargainActiveList extends wepy.page {
     mixins = [base]
     config = {
-      navigationBarTitleText: '疯狂砍价'
+      navigationBarTitleText: '疯狂砍价',
+      backgroundColor: '#f9f9f9',
+      backgroundTextStyle: 'dark',
+      enablePullDownRefresh: true
     }
     data = {
       qrcode: '',
@@ -99,9 +102,14 @@
       appid: null,
       detail: {},
       shop: {},
-      newData: ''
+      newData: '',
+      upTotal: 0,
+      downTotal: 0
     }
-
+    async onPullDownRefresh() {
+      await this.setList()
+      wepy.stopPullDownRefresh()
+    }
     onLoad(option) {
       if ('' + option.isChecked === 'true') {
         // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
@@ -114,7 +122,9 @@
 
     async onShow() {
       this.$invoke('activity-item', 'setLength', this.navList.length)
+      this.$parent.updateGlobalData('shareCoupon', null)
       this.newData = this.$parent.globalData.newData || ''
+      await this._getList()
       await this.setList()
       await this.autoOpen()
     }
@@ -123,6 +133,7 @@
       let data = {status: UP, page: 1}
       let res = await bargain.activityBargainList(data)
       this.shop = {name: res.shop_name, address: res.particular_address}
+      this.upTotal = res.meta.total
       this.appid = res.wap_app_id
       res = this.infoRes(res)
       res = res.map((item) => {
@@ -133,6 +144,7 @@
       let data2 = {status: DOWN, page: 1}
       let res2 = await bargain.activityBargainList(data2)
       this.loaded()
+      this.downTotal = res2.meta.total
       res2 = this.infoRes(res2)
       res2 = res2.map((item) => {
         item.show = false
@@ -160,8 +172,8 @@
       }
       this.$apply()
     }
+    // 设置list
     async setList() {
-      await this._getList()
       if (this.status === UP) {
         this.activityList = this.activityInList
       } else {
@@ -185,7 +197,8 @@
       if (res.error !== ERR_OK) {
         return
       }
-      this.cupList(this.delId)
+      await this._getList()
+      await this.setList()
       this.$apply()
     }
 
@@ -200,6 +213,7 @@
         Tips.success('下线成功')
       }
     }
+    // 上线时修改位置
     cupList(id) {
       if (this.status === UP) {
         this.activityList.splice(this.activityList.findIndex(val => val.id * 1 === id), 1)
@@ -275,7 +289,7 @@
         return this.activityInList.length === 0 && this.activityOffList.length === 0
       },
       showContent() {
-        return (this.activityInList.length === 0 && this.activityOffList.length === 0) || (this.isChecked === 'on')
+        return (this.upTotal === 0 && this.downTotal === 0) || (this.isChecked === 'on')
       },
       switchStatus() {
         return this.isChecked
@@ -287,14 +301,14 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60) + 'px' : (DEVICEINFO.height - 82) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 55) + 'px'
       }
     }
     events = {
       async share(item) {
         // 下载二维码
-        let path = `pages/coupon-detail/coupon-detail?merchantId=${item.merchant_id}&id=${item.id}&s=b`
-        let res = await merchants.getMerchantQRcode({path})
+        let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
+        let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
         this.loaded()
         this.qrcode = res.data.url
         this.detail = item
@@ -305,7 +319,7 @@
       activityDetail(item) {
         wepy.navigateToMiniProgram({
           appId: this.appid,
-          path: `pages/coupon-detail/coupon-detail?merchantId=${item.merchant_id}&id=${item.id}&s=b`,
+          path: `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`,
           extraData: {},
           envVersion: URIS.jumpVersion, // develop
           success(res) {
@@ -324,21 +338,21 @@
           this.$apply()
         }
       },
-      compile(res) {
+      activeBtnEditor(res) {
         let url = `/pages/new-bargain-activity/new-bargain-activity?id=${res.id}&type=${res.status}`
         this.$navigate(url)
       },
-      del(id) {
+      activeBtnDel(id) {
         this.delId = id
         this.currentChooseType = DEL
         this.$invoke('confirm', 'show')
       },
-      down(id) {
+      activeBtnOffline(id) {
         this.downId = id
         this.currentChooseType = DOWN
         this.$invoke('ConfirmMsg', 'show', {title: '确定要下线'})
       },
-      async up(id) {
+      async activeBtnOnline(id) {
         let res = await bargain.upActivityBargain(id)
         if (res.error === ERR_OK) {
           await this.setList()
@@ -475,7 +489,6 @@
         letter-spacing: 1.02px
 
   .g-a-l-article
-    padding-bottom: 52px
     background :$color-white
     box-sizing :border-box
 </style>
