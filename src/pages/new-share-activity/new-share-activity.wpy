@@ -281,7 +281,6 @@
         }
       }
     }
-
     computed = {
       hotEndStartDate() {
         let time = ' '

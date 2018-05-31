@@ -481,14 +481,14 @@
       },
       async share(item) {
         // 下载二维码
-        let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
-        let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
-        this.loaded()
-        this.qrcode = res.data.url
-        this.detail = item
-        this.$invoke('share', 'show', 'bargain')
-        this.$invoke('share', '_drawCanvas')
-        this.$apply()
+        // let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
+        // let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
+        // this.loaded()
+        // this.qrcode = res.data.url
+        // this.detail = item
+        // this.$invoke('share', 'show', 'bargain')
+        // this.$invoke('share', '_drawCanvas')
+        // this.$apply()
       },
       async headerSwitchChange() {
         let type = '1' // 1团购活动 2分享赚钱活动
