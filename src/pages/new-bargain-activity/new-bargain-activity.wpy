@@ -1,0 +1,491 @@
+<template>
+  <view class="tl-share-con border-bottom-1px">
+    <view class="tl-share-box tl-share-type-between" @tap="getServeList()">
+      <view class="tl-share-left">添加服务</view>
+      <view class="tl-share-right">
+        <view class="full-text {{editType  ? 'full-text-dis' : ''}}">{{title}}</view>
+        <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">现价</view>
+      <view class="tl-share-right">
+        <view class="full-text-dis">{{!price ? '0.00' : price}}
+        </view>
+      </view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">活动名称</view>
+      <input type="text" placeholder="请输入" class="tl-share-title" placeholder-class="tl-share-title-place" maxlength="15" bindinput="shareInputTitle" value="{{shareData.activity_name}}"/>
+      <view class="tl-share-number">{{titleNumber}}/15</view>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">添加数量</view>
+      <picker class="tl-share-title" bindchange="numberPickerChange" value="{{shareData.stock ?shareData.stock -1 : 0}}" range="{{stock}}">
+        <view class="tl-share-title-item {{shareData.stock === '' ? 'tl-share-title-place':'tl-share-title-item-active'}}">{{shareData.stock !== '' ? shareData.stock : '请选择'}}</view>
+      </picker>
+      <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+    </view>
+    <view class="tl-share-box border-bottom-1px">
+      <view class="tl-share-left">活动时间</view>
+      <view class="tl-share-data-left">{{shareData.start_at}}</view>
+      <view class="tl-share-data-to tl-share-data-left">至</view>
+      <picker mode="date" class="sell-date" @change="setValidDate" start="{{hotEndStartDate}}" value="{{shareData.end_at}}">
+        <view class="tl-share-data-time">
+          <view>{{shareData.end_at === '' ? '结束时间' : shareData.end_at}}</view>
+          <view class="arrow-right">
+            <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+          </view>
+        </view>
+      </picker>
+    </view>
+  </view>
+  <view class="tl-share-con border-top-1px border-bottom-1px">
+    <view class="tl-share-box">
+      <view class="tl-share-left">底价</view>
+      <input type="digit" placeholder="能砍到的最低价格" disabled="{{id}}" class="tl-share-title {{id ? 'tl-share-title-place' : ''}}" placeholder-class="tl-share-title-place" maxlength="6" bindinput="setMoney" value="{{shareData.bottom_price}}"/>
+    </view>
+    <view class="tl-share-box">
+      <view class="tl-share-left">砍价次数</view>
+      <view wx:if="{{id}}" class="tl-share-title-item tl-share-title tl-share-title-place}}">{{shareData.max_cut_num || '请选择'}}</view>
+      <picker wx:if="{{!id}}" class="tl-share-title" bindchange="maxPickerChange" value="{{index}}" range="{{maCutNum}}">
+        <view class="tl-share-title-item {{shareData.max_cut_num === '' ? 'tl-share-title-place':'tl-share-title-item-active'}}">{{shareData.max_cut_num || '请选择'}}</view>
+      </picker>
+      <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
+    </view>
+  </view>
+  <view class="play-rule border-top-1px" wx:if="{{!editType}}">
+    <view class="tl-share-box border-bottom-1px">
+      <view class="tl-share-icon"></view>
+      <view class="tl-share-icontext">玩法介绍</view>
+    </view>
+    <view class="play-rule-title">1.什么是疯狂砍价？</view>
+    <view class="play-rule-text">疯狂砍价是由商家发起的一种营销类活动，商家可添加商品，设置能砍到的底价和砍到底价所需次数。用户若想以底价购买该商品，可邀请好友一起砍价，每次砍价金额随机。</view>
+    <view class="play-rule-title">2.砍掉后的价格是否对所有用户有效？</view>
+    <view class="play-rule-text">是的。所有用户可对同一个商品进行砍价，并享有砍掉后的商品价格，如商品A现价100元，当某用户砍掉2元后，所有人看到的现价更新为98元，并可在98元的基础上再进行砍价，直到砍到底价为止。</view>
+    <view class="play-rule-title">3.未砍到底价时，用户能否购买？</view>
+    <view class="play-rule-text">能购买，如商品A现价100元，底价10元，当被砍到80元时，若某用户认为已达自己的可接受价位，即可下单购买（为突出商品稀有性，建议商家添加的数量在1-3个）。</view>
+    <view class="play-rule-title">4.用户一次能购买几件商品？</view>
+    <view class="play-rule-text">同一个用户一次下单只能购买一件商品。</view>
+    <view class="play-rule-title">5.砍价商品设置错了怎么办？</view>
+    <view class="play-rule-text">商家可在砍价列表页删除该商品，删除后所有用户不能对该商品进行砍价，已下单但未支付的用户不能再进行支付，已支付的用户不受影响。</view>
+  </view>
+  <view class="tl-share-save">
+    <view class="tl-share-save-btn" @tap="saveShareNewData">保存</view>
+  </view>
+  <Toast></Toast>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import URIS from 'common/js/config'
+  import {ERR_OK} from 'api/base'
+  import Toast from '@/base/toast/toast'
+  import bargain from 'api/bargain'
+
+  export default class newBargainActivity extends wepy.page {
+    mixins = [base]
+
+    config = {
+      navigationBarTitleText: '新建'
+    }
+    data = {
+      imageUri: URIS.image,
+      shareData: {
+        goods_id: '',
+        activity_name: '',
+        stock: '',
+        bottom_price: '',
+        max_cut_num: '',
+        end_at: '',
+        start_at: '',
+        submitLock: false
+      },
+      title: '',
+      price: '',
+      stock: [1, 2, 3],
+      titleNumber: 0,
+      maCutNum: [30, 50, 70, 100],
+      submitLock: true,
+      editType: null, // 编辑类型
+      id: null,
+      oldStock: 0
+    }
+
+    infoRes(res) {
+      if (res.error === ERR_OK) {
+        return res.data
+      }
+      return false
+    }
+
+    async onLoad(options) {
+      this.editType = options.type || this.editType
+      this.id = options.id || null
+      wepy.setNavigationBarTitle({title: this.id ? '编辑' : '新建'})
+      await this.getDetail()
+      if (!this.editType) {
+        await this.getBeginTime()
+      }
+    }
+//    获取详情
+    async getDetail() {
+      if (!this.id) {
+        this.shareData = {
+          goods_id: '',
+          activity_name: '',
+          stock: '',
+          bottom_price: '',
+          max_cut_num: '',
+          end_at: '',
+          start_at: '',
+          submitLock: false
+        }
+        this.currentCoupon = {}
+        this.title = ''
+        this.price = ''
+        this.$apply()
+      } else {
+        let res = await bargain.activityBargainDetail(this.id)
+        this.loaded()
+        this.shareData = this.infoRes(res)
+        this.titleNumber = this.shareData.activity_name.length
+        this.currentCoupon = this.shareData.promotion_data
+        this.title = this.shareData.promotion_data.goods_name
+        this.price = this.shareData.current_price
+        this.oldStock = this.shareData.stock
+        this.$apply()
+      }
+    }
+
+    onShow() {
+      this.submitLock = false
+      // 全局变量拿服务
+      if (this.$parent.globalData.shareCoupon) {
+        this.currentCoupon = this.$parent.globalData.shareCoupon
+        this.title = this.$parent.globalData.shareCoupon.title
+        this.shareData.goods_id = this.$parent.globalData.shareCoupon.id
+        this.price = this.$parent.globalData.shareCoupon.platform_price
+        let stock = this.currentCoupon.stock
+//        判断可添加活动的数量
+        if (stock === -1 || stock >= 3) {
+          this.stock = this.digitize1(3)
+        } else {
+          this.stock = this.digitize1(stock)
+        }
+        this.$apply()
+      }
+    }
+
+//    格式化数字转为数组
+    digitize1(n) {
+      let arr = []
+      for (let i = 1; i <= n; i++) {
+        arr.push(i)
+      }
+      return arr
+    }
+
+    // 格式化日期
+    _formateDate(time) {
+      time = new Date(time)
+      const year = time.getFullYear()
+      const month = time.getMonth() + 1
+      const date = time.getDate()
+      return `${year}-${month}-${date}`
+    }
+//    新建时获取开始时间
+    async getBeginTime() {
+      let res = await bargain.getDate()
+      this.loaded()
+      this.shareData.start_at = this.infoRes(res).date
+      this.$apply()
+    }
+
+    methods = {
+      // 保存活动时间
+      setValidDate(e) {
+        this.shareData.end_at = e.detail.value
+        this.$apply()
+      },
+      //      砍价次数
+      maxPickerChange(e) {
+        let index = e.detail.value * 1
+        this.shareData.max_cut_num = this.maCutNum[index]
+      },
+      //      添加数量
+      numberPickerChange(e) {
+        let index = e.detail.value * 1
+        this.shareData.stock = this.stock[index]
+      },
+      //      选择优惠券
+      getServeList() {
+        if (this.editType) {
+          this.$invoke('Toast', 'show', '活动服务不能更改')
+        } else {
+          let url = `/pages/share-active-choose-server/share-active-choose-server?activity=bargain`
+          this.$navigate(url)
+        }
+      },
+      // 输入分享金额标题
+      shareInputTitle(e) {
+        this.shareData.activity_name = e.detail.value
+        this.titleNumber = e.detail.value.length
+        this.$apply()
+      },
+      setMoney(e) {
+        let value = e.detail.value
+        value = value.match(/\d+(\.\d{0,2})?/) ? value.match(/\d+(\.\d{0,2})?/)[0] : ''
+        this.shareData.bottom_price = value
+        return value
+      },
+      // 提交资料创建
+      async saveShareNewData() {
+        if (!this.currentCoupon) {
+          this.$invoke('Toast', 'show', '请添加服务')
+          return
+        }
+        if (!this.shareData.activity_name) {
+          this.$invoke('Toast', 'show', '请输入活动名称')
+          return
+        }
+        if (!this.shareData.stock) {
+          this.$invoke('Toast', 'show', '请添加活动库存')
+          return
+        }
+        if (!this.shareData.end_at) {
+          this.$invoke('Toast', 'show', '请选择活动截止的日期')
+          return
+        } else {
+          let currentDate = Date.parse(this.shareData.end_at)
+          let sellCurrentDate = Date.parse(this.currentCoupon.end_at)
+          if (currentDate - sellCurrentDate > 0) {
+            this.$invoke('Toast', 'show', '活动时间不能大于等于服务售卖时间')
+            return
+          }
+        }
+        if (!this.shareData.bottom_price) {
+          this.$invoke('Toast', 'show', '请输入底价')
+          return
+        } else if (this.shareData.bottom_price * 1 === 0) {
+          this.$invoke('Toast', 'show', '底价不能为0')
+          return
+        } else if (this.shareData.bottom_price * 1 >= this.price * 1) {
+          this.$invoke('Toast', 'show', '底价不可以大于等于现价')
+          return
+        }
+        if (!this.shareData.max_cut_num) {
+          this.$invoke('Toast', 'show', '请选择砍价次数')
+          return
+        }
+        if (this.id && this.oldStock > this.shareData.stock) {
+          this.$invoke('Toast', 'show', '活动库存不可减少')
+          return
+        }
+        if (this.id) {
+          let data = {activity_name: this.shareData.activity_name, stock: this.shareData.stock, end_at: this.shareData.end_at}
+          let res = await bargain.putActivityBargain(this.id, data)
+          this.loaded()
+          if (res.error === ERR_OK) {
+            this.submitLock = true
+            this.$parent.globalData.newData = 'OLD'
+            setTimeout(() => {
+              this.$back()
+            }, 50)
+          }
+          this.$invoke('Toast', 'show', res.message)
+          this.$apply()
+          return
+        }
+        let res = await bargain.activityBargain(this.shareData)
+        this.loaded()
+        if (res.error === ERR_OK) {
+          this.submitLock = true
+          this.$parent.globalData.newData = 'NEW'
+          setTimeout(() => {
+            this.$parent.updateGlobalData('shareCoupon', null)
+            this.$back()
+          }, 50)
+        }
+        this.$invoke('Toast', 'show', res.message)
+        this.$apply()
+      }
+    }
+    computed = {
+      hotEndStartDate() {
+        let time = ' '
+        if (this.editType) {
+          time = this.shareData.end_at
+        } else {
+          time = new Date()
+        }
+        time = this._formateDate(time)
+        return time
+      },
+      switchStatus() {
+        return this.isChecked
+      }
+    }
+    components = {
+      Toast
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+  .play-rule
+    padding: 0 0px 105px 12px
+    background: $color-white
+    .play-rule-title
+      margin-top: 20px
+      font-size: $font-size-medium
+      color: $color-text-td
+      font-family: $font-family-regular
+      &:first-child
+        margin-top: 15px
+    .play-rule-text
+      color: #696671
+      font-family: $font-family-light
+      margin-top: 10px
+      font-size: $font-size-small
+      line-height: 19px
+
+  .tl-share-con
+    margin-bottom: 10px
+    background: $color-white
+    padding-left: 12px
+
+  .tl-share-type-between
+    justify-content: space-between
+
+  .tl-share-box
+    border-bottom: 0.5px solid $color-row-line
+    height: 43px
+    display: flex
+    align-items: center
+    padding-right: 12px
+    &:last-child
+      border-bottom: 0
+    .tl-share-left
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-td
+      width: 88px
+      @media screen and (max-width: 340px)
+        width: 80px
+    .full-image
+      margin-left: 3.5px
+      display: block
+      width: 10px
+      height: 10px
+    .tl-share-data-time
+      font-size: $font-size-medium
+      font-family: $font-family-light
+      color: $color-theme
+      display: flex
+      align-items: center
+      justify-content: center
+      text-align: right
+      .arrow-right
+        margin-left: 1px
+        justify-content: right
+        .full-image
+          margin-left: 3.5px
+          display: block
+          width: 10px
+          height: 10px
+    .tl-share-data-left
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d
+    .tl-share-data-to
+      margin: 0 25px
+      @media screen and (max-width: 340px)
+        margin: 0 10px
+    .tl-share-title
+      flex: 1
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      height: 100%
+    .tl-share-title-item
+      height: 100%
+      line-height: 43px
+      text-align: right
+      font-size: $font-size-medium
+      &:tl-share-title-item-active
+        color: $color-text
+    .tl-share-title-place
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d
+    .tl-share-title-have
+      color: $color-theme
+    .tl-share-number
+      font-family: $font-family-light
+      font-size: $font-size-small-s
+      color: $color-text-d
+    .tl-share-right
+      display: flex
+      align-items: center
+      .full-text
+        font-size: $font-size-medium
+        font-family: $font-family-light
+        color: $color-theme
+      .full-text-dis
+        font-size: $font-size-medium
+        font-family: $font-family-light
+        color: $color-btn-dis
+      .full-image
+        margin-left: 10px
+        display: block
+        width: 10px
+        height: 10px
+    .tl-share-icon
+      background: $color-assist-f
+      width: 4px
+      height: 13px
+      margin-right: 5px
+    .tl-share-icontext
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text-d
+    .tl-share-rate
+      font-family: $font-family-light
+      font-size: $font-size-medium
+      color: $color-text
+      margin-right: 6px
+      width: 39px
+      height: 22px
+      text-align: center
+      border: 1px solid $color-col-line-f
+
+  .tl-share-save
+    position: fixed
+    left: 0
+    height: 80px
+    display: flex
+    align-items: center
+    justify-content: center
+    bottom: 0
+    padding: 0 12px
+    width: 100%
+    background: $color-background
+    box-sizing: border-box
+    .tl-share-save-btn
+      width: 100%
+      font-family: $font-family-regular
+      font-size: $font-size-medium
+      color: $color-white
+      background: $color-theme
+      border-radius: 2px
+      text-align: center
+      height: 44px
+      line-height: 44px
+
+  .tl-share-con-bottom
+    margin-bottom: 62px
+</style>

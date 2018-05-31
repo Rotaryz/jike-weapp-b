@@ -4,7 +4,7 @@
     <view class="g-a-c-s-section" wx:if="{{!isEmpty}}">
       <repeat for="{{couponList}}" key="index" index="index" item="item">
         <view class="coupon-box">
-          <Coupon :coupon.sync="item" :type.sync="'checked'"></Coupon>
+          <Coupon :coupon.sync="item" :type.sync="'checked'" actType="marketing"></Coupon>
         </view>
       </repeat>
     </view>
@@ -26,6 +26,7 @@
   import URIS from 'common/js/config'
   import base from 'common/mixins/base'
   import ShareMoney from 'api/share-active'
+  import Bargain from 'api/bargain'
   import {ERR_OK} from '@/api/base'
 
   const PAGELIMIT = 10
@@ -42,10 +43,12 @@
         page: 1,
         limit: PAGELIMIT
       },
-      isAll: false
+      isAll: false,
+      activity: ''
     }
 
-    async onLoad() {
+    async onLoad(option) {
+      this.activity = option.activity || ''
       await this._init()
       this.loaded()
       if (this.$parent.globalData.shareCoupon) {
@@ -53,7 +56,6 @@
         this._findCoupon(this.currentCoupon)
       }
     }
-
     async onPullDownRefresh() {
       await this._getNewList()
       /* eslint-disable no-undef */
@@ -65,7 +67,14 @@
     }
     // 获取服务列表
     async _getShareServerList(params, loading) {
-      let res = await ShareMoney.getshareserver(params, loading)
+      let res = []
+      if (this.activity === 'bargain') {
+        let data = {page: this.params.page}
+        res = await Bargain.getBargainServer(data, loading)
+      } else {
+        res = await ShareMoney.getshareserver(params, loading)
+      }
+      console.log(res)
       if (res.error === ERR_OK) {
         return res
       } else {
@@ -118,7 +127,7 @@
         arr.push({
           id: item.id, // 商品id即goods_id
           promotion_id: item.id,
-          platform_price: item.price,
+          platform_price: item.price || item.platform_price,
           title: item.title,
           end_at: item.sell_end_at,
           checked: false,

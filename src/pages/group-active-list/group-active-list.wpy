@@ -6,12 +6,11 @@
           <view class="g-a-l-n-item {{upStatus}}" id="{{tabUpId}}">已上线</view>
           <view class="g-a-l-n-item {{downStatus}}" id="{{tabDownId}}">已过期/已下线</view>
         </view>
+
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabUpId}}" bindscrolltolower="_getMoreList">
           <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{onlineList}}" key="index" index="index" item="item">
-              <view class="g-a-l-a-item">
-                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
-              </view>
+              <activity-item :activeType.sync="type" :navList.sync="navList" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
             </repeat>
           </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
@@ -24,9 +23,7 @@
         <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{status!==tabDownId}}" bindscrolltolower="_getMoreList">
           <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{offlineList}}" key="index" index="index" item="item">
-              <view class="g-a-l-a-item">
-                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
-              </view>
+              <activity-item-on :activeType.sync="type" :activeObj.sync="item" :navList.sync="navList2" :constObj.sync="activeConstObj"></activity-item-on>
             </repeat>
           </view>
           <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
@@ -44,6 +41,9 @@
     <toast></toast>
     <confirm></confirm>
   </view>
+  <view class="pic">
+    <share :qrcode.sync="qrcode" :detail.sync="detail" :shop.sync="shop"></share>
+  </view>
 </template>
 
 <script>
@@ -58,12 +58,16 @@
   import Tips from 'common/js/tips'
   import GroupActiveAPI from 'api/group-active'
   import {ERR_OK} from 'api/base'
+  import Share from '@/base/share/share'
   import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
-
+  let NAVLIST = [{text: '预览', icon: `${URIS.image}/defaults/b-image/marketing/icon-preview@2x.png`}, {text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '分享', icon: `${URIS.image}/defaults/b-image/marketing/icon-share_kj@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
+  let NAVLIST2 = [{text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '上线', icon: `${URIS.image}/defaults/b-image/marketing/icon-upline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   export default class GAList extends wepy.page {
     mixins = [base]
 
     data = {
+      navList: NAVLIST,
+      navList2: NAVLIST2,
       imageUrlHead: URIS.image,
       activityStatus: 'failed', // 活动总开关
       activeConstObj: {
@@ -100,6 +104,7 @@
     }
 
     async onLoad(option) {
+      this.$invoke('activity-item', 'setLength', this.navList.length)
       if ('' + option.isChecked === 'true') {
         // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
         this.isChecked = OFF
@@ -321,15 +326,17 @@
       let arr = []
       res.data.map(item => {
         arr.push({
+          merchant_id: item.merchant_id,
           id: item.id,
           src: item.image_url,
           hotName: item.activity_name,
           peopleNum: item.activity_number,
           price: item.platform_price,
           hotPrice: item.activity_price,
-          statusType: '' + item.status,
+          statusType: item.status,
           statusTypeStr: item.start_str,
-          goodStatus: '' + item.promotion_status
+          goodStatus: item.promotion_status,
+          show: false
         })
       })
       return arr
@@ -414,6 +421,12 @@
         if (this._isTabDownInit()) {
           await this._init(this.status)
         }
+        if (id === '0') {
+          this.$invoke('activity-item-on', 'setLength', this.navList2.length)
+        } else {
+          this.$invoke('activity-item', 'setLength', this.navList.length)
+        }
+
         this.$apply()
       },
       toNewPage() {
@@ -447,8 +460,35 @@
         return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
       }
     }
-
+    changeNav(res) {
+      if (this.status === '1') {
+        let index = this.onlineList.findIndex((item) => item.id === res.id)
+        this.onlineList[index] = res
+        this.$apply()
+        return
+      }
+      let index = this.offlineList.findIndex((item) => item.id === res.id)
+      this.offlineList[index] = res
+      this.$apply()
+    }
     events = {
+      async share(item) {
+        // 下载二维码
+        let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
+        let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
+        this.loaded()
+        this.qrcode = res.data.url
+        this.detail = item
+        this.$invoke('share', 'show', 'bargain')
+        this.$invoke('share', '_drawCanvas')
+        this.$apply()
+      },
+      showNav(res) {
+        this.changeNav(res)
+      },
+      hideNav(res) {
+        this.changeNav(res)
+      },
       async headerSwitchChange() {
         let type = '1' // 1团购活动 2分享赚钱活动
         // 活动状态，0关闭，1开启
@@ -495,8 +535,10 @@
     components = {
       'header-switch': HeaderSwitch,
       'activity-item': ActivityItem,
+      'activity-item-on': ActivityItem,
       'confirm': Confirm,
-      'toast': Toast
+      'toast': Toast,
+      'share': Share
     }
     config = {
       navigationBarTitleText: '团购',
@@ -512,7 +554,9 @@
 <style lang='stylus'>
   @import "../../common/stylus/mixin.styl"
   @import "../../common/stylus/variable.styl"
-
+  .pic
+    position: fixed
+    z-index: 9999
   .g-a-c-s-empty
     background-color: $color-white
     height: 100%

@@ -305,8 +305,8 @@
           price: item.price,
           hotPrice: item.after_price,
           statusTypeStr: item.status_str,
-          statusType: item.status.toString(),
-          goodStatus: item.promotion_status.toString()
+          statusType: item.status,
+          goodStatus: item.promotion_status
         })
       })
       return arr

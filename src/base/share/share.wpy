@@ -1,0 +1,216 @@
+<template>
+  <view animation="{{maskAnimation}}" class="share" @tap.stop="hide"
+        wx:if="{{show}}">
+    <canvas canvas-id="target" class="canvas"></canvas>
+    <view animation="{{modalAnimation}}" class="modal border-top-1px"
+          wx:if="{{show}}">
+      <view class="share-content-wrapper" @tap="generatePicture">
+        <view class="line">
+          <image wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/c-image/recommend/icon-pyq@2x.png'}}"></image>
+          <view class="text">生成卡片保存分享</view>
+        </view>
+      </view>
+      <view class="split border-top-1px border-bottom-1px"></view>
+      <view class="cancel">
+        取消
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Tips from 'common/js/tips'
+  import URIS from 'common/js/config'
+  import base from 'common/mixins/base'
+
+  export default class Share extends wepy.component {
+    mixins = [base]
+    props = {
+      shop: {
+        type: Object,
+        default: {}
+      },
+      detail: {
+        type: Object,
+        default: {}
+      },
+      qrcode: String
+    }
+
+    data = {
+      show: false,
+      maskAnimation: '',
+      modalAnimation: '',
+      imageUrlHead: URIS.image
+    }
+
+    async _drawCanvas() {
+      const ctx = await wepy.createCanvasContext('target')
+      this.shareBgs = '../../common/images/pic-bg_kj@2x.png' // 背景图片
+      const qrcodes = await wepy.downloadFile({url: this.qrcode}) // 小程序码
+
+      let bg = this.shareBgs
+      let qrcode = qrcodes.tempFilePath
+
+      ctx.drawImage(bg, 110, 100, 1280, 2000)
+      ctx.drawImage(qrcode, 433.2, 1684, 238, 238)
+//      商品图片
+      const pics = await wepy.downloadFile({url: this.detail.image_url})
+      let pic = pics.tempFilePath
+      ctx.drawImage(pic, 190, 360, 1120, 596)
+//    文字
+      ctx.setFontSize(64)
+      ctx.setFillStyle('#363547')
+      ctx.setTextAlign('left')
+      let title = `原价${this.detail.platform_price}元的${this.detail.activity_name}，现在只要${this.detail.bottom_price}元，错过再等一年！`
+      let num = Math.ceil(title.length / 18)
+      let height = 1058
+      for (let i = 0; i < num; i++) {
+        let end = 18 * (i + 1)
+        let begin = 18 * i
+        height = height + i * 90
+        ctx.fillText(title.slice(begin, end), 210, height)
+        ctx.stroke()
+      }
+
+      ctx.setFontSize(54)
+      ctx.setFillStyle('#464646')
+      ctx.setTextAlign('left')
+      ctx.fillText(this.shop.name, 210, 1352)
+
+      ctx.setFontSize(48)
+      ctx.setFillStyle('#A1A1A1')
+      ctx.setTextAlign('left')
+      ctx.fillText(this.shop.address, 210, 1436)
+      ctx.draw()
+    }
+
+    methods = {
+      drawCanvas(type) {
+        this._drawCanvas(type)
+      },
+      async generatePicture() {
+        Tips.loading('生成中')
+        const res = await wepy.canvasToTempFilePath({
+          x: 0,
+          y: 0,
+          width: 1500,
+          height: 2100,
+          destWidth: 1500,
+          destHeight: 2100,
+          canvasId: 'target'
+        })
+        await wepy.previewImage({urls: [res.tempFilePath]})
+        Tips.loaded()
+//        await wepy.saveImageToPhotosAlbum({filePath: res.tempFilePath})
+        this.$emit('sharePunchLine')
+      },
+      hide() {
+        let modalAnimation = wepy.createAnimation({
+          duration: 200,
+          timingFunction: 'linear',
+          delay: 0
+        })
+        let maskAnimation = wepy.createAnimation({
+          duration: 200,
+          timingFunction: 'linear',
+          delay: 0
+        })
+        maskAnimation.opacity(0).step()
+        modalAnimation.translateY(114).step()
+        this.maskAnimation = maskAnimation.export()
+        this.modalAnimation = modalAnimation.export()
+        setTimeout(() => {
+          maskAnimation.opacity(1).step()
+          modalAnimation.translateY(0).step()
+          this.maskAnimation = maskAnimation.export()
+          this.modalAnimation = modalAnimation.export()
+          this.show = false
+          this.$emit('hidePic')
+          this.$apply()
+        }, 200)
+      },
+      show(type) {
+        // this._drawCanvas(type)
+        let modalAnimation = wepy.createAnimation({
+          duration: 200,
+          timingFunction: 'linear',
+          delay: 0
+        })
+        let maskAnimation = wepy.createAnimation({
+          duration: 200,
+          timingFunction: 'linear',
+          delay: 0
+        })
+        maskAnimation.opacity(0).step()
+        modalAnimation.translateY(114).step()
+        this.maskAnimation = maskAnimation.export()
+        this.modalAnimation = modalAnimation.export()
+        this.show = true
+        setTimeout(() => {
+          maskAnimation.opacity(1).step()
+          modalAnimation.translateY(0).step()
+          this.maskAnimation = maskAnimation.export()
+          this.modalAnimation = modalAnimation.export()
+          this.$emit('showPic')
+          this.$apply()
+        }, 200)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+  @import '../../common/stylus/mixin'
+
+  .share
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    .canvas
+      width: 1500px
+      height: 2500px
+      transform: scale(.25) translateX(200%)
+      transform-origin: left top
+    .modal
+      position: fixed
+      bottom: 0
+      left: 0
+      width: 100%
+      height: 140px
+      overflow: hidden
+      z-index: 9999
+      background: $color-white
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, .1)
+      .share-content-wrapper
+        display: flex
+        align-items: center
+        justify-content: center
+        height: 87px
+        image
+          width: 32px
+          height: 32px
+        .text
+          margin-top: 4.5px
+          font-size: $font-size-small-s
+          color: $color-text
+        .wx
+          line-height: 1
+          margin: 0
+          margin-right: 97px
+          border-none()
+          background: transparent
+          text-align: center
+        .wrapper, .line
+          text-align: center
+      .split
+        height: 5px
+        background-color: $color-background
+      .cancel
+        line-height: 48px
+        text-align: center
+        font-size: $font-size-medium
+</style>

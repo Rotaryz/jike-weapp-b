@@ -23,9 +23,9 @@ export default class Merchants extends base {
    * 获取小程序码
    * @returns {Promise.<*>}
    */
-  static async getMerchantQRcode(loading = true) {
+  static async getMerchantQRcode(loading = true, data = {}) {
     const url = `${this.baseUrl}/api/merchants/shop-qrcode`
-    return await this.get(url, {}, loading)
+    return await this.get(url, data, loading)
   }
 
   /**

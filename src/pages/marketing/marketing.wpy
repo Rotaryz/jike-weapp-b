@@ -71,6 +71,7 @@
   const LIVE = '点播优惠'
   const SHAREMONEY = '分享赚钱'
   const GROUPON = '团购'
+  const BARGAIN = '疯狂砍价'
 
   export default class Marketing extends wepy.page {
     mixins = [base]
@@ -131,6 +132,12 @@
           name: GROUPON,
           img: URIS.image + '/defaults/b-image/marketing/icon-group@2x.png',
           url: '/pages/group-active-list/group-active-list',
+          checked: 1
+        },
+        {
+          name: BARGAIN,
+          img: URIS.image + '/defaults/b-image/marketing/icon-bargain@2x.png',
+          url: '/pages/bargain-active-list/bargain-active-list',
           checked: 1
         }
       ],
@@ -216,6 +223,9 @@
           case SHAREMONEY:
             item.checked = !(res.share * 1)
             break
+          case BARGAIN: // 砍价的判断
+            item.checked = !(res.bargain * 1)
+            break
           // case LIVE:
           //   item.checked = res.video_live
           //   break
@@ -245,6 +255,7 @@
   @import "../../common/stylus/variable"
 
   .marketing-wrapper
+    padding-bottom: 20px
     .header
       position: relative
       display: flex
