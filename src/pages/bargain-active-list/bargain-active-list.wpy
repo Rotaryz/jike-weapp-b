@@ -136,18 +136,19 @@
       }
       res.map(item => {
         arr.push({
-          merchant_id: item.merchant_id,
-          id: item.id,
-          src: item.image_url,
-          hotName: item.activity_name,
-          price: item.platform_price,
-          hotPrice: item.bottom_price,
-          statusType: item.status,
-          statusTypeStr: item.status_str,
-          goodStatus: item.promotion_status,
-          stock: item.stock,
-          sales_stock: item.promotion_status,
-          show: false
+          merchant_id: item.merchant_id, // 商家id
+          id: item.id, // 券id
+          src: item.image_url, // 图片
+          hotName: item.activity_name, // 标题
+          price: item.shop_price, // 原价
+          hotPrice: item.platform_price, // 现价
+          statusType: item.status, // 状态
+          statusTypeStr: item.status_str, // 状态名称
+          goodStatus: item.promotion_status, // 商品状态
+          stock: item.stock, // 数量
+          sales_stock: item.promotion_status, // 销售数量
+          show: false,
+          width: 'width:0px'
         })
       })
       return arr
@@ -344,6 +345,7 @@
         this.$invoke('share', '_drawCanvas')
         this.$apply()
       },
+      // 预览
       activityDetail(item) {
         wepy.navigateToMiniProgram({
           appId: this.appid,
@@ -366,20 +368,24 @@
           this.$apply()
         }
       },
+      // 编辑
       activeBtnEditor(res) {
         let url = `/pages/new-bargain-activity/new-bargain-activity?id=${res.id}&type=${res.status}`
         this.$navigate(url)
       },
+      // 删除
       activeBtnDel(res) {
         this.delId = res.id
         this.currentChooseType = DEL
         this.$invoke('confirm', 'show')
       },
+      // 下线
       activeBtnOffline(res) {
         this.downId = res.id
         this.currentChooseType = DOWN
         this.$invoke('ConfirmMsg', 'show', {title: '确定要下线'})
       },
+      // 上线
       async activeBtnOnline(item) {
         let res = await bargain.upActivityBargain(item.id)
         if (res.error === ERR_OK) {
@@ -391,6 +397,7 @@
           this.loaded()
         }
       },
+      // 编辑
       async confirm() {
         if (this.currentChooseType === DOWN) {
           await this._DownActive()
@@ -398,7 +405,7 @@
           await this._delBargain()
         }
         // 删除确认
-      },
+      }
       // showNav(item) {
       //   let index = this.activityList.findIndex((val) => val.id === item.id)
       //   this.activityList.map((items, idx) => {

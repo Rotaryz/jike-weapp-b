@@ -1,5 +1,5 @@
 <template>
-  <view class="group-active-list">
+  <view class="group-active-list" @tap="_hideNav">
     <header-switch title="分享赚钱" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
@@ -25,7 +25,7 @@
           <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{offlineList}}" key="index" index="index" item="item">
               <view class="g-a-l-a-item">
-                <activity-item :activeType.sync="type" :activeObj.sync="item" :navList.sync="navList2"  :constObj.sync="activeConstObj"></activity-item>
+                <activity-item-on :activeType.sync="type" :activeObj.sync="item" :navList.sync="navList2"  :constObj.sync="activeConstObj"></activity-item-on>
               </view>
             </repeat>
           </view>
@@ -120,6 +120,7 @@
     }
 
     async onLoad(option) {
+      this.$invoke('activity-item', 'setLength', this.navList.length)
       await this._init(this.status)
       if ('' + option.isChecked === 'true') {
         // 服务接口那边 true 总开关 false 打开总开关 ，true和false是字符串类型
@@ -154,6 +155,22 @@
       this._resetConfig()
       await this._init(this.status)
       wx.stopPullDownRefresh()
+    }
+    _hideNav() {
+      switch (this.status) {
+        case '0':
+          this.willOnLines = this.willOnLines.map((items, idx) => {
+            items.show = false
+            return items
+          })
+          break
+        case '1':
+          this.onLines = this.onLines.map((items, idx) => {
+            items.show = false
+            return items
+          })
+          break
+      }
     }
 
     // 插入来自编辑页面
@@ -531,6 +548,7 @@
     components = {
       'header-switch': HeaderSwitch,
       'activity-item': ActivityItem,
+      'activity-item-on': ActivityItem,
       'confirm': Confirm,
       'toast': Toast,
       'ConfirmMsg': ConfirmMsg
