@@ -128,6 +128,28 @@
       await this.setList()
       await this.autoOpen()
     }
+    // 格式化服务器数据
+    _formatRqData(res) {
+      let arr = []
+      res.map(item => {
+        arr.push({
+          merchant_id: item.merchant_id,
+          id: item.id,
+          src: item.image_url,
+          hotName: item.activity_name,
+          price: item.platform_price,
+          hotPrice: item.bottom_price,
+          statusType: item.status,
+          statusTypeStr: item.status_str,
+          goodStatus: item.promotion_status,
+          stock: item.stock,
+          sales_stock: item.promotion_status,
+          show: false
+        })
+      })
+      console.log(arr)
+      return arr
+    }
     // 获取上下线列表
     async _getList() {
       let data = {status: UP, page: 1}
@@ -136,21 +158,13 @@
       this.upTotal = res.meta.total
       this.appid = res.wap_app_id
       res = this.infoRes(res)
-      res = res.map((item) => {
-        item.show = false
-        return item
-      })
-      this.activityInList = res
+      this.activityInList = this._formatRqData(res)
       let data2 = {status: DOWN, page: 1}
       let res2 = await bargain.activityBargainList(data2)
       this.loaded()
       this.downTotal = res2.meta.total
       res2 = this.infoRes(res2)
-      res2 = res2.map((item) => {
-        item.show = false
-        return item
-      })
-      this.activityOffList = res2
+      this.activityOffList = this._formatRqData(res2)
       this.$apply()
     }
     // 加载更多
@@ -161,6 +175,7 @@
       this.page++
       if (this.page > 1) {
         let res = await bargain.activityBargainList({status: this.status, page: this.page})
+        this._formatRqData(res)
         this.loaded()
         if (res.error === ERR_OK) {
           res = res.data
@@ -312,7 +327,7 @@
         this.loaded()
         this.qrcode = res.data.url
         this.detail = item
-        this.$invoke('share', 'show')
+        this.$invoke('share', 'show', 'bargain')
         this.$invoke('share', '_drawCanvas')
         this.$apply()
       },
@@ -342,18 +357,18 @@
         let url = `/pages/new-bargain-activity/new-bargain-activity?id=${res.id}&type=${res.status}`
         this.$navigate(url)
       },
-      activeBtnDel(id) {
-        this.delId = id
+      activeBtnDel(res) {
+        this.delId = res.id
         this.currentChooseType = DEL
         this.$invoke('confirm', 'show')
       },
-      activeBtnOffline(id) {
-        this.downId = id
+      activeBtnOffline(res) {
+        this.downId = res.id
         this.currentChooseType = DOWN
         this.$invoke('ConfirmMsg', 'show', {title: '确定要下线'})
       },
-      async activeBtnOnline(id) {
-        let res = await bargain.upActivityBargain(id)
+      async activeBtnOnline(item) {
+        let res = await bargain.upActivityBargain(item.id)
         if (res.error === ERR_OK) {
           await this.setList()
           this.loaded()

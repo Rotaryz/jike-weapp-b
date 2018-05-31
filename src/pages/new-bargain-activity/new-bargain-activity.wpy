@@ -22,7 +22,7 @@
     <view class="tl-share-box">
       <view class="tl-share-left">添加数量</view>
       <picker class="tl-share-title" bindchange="numberPickerChange" value="{{shareData.stock ?shareData.stock -1 : 0}}" range="{{stock}}">
-        <view class="tl-share-title-item {{shareData.stock === '' ? 'tl-share-title-place':'tl-share-title-item-active'}}">{{shareData.stock || '请选择'}}</view>
+        <view class="tl-share-title-item {{shareData.stock === '' ? 'tl-share-title-place':'tl-share-title-item-active'}}">{{shareData.stock !== '' ? shareData.stock : '请选择'}}</view>
       </picker>
       <image wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/page/Rectangle @2x.png'}}" class="full-image"></image>
     </view>
@@ -222,7 +222,7 @@
       //      选择优惠券
       getServeList() {
         if (this.editType) {
-          this.$invoke('Toast', 'show', '上线中的服务不能更改')
+          this.$invoke('Toast', 'show', '活动服务不能更改')
         } else {
           let url = `/pages/share-active-choose-server/share-active-choose-server?activity=bargain`
           this.$navigate(url)

@@ -274,7 +274,7 @@
       },
       getServeList() {
         if (this.editType) {
-          this.$invoke('Toast', 'show', '上线中的服务不能更改')
+          this.$invoke('Toast', 'show', '活动服务不能更改')
         } else {
           let url = `/pages/share-active-choose-server/share-active-choose-server`
           this.$navigate(url)
