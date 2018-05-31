@@ -10,7 +10,7 @@
           <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{onlineList}}" key="index" index="index" item="item">
               <view class="g-a-l-a-item">
-                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :navList.sync="navList" :constObj.sync="activeConstObj"></activity-item>
               </view>
             </repeat>
           </view>
@@ -25,7 +25,7 @@
           <view class="g-a-c-s-has-content" wx:if="{{!isEmpty}}">
             <repeat for="{{offlineList}}" key="index" index="index" item="item">
               <view class="g-a-l-a-item">
-                <activity-item :activeType.sync="type" :activeObj.sync="item" :constObj.sync="activeConstObj"></activity-item>
+                <activity-item :activeType.sync="type" :activeObj.sync="item" :navList.sync="navList2"  :constObj.sync="activeConstObj"></activity-item>
               </view>
             </repeat>
           </view>
@@ -75,11 +75,14 @@
     SUCCESS,
     OUT
   } from 'api/share-active-config'
-
+  let NAVLIST = [{text: '预览', icon: `${URIS.image}/defaults/b-image/marketing/icon-preview@2x.png`}, {text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
+  let NAVLIST2 = [{text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '上线', icon: `${URIS.image}/defaults/b-image/marketing/icon-upline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   export default class GAList extends wepy.page {
     mixins = [base]
 
     data = {
+      navList: NAVLIST,
+      navList2: NAVLIST2,
       imageUrlHead: URIS.image,
       activityStatus: SUCCESS, // 活动总开关
       status: UP, // tab栏状态
@@ -406,6 +409,11 @@
         if (this._isTabDownInit()) {
           await this._init(this.status)
         }
+        if (id === '0') {
+          this.$invoke('activity-item-on', 'setLength', this.navList2.length)
+        } else {
+          this.$invoke('activity-item', 'setLength', this.navList.length)
+        }
         this.$apply()
       },
       toNewPage() {
@@ -442,8 +450,24 @@
         return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
       }
     }
-
+    changeNav(res) {
+      if (this.status === '1') {
+        let index = this.onlineList.findIndex((item) => item.id === res.id)
+        this.onlineList[index] = res
+        this.$apply()
+        return
+      }
+      let index = this.offlineList.findIndex((item) => item.id === res.id)
+      this.offlineList[index] = res
+      this.$apply()
+    }
     events = {
+      showNav(res) {
+        this.changeNav(res)
+      },
+      hideNav(res) {
+        this.changeNav(res)
+      },
       async headerSwitchChange() {
         let type = '2' // 1团购活动 2分享赚钱活动
         // 活动状态，0关闭，1开启

@@ -339,6 +339,7 @@
           show: false
         })
       })
+      console.log(arr)
       return arr
     }
 
@@ -472,6 +473,12 @@
       this.$apply()
     }
     events = {
+      showNav(res) {
+        this.changeNav(res)
+      },
+      hideNav(res) {
+        this.changeNav(res)
+      },
       async share(item) {
         // 下载二维码
         let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
@@ -482,12 +489,6 @@
         this.$invoke('share', 'show', 'bargain')
         this.$invoke('share', '_drawCanvas')
         this.$apply()
-      },
-      showNav(res) {
-        this.changeNav(res)
-      },
-      hideNav(res) {
-        this.changeNav(res)
       },
       async headerSwitchChange() {
         let type = '1' // 1团购活动 2分享赚钱活动

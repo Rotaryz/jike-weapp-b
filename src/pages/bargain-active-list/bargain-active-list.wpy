@@ -131,6 +131,9 @@
     // 格式化服务器数据
     _formatRqData(res) {
       let arr = []
+      if (!res.length) {
+        return []
+      }
       res.map(item => {
         arr.push({
           merchant_id: item.merchant_id,
@@ -147,7 +150,6 @@
           show: false
         })
       })
-      console.log(arr)
       return arr
     }
     // 获取上下线列表
@@ -319,7 +321,18 @@
         return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 55) + 'px'
       }
     }
+    changeNav(res) {
+      let index = this.activityList.findIndex((item) => item.id === res.id)
+      this.activityList[index] = res
+      this.$apply()
+    }
     events = {
+      showNav(res) {
+        this.changeNav(res)
+      },
+      hideNav(res) {
+        this.changeNav(res)
+      },
       async share(item) {
         // 下载二维码
         let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
@@ -386,23 +399,23 @@
         }
         // 删除确认
       },
-      showNav(item) {
-        let index = this.activityList.findIndex((val) => val.id === item.id)
-        this.activityList.map((items, idx) => {
-          items.show = false
-          if (idx === index) {
-            items = item
-          }
-          return items
-        })
-        this.activityList[index] = item
-        this.$apply()
-      },
-      hideNav(item) {
-        let index = this.activityList.findIndex((val) => val.id === item.id)
-        this.activityList[index] = item
-        this.$apply()
-      }
+      // showNav(item) {
+      //   let index = this.activityList.findIndex((val) => val.id === item.id)
+      //   this.activityList.map((items, idx) => {
+      //     items.show = false
+      //     if (idx === index) {
+      //       items = item
+      //     }
+      //     return items
+      //   })
+      //   this.activityList[index] = item
+      //   this.$apply()
+      // },
+      // hideNav(item) {
+      //   let index = this.activityList.findIndex((val) => val.id === item.id)
+      //   this.activityList[index] = item
+      //   this.$apply()
+      // }
     }
 
     components = {
