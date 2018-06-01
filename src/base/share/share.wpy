@@ -51,7 +51,6 @@
     }
 
     async _drawCanvas(type) {
-      type = 'coupon'
       const ctx = await wepy.createCanvasContext('target')
       this.shareBgs = BGS[type] // 背景图片
       const qrcodes = await wepy.downloadFile({url: this.qrcode}) // 小程序码
@@ -70,21 +69,18 @@
           ctx.setFontSize(64)
           ctx.setFillStyle('#363547')
           ctx.setTextAlign('left')
-          this.detail.hotName = '很简单的放假回家好地方加的复合肥好几个方法和广发华福'
           let title1 = `原价${this.detail.price}元的${this.detail.hotName}，现在只要${this.detail.hotPrice}元，错过再等一年！`
-          let num1 = Math.ceil(title1.length / 17)
-          let height1 = 1058
+          let titleArr1 = this._checkStr(title1, 17)
+          let num1 = titleArr1.length
+          let height1
           if (num1 > 2) {
-            height1 = 1048
+            height1 = 1040
           } else {
-            height1 = 1058
+            height1 = 1078
           }
           for (let i = 0; i < num1; i++) {
-            let end = 17 * (i + 1)
-            let begin = 17 * i
             let txtHeight = height1 + i * 90
-            ctx.fillText(title1.slice(begin, end), 210, txtHeight)
-            ctx.stroke()
+            ctx.fillText(titleArr1[i], 210, txtHeight)
           }
           ctx.setFontSize(54)
           ctx.setFillStyle('#464646')
@@ -115,19 +111,17 @@
           ctx.setFillStyle('#363547')
           ctx.setTextAlign('left')
           let title2 = `原价${this.detail.price}元的${this.detail.hotName}，现在只要${this.detail.hotPrice}元，超值优惠！`
-          let numCount = this._checkNum(title2)
-          let num2 = Math.ceil(title2.length / 18)
+          let titleArr2 = this._checkStr(title2, 18)
+          let num2 = titleArr2.length
           let height2
           if (num2 > 2) {
-            height2 = 1055
+            height2 = 1060
           } else {
             height2 = 1100
           }
           for (let i = 0; i < num2; i++) {
-            let end = 18 * (i + 1)
-            let begin = 18 * i
             let txtHeight = height2 + i * 90
-            ctx.fillText(title2.slice(begin, end), 180, txtHeight)
+            ctx.fillText(titleArr2[i], 180, txtHeight)
           }
 
           ctx.setFontSize(54)
@@ -153,18 +147,17 @@
           ctx.setFillStyle('#363547')
           ctx.setTextAlign('left')
           let title3 = `原价${this.detail.price}元的${this.detail.hotName}，团购价只要${this.detail.hotPrice}元，心动不如行动！`
-          let num3 = Math.ceil(title3.length / 17)
+          let titleArr3 = this._checkStr(title3, 17)
+          let num3 = titleArr3.length
           let height3
           if (num3 > 2) {
-            height3 = 1140
+            height3 = 1150
           } else {
             height3 = 1200
           }
           for (let i = 0; i < num3; i++) {
-            let end = 17 * (i + 1)
-            let begin = 17 * i
             let txtHeight = height3 + i * 90
-            ctx.fillText(title3.slice(begin, end), 210, txtHeight)
+            ctx.fillText(titleArr3[i], 210, txtHeight)
           }
 
           ctx.setFontSize(54)
@@ -186,10 +179,19 @@
     _checkStr(str, count) {
       let first = str.slice(0, count)
       let numCount = this._checkNum(first)
-      first = str.slice(0, count + (numCount / 2))
-      let second = str.slice(count + (numCount / 2), count)
+      let addNumCount = Math.floor(numCount / 2)
+      first = str.slice(0, count + addNumCount)
+      let begin = count + addNumCount
+      let second = str.slice(begin, begin + count)
       numCount = this._checkNum(second)
-      second = str.slice(count + (numCount / 2), count + (numCount / 2))
+      addNumCount = Math.floor(numCount / 2)
+      second = str.slice(begin, begin + count + addNumCount)
+      begin = begin + count + addNumCount
+      let three = str.slice(begin, begin + count)
+      let res = [first, second, three].filter((item) => {
+        return item
+      })
+      return res
     }
 
     _checkNum(str) {
