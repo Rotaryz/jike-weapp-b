@@ -1,7 +1,7 @@
 <template>
   <view class="choiceCoupon">
     <view class="eva-title">可添加优惠券</view>
-    <scroll-view class="cou-all" scroll-y @scrolltolower="scrollToLower" wx:if="{{!couponList.length}}">
+    <scroll-view class="cou-all" scroll-y @scrolltolower="scrollToLower" wx:if="{{!isEmpty}}">
       <repeat for="{{couponList}}" key="index" index="index"
               item="item">
         <view class="coupon-box">
@@ -9,13 +9,13 @@
         </view>
       </repeat>
     </scroll-view>
-    <view class="no-server" wx:if="{{couponList.length}}">
+    <view class="no-server" wx:if="{{isEmpty}}">
       <view class="no-server-title"><text class="no-server-title-o">暂无</text>可用服务！可按步骤添加</view>
       <image class="no-server-pic" wx:if="{{imageUri}}" mode="widthFix" src="{{imageUri + '/defaults/b-image/marketing/pic-step@2x.png'}}"></image>
     </view>
     <view class="con-submit" @tap="submitOk">
-      <view>
-        完成
+      <view data-type="{{!isEmpty ? 1 : 0}}">
+        {{!isEmpty ? '完成' : '知道了'}}
       </view>
     </view>
   </view>
@@ -51,31 +51,36 @@
       index: -1,
       moreList: [],
       page: 1,
-      nothing: false
+      nothing: false,
+      isEmpty: false
     }
     methods = {
       async scrollToLower() {
-        if (this.nothing) {
-          return
-        }
-        this.page++
-        if (this.page > 1) {
-          let res = await this.load(this.page)
-          this.couponList = this.couponList.concat(res)
-          if (res.length === 0 && res) {
-            this.nothing = true
-          }
-        }
+        // if (this.nothing) {
+        //   return
+        // }
+        // this.page++
+        // if (this.page > 1) {
+        //   let res = await this.load(this.page)
+        //   this.couponList = this.couponList.concat(res)
+        //   if (res.length === 0 && res) {
+        //     this.nothing = true
+        //   }
+        // }
         this.$apply()
       },
-      async submitOk() {
+      async submitOk(e) {
+        if (!e.target.dataset.type) {
+          this.$back()
+          return
+        }
+        this.moreList = []
         if (this.index !== -1) {
           this.$parent.updateGlobalData('coupon', this.couponList[this.num])
           this.$parent.updateGlobalData('couIndex', this.index)
         } else {
-          this.moreList = []
           this.couponList.forEach((item) => {
-            if (item['checked']) {
+            if (item.checked) {
               this.moreList.push(item)
             }
           })
@@ -99,10 +104,11 @@
             }
           })
         } else {
-          this.couponList.forEach((item, idx) => {
+          this.couponList = this.couponList.map((item, idx) => {
             if (item.promotion_id === id) {
               item.checked = !item.checked
             }
+            return item
           })
         }
       }
@@ -119,7 +125,14 @@
       }
       this.loaded()
       this.$apply()
-      return res.data
+      if (!res.data.length) {
+        return []
+      }
+      res = res.data.map((item) => {
+        item.checked = false
+        return item
+      })
+      return res
     }
 
     async onLoad(options) {
@@ -129,6 +142,7 @@
         this.index = options.index * 1
       }
       this.couponList = await this.load()
+      this.isEmpty = !this.couponList.length
       this.$apply()
     }
   }

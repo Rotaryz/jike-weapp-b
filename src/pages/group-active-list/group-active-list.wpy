@@ -60,6 +60,7 @@
   import {ERR_OK} from 'api/base'
   import Share from '@/base/share/share'
   import {UP, DOWN, ON, OFF, OUT, TAKENOFF, DEL, DEVICEINFO, NEW, EDITOR, UPPAGELIMIT, DOWNPAGELIMIT, SUCCESS} from 'api/group-active-config'
+  import merchants from 'api/merchants'
   let NAVLIST = [{text: '预览', icon: `${URIS.image}/defaults/b-image/marketing/icon-preview@2x.png`}, {text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '分享', icon: `${URIS.image}/defaults/b-image/marketing/icon-share_kj@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   let NAVLIST2 = [{text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '上线', icon: `${URIS.image}/defaults/b-image/marketing/icon-upline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   export default class GAList extends wepy.page {
@@ -101,7 +102,10 @@
       showTabDownCount: 0,
       currentDelObj: null,
       currentOfflineObj: null,
-      appid: 0
+      appid: 0,
+      shop: {},
+      qrcode: '',
+      detail: {}
     }
 
     async onLoad(option) {
@@ -229,6 +233,7 @@
         res && (this.offlineList = this._formatRqData(res))
       }
       this.appid = res.wap_app_id
+      this.shop = {name: res.shop_name, address: res.particular_address}
       if (res) {
         this._checkIsAll(res)
       }
@@ -514,14 +519,14 @@
       },
       async share(item) {
         // 下载二维码
-        // let path = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.pId}&groupId=${item.id}&s=group`
-        // let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
-        // this.loaded()
-        // this.qrcode = res.data.url
-        // this.detail = item
-        // this.$invoke('share', 'show', 'bargain')
-        // this.$invoke('share', '_drawCanvas')
-        // this.$apply()
+        let path = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.pId}&groupId=${item.id}&s=group`
+        let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
+        this.loaded()
+        this.qrcode = res.data.url
+        this.detail = item
+        this.$invoke('share', 'show')
+        this.$invoke('share', '_drawCanvas', 'groupBuy')
+        this.$apply()
       },
       async headerSwitchChange() {
         let type = '1' // 1团购活动 2分享赚钱活动

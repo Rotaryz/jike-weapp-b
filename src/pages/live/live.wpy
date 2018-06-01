@@ -112,14 +112,22 @@
     }
 
     async onShow() {
-      if (this.$parent.globalData.coupon &&
-        this.$parent.globalData.coupon !== '') {
-        for (let item of this.activityPromotion) {
-          if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
-            this.$invoke('Toast', 'show', '不可选择重复优惠券')
-            return false
+      if (this.$parent.globalData.coupon && this.$parent.globalData.coupon !== '') {
+        for (let i = 0; i < this.activityPromotion.length; i++) {
+          for (let j = this.$parent.globalData.coupon.length - 1; j >= 0; j--) {
+            if (this.activityPromotion[i].promotion_id === this.$parent.globalData.coupon[j].promotion_id) {
+              this.$parent.globalData.coupon.splice(j, 1)
+              console.log(this.$parent.globalData.coupon)
+            }
           }
         }
+        // for (let item of this.activityPromotion) {
+        //   if (item.promotion_id === this.$parent.globalData.coupon[0].promotion_id) {
+        //     this.$invoke('Toast', 'show', '不可选择重复优惠券')
+        //     return false
+        //   }
+        // }
+        console.log( this.$parent.globalData.coupon)
         this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
         this.$parent.globalData.coupon = ''
         this.$apply()

@@ -9,7 +9,7 @@
       </repeat>
     </view>
     <view class="g-a-c-s-btn-box">
-      <view class="g-a-c-s-submit" @tap="done">{{isEmpty ? '完成' : '知道了'}}</view>
+      <view class="g-a-c-s-submit" @tap="done" data-type="{{!isEmpty ? 1 : 0}}">{{!isEmpty ? '完成' : '知道了'}}</view>
     </view>
     <!--<view class="g-a-c-s-empty" wx:if="{{isEmpty}}">-->
       <!--<view class="e-box">-->
@@ -48,7 +48,8 @@
         limit: PAGELIMIT
       },
       isAll: false,
-      activity: ''
+      activity: '',
+      isEmpty: false
     }
 
     async onLoad(option) {
@@ -150,6 +151,7 @@
         this.$apply()
         this._checkIsAll(res)
       }
+      this.isEmpty = !this.couponList.length
       this.loaded()
     }
 
@@ -189,9 +191,6 @@
     }
 
     computed = {
-      isEmpty() {
-        return this.couponList.length === 0
-      },
       btnStausStyle() {
         let flag = this._checkInfoLegal()
         return flag ? 'disable' : ''
@@ -213,7 +212,11 @@
     }
 
     methods = {
-      done() {
+      done(e) {
+        if (!e.target.dataset.type) {
+          this.$back()
+          return
+        }
         if (!this._checkInfoLegal()) {
           this.$parent.globalData.shareCoupon = this.currentCoupon
           this.$apply()
