@@ -1,7 +1,7 @@
 <template>
   <view class="choiceCoupon">
     <view class="eva-title">可添加优惠券</view>
-    <scroll-view class="cou-all" scroll-y @scrolltolower="scrollToLower">
+    <scroll-view class="cou-all" scroll-y @scrolltolower="scrollToLower" wx:if="{{!couponList.length}}">
       <repeat for="{{couponList}}" key="index" index="index"
               item="item">
         <view class="coupon-box">
@@ -9,6 +9,10 @@
         </view>
       </repeat>
     </scroll-view>
+    <view class="no-server" wx:if="{{couponList.length}}">
+      <view class="no-server-title"><text class="no-server-title-o">暂无</text>可用服务！可按步骤添加</view>
+      <image class="no-server-pic" wx:if="{{imageUri}}" mode="widthFix" src="{{imageUri + '/defaults/b-image/marketing/pic-step@2x.png'}}"></image>
+    </view>
     <view class="con-submit" @tap="submitOk">
       <view>
         完成
@@ -133,6 +137,21 @@
 <style lang="stylus">
   @import '../../common/stylus/variable'
   @import '../../common/stylus/mixin'
+  .no-server
+    background :$color-white
+    padding-bottom: 100px
+    .no-server-title
+      text-align :center
+      font-family : PingFang-SC-Medium
+      font-size :$font-size-medium-x
+      color :#181700
+      padding : 30px 0 50px
+      .no-server-title-o
+        color : #EF705D
+    .no-server-pic
+      width: 74.93vw
+      display :block
+      margin-left : 12.53vw
   .coupon-box
     margin-bottom: 12px
 

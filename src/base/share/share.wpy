@@ -58,7 +58,6 @@
 
       let bg = this.shareBgs
       let qrcode = qrcodes.tempFilePath
-
       ctx.drawImage(bg, 110, 100, 1280, 2000)
       switch (type) {
         case 'bargain':

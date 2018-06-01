@@ -250,7 +250,7 @@
       font-family : PingFang-SC-Medium
       font-size :$font-size-medium-x
       color :#181700
-      margin : 30px 0 50px
+      padding : 30px 0 50px
       .no-server-title-o
         color : #EF705D
     .no-server-pic

@@ -159,13 +159,13 @@
     _hideNav() {
       switch (this.status) {
         case '0':
-          this.willOnLines = this.willOnLines.map((items, idx) => {
+          this.offlineList = this.offlineList.map((items, idx) => {
             items.show = false
             return items
           })
           break
         case '1':
-          this.onLines = this.onLines.map((items, idx) => {
+          this.onlineList = this.onlineList.map((items, idx) => {
             items.show = false
             return items
           })
@@ -319,14 +319,18 @@
       let arr = []
       res.data.map(item => {
         arr.push({
+          merchant_id: item.merchant_id,
           id: item.id,
+          pId: item.promotion_id,
           src: item.image_url,
           hotName: item.title,
           price: item.price,
           hotPrice: item.after_price,
           statusTypeStr: item.status_str,
           statusType: item.status,
-          goodStatus: item.promotion_status
+          goodStatus: item.promotion_status,
+          stock: item.stock,
+          sales_stock: item.sales_volume // 销售数量
         })
       })
       return arr
@@ -418,6 +422,7 @@
 
     methods = {
       async chooseStatus(e) {
+        this._hideNav()
         let id = e.target.id
         if (id !== UP && id !== DOWN) {
           return
@@ -479,6 +484,20 @@
       this.$apply()
     }
     events = {
+      // 预览
+      // i=88,100004,84,205&s=s
+      activityDetail(item) {
+        // let i = `${item.id},${item.merchant_id},${item.fId},${item.pId}`
+        // wepy.navigateToMiniProgram({
+        //   appId: this.appid,
+        //   path: `pages/coupon-detail/coupon-detail?i=${i}&s=s`,
+        //   extraData: {},
+        //   envVersion: URIS.jumpVersion, // develop
+        //   success(res) {
+        //     // 打开成功
+        //   }
+        // })
+      },
       showNav(res) {
         this.changeNav(res)
       },
