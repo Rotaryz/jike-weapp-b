@@ -23,6 +23,11 @@
   import Tips from 'common/js/tips'
   import URIS from 'common/js/config'
   import base from 'common/mixins/base'
+  const BGS = {
+    groupBuy: '',
+    coupon: '',
+    bargain: '../../common/images/pic-bg_kj@2x.png'
+  }
 
   export default class Share extends wepy.component {
     mixins = [base]
@@ -45,44 +50,50 @@
       imageUrlHead: URIS.image
     }
 
-    async _drawCanvas() {
+    async _drawCanvas(type) {
       const ctx = await wepy.createCanvasContext('target')
-      this.shareBgs = '../../common/images/pic-bg_kj@2x.png' // 背景图片
+      this.shareBgs = BGS[type] // 背景图片
+      console.log(this.shareBgs)
       const qrcodes = await wepy.downloadFile({url: this.qrcode}) // 小程序码
 
       let bg = this.shareBgs
       let qrcode = qrcodes.tempFilePath
 
       ctx.drawImage(bg, 110, 100, 1280, 2000)
-      ctx.drawImage(qrcode, 433.2, 1684, 238, 238)
+      switch (type) {
+        case 'bargain':
+          ctx.drawImage(qrcode, 433.2, 1684, 238, 238)
 //      商品图片
-      const pics = await wepy.downloadFile({url: this.detail.image_url})
-      let pic = pics.tempFilePath
-      ctx.drawImage(pic, 190, 360, 1120, 596)
-//    文字
-      ctx.setFontSize(64)
-      ctx.setFillStyle('#363547')
-      ctx.setTextAlign('left')
-      let title = `原价${this.detail.platform_price}元的${this.detail.activity_name}，现在只要${this.detail.bottom_price}元，错过再等一年！`
-      let num = Math.ceil(title.length / 18)
-      let height = 1058
-      for (let i = 0; i < num; i++) {
-        let end = 18 * (i + 1)
-        let begin = 18 * i
-        height = height + i * 90
-        ctx.fillText(title.slice(begin, end), 210, height)
-        ctx.stroke()
+          const pics = await wepy.downloadFile({url: this.detail.src})
+          let pic = pics.tempFilePath
+          ctx.drawImage(pic, 190, 360, 1120, 596)
+//        文字
+          ctx.setFontSize(64)
+          ctx.setFillStyle('#363547')
+          ctx.setTextAlign('left')
+          let title = `原价${this.detail.platform_price}元的${this.detail.activity_name}，现在只要${this.detail.bottom_price}元，错过再等一年！`
+          let num = Math.ceil(title.length / 18)
+          let height = 1058
+          for (let i = 0; i < num; i++) {
+            let end = 18 * (i + 1)
+            let begin = 18 * i
+            height = height + i * 90
+            ctx.fillText(title.slice(begin, end), 210, height)
+            ctx.stroke()
+          }
+
+          ctx.setFontSize(54)
+          ctx.setFillStyle('#464646')
+          ctx.setTextAlign('left')
+          ctx.fillText(this.shop.name, 210, 1352)
+
+          ctx.setFontSize(48)
+          ctx.setFillStyle('#A1A1A1')
+          ctx.setTextAlign('left')
+          let address = this.shop.address.length < 24 ? this.shop.address : this.shop.address.slice(0, 24) + '...'
+          ctx.fillText(address, 210, 1436)
+          break
       }
-
-      ctx.setFontSize(54)
-      ctx.setFillStyle('#464646')
-      ctx.setTextAlign('left')
-      ctx.fillText(this.shop.name, 210, 1352)
-
-      ctx.setFontSize(48)
-      ctx.setFillStyle('#A1A1A1')
-      ctx.setTextAlign('left')
-      ctx.fillText(this.shop.address, 210, 1436)
       ctx.draw()
     }
 
