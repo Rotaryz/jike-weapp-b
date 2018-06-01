@@ -72,7 +72,7 @@
         {id: 4, name: '服务-团购'},
         {id: 6, name: '分享赚钱'},
         {id: 3, name: '买单'},
-        {id: 4, name: '服务-砍价'},
+        {id: 7, name: '服务-砍价'},
         {id: 20, name: '联盟投放'}
       ],
       selectType: {id: 0, name: '全部'},
