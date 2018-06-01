@@ -7,7 +7,7 @@
           <view class="order-component-title">{{orderMsg.title}}</view>
           <view class="order-component-tel">手机号码: {{orderMsg.customer_phone}}</view>
         </view>
-        <view class="component-top-right">{{status[orderMsg.status]}}</view>
+        <view class="component-top-right">{{orderMsg.type * 1 === 3 && orderMsg.status * 1 === 1 ? '支付成功' : status[orderMsg.status]}}</view>
       </view>
       <view class="order-component-down">
         <view class="component-down-left">订单编号: {{orderMsg.order_sn}}</view>

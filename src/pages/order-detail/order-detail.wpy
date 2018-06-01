@@ -6,7 +6,7 @@
         <text class="money-icon">¥</text>
         <text>{{orderDetail.total}}</text>
       </view>
-      <view class="order-status">{{status[orderDetail.status]}}</view>
+      <view class="order-status">{{orderDetail.type * 1 === 3 && orderDetail.status * 1 === 1 ? '支付成功' : status[orderDetail.status]}}</view>
     </view>
     <view class="order-detail-container border-bottom-1px">
       <view class="order-ul border-bottom-1px">

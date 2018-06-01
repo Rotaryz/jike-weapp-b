@@ -24,9 +24,9 @@
   import URIS from 'common/js/config'
   import base from 'common/mixins/base'
   const BGS = {
-    groupBuy: '',
-    coupon: '',
-    bargain: '../../common/images/pic-bg_kj@2x.png'
+    groupBuy: '../../common/images/pic-share_tg@2x.png', // 团购背景
+    coupon: '../../common/images/pic-share_fw@2x.png', // 优惠券背景
+    bargain: '../../common/images/pic-bg_kj@2x.png' // 砍价背景
   }
 
   export default class Share extends wepy.component {
@@ -51,36 +51,41 @@
     }
 
     async _drawCanvas(type) {
+      type = 'coupon'
       const ctx = await wepy.createCanvasContext('target')
       this.shareBgs = BGS[type] // 背景图片
-      console.log(this.shareBgs)
       const qrcodes = await wepy.downloadFile({url: this.qrcode}) // 小程序码
 
       let bg = this.shareBgs
       let qrcode = qrcodes.tempFilePath
-      ctx.drawImage(bg, 110, 100, 1280, 2000)
+      let pics = await wepy.downloadFile({url: this.detail.src})
+      let pic = pics.tempFilePath
       switch (type) {
         case 'bargain':
+          ctx.drawImage(bg, 110, 100, 1280, 2000)
           ctx.drawImage(qrcode, 433.2, 1684, 238, 238)
 //      商品图片
-          const pics = await wepy.downloadFile({url: this.detail.src})
-          let pic = pics.tempFilePath
           ctx.drawImage(pic, 190, 360, 1120, 596)
 //        文字
           ctx.setFontSize(64)
           ctx.setFillStyle('#363547')
           ctx.setTextAlign('left')
-          let title = `原价${this.detail.platform_price}元的${this.detail.activity_name}，现在只要${this.detail.bottom_price}元，错过再等一年！`
-          let num = Math.ceil(title.length / 18)
-          let height = 1058
-          for (let i = 0; i < num; i++) {
-            let end = 18 * (i + 1)
-            let begin = 18 * i
-            height = height + i * 90
-            ctx.fillText(title.slice(begin, end), 210, height)
+          this.detail.hotName = '很简单的放假回家好地方加的复合肥好几个方法和广发华福'
+          let title1 = `原价${this.detail.price}元的${this.detail.hotName}，现在只要${this.detail.hotPrice}元，错过再等一年！`
+          let num1 = Math.ceil(title1.length / 17)
+          let height1 = 1058
+          if (num1 > 2) {
+            height1 = 1048
+          } else {
+            height1 = 1058
+          }
+          for (let i = 0; i < num1; i++) {
+            let end = 17 * (i + 1)
+            let begin = 17 * i
+            let txtHeight = height1 + i * 90
+            ctx.fillText(title1.slice(begin, end), 210, txtHeight)
             ctx.stroke()
           }
-
           ctx.setFontSize(54)
           ctx.setFillStyle('#464646')
           ctx.setTextAlign('left')
@@ -89,11 +94,112 @@
           ctx.setFontSize(48)
           ctx.setFillStyle('#A1A1A1')
           ctx.setTextAlign('left')
-          let address = this.shop.address.length < 24 ? this.shop.address : this.shop.address.slice(0, 24) + '...'
-          ctx.fillText(address, 210, 1436)
+          let address1 = this.shop.address.length < 22 ? this.shop.address : this.shop.address.slice(0, 22) + '...'
+          ctx.fillText(address1, 210, 1436)
+          break
+        case 'coupon':
+          ctx.rect(450, 1630, 300, 300)
+          ctx.setFillStyle('white')
+          ctx.fill()
+          ctx.stroke()
+          ctx.drawImage(qrcode, 484, 1673, 220, 220)
+          ctx.drawImage(bg, 110, 100, 1280, 2000)
+
+          // 商品图片
+          ctx.drawImage(pic, 148, 310, 1200, 668)
+          let shopTop = '../../common/images/pic-recommend@2x.png'
+          ctx.drawImage(shopTop, 641, 172, 268, 268)
+
+          // 文字
+          ctx.setFontSize(64)
+          ctx.setFillStyle('#363547')
+          ctx.setTextAlign('left')
+          let title2 = `原价${this.detail.price}元的${this.detail.hotName}，现在只要${this.detail.hotPrice}元，超值优惠！`
+          let numCount = this._checkNum(title2)
+          let num2 = Math.ceil(title2.length / 18)
+          let height2
+          if (num2 > 2) {
+            height2 = 1055
+          } else {
+            height2 = 1100
+          }
+          for (let i = 0; i < num2; i++) {
+            let end = 18 * (i + 1)
+            let begin = 18 * i
+            let txtHeight = height2 + i * 90
+            ctx.fillText(title2.slice(begin, end), 180, txtHeight)
+          }
+
+          ctx.setFontSize(54)
+          ctx.setFillStyle('#464646')
+          ctx.setTextAlign('left')
+          ctx.fillText(this.shop.name, 180, 1410)
+
+          ctx.setFontSize(48)
+          ctx.setFillStyle('#A1A1A1')
+          ctx.setTextAlign('left')
+          let address2 = this.shop.address.length < 24 ? this.shop.address : this.shop.address.slice(0, 24) + '...'
+          ctx.fillText(address2, 180, 1490)
+          break
+        case 'groupBuy':
+          ctx.drawImage(bg, 110, 100, 1280, 2000)
+          ctx.drawImage(qrcode, 744, 1683, 238, 238)
+
+          // 商品图片
+          ctx.drawImage(pic, 200, 500, 1080, 574)
+
+          // 文字
+          ctx.setFontSize(64)
+          ctx.setFillStyle('#363547')
+          ctx.setTextAlign('left')
+          let title3 = `原价${this.detail.price}元的${this.detail.hotName}，团购价只要${this.detail.hotPrice}元，心动不如行动！`
+          let num3 = Math.ceil(title3.length / 17)
+          let height3
+          if (num3 > 2) {
+            height3 = 1140
+          } else {
+            height3 = 1200
+          }
+          for (let i = 0; i < num3; i++) {
+            let end = 17 * (i + 1)
+            let begin = 17 * i
+            let txtHeight = height3 + i * 90
+            ctx.fillText(title3.slice(begin, end), 210, txtHeight)
+          }
+
+          ctx.setFontSize(54)
+          ctx.setFillStyle('#464646')
+          ctx.setTextAlign('left')
+          ctx.fillText(this.shop.name, 210, 1475)
+
+          ctx.setFontSize(48)
+          ctx.setFillStyle('#A1A1A1')
+          ctx.setTextAlign('left')
+          let address3 = this.shop.address.length < 24 ? this.shop.address : this.shop.address.slice(0, 24) + '...'
+          ctx.fillText(address3, 210, 1555)
           break
       }
       ctx.draw()
+    }
+
+    // 将字符串分割成合适的分段，并返回分段数组
+    _checkStr(str, count) {
+      let first = str.slice(0, count)
+      let numCount = this._checkNum(first)
+      first = str.slice(0, count + (numCount / 2))
+      let second = str.slice(count + (numCount / 2), count)
+      numCount = this._checkNum(second)
+      second = str.slice(count + (numCount / 2), count + (numCount / 2))
+    }
+
+    _checkNum(str) {
+      let arr = str.split('')
+      let reg = /^[a-zA-Z\d]{1}$/
+      let res = arr.filter((item) => {
+        let itemString = item.toString()
+        return reg.test(itemString)
+      })
+      return res.length
     }
 
     methods = {
