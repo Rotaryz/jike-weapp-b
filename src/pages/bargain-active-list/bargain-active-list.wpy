@@ -7,28 +7,28 @@
         <view class="g-a-l-n-item {{upStatus}}" id="1">已上线</view>
         <view class="g-a-l-n-item {{downStatus}}" id="0">已过期/已下线</view>
       </view>
-      <scroll-view scroll-y class="g-a-l-article" scroll-top="{{height}}" bindscroll="setHeight" style="height:{{heightStyle}}" bindscrolltolower="_getMoreList">
-        <view class="g-a-c-s-empty" wx:if="{{!activityList.length}}">
+      <scroll-view scroll-y class="g-a-l-article" scroll-top="{{height}}" wx:if="{{status === '1'}}" bindscroll="setHeight" style="height:{{heightStyle}}" bindscrolltolower="_getMoreList">
+        <view class="g-a-c-s-empty" wx:if="{{!activityInList.length}}">
           <view class="e-box">
             <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
             <view class="e-txt">暂无数据</view>
           </view>
         </view>
-        <repeat for="{{activityList}}" key="index" index="index" item="item">
+        <repeat for="{{activityInList}}" key="index" index="index" item="item">
           <activity-item :activeType.sync="type" :navList.sync="navList" :activeObj.sync="item"></activity-item>
         </repeat>
       </scroll-view>
-      <!--<scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" hidden="{{!downStatus}}" bindscrolltolower="_getMoreList">-->
-        <!--<view class="g-a-c-s-empty" wx:if="{{!activityOffList.length}}">-->
-          <!--<view class="e-box">-->
-            <!--<image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>-->
-            <!--<view class="e-txt">暂无数据</view>-->
-          <!--</view>-->
-        <!--</view>-->
-        <!--<repeat for="{{activityOffList}}" key="index" index="index" item="item">-->
-          <!--<activity-item :activeType.sync="type" :navList.sync="navList2" :activeObj.sync="item"></activity-item>-->
-        <!--</repeat>-->
-      <!--</scroll-view>-->
+      <scroll-view scroll-y class="g-a-l-article" style="height:{{heightStyle}}" wx:if="{{status === '0'}}" bindscrolltolower="_getMoreList">
+        <view class="g-a-c-s-empty" wx:if="{{!activityOffList.length}}">
+          <view class="e-box">
+            <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
+            <view class="e-txt">暂无数据</view>
+          </view>
+        </view>
+        <repeat for="{{activityOffList}}" key="index" index="index" item="item">
+          <activity-item-on :activeType.sync="type" :navList.sync="navList2" :activeObj.sync="item"></activity-item-on>
+        </repeat>
+      </scroll-view>
       <view class="g-a-l-btn-box">
         <view class="g-a-l-submit" @tap="toNewPage">新建</view>
       </view>
@@ -93,6 +93,7 @@
       isChecked: ON,
       imageUrl: URIS.image,
       page: 1,
+      offPage: 1,
       activityList: [],
       activityOffList: [],
       activityInList: [],
@@ -104,10 +105,15 @@
       shop: {},
       newData: '',
       upTotal: 0,
-      downTotal: 0
+      downTotal: 0,
+      offThing: false
     }
     async onPullDownRefresh() {
-      await this.setList()
+      this.nothing = false
+      this.offThing = false
+      this.page = 1
+      this.offPage = 1
+      this._getList()
       wepy.stopPullDownRefresh()
     }
     onLoad(option) {
@@ -125,7 +131,6 @@
       this.$parent.updateGlobalData('shareCoupon', null)
       this.newData = this.$parent.globalData.newData || ''
       await this._getList()
-      await this.setList()
       await this.autoOpen()
     }
     // 格式化服务器数据
@@ -173,26 +178,37 @@
     }
     // 加载更多
     async _getMoreList() {
-      if (this.nothing) {
-        return
-      }
-      this.page++
-      if (this.page > 1) {
-        let res = await bargain.activityBargainList({status: this.status, page: this.page})
-        this._formatRqData(res)
+      if (this.status === UP && !this.nothing) {
+        this.page++
+        let data = {status: UP, page: this.page}
+        let res = await bargain.activityBargainList(data)
         this.loaded()
-        if (res.error === ERR_OK) {
-          res = res.data
-          this.activityList = this.activityList.concat(res)
-          if (res.length === 0 && res) {
-            this.nothing = true
-          }
+        res = this.infoRes(res)
+        let Json = this._formatRqData(res)
+        this.activityInList = [...this.activityInList, ...Json]
+        if (!res.length) {
+          this.nothing = true
+        }
+      } else if (this.status === DOWN && !this.offThing) {
+        this.offPage++
+        let data = {status: DOWN, page: this.offPage}
+        let res = await bargain.activityBargainList(data)
+        this.loaded()
+        res = this.infoRes(res)
+        let Json = this._formatRqData(res)
+        this.activityOffList = [...this.activityOffList, ...Json]
+        if (!res.length) {
+          this.offThing = true
         }
       }
       this.$apply()
     }
     // 设置list
     async setList() {
+      this.nothing = false
+      this.offThing = false
+      this.page = 1
+      this.offPage = 1
       if (this.status === UP) {
         this.activityList = this.activityInList
       } else {
@@ -217,7 +233,6 @@
         return
       }
       await this._getList()
-      await this.setList()
       this.$apply()
     }
 
@@ -226,7 +241,8 @@
       let res = await bargain.downActivityBargain(this.downId)
       if (res.error === ERR_OK) {
         this.loaded()
-        let item = this.activityList[this.activityList.findIndex(val => val.id * 1 === this.downId)]
+        let item = this.activityInList[this.activityInList.findIndex(val => val.id * 1 === this.downId)]
+        item.statusTypeStr = '已下线'
         this.activityOffList.unshift(item)
         this.cupList(this.downId)
         Tips.success('下线成功')
@@ -235,9 +251,9 @@
     // 上线时修改位置
     cupList(id) {
       if (this.status === UP) {
-        this.activityList.splice(this.activityList.findIndex(val => val.id * 1 === id), 1)
+        this.activityInList.splice(this.activityInList.findIndex(val => val.id * 1 === id), 1)
       } else {
-        this.activityList.splice(this.activityList.findIndex(val => val.id * 1 === id), 1)
+        this.activitOffList.splice(this.activitOffList.findIndex(val => val.id * 1 === id), 1)
       }
       this.$apply()
     }
@@ -279,8 +295,6 @@
 //      nav切换
       async chooseStatus(e) {
         this.height = 0
-        this.page = 1
-        this.nothing = false
         let id = e.target.id
         if (id !== UP && id !== DOWN) {
           return
@@ -288,14 +302,13 @@
         this.status = id
         switch (this.status) {
           case '1':
-            this.navList = NAVLIST
+            this.$invoke('activity-item', 'setLength', this.navList.length)
             break
           case '0':
-            this.navList = NAVLIST2
+            this.$invoke('activity-item-on', 'setLength', this.navList2.length)
             break
         }
-        this.$invoke('activity-item', 'setLength', this.navList.length)
-        await this.setList()
+        this.$apply()
       },
 //      活动按钮
       switchStatus() {
@@ -320,12 +333,17 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 55) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 110) + 'px'
       }
     }
     changeNav(res) {
-      let index = this.activityList.findIndex((item) => item.id === res.id)
-      this.activityList[index] = res
+      if (this.status === UP) {
+        let index = this.activityInList.findIndex((item) => item.id === res.id)
+        this.activityInList[index] = res
+      } else {
+        let index = this.activityOffList.findIndex((item) => item.id === res.id)
+        this.activityOffList[index] = res
+      }
       this.$apply()
     }
     events = {
@@ -390,8 +408,12 @@
       async activeBtnOnline(item) {
         let res = await bargain.upActivityBargain(item.id)
         if (res.error === ERR_OK) {
-          await this.setList()
+          let items = this.activityOffList[this.activityOffList.findIndex(val => val.id * 1 === item.id)]
+          items.statusTypeStr = '已上线'
+          this.activityOffList.splice(this.activityOffList.findIndex(val => val.id * 1 === item.id), 1)
+          this.activityInList.unshift(items)
           this.loaded()
+          this.$apply()
           Tips.success('上线成功')
         } else {
           this.$invoke('toast', 'show', res.message)
@@ -429,7 +451,7 @@
     components = {
       'header-switch': HeaderSwitch,
       'activity-item': ActivityItem,
-      'activity-item-down': ActivityItem,
+      'activity-item-on': ActivityItem,
       'confirm': Confirm,
       'toast': Toast,
       'ConfirmMsg': ConfirmMsg,

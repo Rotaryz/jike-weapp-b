@@ -43,7 +43,8 @@
         page: 1,
         limit: PAGELIMIT
       },
-      isAll: false
+      isAll: false,
+      isEmpty: false
     }
 
     async onLoad(option) {
@@ -69,6 +70,7 @@
         this.$apply()
         this._checkIsAll(res)
       }
+      this.isEmpty = !this.couponList.length
       this.loaded()
     }
 
@@ -177,9 +179,6 @@
     }
 
     computed = {
-      isEmpty() {
-        return this.couponList.length === 0
-      },
       btnStatusStyle() {
         let flag = this._checkInfoLegal()
         return flag ? 'disable-undef' : 'disable'
@@ -204,7 +203,10 @@
 
     methods = {
       done(e) {
-        console.log(e.target.dataset)
+        if (!e.target.dataset.type) {
+          this.$back()
+          return
+        }
         if (this._checkInfoLegal()) {
           this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()

@@ -50,6 +50,9 @@
     <confirm></confirm>
     <toast></toast>
   </view>
+  <view class="pic">
+    <share :qrcode.sync="qrcode" :detail.sync="detail" :shop.sync="shop"></share>
+  </view>
 </template>
 
 <script>
@@ -62,7 +65,8 @@
   import URIS from 'common/js/config'
   import Tips from 'common/js/tips'
   import ActivityItem from '@/base/activity-item/activity-item'
-
+  import Share from '@/base/share/share'
+  import merchants from 'api/merchants'
   const TABS = ['待上线', '已上线', '已下线']
   const SHOPWHITELIST = ['discount', 'reduction', 'voucher', 'cash'] // 商品白名单
   let NAVLIST = [{text: '预览', icon: `${URIS.image}/defaults/b-image/marketing/icon-preview@2x.png`}, {text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '分享', icon: `${URIS.image}/defaults/b-image/marketing/icon-share_kj@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
@@ -97,7 +101,11 @@
       offPage: 1,
       onlineId: null,
       offlineId: null,
-      deleteId: null
+      deleteId: null,
+      appid: 0,
+      shop: {},
+      qrcode: '',
+      detail: {}
     }
 
     async onShow() {
@@ -121,7 +129,7 @@
           hotName: item.title,
           price: item.platform_price,
           hotPrice: item.platform_price,
-          statusType: item.status,
+          statusType: item.promotion_status,
           statusTypeStr: item.status_str,
           goodStatus: item.promotion_status,
           stock: item.stock,
@@ -177,6 +185,9 @@
       if (json.error !== ERR_OK) {
         return
       }
+      // 这里设置商家地址 + appid
+      this.appid = json.wap_app_id
+      this.shop = {name: json.shop_name, address: json.particular_address}
       let res = json.data
       // 过滤商品
       res = this._filterRqData(res)
@@ -353,7 +364,7 @@
     }
     // 编辑
     edit(id) {
-      let model = this.tabIndex === 0 ? 'down-editor' : this.tabIndex === 1 ? 'up-editor' : 'up-editor'
+      let model = this.tabIndex === 2 ? 'down-editor' : 'up-editor'
       setTimeout(() => {
         this.$navigate(`/pages/service-controller/service-controller?id=${id}&model=${model}`)
       }, 20)
@@ -402,6 +413,30 @@
       this.$apply()
     }
     events = {
+      // id=532&type=1&currentMerchant=100004
+      // 预览
+      activityDetail(item) {
+        wepy.navigateToMiniProgram({
+          appId: this.appid,
+          path: `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.id}`,
+          extraData: {},
+          envVersion: URIS.jumpVersion, // develop
+          success(res) {
+            // 打开成功
+          }
+        })
+      },
+      async share(item) {
+        // 下载二维码
+        let path = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.id}`
+        let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
+        this.loaded()
+        this.qrcode = res.data.url
+        this.detail = item
+        this.$invoke('share', 'show')
+        this.$invoke('share', '_drawCanvas', 'coupon')
+        this.$apply()
+      },
       // 下线
       async activeBtnOffline(item) {
         this.offlineId = item.id
@@ -496,7 +531,8 @@
       'toast': Toast,
       'activity-item-will': ActivityItem,
       'activity-item-off': ActivityItem,
-      'activity-item-on': ActivityItem
+      'activity-item-on': ActivityItem,
+      'share': Share
     }
 
     config = {
@@ -508,7 +544,9 @@
 <style lang="stylus">
   @import "../../common/stylus/variable"
   @import "../../common/stylus/mixin"
-
+  .pic
+    position: fixed
+    z-index: 9999
   .service-manage
     padding-top: 36px
     padding-bottom: 64px
