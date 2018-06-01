@@ -1,5 +1,5 @@
 <template>
-  <view class="group-active-list">
+  <view class="group-active-list" @tap="_hideNav">
     <header-switch title="团购" :isChecked.sync="switchStatus" :activityStatus.sync="activityStatus" :constObj.sync="switchConstObj">
       <view class="group-active-list-box">
         <view class="g-a-l-nav" @tap="chooseStatus">
@@ -100,7 +100,8 @@
       isAllDown: false, // 下线栏数据是否全部查询完毕
       showTabDownCount: 0,
       currentDelObj: null,
-      currentOfflineObj: null
+      currentOfflineObj: null,
+      appid: 0
     }
 
     async onLoad(option) {
@@ -127,7 +128,22 @@
       await this._getNewActiveList(this.status, params, false)
       wx.stopPullDownRefresh()
     }
-
+    _hideNav() {
+      switch (this.status) {
+        case '0':
+          this.offlineList = this.offlineList.map((items, idx) => {
+            items.show = false
+            return items
+          })
+          break
+        case '1':
+          this.onlineList = this.onlineList.map((items, idx) => {
+            items.show = false
+            return items
+          })
+          break
+      }
+    }
     // 插入来自编辑页面
     async _fromPrevPage(obj) {
       // 从新建活动页面返回该页面
@@ -212,6 +228,7 @@
         res = await this._rqGetGroupActiveList(this.paramsDown, status)
         res && (this.offlineList = this._formatRqData(res))
       }
+      this.appid = res.wap_app_id
       if (res) {
         this._checkIsAll(res)
       }
@@ -328,6 +345,7 @@
         arr.push({
           merchant_id: item.merchant_id,
           id: item.id,
+          pId: item.promotion_id,
           src: item.image_url,
           hotName: item.activity_name,
           peopleNum: item.activity_number,
@@ -336,7 +354,9 @@
           statusType: item.status,
           statusTypeStr: item.start_str,
           goodStatus: item.promotion_status,
-          show: false
+          show: false,
+          stock: item.stock,
+          sales_stock: item.sales_volume // 销售数量
         })
       })
       console.log(arr)
@@ -414,6 +434,7 @@
 
     methods = {
       async chooseStatus(e) {
+        this._hideNav()
         let id = e.target.id
         if (id !== UP && id !== DOWN) {
           return
@@ -473,6 +494,18 @@
       this.$apply()
     }
     events = {
+      // 预览
+      activityDetail(item) {
+        wepy.navigateToMiniProgram({
+          appId: this.appid,
+          path: `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.pId}&groupId=${item.id}&s=group`,
+          extraData: {},
+          envVersion: URIS.jumpVersion, // develop
+          success(res) {
+            // 打开成功
+          }
+        })
+      },
       showNav(res) {
         this.changeNav(res)
       },
@@ -481,7 +514,7 @@
       },
       async share(item) {
         // 下载二维码
-        // let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
+        // let path = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.pId}&groupId=${item.id}&s=group`
         // let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
         // this.loaded()
         // this.qrcode = res.data.url

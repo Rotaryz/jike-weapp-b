@@ -52,11 +52,10 @@
 
       let bg = this.shareBgs
       let qrcode = qrcodes.tempFilePath
-
       ctx.drawImage(bg, 110, 100, 1280, 2000)
       ctx.drawImage(qrcode, 433.2, 1684, 238, 238)
 //      商品图片
-      const pics = await wepy.downloadFile({url: this.detail.image_url})
+      const pics = await wepy.downloadFile({url: this.detail.src})
       let pic = pics.tempFilePath
       ctx.drawImage(pic, 190, 360, 1120, 596)
 //    文字

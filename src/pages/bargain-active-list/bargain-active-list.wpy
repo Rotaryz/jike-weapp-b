@@ -138,15 +138,16 @@
         arr.push({
           merchant_id: item.merchant_id, // 商家id
           id: item.id, // 券id
+          pId: item.promotion_id, // 券id
           src: item.image_url, // 图片
           hotName: item.activity_name, // 标题
-          price: item.shop_price, // 原价
-          hotPrice: item.platform_price, // 现价
+          price: item.platform_price, // 原价
+          hotPrice: item.bottom_price, // 现价
           statusType: item.status, // 状态
           statusTypeStr: item.status_str, // 状态名称
           goodStatus: item.promotion_status, // 商品状态
           stock: item.stock, // 数量
-          sales_stock: item.promotion_status, // 销售数量
+          sales_stock: item.sales_volume, // 销售数量
           show: false,
           width: 'width:0px'
         })
@@ -336,20 +337,20 @@
       },
       async share(item) {
         // 下载二维码
-        let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`
+        let path = `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.pId}&a=${item.id}&s=bargain`
         let res = await merchants.getMerchantQRcode(true, {path, is_custom: 1})
         this.loaded()
         this.qrcode = res.data.url
         this.detail = item
-        this.$invoke('share', 'show', 'bargain')
-        this.$invoke('share', '_drawCanvas')
+        this.$invoke('share', 'show')
+        this.$invoke('share', '_drawCanvas', 'bargain')
         this.$apply()
       },
       // 预览
       activityDetail(item) {
         wepy.navigateToMiniProgram({
           appId: this.appid,
-          path: `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.promotion_id}&a=${item.id}&s=bargain`,
+          path: `pages/coupon-detail/coupon-detail?m=${item.merchant_id}&id=${item.pId}&a=${item.id}&s=bargain`,
           extraData: {},
           envVersion: URIS.jumpVersion, // develop
           success(res) {

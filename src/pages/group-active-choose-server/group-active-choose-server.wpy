@@ -8,14 +8,12 @@
         </view>
       </repeat>
     </view>
-    <view class="g-a-c-s-btn-box" wx:if="{{!isEmpty}}">
-      <view class="g-a-c-s-submit" @tap="done">完成</view>
+    <view class="g-a-c-s-btn-box">
+      <view class="g-a-c-s-submit" @tap="done" data-type="{{!isEmpty ? 1 : 0}}">{{!isEmpty ? '完成' : '知道了'}}</view>
     </view>
-    <view class="g-a-c-s-empty" wx:if="{{isEmpty}}">
-      <view class="e-box">
-        <image class="e-pic" wx:if="{{imageUrlHead}}" src="{{imageUrlHead + '/defaults/b-image/mine/pic-empty@2x.png'}}"></image>
-        <view class="e-txt">暂无数据</view>
-      </view>
+    <view class="no-server" wx:if="{{isEmpty}}">
+      <view class="no-server-title"><text class="no-server-title-o">暂无</text>可用服务！可按步骤添加</view>
+      <image class="no-server-pic" wx:if="{{imageUrlHead}}" mode="widthFix" src="{{imageUrlHead + '/defaults/b-image/marketing/pic-step@2x.png'}}"></image>
     </view>
     <toast></toast>
   </view>
@@ -205,7 +203,8 @@
     }
 
     methods = {
-      done() {
+      done(e) {
+        console.log(e.target.dataset)
         if (this._checkInfoLegal()) {
           this.$parent.globalData.groupActive.currentCouponGA = this.currentCoupon
           this.$apply()
@@ -237,7 +236,21 @@
 <style lang='stylus'>
   @import "../../common/stylus/mixin.styl"
   @import "../../common/stylus/variable.styl"
-
+  .no-server
+    background :$color-white
+    padding-bottom: 100px
+    .no-server-title
+      text-align :center
+      font-family : PingFang-SC-Medium
+      font-size :$font-size-medium-x
+      color :#181700
+      padding : 30px 0 50px
+      .no-server-title-o
+        color : #EF705D
+    .no-server-pic
+      width: 74.93vw
+      display :block
+      margin-left : 12.53vw
   .group-active-choose-server
     min-height: 100vh
     background-color: $color-white
