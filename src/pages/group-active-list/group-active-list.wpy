@@ -167,6 +167,7 @@
           }
         }
       } else if (obj.source === EDITOR) {
+        obj.statusTypeStr = '已上线'
         let index = -1
         index = this.offlineList.findIndex(val => val.id * 1 === obj.id * 1)
         if (index !== -1) {
@@ -385,7 +386,7 @@
       let id = this.currentDelObj.id
       let flag = await this._rqDelActive(id)
       if (!flag) return
-      if (this.currentDelObj.statusType === UP) {
+      if (this.status === UP) {
         index = this.onlineList.findIndex(val => val.id * 1 === id * 1)
         this.onlineList.splice(index, 1)
       } else {
@@ -431,6 +432,7 @@
         this.offlineList.splice(this.offlineList.findIndex(val => val.id * 1 === obj.id * 1), 1)
         obj.statusType = UP
         this.onlineList.unshift(obj)
+        console.log(this.onlineList)
         obj.statusTypeStr = '已上线'
         Tips.success('上线成功')
       }
@@ -489,13 +491,27 @@
     }
     changeNav(res) {
       if (this.status === '1') {
-        let index = this.onlineList.findIndex((item) => item.id === res.id)
-        this.onlineList[index] = res
+        this.onlineList = this.onlineList.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
         this.$apply()
         return
       }
-      let index = this.offlineList.findIndex((item) => item.id === res.id)
-      this.offlineList[index] = res
+      this.offlineList = this.offlineList.map((item) => {
+        if (item.id === res.id) {
+          item = res
+        } else {
+          item.show = false
+          item.width = 'width:0px'
+        }
+        return item
+      })
       this.$apply()
     }
     events = {

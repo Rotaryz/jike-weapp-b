@@ -28,7 +28,7 @@
       <view class="server-hot-date g-a-item-box">
         <view class="g-a-item-left">活动时间</view>
         <view class="g-a-item-middle g-a-item-hot-data">
-          <view class="g-a-h-d-l">自今日起</view>
+          <view class="g-a-h-d-l">{{innfo.start_at}}</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
             <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" end="{{hotSellEndDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
@@ -97,6 +97,7 @@
     HTOENDSTAMP,
     NORMAL
   } from 'api/group-active-config'
+  import bargain from 'api/bargain'
 
   export default class GAEditor extends wepy.page {
     mixins = [base]
@@ -122,12 +123,19 @@
         disableReduceInfo: {},
         hotSellEndDate: '2100-01-01',
         source: NEW, // 新建 和 编辑 2种模式,
-        goodId: -1
+        goodId: -1,
+        start_at: ''
       },
       arrayPeople: TPLPEOPLE,
       arrayTime: TPLTIME
     }
-
+//    新建时获取开始时间
+    async getBeginTime() {
+      let res = await bargain.getDate()
+      this.loaded()
+      this.info.start_at = res.data.date
+      this.$apply()
+    }
     onLoad(option) {
       // 页面新建(全部),活动下线时编辑(全部),活动上线时编辑(编辑活动名称,时间只能延后,数量只能增加)
       this._init(option)
@@ -179,6 +187,7 @@
         this.info.src = obj.src
         this.info.goodId = obj.goodId
         this.info.goodStatus = obj.goodStatus
+        this.info.start_at = obj.start_at || ''
         this.$apply()
       } else {
         this.$parent.globalData.groupActive.currentGroupActive = null

@@ -474,13 +474,27 @@
     }
     changeNav(res) {
       if (this.status === '1') {
-        let index = this.onlineList.findIndex((item) => item.id === res.id)
-        this.onlineList[index] = res
+        this.onlineList = this.onlineList.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
         this.$apply()
         return
       }
-      let index = this.offlineList.findIndex((item) => item.id === res.id)
-      this.offlineList[index] = res
+      this.offlineList = this.offlineList.map((item) => {
+        if (item.id === res.id) {
+          item = res
+        } else {
+          item.show = false
+          item.width = 'width:0px'
+        }
+        return item
+      })
       this.$apply()
     }
     events = {
@@ -643,16 +657,10 @@
           border-bottom: 2px solid $color-assist-f
     .g-a-l-article
       background-color: $color-white
-      padding-bottom: 82px
+      padding: 0 2px 82px 2px
+      box-sizing :border-box
       .g-a-c-s-has-content
         layout(column, block, no-wrap)
-        .g-a-l-a-item
-          padding: 0 12px
-          margin-bottom: 10px
-          &:first-child
-            margin-top: 10px
-          &:last-child
-            margin-bottom: 20px
     .g-a-l-btn-box
       position: fixed
       bottom: 0

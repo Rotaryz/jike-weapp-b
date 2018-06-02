@@ -1,88 +1,4 @@
 <template>
-  <!--<view class="active-item-component" wx:if="{{activeType !== 'bargain'}}">-->
-    <!--<image class="a-i-line" wx:if="{{imageUri}}" src="{{imageUri + '/defaults/b-image/marketing/bg-activity@2x.png'}}"></image>-->
-    <!--<view class="component-group-item" wx:if="{{activeType === 'group'}}">-->
-      <!--<view class="a-i-up">-->
-        <!--<view class="a-i-up-box">-->
-          <!--<view class="a-i-u-pic">-->
-            <!--<image class="a-i-u-p-image" mode="aspectFill" src="{{activeObj.src}}"></image>-->
-            <!--<view class="a-i-u-p-people">{{activeObj.peopleNum}}人团</view>-->
-          <!--</view>-->
-          <!--<view class="a-i-u-title">{{activeObj.hotName}}</view>-->
-          <!--<view class="a-i-u-price">现价 ¥{{activeObj.price}}</view>-->
-          <!--<view class="a-i-u-hot-price">团购价-->
-            <!--<view class="a-i-u-hot-price-em">¥{{activeObj.hotPrice}}</view>-->
-          <!--</view>-->
-        <!--</view>-->
-      <!--</view>-->
-      <!--<view class="a-i-down">-->
-        <!--<view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">-->
-          <!--<view class="a-i-d-status">商品已过期</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">-->
-          <!--<view class="a-i-d-status">商品已删除</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">-->
-          <!--<view class="a-i-d-status">商品已下架</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">-->
-          <!--<view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>-->
-          <!--<view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOffline({{activeObj}})">下线</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-          <!--<view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">-->
-          <!--<view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>-->
-          <!--<view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-          <!--<view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>-->
-        <!--</view>-->
-      <!--</view>-->
-    <!--</view>-->
-    <!--<view class="component-group-item" wx:if="{{activeType === 'share'}}">-->
-      <!--<view class="a-i-up">-->
-        <!--<view class="a-i-up-box">-->
-          <!--<view class="a-i-u-pic">-->
-            <!--<image class="a-i-u-p-image" mode="aspectFit" src="{{activeObj.src}}"></image>-->
-          <!--</view>-->
-          <!--<view class="a-i-u-title">{{activeObj.hotName}}</view>-->
-          <!--<view class="a-i-u-price">现价 ¥{{activeObj.price}}</view>-->
-          <!--<view class="a-i-u-hot-price">券后价-->
-            <!--<view class="a-i-u-hot-price-em">¥{{activeObj.hotPrice}}</view>-->
-          <!--</view>-->
-        <!--</view>-->
-      <!--</view>-->
-      <!--<view class="a-i-down">-->
-        <!--<view class="a-i-down-box" wx:if="{{activeObj.goodStatus === constObj.OUT}}">-->
-          <!--<view class="a-i-d-status">商品已过期</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.DEL}}">-->
-          <!--<view class="a-i-d-status">商品已删除</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.goodStatus === constObj.TAKENOFF}}">-->
-          <!--<view class="a-i-d-status">商品已下架</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.UP}}">-->
-          <!--<view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>-->
-          <!--<view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOffline({{activeObj}})">下线</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-          <!--<view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>-->
-        <!--</view>-->
-        <!--<view class="a-i-down-box" wx:elif="{{activeObj.statusType === constObj.DOWN}}">-->
-          <!--<view class="a-i-d-status">{{activeObj.statusTypeStr}}</view>-->
-          <!--<view class="a-i-d-on-off a-i-d-btn" bindtap="handleClickOnline({{activeObj}})">上线</view>-->
-          <!--<view class="a-i-d-delete a-i-d-btn" bindtap="handleClickDel({{activeObj}})">删除</view>-->
-          <!--<view class="a-i-d-editor a-i-d-btn" bindtap="handleClickEditor({{activeObj}})">编辑</view>-->
-        <!--</view>-->
-      <!--</view>-->
-    <!--</view>-->
-  <!--</view>-->
   <view class="ro-active-use-item">
     <image class="ro-active-use-item-img" src="{{activeObj.src}}" mode="aspectFill">
       <image class="ro-active-use-item-down" src="{{activeObj.statusTypeStr === '已下线' ? imageUri + '/defaults/b-image/marketing/icon_soldout@2x.png' : activeObj.statusTypeStr === '已过期' ? imageUri + '/defaults/b-image/marketing/icon_overdue@2x.png' : ''}}" wx:if="{{imageUri && activeObj.statusTypeStr === '已下线' || activeObj.statusTypeStr === '已过期'}}"></image>
@@ -269,20 +185,21 @@
     margin: 10px 10px 0
     padding :10px
     box-sizing :border-box
-    display :flex
     border: 0.5px solid #E6E6E6
     border-radius: 4px
     position: relative
     z-index: 1000
     background :$color-white
+    clear :both
     .ro-active-use-item-img
-      display :block
+      float :left
       height :70px
       width : 70px
       border-radius :2px
       overflow :hidden
       position: relative
       border: 0.5px solid $color-col-line
+      margin-right: 10px
       .ro-active-use-item-down
         position: absolute
         z-index:2
@@ -292,8 +209,8 @@
         left: 0
         border-radius :2px
     .ro-active-use-item-content
-      flex :1
-      margin-left: 10px
+      overflow:hidden
+      width: 75%
       .ro-active-use-item-title
         margin-top: 3px
         font-family: $font-family-regular
@@ -340,6 +257,8 @@
       background: rgba(0,0,0,0.80)
       border-radius : 2px
       box-shadow: 0 1px 10px 0 rgba(54,53,71,0.50)
+      box-sizing :border-box
+      justify-content :space-around
       .ro-active-use-item-nav-small-box
         height: 100%
         width: 100%
@@ -347,7 +266,7 @@
         opacity: 0
         transition : opacity 0.1s
         justify-content :space-around
-        padding : 0 4.5vw 0 3vw
+        padding : 0 3vw 0 3vw
         box-sizing :border-box
       .ro-active-use-item-nav
         position: absolute
@@ -370,12 +289,12 @@
         flex-direction :column
         align-items :center
         justify-content:center
-        &:not(:first-child)
+        /*&:not(:first-child)
           padding-left: 6.67vw
         &:first-child
           padding-left: 6.5vw
         &:last-child
-          padding-right: 5.33vw
+          padding-right: 5.33vw*/
       .ro-active-use-nav-icon
         height: 4.53vw
         width: 4.53vw

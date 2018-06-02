@@ -131,7 +131,7 @@
           hotPrice: item.platform_price,
           statusType: item.promotion_status,
           statusTypeStr: item.status_str,
-          goodStatus: item.promotion_status,
+          goodStatus: 1,
           stock: item.stock,
           sales_stock: item.promotion_status,
           show: false,
@@ -398,15 +398,36 @@
           this.$apply()
         }
         // 上线
-        let index = this.onLines.findIndex((item) => item.id === res.id)
-        this.onLines[index] = res
+        this.onLines = this.onLines.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
       } else if (this.tabIndex === 0) {
-        let index = this.willOnLines.findIndex((item) => item.id === res.id)
-        this.willOnLines[index] = res
+        this.willOnLines = this.willOnLines.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
         // 待上线
       } else if (this.tabIndex === 2) {
-        let index = this.offLines.findIndex((item) => item.id === res.id)
-        this.offLines[index] = res
+        this.offLines = this.offLines.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
         // 下线
       }
 
@@ -450,6 +471,11 @@
       // 编辑
       activeBtnEditor(item) {
         this.edit(item.id)
+      },
+      // 上线
+      async activeBtnOnline(obj) {
+        this.onlineId = obj.id
+        this._onLine()
       },
       showNav(res) {
         this.changeNav(res)

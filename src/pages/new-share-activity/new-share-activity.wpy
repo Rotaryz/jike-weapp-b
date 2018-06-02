@@ -25,7 +25,7 @@
     </view>
     <view class="tl-share-box">
       <view class="tl-share-left">活动时间</view>
-      <view class="tl-share-data-left">自上线之日起</view>
+      <view class="tl-share-data-left">{{shareData.sell_start_at}}</view>
       <view class="tl-share-data-to tl-share-data-left">至</view>
       <picker mode="date" class="sell-date" @change="setValidDate" start="{{hotEndStartDate}}" value="{{shareData.sell_end_at}}">
         <view class="tl-share-data-time">
@@ -77,6 +77,7 @@
   import URIS from 'common/js/config'
   import ShareMoney from 'api/share-active'
   import {ERR_OK} from '@/api/base'
+  import bargain from 'api/bargain'
 
   export default class ShareActivity extends wepy.page {
     mixins = [base]
@@ -91,6 +92,7 @@
       stockToast: '请输入',
       pickerStar: '',
       shareData: {
+        sell_start_at: '',
         promotion_id: '',
         promotion_title: '',
         title: '',
@@ -103,8 +105,15 @@
         submitLock: false
       }
     }
-
+//    新建时获取开始时间
+    async getBeginTime() {
+      let res = await bargain.getDate()
+      this.loaded()
+      this.shareData.sell_start_at = res.data.date
+      this.$apply()
+    }
     async onLoad(options) {
+      this.getBeginTime()
       this.pickerStar = new Date()
       this.$parent.globalData.shareCoupon = null
       if (options.id) {

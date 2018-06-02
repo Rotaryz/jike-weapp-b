@@ -109,10 +109,6 @@
       offThing: false
     }
     async onPullDownRefresh() {
-      this.nothing = false
-      this.offThing = false
-      this.page = 1
-      this.offPage = 1
       this._getList()
       wepy.stopPullDownRefresh()
     }
@@ -161,6 +157,10 @@
     }
     // 获取上下线列表
     async _getList() {
+      this.nothing = false
+      this.offThing = false
+      this.page = 1
+      this.offPage = 1
       let data = {status: UP, page: 1}
       let res = await bargain.activityBargainList(data)
       this.shop = {name: res.shop_name, address: res.particular_address}
@@ -333,16 +333,30 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 110) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82) + 'px'
       }
     }
     changeNav(res) {
       if (this.status === UP) {
-        let index = this.activityInList.findIndex((item) => item.id === res.id)
-        this.activityInList[index] = res
+        this.activityInList = this.activityInList.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
       } else {
-        let index = this.activityOffList.findIndex((item) => item.id === res.id)
-        this.activityOffList[index] = res
+        this.activityOffList = this.activityOffList.map((item) => {
+          if (item.id === res.id) {
+            item = res
+          } else {
+            item.show = false
+            item.width = 'width:0px'
+          }
+          return item
+        })
       }
       this.$apply()
     }
@@ -463,6 +477,10 @@
 <style lang="stylus">
     @import '../../common/stylus/variable'
     @import '../../common/stylus/mixin'
+    .bargain-active-list
+      height: 100vh
+      box-sizing :border-box
+      overflow :hidden
     .pic
       position: fixed
       z-index: 9999
@@ -547,6 +565,7 @@
         letter-spacing: 1.02px
 
   .g-a-l-article
+    padding-bottom: 21.26vh
     background :$color-white
     box-sizing :border-box
 </style>
