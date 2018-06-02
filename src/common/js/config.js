@@ -16,7 +16,7 @@
 //   B端api地址   https://backend-api.jkweixin.com
 //   C端api地址   https://wap-api.jkweixin.com
 
-const version = '/v2'
+const version = '/v1'
 
 /**
  * 研发环境
