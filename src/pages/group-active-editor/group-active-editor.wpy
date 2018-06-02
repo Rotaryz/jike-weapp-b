@@ -28,7 +28,7 @@
       <view class="server-hot-date g-a-item-box">
         <view class="g-a-item-left">活动时间</view>
         <view class="g-a-item-middle g-a-item-hot-data">
-          <view class="g-a-h-d-l">{{innfo.start_at}}</view>
+          <view class="g-a-h-d-l">{{info.start_at}}</view>
           <view class="g-a-h-d-m">至</view>
           <view class="g-a-h-d-r">
             <picker class="g-a-i-option {{hotEndDate}}" mode="date" start="{{hotEndStartDate}}" end="{{hotSellEndDate}}" @change="bindPickerChangeHotEndDate" value="{{info.hotEndDate}}">{{info.hotEndDate}}</picker>
@@ -187,9 +187,10 @@
         this.info.src = obj.src
         this.info.goodId = obj.goodId
         this.info.goodStatus = obj.goodStatus
-        this.info.start_at = obj.start_at || ''
+        this.info.start_at = obj.start_at
         this.$apply()
       } else {
+        await this.getBeginTime()
         this.$parent.globalData.groupActive.currentGroupActive = null
         this.$parent.globalData.groupActive.currentCouponGA = null
       }
@@ -234,6 +235,7 @@
         obj.hotPrice = item.config.group_price
         obj.peopleNum = item.config.group_number
         obj.timeLimit = item.config.group_validity
+        obj.start_at = item.start_at
       }
       return obj
     }

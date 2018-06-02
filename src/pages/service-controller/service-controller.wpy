@@ -441,7 +441,7 @@
       <view class="time input-wrapper border-bottom-1px">
         <view class="label">券有效期</view>
         <view class="content">
-          <view class="start">自上线之日起</view>
+          <view class="start">{{startAt}}</view>
           <view class="to">至</view>
           <picker mode="date" class="sell-date" @change="setValidDate" start="{{limitValidStartDate}}" value="{{validDate}}">
             <view class="date">
@@ -731,6 +731,7 @@
     mixins = [base]
 
     data = {
+      startAt: '',
       imageUri: URIS.image,
       navigationBarTitle: '创建服务',
       promotionId: 0,
@@ -831,7 +832,11 @@
         this.navigationBarTitle = '编辑服务'
         wepy.setNavigationBarTitle({title: this.navigationBarTitle})
         await this._getCouponDetail()
+        await this.load()
+        this.loaded()
+        return
       }
+      this.startAt = await this.getBeginTimes()
       await this.load()
       this.loaded()
       this.$apply()
@@ -883,6 +888,7 @@
       this.sellStartTime = res.sell_start_at
       this.sellEndTime = res.sell_end_at // 售卖结束时间
       this.validDate = res.end_at // 有效期结束时间
+      this.startAt = res.start_at // 券有效期开始时间
       this.notAllowTime = res.not_allow_time
       this.tempNotAllowTime = this.notAllowTime
       this.subscribe = res.note.need_subscribe
