@@ -22,23 +22,23 @@ const version = '/v2'
  * 研发环境
  * @type {{image: string, login: string, api: string}}
  */
-// const URLS = {
-//   image: 'https://img.jerryf.cn',
-//   login: 'https://dev.jike-jwt.jerryf.cn',
-//   api: 'https://dev.jike-backend-api.jerryf.cn' + version,
-//   jumpVersion: 'develop'
-// }
+const URLS = {
+  image: 'https://img.jerryf.cn',
+  login: 'https://dev.jike-jwt.jerryf.cn',
+  api: 'https://dev.jike-backend-api.jerryf.cn' + version,
+  jumpVersion: 'develop'
+}
 
 /**
  * 测试环境
  * @type {{image: string, login: string, api: string}}
  */
-const URLS = {
-  image: 'https://img.jkweixin.net',
-  login: 'https://jwt.jkweixin.net',
-  api: 'https://backend-api.jkweixin.net' + version,
-  jumpVersion: 'trial'
-}
+// const URLS = {
+//   image: 'https://img.jkweixin.net',
+//   login: 'https://jwt.jkweixin.net',
+//   api: 'https://backend-api.jkweixin.net' + version,
+//   jumpVersion: 'trial'
+// }
 
 /**
  * 生产环境

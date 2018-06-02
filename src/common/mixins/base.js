@@ -1,5 +1,6 @@
 import wepy from 'wepy'
 import Tips from 'common/js/tips'
+import bargain from 'api/bargain'
 
 export default class base extends wepy.mixin {
   loaded() {
@@ -22,7 +23,12 @@ export default class base extends wepy.mixin {
       }
     }
   }
-
+//    新建时获取开始时间
+  async getBeginTimes() {
+    let res = await bargain.getDate()
+    this.loaded()
+    return res.data.date
+  }
   // 卸载清理
   onUnload() {
     Object.assign(this, this.def)
