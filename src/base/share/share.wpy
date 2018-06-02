@@ -104,7 +104,7 @@
           // 商品图片
           ctx.drawImage(pic, 148, 310, 1200, 668)
           let shopTop = '../../common/images/pic-recommend@2x.png'
-          ctx.drawImage(shopTop, 641, 172, 268, 268)
+          ctx.drawImage(shopTop, 620, 172, 268, 268)
 
           // 文字
           ctx.setFontSize(64)
