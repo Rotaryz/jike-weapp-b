@@ -333,7 +333,7 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 50) + 'px'
       }
     }
     changeNav(res) {
@@ -541,7 +541,7 @@
     .g-a-l-btn-box
       position: fixed
       bottom: 0
-      z-index :100
+      z-index :1000
       width: 100%
       height: 82px
       box-sizing: border-box
@@ -565,7 +565,8 @@
         letter-spacing: 1.02px
 
   .g-a-l-article
-    padding-bottom: 21.26vh
+    padding-bottom: 0
+    /*padding-bottom: 21.26vh*/
     background :$color-white
     box-sizing :border-box
 </style>
