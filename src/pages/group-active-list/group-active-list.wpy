@@ -486,7 +486,7 @@
         return this.isChecked
       },
       heightStyle() {
-        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 60 - 44.5) + 'px' : (DEVICEINFO.height - 82 - 44.5) + 'px'
+        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 50) + 'px' : (DEVICEINFO.height - 82) + 'px'
       }
     }
     changeNav(res) {
