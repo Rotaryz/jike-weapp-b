@@ -122,6 +122,11 @@
         return []
       }
       res.map(item => {
+        if (item.promotion_type_cn === '满减券') {
+          item.image_url = this.imageUri + '/defaults/b-image/order/pic-mjq_fw@2x.png'
+        } else if (item.promotion_type_cn === '折扣券') {
+          item.image_url = this.imageUri + '/defaults/b-image/order/pic-zkq_fw@2x.png'
+        }
         arr.push({
           merchant_id: item.merchant_id,
           id: item.id,
@@ -133,7 +138,7 @@
           statusTypeStr: item.status_str,
           goodStatus: 1,
           stock: item.stock,
-          sales_stock: item.promotion_status,
+          sales_stock: item.sales_volume,
           show: false,
           promotionType: item.promotion_type_cn,
           width: 'width:0px'

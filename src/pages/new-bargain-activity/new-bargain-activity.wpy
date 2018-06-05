@@ -155,6 +155,12 @@
         this.title = this.shareData.promotion_data.goods_name
         this.price = this.shareData.platform_price
         this.oldStock = this.shareData.stock
+        let stock = this.shareData.stock
+        if (stock === -1 || stock >= 3) {
+          this.stock = this.digitize1(3)
+        } else {
+          this.stock = this.digitize1(stock)
+        }
         this.$apply()
       }
     }
@@ -176,6 +182,7 @@
         }
         this.$apply()
       }
+
     }
 
 //    格式化数字转为数组
