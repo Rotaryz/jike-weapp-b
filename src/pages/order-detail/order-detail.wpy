@@ -87,7 +87,7 @@
           </view>
           <view class="order-li">
             <view class="order-li-title">优惠金额</view>
-            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}{{orderDetail.discount_price ? orderDetail.discount_type : ''}}</view>
           </view>
           <view class="order-li">
             <view class="order-li-title">分佣金额</view>
@@ -105,7 +105,7 @@
           </view>
           <view class="order-li">
             <view class="order-li-title">优惠金额</view>
-            <view class="order-li-txt">{{orderDetail.discount_price}}</view>
+            <view class="order-li-txt">{{orderDetail.discount_price}}{{orderDetail.discount_price ? orderDetail.discount_type : ''}}</view>
           </view>
           <view class="order-li">
             <view class="order-li-title">实收金额</view>
