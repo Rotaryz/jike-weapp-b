@@ -22,7 +22,7 @@
       <view class="server-add-number g-a-item-box">
         <view class="g-a-item-left ">添加数量</view>
         <view class="g-a-item-middle">
-          <input class="g-a-input" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{inventory}}" placeholder-class="p-h-style" maxlength="10"></input>
+          <input class="g-a-input" type="number" value="{{info.addNum}}" @input="addNumInput" placeholder="{{stock}}" placeholder-class="p-h-style" maxlength="10"></input>
         </view>
       </view>
       <view class="server-hot-date g-a-item-box">
@@ -118,7 +118,7 @@
         peopleNum: PICKERDEFAUFT,
         peopleNumIndex: 0,
         hotPrice: INPUTDEFAULT,
-        inventory: INPUTDEFAULT,
+        stock: INPUTDEFAULT,
         statusType: DOWN,
         disableReduceInfo: {},
         hotSellEndDate: '2100-01-01',
@@ -151,7 +151,7 @@
       if (obj) {
         this.info.serverType = obj.title
         this.info.price = obj.platform_price
-        this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
+        this.info.stock = (obj.stock === STOCKUNLIMIT ? '无限制' : obj.stock)
         this.info.goodId = obj.id // 这里是商品id
         this.info.hotSellEndDate = obj.end_at
         this.info.src = obj.src
@@ -178,7 +178,7 @@
         this.info.timeLimit = obj.timeLimit + '小时'
         this.info.peopleNum = obj.peopleNum + '人'
         this.info.hotPrice = parseFloat(obj.hotPrice).toFixed(1)
-        this.info.inventory = (obj.inventory === STOCKUNLIMIT ? '无限制' : obj.inventory)
+        this.info.stock = (obj.stock === STOCKUNLIMIT ? '无限制' : obj.stock)
         this.info.peopleNumIndex = this.arrayPeople.findIndex(val => val === this.info.peopleNum) || 0
         this.info.timeLimitIndex = this.arrayTime.findIndex(val => val === this.info.timeLimit) || 0
         this.info.disableReduceInfo.addNum = obj.addNum
@@ -230,7 +230,7 @@
         obj.statusType = '' + item.status
         obj.price = item.platform_price
         obj.serverType = item.promotion_title
-        obj.inventory = item.promotion_stock === STOCKUNLIMIT ? item.promotion_stock : (item.promotion_stock + item.stock)
+        obj.stock = item.promotion_stock === STOCKUNLIMIT ? item.promotion_stock : (item.promotion_stock + item.stock)
         obj.hotSellEndDate = item.promotion_sell_end_at.split(' ')[0]
         obj.hotPrice = item.config.group_price
         obj.peopleNum = item.config.group_number
@@ -261,14 +261,14 @@
       let oldAddNum = parseInt(this.info.disableReduceInfo.addNum)
       let hotPrice = parseFloat(this.info.hotPrice)
       let peopleNum = parseInt(this.info.peopleNum)
-      let inventory = parseInt(this.info.inventory)
+      let stock = parseInt(this.info.stock)
       let newEndDate = new Date(this.info.hotEndDate).getTime()
       let oldEndDate = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
       let sellEndDate = new Date(this.info.hotSellEndDate).getTime()
       oldEndDate = this._formateDate(oldEndDate)
       oldEndDate = new Date(oldEndDate).getTime()
-      if (isNaN(inventory) || inventory <= 0) {
-        inventory = Number.MAX_VALUE
+      if (isNaN(stock) || stock <= 0) {
+        stock = Number.MAX_VALUE
       }
       if (isNaN(peopleNum)) {
         peopleNum = 2
@@ -287,17 +287,17 @@
         } else if (this.info.addNum === INPUTDEFAULT) {
           flag = '请输入服务数量'
           return flag
-        } else if (peopleNum > inventory) {
+        } else if (peopleNum > stock) {
           flag = '库存不足,请添加库存'
           return flag
         } else if (addNum < oldAddNum) {
           flag = `输入的数量不能小于之前${oldAddNum}`
           return flag
-        } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
+        } else if (stock === Number.MAX_VALUE && addNum < peopleNum) {
           flag = `输入的数量不能小于${peopleNum}`
           return flag
-        } else if (addNum < peopleNum || addNum > inventory) {
-          flag = `请输入${peopleNum}至${inventory}之内的数量`
+        } else if (addNum < peopleNum || addNum > stock) {
+          flag = `请输入${peopleNum}至${stock}之内的数量`
           return flag
         } else if (this.info.hotEndDate === HOTENDDEFAULT) {
           flag = '请输入活动截止日期'
@@ -329,17 +329,17 @@
         } else if (this.info.addNum === INPUTDEFAULT) {
           flag = '请输入服务数量'
           return flag
-        } else if (peopleNum > inventory) {
+        } else if (peopleNum > stock) {
           flag = '库存不足,请添加库存'
           return flag
         } else if (addNum === 0) {
           flag = '请输入服务的数量'
           return flag
-        } else if (inventory === Number.MAX_VALUE && addNum < peopleNum) {
+        } else if (stock === Number.MAX_VALUE && addNum < peopleNum) {
           flag = `输入的数量不能小于${peopleNum}`
           return flag
-        } else if (addNum < peopleNum || addNum > inventory) {
-          flag = `请输入${peopleNum}至${inventory}之内的数量`
+        } else if (addNum < peopleNum || addNum > stock) {
+          flag = `请输入${peopleNum}至${stock}之内的数量`
           return flag
         } else if (this.info.hotEndDate === HOTENDDEFAULT) {
           flag = '请输入活动截止日期'
@@ -537,8 +537,8 @@
         time = this._formateDate(time)
         return time
       },
-      inventory() {
-        return this.info.inventory !== INPUTDEFAULT ? `最大可输入数量${this.info.inventory}` : '请输入'
+      stock() {
+        return this.info.stock !== INPUTDEFAULT ? `最大可输入数量${this.info.stock}` : '请输入'
       },
       btnStatusStyle() {
         let flag = this._checkInfoLegal()

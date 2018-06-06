@@ -56,7 +56,7 @@
       <view class="couponList-item-head-left">
         <view class="border-line" wx:if="{{border!=='no'}}"></view>
         <view class="couponList-itemPay">
-          <image class="couponList-itemPay-img" mode="aspectFill" src="{{coupon.src}}"></image>
+          <image class="couponList-itemPay-img" mode="aspectFill" src="{{coupon.src ? coupon.src : coupon.promotion_img ? coupon.promotion_img : coupon.image_url}}"></image>
         </view>
         <view class="couponList-itemMsg">
           <view class="couponList-item-title ro-couponList-item-title">

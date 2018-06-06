@@ -365,7 +365,6 @@
           sales_stock: item.sales_volume // 销售数量
         })
       })
-      console.log(arr)
       return arr
     }
 
