@@ -113,11 +113,11 @@
               this.$emit('activityDetail', this.activityItem)
               break
             case '编辑':
-              if (this.activityItem.goodStatus === 0) {
-                this.$parent.$invoke('toast', 'show', '活动不可用，商品已下线')
-                return
-              } else if (this.activityItem.goodStatus === 3) {
+              if (this.activityItem.goodStatus === 3) {
                 this.$parent.$invoke('toast', 'show', '活动不可用，商品已删除')
+                return
+              } else if (this.activityItem.goodStatus === 0) {
+                this.$parent.$invoke('toast', 'show', '活动不可用，商品已下线')
                 return
               }
               this.$emit('activeBtnEditor', this.activityItem)

@@ -158,7 +158,7 @@
           title: item.title,
           end_at: item.sell_end_at,
           checked: false,
-          inventory: item.stock,
+          stock: item.stock,
           src: item.image_url
         })
       })

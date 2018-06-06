@@ -333,7 +333,7 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 50) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82 - 30) + 'px' : (DEVICEINFO.height - 82 - 50) + 'px'
       }
     }
     changeNav(res) {

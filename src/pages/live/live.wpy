@@ -127,7 +127,6 @@
         //     return false
         //   }
         // }
-        console.log( this.$parent.globalData.coupon)
         this.activityPromotion = this.activityPromotion.concat(this.$parent.globalData.coupon)
         this.$parent.globalData.coupon = ''
         this.$apply()
