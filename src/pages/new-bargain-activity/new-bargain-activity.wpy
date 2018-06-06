@@ -155,7 +155,7 @@
         this.title = this.shareData.promotion_data.goods_name
         this.price = this.shareData.platform_price
         this.oldStock = this.shareData.stock
-        let stock = this.shareData.promotion_data.goods_stock === 0 ? this.shareData.stock : this.shareData.promotion_data.goods_stock
+        let stock = this.shareData.promotion_data.goods_stock === -1 ? this.shareData.promotion_data.goods_stock : this.shareData.promotion_data.goods_stock + this.shareData.stock
         if (stock === -1 || stock >= 3) {
           this.stock = this.digitize1(3)
         } else {
