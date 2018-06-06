@@ -9,7 +9,7 @@
       </view>
       <view class="m-content">{{info.total_money ? '¥' + info.total_money : ''}}</view>
       <view class="b-content" wx:if="{{type === 1}}">{{statusTxt[info.status]}}</view>
-      <view class="b-content" wx:if="{{type === 2}}">{{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}</view>
+      <view class="b-content" wx:if="{{type === 2}}">{{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已完成' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}</view>
     </view>
     <view class="container border-bottom-1px">
       <view class="content-wrapper border-bottom-1px">
@@ -63,7 +63,7 @@
             {{statusTxt[info.status]}}
           </view>
           <view class="r-content" wx:if="{{type === 2}}">
-            {{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已评价' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}
+            {{info.status === 1 ? '已支付' : info.status === 2 ? '待评价' : info.status === 3 ? '退款中' : info.status === 5 ? '已完成' : (info.status === 7 || info.status === 8) ? '退款失败' : info.status === 9 ? '已关闭' : ''}}
           </view>
         </view>
       </view>
