@@ -28,7 +28,7 @@
         <view class="detail-content">收入{{income}}{{expend ? '，支出' + expend : ''}}</view>
       </view>
       <view class="list-wrapper" wx:if="{{list.length > 0}}">
-        <scroll-view scroll-y bindscrolltolower="loadMore" class="list-box">
+        <view class="list-box">
           <repeat for="{{list}}" key="index" index="index">
             <navigator url="/pages/order-detail/order-detail?id={{item.order_id}}&genre={{item.genre}}" class="item-wrapper border-bottom-1px">
               <view class="content-wrapper">
@@ -40,9 +40,9 @@
               </view>
             </navigator>
           </repeat>
-        </scroll-view>
+        </view>
       </view>
-      <view wx:if="{{list.length === 0}}" class="empty-wrapper">
+      <view wx:if="{{list.length === 0}}" class="empty-wrapper top-45px">
         <view class="image-wrapper">
           <image wx:if="{{imageUrl}}" class="full-image" src="{{imageUrl + '/defaults/b-image/page/pic-empty_finance@2x.png'}}"></image>
         </view>
@@ -100,7 +100,7 @@
       this.$apply()
     }
 
-    async loadMore() {
+    async onReachBottom() {
       if (!this.hasMore) {
         return
       }
@@ -189,7 +189,6 @@
     background: transparent
   .total-income
     width: 100vw
-    height: 100vh
     .tip-modal
       padding: 16px 10px 0 10px
       .text
@@ -221,16 +220,18 @@
         color: $color-assist-tr
     .container
       width: 100vw
-      height: 100vh
-      overflow: hidden
-      display: flex
-      flex-direction: column
       .select-wrapper
         display: flex
         align-items: center
         justify-content: space-between
+        background: $color-white
         height: 45px
         padding: 0 12px
+        position: fixed
+        left: 0
+        right: 0
+        top: 0
+        z-index: 1
         .select-container-left
           display: flex
           align-items: center
@@ -267,6 +268,11 @@
         display: flex
         padding: 0 12px
         align-items: center
+        position: fixed
+        left: 0
+        right: 0
+        top: 45px
+        z-index: 1
         .detail-title
           font-family: PingFang-SC-Regular
           font-size: $font-size-medium
@@ -278,10 +284,8 @@
           color: $color-text-d
       .list-wrapper
         padding-left: 12px
-        flex: 1
+        padding-top: 90px
         overflow: hidden
-        .list-box
-          height: 100%
         .item-wrapper
           display: flex
           align-items: center
@@ -307,4 +311,6 @@
             .b-content
               font-size: $font-size-small-s
               color: $color-text-d
+      .top-45px
+        margin-top: 135px
 </style>

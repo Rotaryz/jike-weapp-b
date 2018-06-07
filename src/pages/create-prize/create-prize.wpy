@@ -501,7 +501,7 @@
             }, 1500)
           }
         } else {
-          this.$invoke('Toast', 'show', res.message)
+          this.$invoke('Toast', 'show', Json.message)
         }
         this.$apply()
       },
