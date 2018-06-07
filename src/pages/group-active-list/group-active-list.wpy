@@ -137,12 +137,14 @@
         case '0':
           this.offlineList = this.offlineList.map((items, idx) => {
             items.show = false
+            items.width = 'width:0px'
             return items
           })
           break
         case '1':
           this.onlineList = this.onlineList.map((items, idx) => {
             items.show = false
+            items.width = 'width:0px'
             return items
           })
           break
@@ -485,7 +487,7 @@
         return this.isChecked
       },
       heightStyle() {
-        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 50) + 'px' : (DEVICEINFO.height - 82) + 'px'
+        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 100) + 'px' : (DEVICEINFO.height - 82) + 'px'
       }
     }
     changeNav(res) {

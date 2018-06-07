@@ -287,8 +287,14 @@
         this.toNewTimer = null
       },
       hideNav() {
-        this.activityList.map((items, idx) => {
+        this.activityOffList.map((items, idx) => {
           items.show = false
+          items.width = 'width:0px'
+          return items
+        })
+        this.activityInList.map((items, idx) => {
+          items.show = false
+          items.width = 'width:0px'
           return items
         })
       },
@@ -333,7 +339,7 @@
         return this.status === DOWN ? 'active' : ''
       },
       heightStyle() {
-        return this.showHeader ? (DEVICEINFO.height - 82 - 30) + 'px' : (DEVICEINFO.height - 82 - 50) + 'px'
+        return this.showHeader ? (DEVICEINFO.height - 82) + 'px' : (DEVICEINFO.height - 82 - 100) + 'px'
       }
     }
     changeNav(res) {

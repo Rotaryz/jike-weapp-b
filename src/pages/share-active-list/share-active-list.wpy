@@ -75,7 +75,7 @@
     SUCCESS,
     OUT
   } from 'api/share-active-config'
-  let NAVLIST = [{text: '预览', icon: `${URIS.image}/defaults/b-image/marketing/icon-preview@2x.png`}, {text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
+  let NAVLIST = [{text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '下线', icon: `${URIS.image}/defaults/b-image/marketing/icon-offline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   let NAVLIST2 = [{text: '编辑', icon: `${URIS.image}/defaults/b-image/marketing/icon-compile_kj@2x.png`}, {text: '上线', icon: `${URIS.image}/defaults/b-image/marketing/icon-upline@2x.png`}, {text: '删除', icon: `${URIS.image}/defaults/b-image/marketing/icon-delete@2x.png`}, {text: '统计', icon: `${URIS.image}/defaults/b-image/marketing/icon-statistic@2x.png`}]
   export default class GAList extends wepy.page {
     mixins = [base]
@@ -469,7 +469,7 @@
         return this.isChecked
       },
       heightStyle() {
-        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 50) + 'px' : (DEVICEINFO.height - 82) + 'px'
+        return this.activityStatus === SUCCESS ? (DEVICEINFO.height - 82 - 100) + 'px' : (DEVICEINFO.height - 82) + 'px'
       }
     }
     changeNav(res) {
