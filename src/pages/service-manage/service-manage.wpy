@@ -442,9 +442,16 @@
       // id=532&type=1&currentMerchant=100004
       // 预览
       activityDetail(item) {
+        let page = ''
+        if ((item.promotionType === '折扣券' || item.promotionType === '满减券')) {
+          page = `pages/coupon-particulars/coupon-particulars?merchantId=${item.merchant_id}&id=${item.id}`
+        } else {
+          page = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.id}`
+        }
+        console.log(page)
         wepy.navigateToMiniProgram({
           appId: this.appid,
-          path: `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.id}`,
+          path: page,
           extraData: {},
           envVersion: URIS.jumpVersion, // develop
           success(res) {

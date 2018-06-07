@@ -262,7 +262,7 @@
       .ro-active-use-item-nav-small-box
         height: 100%
         width: 100%
-        display :flex
+        display :none
         opacity: 0
         transition : opacity 0.1s
         justify-content :space-around
@@ -310,6 +310,7 @@
       transition :all 0.3s
       .ro-active-use-item-nav-small-box
         opacity: 1
+        display :flex
         transition :all 0.1s linear 0.2s
     .ro-active-use-item-nav-box-active-tw
       width: 59.2vw
