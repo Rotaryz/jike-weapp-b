@@ -304,7 +304,6 @@
         if (status === 'add') {
           DATA.type = type
           let coverUrl = videoId.cover_url.replace(/.jpg$/, '_314x75.jpg')
-          console.log(coverUrl)
           DATA.detail[0] = {
             url: videoId.url,
             id: videoId.id,
@@ -551,8 +550,12 @@
         res = res.data
         this.imgSrc = res['image_url']
         res['content_detail_data'].map((item, idx) => {
+          console.log(item)
           let detail = item.detail
           item.detail = []
+          if (item.type === 3) {
+
+          }
           item.detail.push(detail)
           return item
         })

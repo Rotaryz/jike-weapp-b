@@ -132,7 +132,7 @@
           id: item.id,
           src: item.image_url,
           hotName: item.title,
-          price: item.platform_price,
+          price: item.shop_price,
           hotPrice: item.platform_price,
           statusType: item.promotion_status,
           statusTypeStr: item.status_str,

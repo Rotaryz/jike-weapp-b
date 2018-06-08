@@ -8,7 +8,7 @@
       <view class="ro-active-use-item-price">
         <view class="ro-active-use-item-price-box">
           <view class="ro-active-use-price-item">{{activeType === 'bargain' ? '底价' : activeType === 'group' ? '团购价' : activeType === 'share' ? '券后价' : activeType === 'service' ? '现价' : ''}}：<text class="bottom-price">¥{{activeObj.hotPrice}}</text></view>
-          <view class="ro-active-use-price-item">{{activeType === 'service' ? '原价' : '现价'}}：¥{{activeObj.price}}</view>
+          <view class="ro-active-use-price-item">{{activeType === 'service' ? '门市价' : '现价'}}：¥{{activeObj.price}}</view>
         </view>
         <view class="ro-active-use-item-price-box">
           <view class="ro-active-use-price-item">库存：{{activeObj.stock === -1 ? '无限量' : activeObj.stock}}</view>
