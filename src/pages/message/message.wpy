@@ -285,9 +285,10 @@
       display: flex
       border: 1px solid $color-split-line
       padding: 10px
+      background: $color-white
       image
         width: 13vw
-        height: 12vw
+        height: 13vw
         border: 1px solid $color-split-line
         border-radius: 4px
       .order-top
