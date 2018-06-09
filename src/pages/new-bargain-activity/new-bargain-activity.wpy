@@ -106,7 +106,7 @@
       price: '',
       stock: [1, 2, 3],
       titleNumber: 0,
-      maCutNum: [3, 5, 7, 10, 30, 50, 70, 100],
+      maCutNum: [30, 50, 70, 100],
       submitLock: true,
       editType: null, // 编辑类型
       id: null,
