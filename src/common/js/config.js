@@ -33,23 +33,23 @@ const version = '/v2'
  * 测试环境
  * @type {{image: string, login: string, api: string}}
  */
-// const URLS = {
-//   image: 'https://img.jkweixin.net',
-//   login: 'https://jwt.jkweixin.net',
-//   api: 'https://backend-api.jkweixin.net' + version,
-//   jumpVersion: 'trial'
-// }
+const URLS = {
+  image: 'https://img.jkweixin.net',
+  login: 'https://jwt.jkweixin.net',
+  api: 'https://backend-api.jkweixin.net' + version,
+  jumpVersion: 'trial'
+}
 
 /**
  * 生产环境
  * @type {{image: string, login: string, api: string}}
  */
-const URLS = {
-  image: 'https://img.jkweixin.com',
-  login: 'https://jwt.jkweixin.com',
-  api: 'https://backend-api.jkweixin.com' + version,
-  jumpVersion: 'release'
-}
+// const URLS = {
+//   image: 'https://img.jkweixin.com',
+//   login: 'https://jwt.jkweixin.com',
+//   api: 'https://backend-api.jkweixin.com' + version,
+//   jumpVersion: 'release'
+// }
 
 class URIS {
   constructor() {

@@ -6,7 +6,7 @@
     <view class="ro-active-use-item-content">
       <view class="ro-active-use-item-title">{{activeObj.hotName}}</view>
       <view class="ro-active-use-item-price">
-        <view class="ro-active-use-item-price-box">
+        <view class="ro-active-use-item-price-box" wx:if="{{activeObj.promotionType !== '满减券' && activeObj.promotionType !== '折扣券'}}">
           <view class="ro-active-use-price-item">{{activeType === 'bargain' ? '底价' : activeType === 'group' ? '团购价' : activeType === 'share' ? '券后价' : activeType === 'service' ? '现价' : ''}}：<text class="bottom-price">¥{{activeObj.hotPrice}}</text></view>
           <view class="ro-active-use-price-item">{{activeType === 'service' ? '门市价' : '现价'}}：¥{{activeObj.price}}</view>
         </view>

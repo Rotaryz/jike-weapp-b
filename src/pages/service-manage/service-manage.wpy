@@ -393,14 +393,14 @@
     changeNav(res) {
       // willOnLines，onLines，offLines
       if (this.tabIndex === 1) {
-        if (res.promotionType && this.navList.length === 6) {
+        if (res.promotionType) {
           if ((res.promotionType === '折扣券' || res.promotionType === '满减券')) {
             this.navList = NAVLIST4
           } else {
             this.navList = NAVLIST
           }
-          this.$invoke('activity-item-on', 'setLength', this.navList.length)
           this.$apply()
+          this.$invoke('activity-item-on', 'setLength', this.navList.length)
         }
         // 上线
         this.onLines = this.onLines.map((item) => {
@@ -448,7 +448,6 @@
         } else {
           page = `pages/coupon-detail/coupon-detail?type=1&currentMerchant=${item.merchant_id}&id=${item.id}`
         }
-        console.log(page)
         wepy.navigateToMiniProgram({
           appId: this.appid,
           path: page,
@@ -491,6 +490,7 @@
       },
       showNav(res) {
         this.changeNav(res)
+        console.log(res)
       },
       hideNav(res) {
         this.changeNav(res)
