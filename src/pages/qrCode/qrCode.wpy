@@ -219,9 +219,8 @@
         margin-right: 5px
         border-radius: 2px
         background: $color-white
-        display: flex
-        align-items: center
-        justify-content: center
+        text-align: center
+        line-height: 13.3333vw
         font-size: $font-size-large-bxx
         font-family: PingFangSC-Medium
 
