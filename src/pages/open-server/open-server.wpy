@@ -65,6 +65,7 @@
   import Merchant from '@/api/merchants'
   import Tips from 'common/js/tips'
   import {ERR_OK} from '@/api/base'
+  import {TELREG} from '@/common/js/regs'
 
   export default class OpenServer extends wepy.page {
     mixins = [base]
@@ -222,7 +223,7 @@
 
     computed = {
       phoneTest() {
-        let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
+        let reg = TELREG
         return reg.test(this.ReferrerMobile)
       },
       btnTxt() {
